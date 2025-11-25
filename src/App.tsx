@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -17,50 +17,105 @@ import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
-import Home from "./pages/Dashboard/Home";
+
+// --- Public Components ---
+import PublicNavbar from "./components/PublicNavbar";
+import Footer from "./components/Footer";
+
+// --- Public Pages ---
+import Home from "./pages/Public/Home";
+import About from "./pages/Public/About";
+import Services from "./pages/Public/Services";
+import Projects from "./pages/Public/Projects";
+import Contact from "./pages/Public/Contact";
 
 export default function App() {
   return (
-    <>
+    <div className="min-h-screen w-full bg-[#0A0F1E] text-white overflow-x-hidden">
+      {/* Entire app wrapped in dark background and hidden overflow */}
+
       <Router>
         <ScrollToTop />
-        <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
 
-            {/* Others Page */}
+        <Routes>
+          {/* 🏦 Public Pages (with Navbar + Footer) */}
+          <Route
+            path="/"
+            element={
+              <>
+                <PublicNavbar />
+                <Home />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/about"
+            element={
+              <>
+                <PublicNavbar />
+                <About />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/services"
+            element={
+              <>
+                <PublicNavbar />
+                <Services />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/projects"
+            element={
+              <>
+                <PublicNavbar />
+                <Projects />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/contact"
+            element={
+              <>
+                <PublicNavbar />
+                <Contact />
+                <Footer />
+              </>
+            }
+          />
+
+          {/* 💼 Dashboard Layout */}
+          <Route element={<AppLayout />}>
+            <Route path="/dashboard" element={<Home />} />
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
-
-            {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
-
-            {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
-
-            {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />
             <Route path="/badge" element={<Badges />} />
             <Route path="/buttons" element={<Buttons />} />
             <Route path="/images" element={<Images />} />
             <Route path="/videos" element={<Videos />} />
-
-            {/* Charts */}
             <Route path="/line-chart" element={<LineChart />} />
             <Route path="/bar-chart" element={<BarChart />} />
           </Route>
 
-          {/* Auth Layout */}
+          {/* 🔐 Auth Pages */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
 
-          {/* Fallback Route */}
+          {/* ❌ Fallback Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
-    </>
+    </div>
   );
 }
