@@ -6,8 +6,8 @@ export default function SignUp() {
   return (
     <>
       <PageMeta
-        title="React.js SignUp Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js SignUp Tables Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        title="Institutional Digital Account | ClaveRica"
+        description="Multi-signature crypto custody & enterprise payroll with Goldman Sachs' security infrastructure. Built for family offices and Fortune 500 treasury teams."
       />
       <AuthLayout>
         <SignUpForm />

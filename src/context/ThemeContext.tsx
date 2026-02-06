@@ -7,6 +7,7 @@ type Theme = "light" | "dark";
 
 type ThemeContextType = {
   theme: Theme;
+  darkMode: boolean;
   toggleTheme: () => void;
 };
 
@@ -16,43 +17,52 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [theme, setTheme] = useState<Theme>("light");
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
+  // Read theme from localStorage BEFORE UI loads
   useEffect(() => {
-    // This code will only run on the client side
-    const savedTheme = localStorage.getItem("theme") as Theme | null;
-    const initialTheme = savedTheme || "light"; // Default to light theme
-
-    setTheme(initialTheme);
-    setIsInitialized(true);
+    const savedTheme = (localStorage.getItem("theme") as Theme) || "light";
+    setTheme(savedTheme);
+    setIsReady(true);
   }, []);
 
+  // Apply the theme to <html class="dark"> + save to localStorage
   useEffect(() => {
-    if (isInitialized) {
-      localStorage.setItem("theme", theme);
-      if (theme === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+    if (!isReady) return;
+
+    localStorage.setItem("theme", theme);
+
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
-  }, [theme, isInitialized]);
+  }, [theme, isReady]);
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
+  const darkMode = theme === "dark";
+
+  if (!isReady) {
+    // Prevent flashing white/black when loading
+    return (
+      <div className="w-full h-screen bg-white dark:bg-[#0B0E14] transition-none" />
+    );
+  }
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, darkMode, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
 };
 
 export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
+  const ctx = useContext(ThemeContext);
+  if (!ctx) {
+    throw new Error("useTheme must be used inside ThemeProvider");
   }
-  return context;
+  return ctx;
 };

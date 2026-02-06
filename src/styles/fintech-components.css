@@ -1,0 +1,469 @@
+/* src/styles/fintech-components.css - FINANCIAL SPECIFIC COMPONENTS */
+
+/* ========== TRANSACTION COMPONENTS ========== */
+.transaction-list {
+  background: white;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-theme-md);
+}
+
+.transaction-item-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--color-gray-100);
+  transition: background-color 0.2s ease;
+}
+
+.transaction-item-compact:hover {
+  background: var(--color-gray-50);
+}
+
+.transaction-item-compact:last-child {
+  border-bottom: none;
+}
+
+.transaction-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  font-size: 18px;
+}
+
+.transaction-icon-income {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-profit);
+}
+
+.transaction-icon-expense {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-loss);
+}
+
+.transaction-icon-transfer {
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--color-finance-accent);
+}
+
+.transaction-details {
+  flex: 1;
+}
+
+.transaction-name {
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.transaction-meta {
+  font-size: 14px;
+  color: var(--color-gray-500);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.transaction-amount {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.transaction-amount-positive {
+  color: var(--color-profit);
+}
+
+.transaction-amount-negative {
+  color: var(--color-loss);
+}
+
+/* Quick Action Buttons */
+.transaction-actions {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.transaction-item-compact:hover .transaction-actions {
+  opacity: 1;
+}
+
+.transaction-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gray-200);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.transaction-action-btn:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+}
+
+/* ========== ACCOUNT SUMMARY CARDS ========== */
+.account-summary-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  border: 1px solid var(--color-gray-200);
+  position: relative;
+  overflow: hidden;
+}
+
+.account-summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: var(--account-color, var(--color-checking));
+}
+
+.account-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.account-type {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-gray-500);
+  margin-bottom: 4px;
+}
+
+.account-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 8px;
+}
+
+.account-number {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 14px;
+  color: var(--color-gray-500);
+}
+
+.account-balance {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.account-balance-change {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.balance-positive {
+  color: var(--color-profit);
+}
+
+.balance-negative {
+  color: var(--color-loss);
+}
+
+/* ========== PAYMENT/TRANSFER FORM ========== */
+.payment-form {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: var(--shadow-theme-lg);
+}
+
+.payment-amount-input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 36px;
+  font-weight: 600;
+  text-align: center;
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.payment-amount-input:focus {
+  border-color: var(--color-finance-primary);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+  outline: none;
+}
+
+.payment-recipient {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+}
+
+.payment-recipient:hover {
+  border-color: var(--color-gray-300);
+  background: var(--color-gray-50);
+}
+
+.recipient-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-gray-200);
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.recipient-details {
+  flex: 1;
+}
+
+.recipient-name {
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.recipient-account {
+  font-size: 14px;
+  color: var(--color-gray-500);
+}
+
+/* ========== FINANCIAL GOAL TRACKER ========== */
+.goal-tracker {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  border: 1px solid var(--color-gray-200);
+}
+
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.goal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+}
+
+.goal-amount {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  color: var(--color-gray-900);
+}
+
+.goal-progress {
+  margin-bottom: 16px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--color-gray-600);
+}
+
+.goal-progress-bar {
+  height: 12px;
+  background: var(--color-gray-200);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.goal-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-finance-primary), var(--color-finance-accent));
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+/* ========== CRYPTO PRICE CARD ========== */
+.crypto-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  border: 1px solid var(--color-gray-200);
+  transition: all 0.3s ease;
+}
+
+.crypto-card:hover {
+  box-shadow: var(--shadow-floating);
+  transform: translateY(-2px);
+}
+
+.crypto-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.crypto-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-weight: 600;
+}
+
+.crypto-symbol {
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 2px;
+}
+
+.crypto-name {
+  font-size: 14px;
+  color: var(--color-gray-500);
+}
+
+.crypto-price {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.crypto-change {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.crypto-change-positive {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-profit);
+}
+
+.crypto-change-negative {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-loss);
+}
+
+/* ========== PORTFOLIO ALLOCATION ========== */
+.allocation-chart {
+  display: flex;
+  height: 200px;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 20px 0;
+}
+
+.allocation-bar {
+  flex: 1;
+  background: linear-gradient(to top, var(--bar-color, var(--color-gray-300)), var(--bar-color, var(--color-gray-300)) 70%, transparent);
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  min-height: 20px;
+  transition: height 0.5s ease;
+}
+
+.allocation-label {
+  position: absolute;
+  bottom: -24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-gray-700);
+  white-space: nowrap;
+}
+
+.allocation-percentage {
+  position: absolute;
+  top: -24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+}
+
+/* ========== DARK MODE SUPPORT ========== */
+@media (prefers-color-scheme: dark) {
+  .transaction-list,
+  .transaction-item-compact,
+  .account-summary-card,
+  .payment-form,
+  .crypto-card {
+    background: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+    color: var(--color-gray-100);
+  }
+  
+  .transaction-item-compact:hover {
+    background: var(--color-gray-700);
+  }
+  
+  .transaction-name,
+  .account-name,
+  .account-balance,
+  .recipient-name,
+  .goal-title,
+  .goal-amount,
+  .crypto-symbol,
+  .crypto-price {
+    color: var(--color-gray-100);
+  }
+  
+  .goal-tracker {
+    background: linear-gradient(135deg, var(--color-gray-800) 0%, var(--color-gray-900) 100%);
+    border-color: var(--color-gray-700);
+  }
+  
+  .payment-amount-input {
+    background: var(--color-gray-800);
+    border-color: var(--color-gray-600);
+    color: var(--color-gray-100);
+  }
+  
+  .transaction-action-btn {
+    background: var(--color-gray-700);
+    border-color: var(--color-gray-600);
+    color: var(--color-gray-300);
+  }
+  
+  .transaction-action-btn:hover {
+    background: var(--color-gray-600);
+    border-color: var(--color-gray-500);
+  }
+}

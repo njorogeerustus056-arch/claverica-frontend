@@ -1,0 +1,371 @@
+﻿/* ============================================= */
+/* TAILWIND CSS v4 - GLOBAL ENTRY POINT         */
+/* ============================================= */
+
+/* Google Font */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+@import "tailwindcss";
+
+/* ============================================= */
+/* 1. IMPORT YOUR CUSTOM STYLES                 */
+/* ============================================= */
+@import "./animations.css";
+@import "./components.css";
+@import "./utilities.css";
+@import "./theme.css";
+@import "./fintech-components.css";
+@import "./charts-financial.css";
+@import "./mobile-finance.css";
+@import "./empty-states.css";
+@import "./notifications-financial.css";
+@import "./print-financial.css";
+
+/* ============================================= */
+/* 2. GLOBAL RESETS & OVERFLOW FIXES            */
+/* ============================================= */
+html, body, #root, [data-vite-dev-id] {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ============================================= */
+/* 3. DESIGN SYSTEM THEME CONFIG                */
+/* ============================================= */
+@theme {
+  /* Fonts */
+  --font-outfit: 'Outfit', sans-serif;
+
+  /* Breakpoints */
+  --breakpoint-2xsm: 375px;
+  --breakpoint-xsm: 425px;
+  --breakpoint-3xl: 2000px;
+
+  /* Typography */
+  --text-title-2xl: 72px;
+  --text-title-2xl--line-height: 90px;
+  --text-title-xl: 60px;
+  --text-title-xl--line-height: 72px;
+  --text-title-lg: 48px;
+  --text-title-lg--line-height: 60px;
+  --text-title-md: 36px;
+  --text-title-md--line-height: 44px;
+  --text-title-sm: 30px;
+  --text-title-sm--line-height: 38px;
+  --text-theme-xl: 20px;
+  --text-theme-xl--line-height: 30px;
+  --text-theme-sm: 14px;
+  --text-theme-sm--line-height: 20px;
+  --text-theme-xs: 12px;
+  --text-theme-xs--line-height: 18px;
+
+  /* Colors */
+  --color-white: #ffffff;
+  --color-black: #101828;
+  --color-brand-500: #465fff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f2f4f7;
+  --color-gray-200: #e4e7ec;
+  --color-gray-300: #d0d5dd;
+  --color-gray-400: #98a2b3;
+  --color-gray-500: #667085;
+  --color-gray-600: #475467;
+  --color-gray-700: #344054;
+  --color-gray-800: #1d2939;
+  --color-gray-900: #101828;
+  --color-success-500: #12b76a;
+  --color-error-500: #f04438;
+  --color-warning-500: #f79009;
+  --color-theme-pink-500: #ee46bc;
+  --color-theme-purple-500: #7a5af8;
+
+  /* NEW COLORS FOR COMPONENTS */
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-purple-500: #8b5cf6;
+  --color-purple-600: #7c3aed;
+  --color-green-500: #10b981;
+  --color-green-600: #059669;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+
+  /* FINANCIAL THEME COLORS (from theme.css) */
+  --color-finance-primary: #1e40af;
+  --color-finance-secondary: #059669;
+  --color-finance-accent: #7c3aed;
+  --color-profit: #10b981;
+  --color-loss: #ef4444;
+  --color-neutral: #6b7280;
+  --color-highlight: #fbbf24;
+  --color-income: #059669;
+  --color-expense: #dc2626;
+  --color-investment: #3b82f6;
+  --color-savings: #8b5cf6;
+  --color-transfer: #7c3aed;
+  --color-checking: #2563eb;
+  --color-savings-acct: #7c3aed;
+  --color-credit: #f59e0b;
+  --color-investment-acct: #10b981;
+  --color-loan: #ef4444;
+  --color-risk-low: #10b981;
+  --color-risk-medium: #f59e0b;
+  --color-risk-high: #ef4444;
+
+  /* Gradients */
+  --gradient-profit: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  --gradient-loss: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  --gradient-portfolio: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  --gradient-premium: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+
+  /* Shadows */
+  --shadow-theme-xs: 0px 1px 2px 0px rgba(16,24,40,0.05);
+  --shadow-theme-sm: 0px 1px 3px 0px rgba(16,24,40,0.1), 0px 1px 2px 0px rgba(16,24,40,0.06);
+  --shadow-theme-md: 0px 4px 8px -2px rgba(16,24,40,0.1), 0px 2px 4px -2px rgba(16,24,40,0.06);
+  --shadow-theme-lg: 0px 12px 16px -4px rgba(16,24,40,0.08), 0px 4px 6px -2px rgba(16,24,40,0.03);
+  --shadow-theme-xl: 0px 20px 24px -4px rgba(16,24,40,0.08), 0px 8px 8px -4px rgba(16,24,40,0.03);
+  --shadow-currency: 0 4px 6px -1px rgba(30, 64, 175, 0.1), 0 2px 4px -1px rgba(30, 64, 175, 0.06);
+  --shadow-card-finance: 0 10px 25px -5px rgba(30, 64, 175, 0.1), 0 5px 10px -5px rgba(30, 64, 175, 0.04);
+  --shadow-floating: 0 20px 40px -10px rgba(30, 64, 175, 0.15);
+
+  /* NEW RADIUS VARIABLES */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+}
+
+/* ============================================= */
+/* 4. BASE STYLES ONLY                          */
+/* ============================================= */
+@layer base {
+  *, *::before, *::after {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
+  body {
+    font-family: var(--font-outfit);
+    background-color: var(--color-gray-50);
+    color: var(--color-gray-800);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-outfit);
+    font-weight: 600;
+    color: var(--color-gray-900);
+  }
+
+  a {
+    color: var(--color-brand-500);
+  }
+  a:hover {
+    color: #3641f5;
+  }
+
+  /* Dark mode support for your components */
+  @media (prefers-color-scheme: dark) {
+    .dashboard-card {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+      color: white;
+    }
+    
+    .stat-card {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: var(--color-gray-700);
+    }
+    
+    /* Financial components dark mode */
+    .card-finance,
+    .card-finance-premium,
+    .transaction-list,
+    .transaction-item-compact,
+    .account-summary-card,
+    .payment-form,
+    .crypto-card,
+    .chart-container-financial {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+      color: var(--color-gray-100);
+    }
+    
+    .goal-tracker {
+      background: linear-gradient(135deg, var(--color-gray-800) 0%, var(--color-gray-900) 100%);
+      border-color: var(--color-gray-700);
+    }
+  }
+}
+
+/* ============================================= */
+/* 5. TAILWIND UTILITIES                        */
+/* ============================================= */
+@layer utilities {
+  .shadow-theme-xs { box-shadow: var(--shadow-theme-xs); }
+  .shadow-theme-sm { box-shadow: var(--shadow-theme-sm); }
+  .shadow-theme-md { box-shadow: var(--shadow-theme-md); }
+  .shadow-theme-lg { box-shadow: var(--shadow-theme-lg); }
+  .shadow-theme-xl { box-shadow: var(--shadow-theme-xl); }
+  .shadow-currency { box-shadow: var(--shadow-currency); }
+  .shadow-card-finance { box-shadow: var(--shadow-card-finance); }
+  .shadow-floating { box-shadow: var(--shadow-floating); }
+
+  /* NEW: Card utilities that work with Tailwind */
+  .card {
+    @apply bg-white rounded-2xl p-6 shadow-theme-lg border border-gray-200;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-theme-xl hover:border-blue-200;
+  }
+  
+  /* Financial cards */
+  .card-finance {
+    @apply bg-white rounded-xl border border-gray-200 shadow-card-finance transition-all duration-300;
+  }
+  
+  .card-finance-hover {
+    @apply hover:shadow-floating hover:border-finance-primary;
+  }
+  
+  /* Button utilities */
+  .btn {
+    @apply px-4 py-2.5 rounded-lg font-semibold transition-all duration-200 inline-flex items-center justify-center gap-2;
+  }
+  
+  .btn-primary {
+    @apply bg-brand-500 text-white hover:bg-[#3641f5] shadow-theme-sm hover:shadow-theme-md;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400;
+  }
+  
+  /* Financial buttons */
+  .btn-finance {
+    @apply bg-finance-primary text-white hover:bg-[#1e40af] shadow-currency;
+  }
+  
+  .btn-finance-success {
+    @apply bg-profit text-white hover:bg-[#059669];
+  }
+  
+  /* Currency utilities */
+  .currency-positive {
+    color: var(--color-profit);
+  }
+  
+  .currency-negative {
+    color: var(--color-loss);
+  }
+  
+  /* Risk indicators */
+  .risk-badge-low {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .risk-badge-medium {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  .risk-badge-high {
+    @apply bg-red-100 text-red-800;
+  }
+}
+
+/* ============================================= */
+/* 6. THIRD-PARTY LIBRARY STYLES (KEEP)         */
+/* ============================================= */
+/* Keep ApexCharts, Flatpickr, FullCalendar, Swiper styles here */
+
+/* ============================================= */
+/* 7. FIX FOR SCREENSHOT ISSUE                  */
+/* ============================================= */
+/* This fixes the card container styling issue */
+.dashboard-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+}
+
+.dashboard-grid {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+}
+
+.dashboard-main-card {
+  @apply bg-white rounded-2xl p-6 shadow-theme-lg border border-gray-200 lg:col-span-2;
+}
+
+.dashboard-sidebar {
+  @apply space-y-6;
+}
+
+/* ============================================= */
+/* 8. FINANCIAL LAYOUT UTILITIES                */
+/* ============================================= */
+.financial-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4;
+}
+
+.transaction-grid {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+}
+
+.portfolio-grid {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
+}
+
+/* ============================================= */
+/* 9. RESPONSIVE FINANCIAL BREAKPOINTS          */
+/* ============================================= */
+@media (max-width: 640px) {
+  .financial-grid {
+    @apply grid-cols-1 gap-3;
+  }
+  
+  .transaction-grid {
+    @apply grid-cols-1 gap-4;
+  }
+  
+  .portfolio-grid {
+    @apply grid-cols-1 gap-4;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .financial-grid {
+    @apply grid-cols-2 gap-4;
+  }
+  
+  .transaction-grid {
+    @apply grid-cols-2 gap-5;
+  }
+}
+
+/* ============================================= */
+/* 10. LAYOUT-SPECIFIC FIXES                    */
+/* ============================================= */
+.dashboard-layout {
+  overflow-y: hidden !important;
+  height: 100vh !important;
+}
+
+.auth-layout {
+  min-height: 100vh;
+  overflow-y: auto;
+}

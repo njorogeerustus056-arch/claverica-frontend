@@ -1,0 +1,26 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var react_1 = require("react");
+var Select = function (_a) {
+    var options = _a.options, _b = _a.placeholder, placeholder = _b === void 0 ? "Select an option" : _b, onChange = _a.onChange, _c = _a.className, className = _c === void 0 ? "" : _c, _d = _a.defaultValue, defaultValue = _d === void 0 ? "" : _d;
+    // Manage the selected value
+    var _e = (0, react_1.useState)(defaultValue), selectedValue = _e[0], setSelectedValue = _e[1];
+    var handleChange = function (e) {
+        var value = e.target.value;
+        setSelectedValue(value);
+        onChange(value); // Trigger parent handler
+    };
+    return (<select className={"h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 ".concat(selectedValue
+            ? "text-gray-800 dark:text-white/90"
+            : "text-gray-400 dark:text-gray-400", " ").concat(className)} value={selectedValue} onChange={handleChange}>
+      {/* Placeholder option */}
+      <option value="" disabled className="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
+        {placeholder}
+      </option>
+      {/* Map over options */}
+      {options.map(function (option) { return (<option key={option.value} value={option.value} className="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
+          {option.label}
+        </option>); })}
+    </select>);
+};
+exports.default = Select;

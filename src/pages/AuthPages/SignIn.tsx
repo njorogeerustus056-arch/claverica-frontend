@@ -6,8 +6,8 @@ export default function SignIn() {
   return (
     <>
       <PageMeta
-        title="React.js SignIn Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-        description="This is React.js SignIn Tables Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        title="Secure Sign In | ClaveRica"
+        description="Access your institutional digital treasury with Goldman Sachs-grade security. Multi-signature authentication for crypto vaults and enterprise accounts."
       />
       <AuthLayout>
         <SignInForm />

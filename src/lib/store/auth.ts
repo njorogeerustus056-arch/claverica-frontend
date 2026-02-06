@@ -1,0 +1,248 @@
+﻿// src/lib/store/auth.ts - CLEAN VERSION WITH REDUCED LOGS
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+export interface User {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  account_number: string;
+  phone: string;
+  is_active: boolean;
+  is_verified: boolean;
+}
+
+interface AuthTokens {
+  access: string;
+  refresh: string;
+}
+
+interface AuthStore {
+  user: User | null;
+  tokens: AuthTokens | null;
+  loading: boolean;
+  isAuthenticated: boolean;
+
+  login: (email: string, password: string) => Promise<boolean>;
+  logout: () => void;
+  refreshToken: () => Promise<boolean>;
+  setLoading: (loading: boolean) => void;
+  checkAuth: () => void;
+  updateUser: (userData: Partial<User>) => void;
+  clearAuth: () => void;
+  verifyToken: () => Promise<boolean>;
+  syncFromLocalStorage: () => void;
+}
+
+export const useAuthStore = create<AuthStore>()(
+  persist(
+    (set, get) => ({
+      user: null,
+      tokens: null,
+      loading: false,
+      isAuthenticated: false,
+
+      syncFromLocalStorage: () => {
+        if (typeof window === 'undefined') return;
+
+        const localToken = localStorage.getItem('token');
+        const localRefresh = localStorage.getItem('refresh_token');     
+
+        if (localToken && localRefresh) {
+          set({
+            tokens: { access: localToken, refresh: localRefresh }       
+          });
+        }
+      },
+
+      login: async (email: string, password: string): Promise<boolean> => {
+        set({ loading: true });
+        try {
+          const response = await fetch(`${API_URL}/api/accounts/login/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || error.detail || 'Login failed');
+          }
+
+          const data = await response.json();
+
+          if (data.tokens?.access) {
+            localStorage.setItem('token', data.tokens.access);
+          }
+          if (data.tokens?.refresh) {
+            localStorage.setItem('refresh_token', data.tokens.refresh); 
+          }
+
+          set({
+            user: data.account,
+            tokens: data.tokens,
+            isAuthenticated: true,
+            loading: false,
+          });
+
+          return true;
+        } catch (error: any) {
+          console.error('Login error:', error);
+          set({ loading: false });
+          return false;
+        }
+      },
+
+      logout: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refresh_token');
+
+        set({
+          user: null,
+          tokens: null,
+          isAuthenticated: false,
+        });
+      },
+
+      clearAuth: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refresh_token');
+
+        set({
+          user: null,
+          tokens: null,
+          isAuthenticated: false,
+        });
+      },
+
+      refreshToken: async (): Promise<boolean> => {
+        const { tokens } = get();
+        if (!tokens?.refresh) return false;
+
+        try {
+          const response = await fetch(`${API_URL}/api/accounts/refresh/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh: tokens.refresh }),
+          });
+
+          if (!response.ok) return false;
+
+          const data = await response.json();
+
+          if (data.access) {
+            localStorage.setItem('token', data.access);
+          }
+
+          set({
+            tokens: { ...tokens, access: data.access },
+          });
+
+          return true;
+        } catch {
+          get().clearAuth();
+          return false;
+        }
+      },
+
+      setLoading: (loading: boolean) => set({ loading }),
+
+      checkAuth: () => {
+        get().syncFromLocalStorage();
+
+        const { tokens, user } = get();
+
+        if (tokens?.access && user) {
+          set({ isAuthenticated: true });
+          return;
+        }
+
+        if (tokens?.access && !user) {
+          set({ isAuthenticated: false });
+          return;
+        }
+
+        set({ isAuthenticated: false });
+      },
+
+      verifyToken: async (): Promise<boolean> => {
+        get().syncFromLocalStorage();
+
+        const { tokens, user } = get();
+
+        if (!tokens?.access) {
+          return false;
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/api/users/me/`, {    
+            headers: {
+              Authorization: `Bearer ${tokens.access}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+
+            set({
+              isAuthenticated: true,
+              user: userData
+            });
+
+            return true;
+          } else if (response.status === 401) {
+            const refreshed = await get().refreshToken();
+            if (refreshed) {
+              return await get().verifyToken();
+            } else {
+              get().logout();
+              return false;
+            }
+          } else {
+            return false;
+          }
+        } catch (error) {
+          console.error('Token verification error:', error);
+          return false;
+        }
+      },
+
+      updateUser: (userData: Partial<User>) => {
+        set((state) => ({
+          user: state.user ? { ...state.user, ...userData } : null,     
+        }));
+      },
+    }),
+    {
+      name: 'auth-storage',
+      partialize: (state) => ({
+        user: state.user,
+        tokens: state.tokens,
+      }),
+      migrate: (persistedState: any, version: number) => {
+        if (typeof window !== 'undefined') {
+          const localToken = localStorage.getItem('token');
+          const localRefresh = localStorage.getItem('refresh_token');   
+
+          if (localToken && localRefresh) {
+            if (!persistedState.tokens || !persistedState.tokens.access) {
+              persistedState.tokens = {
+                access: localToken,
+                refresh: localRefresh
+              };
+            }
+          }
+        }
+        return persistedState;
+      }
+    }
+  )
+);
+
+
+
+

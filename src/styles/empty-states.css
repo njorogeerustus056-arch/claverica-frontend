@@ -1,0 +1,482 @@
+/* src/styles/empty-states.css - EMPTY & LOADING STATES */
+
+/* ========== SKELETON LOADERS ========== */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-100) 25%,
+    var(--color-gray-200) 50%,
+    var(--color-gray-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  border: 1px solid var(--color-gray-200);
+}
+
+.skeleton-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-right: 16px;
+}
+
+.skeleton-text {
+  flex: 1;
+}
+
+.skeleton-line {
+  height: 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+}
+
+.skeleton-line:last-child {
+  margin-bottom: 0;
+  width: 60%;
+}
+
+.skeleton-line-sm {
+  height: 8px;
+  width: 80%;
+}
+
+.skeleton-line-md {
+  height: 12px;
+}
+
+.skeleton-line-lg {
+  height: 16px;
+}
+
+.skeleton-chart {
+  height: 200px;
+  border-radius: var(--radius-lg);
+  margin-top: 20px;
+}
+
+/* Financial Data Skeletons */
+.skeleton-transaction {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.skeleton-transaction:last-child {
+  border-bottom: none;
+}
+
+.skeleton-transaction-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  margin-right: 16px;
+}
+
+.skeleton-transaction-details {
+  flex: 1;
+}
+
+.skeleton-transaction-amount {
+  width: 80px;
+  height: 20px;
+}
+
+/* ========== EMPTY STATES ========== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--color-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  color: var(--color-gray-400);
+  font-size: 32px;
+}
+
+.empty-state-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 8px;
+}
+
+.empty-state-description {
+  font-size: 14px;
+  color: var(--color-gray-500);
+  margin-bottom: 24px;
+  max-width: 300px;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Specific Empty States */
+.empty-transactions .empty-state-icon {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--color-blue-500);
+}
+
+.empty-investments .empty-state-icon {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-profit);
+}
+
+.empty-alerts .empty-state-icon {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--color-warning);
+}
+
+.empty-search .empty-state-icon {
+  background: rgba(156, 163, 175, 0.1);
+  color: var(--color-gray-400);
+}
+
+/* Zero Balance State */
+.zero-balance-state {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: var(--radius-xl);
+  padding: 40px 24px;
+  text-align: center;
+  border: 2px dashed var(--color-gray-300);
+}
+
+.zero-balance-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  color: var(--color-gray-400);
+  font-size: 24px;
+}
+
+.zero-balance-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  margin-bottom: 8px;
+}
+
+.zero-balance-description {
+  color: var(--color-gray-600);
+  margin-bottom: 24px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ========== LOADING SPINNERS ========== */
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-gray-200);
+  border-top-color: var(--color-finance-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-spinner-sm {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.loading-spinner-lg {
+  width: 60px;
+  height: 60px;
+  border-width: 4px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Banking Connection Spinner */
+.bank-connection-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.bank-connection-spinner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.bank-spinner-outer {
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(59, 130, 246, 0.2);
+  border-top-color: var(--color-finance-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.bank-spinner-inner {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(16, 185, 129, 0.2);
+  border-top-color: var(--color-profit);
+  border-radius: 50%;
+  animation: spin 1.5s linear infinite reverse;
+}
+
+.bank-connection-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--color-gray-600);
+  text-align: center;
+}
+
+/* ========== PROGRESS INDICATORS ========== */
+.upload-progress {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  border: 1px solid var(--color-gray-200);
+}
+
+.upload-progress-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.upload-progress-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  color: var(--color-finance-primary);
+}
+
+.upload-progress-title {
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.upload-progress-subtitle {
+  font-size: 14px;
+  color: var(--color-gray-500);
+}
+
+.upload-progress-bar {
+  height: 8px;
+  background: var(--color-gray-200);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.upload-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-finance-primary), var(--color-finance-accent));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.upload-progress-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--color-gray-600);
+}
+
+/* ========== ERROR STATES ========== */
+.error-state {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 40px 24px;
+  text-align: center;
+  border: 1px solid var(--color-gray-200);
+}
+
+.error-state-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  color: var(--color-loss);
+  font-size: 24px;
+}
+
+.error-state-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 8px;
+}
+
+.error-state-description {
+  color: var(--color-gray-600);
+  margin-bottom: 24px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error-state-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background: var(--color-gray-50);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  color: var(--color-gray-700);
+  margin: 16px 0;
+}
+
+/* Connection Error */
+.connection-error {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin: 16px 0;
+}
+
+.connection-error-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.connection-error-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-loss);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.connection-error-title {
+  font-weight: 600;
+  color: var(--color-loss);
+}
+
+.connection-error-message {
+  font-size: 14px;
+  color: #991b1b;
+  margin-bottom: 16px;
+}
+
+/* ========== DARK MODE SUPPORT ========== */
+@media (prefers-color-scheme: dark) {
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-gray-800) 25%,
+      var(--color-gray-700) 50%,
+      var(--color-gray-800) 75%
+    );
+  }
+  
+  .skeleton-card,
+  .upload-progress,
+  .error-state {
+    background: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+  }
+  
+  .empty-state-icon,
+  .zero-balance-icon {
+    background: var(--color-gray-700);
+    color: var(--color-gray-500);
+  }
+  
+  .empty-state-title,
+  .zero-balance-title,
+  .upload-progress-title,
+  .error-state-title {
+    color: var(--color-gray-100);
+  }
+  
+  .empty-state-description,
+  .zero-balance-description,
+  .upload-progress-subtitle,
+  .error-state-description {
+    color: var(--color-gray-400);
+  }
+  
+  .zero-balance-state {
+    background: linear-gradient(135deg, var(--color-gray-800) 0%, var(--color-gray-900) 100%);
+    border-color: var(--color-gray-600);
+  }
+  
+  .connection-error {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+    border-color: #dc2626;
+  }
+  
+  .connection-error-message {
+    color: #fecaca;
+  }
+  
+  .error-state-code {
+    background: var(--color-gray-700);
+    color: var(--color-gray-300);
+  }
+}

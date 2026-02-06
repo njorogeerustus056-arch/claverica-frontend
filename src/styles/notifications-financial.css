@@ -1,0 +1,613 @@
+/* src/styles/notifications-financial.css - FINANCIAL ALERTS & NOTIFICATIONS */
+
+/* ========== NOTIFICATION CONTAINERS ========== */
+.notifications-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 400px;
+  max-width: calc(100vw - 40px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notification-item {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  box-shadow: var(--shadow-floating);
+  border-left: 4px solid var(--notification-color, var(--color-gray-400));
+  display: flex;
+  align-items: flex-start;
+  animation: slide-in-right 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+.notification-item:hover {
+  transform: translateX(-4px);
+  box-shadow: var(--shadow-floating), 0 0 0 2px var(--notification-color, transparent);
+}
+
+.notification-item.exiting {
+  animation: slide-out-right 0.3s ease;
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+/* Notification Colors */
+.notification-success {
+  --notification-color: var(--color-profit);
+}
+
+.notification-warning {
+  --notification-color: var(--color-warning);
+}
+
+.notification-error {
+  --notification-color: var(--color-loss);
+}
+
+.notification-info {
+  --notification-color: var(--color-finance-primary);
+}
+
+.notification-premium {
+  --notification-color: var(--color-finance-accent);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+/* ========== NOTIFICATION CONTENT ========== */
+.notification-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  background: rgba(var(--notification-color-rgb, 156, 163, 175), 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  color: var(--notification-color, var(--color-gray-400));
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.notification-title {
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: var(--color-gray-500);
+  white-space: nowrap;
+  margin-left: 12px;
+}
+
+.notification-message {
+  font-size: 14px;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.notification-close {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-gray-200);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.notification-close:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+}
+
+/* ========== FINANCIAL ALERT TYPES ========== */
+/* Price Change Alert */
+.alert-price-change {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alert-symbol {
+  font-weight: 600;
+  color: var(--color-gray-900);
+  min-width: 60px;
+}
+
+.alert-price {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--color-gray-900);
+}
+
+.alert-change {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.alert-change-positive {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-profit);
+}
+
+.alert-change-negative {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-loss);
+}
+
+/* Payment Reminder */
+.alert-payment {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.payment-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: rgba(124, 58, 237, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-finance-accent);
+  font-size: 20px;
+}
+
+.payment-details {
+  flex: 1;
+}
+
+.payment-amount {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.payment-due {
+  font-size: 14px;
+  color: var(--color-gray-600);
+}
+
+.payment-urgent .payment-icon {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-loss);
+}
+
+/* Security Alert */
+.alert-security {
+  border-left-color: var(--color-loss);
+}
+
+.security-alert-icon {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-loss);
+}
+
+.security-alert-title {
+  color: var(--color-loss);
+}
+
+/* ========== TOAST NOTIFICATIONS ========== */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.toast-notification {
+  background: var(--color-gray-900);
+  color: white;
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  box-shadow: var(--shadow-floating);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 350px;
+  animation: slide-up 0.3s ease;
+}
+
+.toast-notification.exiting {
+  animation: slide-down 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.toast-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.toast-success .toast-icon {
+  background: var(--color-profit);
+}
+
+.toast-error .toast-icon {
+  background: var(--color-loss);
+}
+
+.toast-warning .toast-icon {
+  background: var(--color-warning);
+}
+
+.toast-message {
+  font-size: 14px;
+  flex: 1;
+}
+
+.toast-close {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toast-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Transaction Toast */
+.toast-transaction {
+  background: var(--color-finance-primary);
+}
+
+.toast-transaction .toast-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ========== INLINE ALERTS ========== */
+.inline-alert {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border: 1px solid var(--color-gray-200);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.inline-alert-warning {
+  background: rgba(245, 158, 11, 0.05);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.inline-alert-error {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.inline-alert-success {
+  background: rgba(16, 185, 129, 0.05);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.inline-alert-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.inline-alert-warning .inline-alert-icon {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--color-warning);
+}
+
+.inline-alert-error .inline-alert-icon {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-loss);
+}
+
+.inline-alert-success .inline-alert-icon {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-profit);
+}
+
+.inline-alert-content {
+  flex: 1;
+}
+
+.inline-alert-title {
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.inline-alert-message {
+  font-size: 14px;
+  color: var(--color-gray-600);
+  line-height: 1.5;
+}
+
+/* ========== BANNER ALERTS ========== */
+.banner-alert {
+  background: linear-gradient(135deg, var(--alert-bg, #fef3c7), #fffbeb);
+  border: 1px solid var(--alert-border, #fbbf24);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 20px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-alert::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--alert-border, #fbbf24);
+}
+
+.banner-alert-warning {
+  --alert-bg: #fef3c7;
+  --alert-border: #fbbf24;
+}
+
+.banner-alert-error {
+  --alert-bg: #fef2f2;
+  --alert-border: #ef4444;
+}
+
+.banner-alert-success {
+  --alert-bg: #d1fae5;
+  --alert-border: #10b981;
+}
+
+.banner-alert-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.banner-alert-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--alert-border, #fbbf24);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.banner-alert-text {
+  flex: 1;
+}
+
+.banner-alert-title {
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.banner-alert-message {
+  font-size: 14px;
+  color: var(--color-gray-700);
+}
+
+.banner-alert-close {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.banner-alert-close:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-out-right {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+/* ========== DARK MODE SUPPORT ========== */
+@media (prefers-color-scheme: dark) {
+  .notification-item {
+    background: var(--color-gray-800);
+    border-left-color: var(--notification-color, var(--color-gray-600));
+  }
+  
+  .notification-premium {
+    background: linear-gradient(135deg, var(--color-gray-800) 0%, var(--color-gray-900) 100%);
+  }
+  
+  .notification-title,
+  .alert-symbol,
+  .alert-price,
+  .payment-amount {
+    color: var(--color-gray-100);
+  }
+  
+  .notification-message,
+  .payment-due {
+    color: var(--color-gray-400);
+  }
+  
+  .notification-close {
+    background: var(--color-gray-700);
+    border-color: var(--color-gray-600);
+    color: var(--color-gray-300);
+  }
+  
+  .notification-close:hover {
+    background: var(--color-gray-600);
+    border-color: var(--color-gray-500);
+  }
+  
+  .inline-alert {
+    background: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+  }
+  
+  .inline-alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+  }
+  
+  .inline-alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+  
+  .inline-alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+  
+  .inline-alert-title {
+    color: var(--color-gray-100);
+  }
+  
+  .inline-alert-message {
+    color: var(--color-gray-400);
+  }
+  
+  .banner-alert {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.2), rgba(30, 64, 175, 0.1));
+    border-color: var(--color-finance-primary);
+  }
+  
+  .banner-alert-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
+    border-color: var(--color-warning);
+  }
+  
+  .banner-alert-error {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+    border-color: var(--color-loss);
+  }
+  
+  .banner-alert-success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+    border-color: var(--color-profit);
+  }
+  
+  .banner-alert-title {
+    color: var(--color-gray-100);
+  }
+  
+  .banner-alert-message {
+    color: var(--color-gray-300);
+  }
+  
+  .banner-alert-close {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-gray-300);
+  }
+  
+  .banner-alert-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}

@@ -1,0 +1,703 @@
+/* Transfer.module.css */
+
+/* ============================================= */
+/* TRANSFER MODULE - FINTECH STYLES             */
+/* ============================================= */
+
+/* MAIN CONTAINER */
+.transferContainer {
+  font-family: 'Outfit', sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  padding-top: 24px;
+  padding-bottom: 40px;
+}
+
+.backButton {
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  border: 1.5px solid #e4e7ec !important;
+  color: #1e40af !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+.backButton:hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* ============================================= */
+/* 1. HEADER & TYPOGRAPHY                       */
+/* ============================================= */
+.transferHeader {
+  color: #1d2939 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.2 !important;
+}
+
+.transferHeader h1 {
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem !important;
+}
+
+.transferHeader p {
+  color: #667085 !important;
+  font-size: 1.125rem !important;
+  font-weight: 500 !important;
+}
+
+/* Account badges */
+.accountBadge {
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%) !important;
+  border: 1px solid rgba(30, 64, 175, 0.2) !important;
+  color: #1e40af !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+}
+
+.balanceBadge {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(52, 211, 153, 0.1) 100%) !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  color: #059669 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+}
+
+/* ============================================= */
+/* 2. AMOUNT CARD - FINTECH THEME               */
+/* ============================================= */
+.amountCard {
+  background: linear-gradient(135deg, 
+    #1e40af 0%, 
+    #2563eb 30%, 
+    #3b82f6 70%, 
+    #60a5fa 100%
+  ) !important;
+  border: none !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 
+    0 20px 40px -10px rgba(30, 64, 175, 0.2),
+    0 10px 25px -5px rgba(30, 64, 175, 0.1) !important;
+}
+
+.amountCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 70% 20%,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+}
+
+.amountLabel {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  letter-spacing: 0.025em !important;
+}
+
+.amountInput {
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 3.5rem !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  width: auto !important;
+  text-align: center !important;
+}
+
+.amountInput::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Balance Card */
+.balanceCard {
+  padding: 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+  color: white;
+  text-align: center;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(30, 64, 175, 0.2);
+}
+
+.balanceCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at 80% 20%,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.balanceIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.9;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.balanceAmount {
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 2.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================= */
+/* 3. INPUT CONTAINERS - FINTECH DESIGN         */
+/* ============================================= */
+.inputContainer {
+  margin-bottom: 1.5rem !important;
+}
+
+.inputLabel {
+  color: #344054 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin-bottom: 0.5rem !important;
+  display: block !important;
+}
+
+.inputField {
+  width: 100% !important;
+  padding: 0.75rem 1rem !important;
+  background: white !important;
+  border: 1.5px solid #e4e7ec !important;
+  border-radius: 12px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: #1d2939 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 3px 0 rgba(16, 24, 40, 0.05) !important;
+}
+
+.inputField:focus {
+  border-color: #1e40af !important;
+  box-shadow: 
+    0 0 0 3px rgba(30, 64, 175, 0.1),
+    0 1px 3px 0 rgba(16, 24, 40, 0.05) !important;
+  outline: none !important;
+}
+
+.inputField::placeholder {
+  color: #98a2b3 !important;
+  font-weight: 400 !important;
+}
+
+/* Error state */
+.inputError {
+  border-color: #f04438 !important;
+  box-shadow: 0 0 0 3px rgba(240, 68, 56, 0.1) !important;
+}
+
+.errorText {
+  color: #f04438 !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  margin-top: 0.25rem !important;
+  display: block !important;
+}
+
+/* ============================================= */
+/* 4. PAPER & CARD STYLES                       */
+/* ============================================= */
+.paper {
+  padding: 24px;
+  border-radius: 16px;
+  background: white;
+  border: 1.5px solid #e4e7ec;
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
+  transition: all 0.3s ease;
+}
+
+.paper:hover {
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+}
+
+.infoPaper {
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1.5px solid #e4e7ec;
+  border-left: 4px solid #1e40af;
+}
+
+.statsCard {
+  padding: 24px;
+  border-radius: 16px;
+  background: white;
+  border: 1.5px solid #e4e7ec;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
+}
+
+.statsCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.15);
+}
+
+/* ============================================= */
+/* 5. STATUS & PROGRESS STYLES                  */
+/* ============================================= */
+.statusIcon {
+  font-size: 48px;
+  color: #1e40af;
+  filter: drop-shadow(0 4px 6px rgba(30, 64, 175, 0.2));
+}
+
+.countdown {
+  font-family: 'Roboto Mono', monospace;
+  font-weight: 700;
+  color: #1e40af;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  padding: 16px 24px;
+  border-radius: 12px;
+  display: inline-block;
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1);
+}
+
+/* Progress bar */
+.progressBar {
+  height: 10px;
+  border-radius: 5px;
+  background-color: #e2e8f0;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #1e40af, #7c3aed);
+  transition: width 0.5s ease;
+}
+
+/* ============================================= */
+/* 6. TAC INPUT STYLES                          */
+/* ============================================= */
+.tacContainer {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.tacInput {
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  background: white;
+  border: 2px solid #e4e7ec;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  color: #1d2939;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.05);
+}
+
+.tacInput:focus {
+  border-color: #1e40af;
+  box-shadow: 
+    0 0 0 4px rgba(30, 64, 175, 0.1),
+    0 2px 8px rgba(16, 24, 40, 0.05);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.tacInput.filled {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  color: #065f46;
+}
+
+/* ============================================= */
+/* 7. TABLE STYLES                              */
+/* ============================================= */
+.tableContainer {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1.5px solid #e4e7ec;
+  background: white;
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
+}
+
+.tableHeader {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  font-weight: 700 !important;
+  color: #1d2939 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+.tableRow {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tableRow:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  transform: translateX(4px);
+}
+
+/* ============================================= */
+/* 8. BUTTON STYLES                             */
+/* ============================================= */
+.primaryButton {
+  background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%) !important;
+  color: white !important;
+  padding: 12px 24px !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  letter-spacing: 0.025em !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 
+    0 4px 12px rgba(30, 64, 175, 0.2),
+    0 2px 8px rgba(124, 58, 237, 0.1) !important;
+  text-transform: none !important;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1e3a8a 0%, #6d28d9 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 
+    0 8px 24px rgba(30, 64, 175, 0.3),
+    0 4px 16px rgba(124, 58, 237, 0.2) !important;
+}
+
+.primaryButton:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* ============================================= */
+/* 9. STATUS BADGES                             */
+/* ============================================= */
+.statusBadge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  display: inline-block;
+}
+
+.statusPending {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border: 1px solid #fbbf24;
+}
+
+.statusSent {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  border: 1px solid #60a5fa;
+}
+
+.statusVerified {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border: 1px solid #34d399;
+}
+
+.statusCompleted {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+  color: #7c3aed;
+  border: 1px solid #a78bfa;
+}
+
+.statusFailed {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #7f1d1d;
+  border: 1px solid #f87171;
+}
+
+/* ============================================= */
+/* 10. ALERTS & NOTIFICATIONS                   */
+/* ============================================= */
+.successAlert {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border: 1.5px solid #10b981;
+  color: #065f46;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+}
+
+.errorAlert {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border: 1.5px solid #f04438;
+  color: #7f1d1d;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(240, 68, 56, 0.1);
+}
+
+.infoAlert {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border: 1.5px solid #1e40af;
+  color: #1e40af;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1);
+}
+
+/* ============================================= */
+/* 11. LOADING STATES                           */
+/* ============================================= */
+.loadingSpinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 16px;
+  border: 1.5px solid #e4e7ec;
+}
+
+/* ============================================= */
+/* 12. BANK SELECTOR STYLES                     */
+/* ============================================= */
+.bankSelector {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.bankSearch {
+  width: 100%;
+  padding: 0.75rem 2.5rem;
+  background: white;
+  border: 1.5px solid #e4e7ec;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1d2939;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+}
+
+.bankSearch:focus {
+  border-color: #1e40af;
+  box-shadow: 
+    0 0 0 3px rgba(30, 64, 175, 0.1),
+    0 1px 3px rgba(16, 24, 40, 0.05);
+  outline: none;
+}
+
+.bankDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border: 1.5px solid #e4e7ec;
+  border-radius: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 
+    0 10px 25px -5px rgba(16, 24, 40, 0.1),
+    0 5px 10px -5px rgba(16, 24, 40, 0.05);
+  z-index: 50;
+}
+
+.bankOption {
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 0.875rem;
+}
+
+.bankOption:hover {
+  background: #f8fafc;
+}
+
+/* ============================================= */
+/* 13. DARK MODE OVERRIDES                      */
+/* ============================================= */
+@media (prefers-color-scheme: dark) {
+  .transferHeader h1 {
+    background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .transferHeader p {
+    color: #d1d5db;
+  }
+  
+  .paper,
+  .infoPaper,
+  .statsCard {
+    background: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
+  }
+  
+  .balanceCard {
+    background: linear-gradient(135deg, #1e3a8a 0%, #5b21b6 100%);
+  }
+  
+  .inputField,
+  .bankSearch {
+    background: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
+  }
+  
+  .bankDropdown {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  
+  .bankOption:hover {
+    background: #374151;
+  }
+  
+  .tacInput {
+    background: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
+  }
+  
+  .tableContainer {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  
+  .tableHeader {
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  }
+  
+  .tableRow:hover {
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  }
+}
+
+/* ============================================= */
+/* 14. UTILITY CLASSES                          */
+/* ============================================= */
+.fintechShadow {
+  box-shadow: 
+    0 10px 25px -5px rgba(30, 64, 175, 0.1),
+    0 5px 10px -5px rgba(30, 64, 175, 0.05);
+}
+
+.fintechShadowHover:hover {
+  box-shadow: 
+    0 20px 40px -10px rgba(30, 64, 175, 0.15),
+    0 10px 20px -5px rgba(30, 64, 175, 0.1);
+}
+
+.fintechBorder {
+  border: 1.5px solid #e4e7ec;
+}
+
+.fintechBorderFocus:focus {
+  border-color: #1e40af;
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+/* ============================================= */
+/* 15. RESPONSIVE ADJUSTMENTS                   */
+/* ============================================= */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .transferHeader h1 {
+    font-size: 2rem;
+  }
+  
+  .paper,
+  .infoPaper,
+  .statsCard {
+    padding: 16px;
+    border-radius: 12px;
+  }
+  
+  .balanceCard {
+    padding: 16px;
+  }
+  
+  .balanceIcon {
+    font-size: 36px;
+  }
+  
+  .balanceAmount {
+    font-size: 2rem;
+  }
+  
+  .tacContainer {
+    gap: 8px;
+  }
+  
+  .tacInput {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+  
+  .amountInput {
+    font-size: 2.5rem;
+  }
+  
+  .inputField,
+  .bankSearch {
+    font-size: 0.8125rem;
+    padding: 0.625rem 0.875rem;
+  }
+}

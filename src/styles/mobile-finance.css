@@ -1,0 +1,411 @@
+/* src/styles/mobile-finance.css - MOBILE-FIRST FINANCIAL STYLES */
+
+@media (max-width: 768px) {
+  
+  /* ========== DASHBOARD LAYOUT ========== */
+  .dashboard-grid-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .mobile-card-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  /* ========== TOUCH-FRIENDLY CONTROLS ========== */
+  .touch-input {
+    min-height: 56px;
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+  
+  .touch-button {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 12px 16px;
+  }
+  
+  /* ========== NUMBER PAD ========== */
+  .number-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+  
+  .number-key {
+    height: 64px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-gray-200);
+    background: white;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .number-key:active {
+    background: var(--color-gray-100);
+    transform: scale(0.98);
+  }
+  
+  .number-key-special {
+    background: var(--color-gray-100);
+    font-size: 18px;
+    color: var(--color-gray-600);
+  }
+  
+  /* ========== SWIPE ACTIONS ========== */
+  .swipe-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .swipe-content {
+    transition: transform 0.3s ease;
+  }
+  
+  .swipe-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    background: linear-gradient(to left, white, white 80%, transparent);
+  }
+  
+  .swipe-action-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .swipe-action-btn:active {
+    transform: scale(0.95);
+  }
+  
+  .swipe-action-edit {
+    background: var(--color-finance-primary);
+    color: white;
+  }
+  
+  .swipe-action-delete {
+    background: var(--color-loss);
+    color: white;
+  }
+  
+  .swipe-action-archive {
+    background: var(--color-warning);
+    color: white;
+  }
+  
+  /* ========== BOTTOM SHEETS ========== */
+  .bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .bottom-sheet.open {
+    transform: translateY(0);
+  }
+  
+  .bottom-sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--color-gray-300);
+    border-radius: 2px;
+    margin: 12px auto;
+  }
+  
+  .bottom-sheet-content {
+    padding: 20px 24px 40px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  
+  .bottom-sheet-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .bottom-sheet-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* ========== MOBILE TRANSACTION FLOWS ========== */
+  .flow-step {
+    display: none;
+    animation: slide-in-right 0.3s ease;
+  }
+  
+  .flow-step.active {
+    display: block;
+  }
+  
+  .flow-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 0 16px;
+  }
+  
+  .flow-back-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--color-gray-200);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    cursor: pointer;
+  }
+  
+  .flow-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-gray-900);
+  }
+  
+  .flow-progress {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 24px 0;
+  }
+  
+  .flow-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-gray-300);
+  }
+  
+  .flow-dot.active {
+    background: var(--color-finance-primary);
+  }
+  
+  /* ========== QUICK ACTIONS BAR ========== */
+  .quick-actions-bar {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 100;
+  }
+  
+  .quick-action-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-finance-primary);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-floating);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .quick-action-btn:active {
+    transform: scale(0.95);
+  }
+  
+  .quick-action-label {
+    position: absolute;
+    right: 70px;
+    background: var(--color-gray-800);
+    color: white;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  .quick-action-btn:hover .quick-action-label {
+    opacity: 1;
+  }
+  
+  /* ========== MOBILE-OPTIMIZED TABLES ========== */
+  .mobile-data-table {
+    display: block;
+  }
+  
+  .mobile-table-row {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border-bottom: 1px solid var(--color-gray-200);
+    background: white;
+  }
+  
+  .mobile-table-cell {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+  
+  .mobile-table-label {
+    font-weight: 600;
+    color: var(--color-gray-700);
+    min-width: 100px;
+  }
+  
+  .mobile-table-value {
+    text-align: right;
+    flex: 1;
+  }
+  
+  /* ========== SAFE AREA SUPPORT (iPhone X+) ========== */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  /* ========== MOBILE ANIMATIONS ========== */
+  @keyframes slide-in-right {
+    from {
+      transform: translateX(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slide-in-bottom {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slide-in-right {
+    animation: slide-in-right 0.3s ease;
+  }
+  
+  .animate-slide-in-bottom {
+    animation: slide-in-bottom 0.3s ease;
+  }
+  
+  /* ========== HAMBURGER MENU FOR FINANCE ========== */
+  .mobile-menu-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-gray-200);
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  
+  .menu-line {
+    width: 20px;
+    height: 2px;
+    background: var(--color-gray-700);
+    border-radius: 1px;
+    transition: all 0.3s ease;
+  }
+  
+  .mobile-menu-toggle.active .menu-line:nth-child(1) {
+    transform: rotate(45deg) translate(4px, 4px);
+  }
+  
+  .mobile-menu-toggle.active .menu-line:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .mobile-menu-toggle.active .menu-line:nth-child(3) {
+    transform: rotate(-45deg) translate(4px, -4px);
+  }
+  
+  /* ========== DARK MODE MOBILE ========== */
+  @media (prefers-color-scheme: dark) {
+    .number-key,
+    .mobile-table-row,
+    .bottom-sheet,
+    .flow-back-btn {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+      color: var(--color-gray-100);
+    }
+    
+    .number-key:active {
+      background: var(--color-gray-700);
+    }
+    
+    .bottom-sheet {
+      background: var(--color-gray-800);
+    }
+    
+    .swipe-actions {
+      background: linear-gradient(to left, var(--color-gray-800), var(--color-gray-800) 80%, transparent);
+    }
+    
+    .quick-action-label {
+      background: var(--color-gray-900);
+    }
+    
+    .mobile-menu-toggle {
+      background: var(--color-gray-800);
+      border-color: var(--color-gray-700);
+    }
+    
+    .menu-line {
+      background: var(--color-gray-300);
+    }
+  }
+}

@@ -1,0 +1,67 @@
+﻿// ES Module version of transfer API
+import { api } from "./api";
+import { useAuthStore } from "../lib/store/auth";
+
+const transferAPI = {
+  createTransfer: async (data) => {
+    try {
+      const response = await api.post("/transfers", data);
+      return response.data;
+    } catch (error) {
+      console.error("Create transfer error:", error);
+      throw error;
+    }
+  },
+
+  getTransfer: async (id) => {
+    try {
+      const response = await api.get(`/transfers/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Get transfer error:", error);
+      throw error;
+    }
+  },
+
+  verifyTAC: async (transferId, tacCode) => {
+    try {
+      const response = await api.post(`/transfers/${transferId}/verify-tac`, { tac: tacCode });
+      return response.data;
+    } catch (error) {
+      console.error("Verify TAC error:", error);
+      throw error;
+    }
+  },
+
+  getTransfersHistory: async () => {
+    try {
+      const response = await api.get("/transfers/history");
+      return response.data || [];
+    } catch (error) {
+      console.error("Get transfers history error:", error);
+      return [];
+    }
+  },
+
+  getTransferStatus: async (id) => {
+    try {
+      const response = await api.get(`/transfers/${id}/status`);
+      return response.data;
+    } catch (error) {
+      console.error("Get transfer status error:", error);
+      throw error;
+    }
+  },
+
+  getAllTransfers: async () => {
+    try {
+      const response = await api.get("/transfers");
+      return response.data || [];
+    } catch (error) {
+      console.error("Get all transfers error:", error);
+      return [];
+    }
+  }
+};
+
+export default transferAPI;
