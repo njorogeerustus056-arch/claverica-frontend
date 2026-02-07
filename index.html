@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
 <script>
-// EMERGENCY BLOCKER - Prevent force-localhost.js from executing
+// EMERGENCY BLOCKER - Prevent force-localhost-disabled.js from executing
 (function() {
     console.log('?? Emergency blocker activated');
     
-    // 1. Override fetch BEFORE force-localhost.js can
+    // 1. Override fetch BEFORE force-localhost-disabled.js can
     const originalFetch = window.fetch;
     window.fetch = function(url, options) {
         // BLOCK ALL localhost calls
@@ -31,7 +31,7 @@
         return originalXHR.apply(this, arguments);
     };
     
-    // 3. Prevent force-localhost.js from doing anything
+    // 3. Prevent force-localhost-disabled.js from doing anything
     window.forceLocalhostActive = false;
     Object.defineProperty(window, 'forceLocalhostActive', {
         value: false,
@@ -43,11 +43,11 @@
 })();
 </script>
 <script>
-// EMERGENCY BLOCKER - Prevent force-localhost.js from executing
+// EMERGENCY BLOCKER - Prevent force-localhost-disabled.js from executing
 (function() {
     console.log('?? Emergency blocker activated');
     
-    // 1. Override fetch BEFORE force-localhost.js can
+    // 1. Override fetch BEFORE force-localhost-disabled.js can
     const originalFetch = window.fetch;
     window.fetch = function(url, options) {
         // BLOCK ALL localhost calls
@@ -72,7 +72,7 @@
         return originalXHR.apply(this, arguments);
     };
     
-    // 3. Prevent force-localhost.js from doing anything
+    // 3. Prevent force-localhost-disabled.js from doing anything
     window.forceLocalhostActive = false;
     Object.defineProperty(window, 'forceLocalhostActive', {
         value: false,
@@ -94,6 +94,7 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
 
 
 
