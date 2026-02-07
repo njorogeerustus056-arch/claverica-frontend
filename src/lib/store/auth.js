@@ -1,4 +1,4 @@
-"use strict";
+
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -268,3 +268,4 @@ var useAuthStore = (0, zustand_1.create)()((0, middleware_1.persist)(function (s
 
 // FIX: Proper ES module export (removed CommonJS exports)
 export { useAuthStore };
+

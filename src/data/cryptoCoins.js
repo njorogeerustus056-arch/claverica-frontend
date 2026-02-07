@@ -1,8 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.cryptoCoins = void 0;
+
+
+export const cryptoCoins = void 0;
 // src/data/cryptoCoins.ts
-exports.cryptoCoins = [
+export const cryptoCoins = [
     { symbol: "BTC", name: "Bitcoin", logo: "₿", price: 68420.00, change24h: 2.5, balance: 0.0342 },
     { symbol: "ETH", name: "Ethereum", logo: "Ξ", price: 3812.00, change24h: 1.2, balance: 0.8521 },
     { symbol: "USDT", name: "Tether", logo: "₮", price: 1.0001, change24h: 0.01, balance: 2500.00 },
@@ -14,3 +14,6 @@ exports.cryptoCoins = [
     { symbol: "MATIC", name: "Polygon", logo: "🔷", price: 0.92, change24h: 2.1, balance: 1500.00 },
     { symbol: "SHIB", name: "Shiba Inu", logo: "🦴", price: 0.000024, change24h: -2.3, balance: 50000000 },
 ];
+
+
+

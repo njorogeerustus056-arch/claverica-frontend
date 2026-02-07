@@ -1,5 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+
+
 // main.tsx - CLEAN VERSION WITH REDUCED LOGS
 var react_1 = require("react");
 var client_1 = require("react-dom/client");
@@ -98,3 +98,4 @@ else {
       </ErrorBoundary_1.ErrorBoundary>
     </react_1.StrictMode>);
 }
+

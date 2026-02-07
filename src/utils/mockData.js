@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.mockCryptoPortfolio = exports.mockExchangeRates = exports.mockSpendingData = exports.mockTransactions = exports.mockAccounts = exports.mockUser = void 0;
-exports.mockUser = {
+
+
+export const mockCryptoPortfolio = export const mockExchangeRates = export const mockSpendingData = export const mockTransactions = export const mockAccounts = export const mockUser = void 0;
+export const mockUser = {
     id: '7116500084',
     name: 'Erustus Njoroge Nyaga',
     initials: 'EN',
@@ -9,7 +9,7 @@ exports.mockUser = {
     phone: '+254 712 345 678',
     avatar: null,
 };
-exports.mockAccounts = [
+export const mockAccounts = [
     {
         id: '****00084',
         type: 'checking',
@@ -25,7 +25,7 @@ exports.mockAccounts = [
         localBalance: 1762.09,
     },
 ];
-exports.mockTransactions = [
+export const mockTransactions = [
     {
         id: 'FIN/171KIGXE2-0525',
         type: 'credit',
@@ -87,14 +87,14 @@ exports.mockTransactions = [
         icon: '🚗',
     },
 ];
-exports.mockSpendingData = [
+export const mockSpendingData = [
     { category: 'Food & Dining', amount: 245.80, color: '#FF6B6B', icon: '🍔' },
     { category: 'Shopping', amount: 432.50, color: '#4ECDC4', icon: '🛍️' },
     { category: 'Transport', amount: 156.30, color: '#45B7D1', icon: '🚗' },
     { category: 'Entertainment', amount: 98.00, color: '#FFA07A', icon: '🎬' },
     { category: 'Bills', amount: 567.40, color: '#98D8C8', icon: '📄' },
 ];
-exports.mockExchangeRates = {
+export const mockExchangeRates = {
     'EUR/USD': 1.17983,
     'GBP/AUD': 2.07026,
     'GBP/CAD': 1.85295,
@@ -102,7 +102,7 @@ exports.mockExchangeRates = {
     'GBP/NZD': 2.23928,
     'EUR/NZD': 1.89858,
 };
-exports.mockCryptoPortfolio = [
+export const mockCryptoPortfolio = [
     {
         symbol: 'BTC',
         name: 'Bitcoin',
@@ -128,3 +128,6 @@ exports.mockCryptoPortfolio = [
         icon: '₮',
     },
 ];
+
+
+

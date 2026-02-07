@@ -1,4 +1,4 @@
-"use strict";
+
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -55,8 +55,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useKYC = void 0;
+
+export const useKYC = void 0;
 var react_1 = require("react");
 var api_1 = require("@/api");
 var kycCreatives_1 = require("@/lib/utils/kycCreatives");
@@ -222,4 +222,8 @@ var useKYC = function () {
         clearError: function () { return setError(null); },
     };
 };
-exports.useKYC = useKYC;
+export const useKYC = useKYC;
+
+
+
+

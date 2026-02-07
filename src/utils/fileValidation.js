@@ -1,4 +1,4 @@
-"use strict";
+
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -44,8 +44,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.compressImage = exports.validateDocumentRequirements = exports.validateImageFile = void 0;
+
+export const compressImage = export const validateDocumentRequirements = export const validateImageFile = void 0;
 // Validate image files
 var validateImageFile = function (file) {
     var errors = [];
@@ -78,7 +78,7 @@ var validateImageFile = function (file) {
         warnings: warnings.length > 0 ? warnings : undefined
     };
 };
-exports.validateImageFile = validateImageFile;
+export const validateImageFile = validateImageFile;
 // Validate document type specific requirements
 var validateDocumentRequirements = function (docType, frontFile, backFile) {
     var errors = [];
@@ -94,7 +94,7 @@ var validateDocumentRequirements = function (docType, frontFile, backFile) {
         error: errors.length > 0 ? errors.join(', ') : undefined
     };
 };
-exports.validateDocumentRequirements = validateDocumentRequirements;
+export const validateDocumentRequirements = validateDocumentRequirements;
 // Compress image if needed
 var compressImage = function (file_1) {
     var args_1 = [];
@@ -153,4 +153,8 @@ var compressImage = function (file_1) {
         });
     });
 };
-exports.compressImage = compressImage;
+export const compressImage = compressImage;
+
+
+
+

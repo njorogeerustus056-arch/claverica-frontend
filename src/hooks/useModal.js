@@ -1,6 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useModal = void 0;
+
+
+export const useModal = void 0;
 var react_1 = require("react");
 var useModal = function (initialState) {
     if (initialState === void 0) { initialState = false; }
@@ -10,4 +10,8 @@ var useModal = function (initialState) {
     var toggleModal = (0, react_1.useCallback)(function () { return setIsOpen(function (prev) { return !prev; }); }, []);
     return { isOpen: isOpen, openModal: openModal, closeModal: closeModal, toggleModal: toggleModal };
 };
-exports.useModal = useModal;
+export const useModal = useModal;
+
+
+
+

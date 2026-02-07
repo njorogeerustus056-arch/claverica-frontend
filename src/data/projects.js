@@ -1,9 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.projects = void 0;
+
+
+export const projects = void 0;
 // src/data/projects.ts
 var lucide_react_1 = require("lucide-react");
-exports.projects = [
+export const projects = [
     {
         id: 1,
         title: "Global Instant Money Transfers",
@@ -405,3 +405,6 @@ exports.projects = [
         ]
     }
 ];
+
+
+

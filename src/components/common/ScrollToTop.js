@@ -1,6 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ScrollToTop = ScrollToTop;
+
+
+export const ScrollToTop = ScrollToTop;
 var react_1 = require("react");
 var react_router_1 = require("react-router");
 function ScrollToTop() {
@@ -14,3 +14,5 @@ function ScrollToTop() {
     }, [pathname]);
     return null;
 }
+
+

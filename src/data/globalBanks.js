@@ -1,8 +1,8 @@
-"use strict";
+
 // src/data/globalBanks.ts
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.globalBanks = void 0;
-exports.globalBanks = [
+
+export const globalBanks = void 0;
+export const globalBanks = [
     // ============================================
     // AFRICA
     // ============================================
@@ -1058,3 +1058,6 @@ exports.globalBanks = [
         supports: { swift: false, sepa: false, local: false, instant: true }
     }
 ];
+
+
+

@@ -1,4 +1,4 @@
-"use strict";
+
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,8 +35,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.useNotifications = exports.NotificationService = void 0;
+
+export const useNotifications = export const NotificationService = void 0;
 // src/lib/services/notificationService.ts - ORIGINAL VERSION (NO WEBSOCKET)
 var api_1 = require("../../api");
 var auth_1 = require("../store/auth");
@@ -418,7 +418,7 @@ var NotificationService = /** @class */ (function () {
     };
     return NotificationService;
 }());
-exports.NotificationService = NotificationService;
+export const NotificationService = NotificationService;
 // Hook for using notification service in components
 var useNotifications = function () {
     var tokens = (0, auth_1.useAuthStore)().tokens;
@@ -452,4 +452,8 @@ var useNotifications = function () {
         getPriorityClasses: NotificationService.getPriorityClasses,
     };
 };
-exports.useNotifications = useNotifications;
+export const useNotifications = useNotifications;
+
+
+
+

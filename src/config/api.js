@@ -1,25 +1,23 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-// src/config/api.ts
-var API_CONFIG = {
-    BASE_URL: import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL,
-    ENDPOINTS: {
-        ACCOUNTS: {
-            REGISTER: "/api/accounts/register/",
-            ACTIVATE: "/api/accounts/activate/",
-            RESEND_ACTIVATION: "/api/accounts/resend-activation/",
-            LOGIN: "/api/accounts/login/",
-            LOGOUT: "/api/accounts/logout/",
-            REFRESH: "/api/accounts/refresh/",
-        },
-        USERS: {
-            PROFILE: "/api/users/profile/",
-            SETTINGS: "/api/users/settings/",
-        },
+// API Configuration
+export const API_CONFIG = {
+  BASE_URL: import.meta.env.VITE_API_URL,
+  endpoints: {
+    auth: {
+      login: "/accounts/login/",
+      register: "/accounts/register/",
+      logout: "/accounts/logout/",
+      profile: "/accounts/profile/",
+      verifyEmail: "/accounts/verify-email/",
+      passwordReset: "/accounts/password/reset/",
     },
-    getUrl: function (endpointPath) {
-        return this.BASE_URL + endpointPath;
-    }
+    wallet: {
+      main: "/wallet/",
+      transactions: "/wallet/transactions/",
+      withdraw: "/wallet/withdraw/",
+    },
+    payments: "/payments/",
+    transfers: "/transfers/",
+    notifications: "/notifications/",
+    kyc: "/kyc/",
+  },
 };
-exports.default = API_CONFIG;
-

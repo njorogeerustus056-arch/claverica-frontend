@@ -1,33 +1,14 @@
-"use strict";
-// src/lib/utils/userTiers.ts
 // User tier system for progressive KYC advancement
 // Inspired by Monzo, Revolut, Wise, and Skrill tier structures
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ACHIEVEMENTS = exports.TIERS = void 0;
-exports.calculateUserTier = calculateUserTier;
-exports.calculateAchievements = calculateAchievements;
-exports.calculateTierProgress = calculateTierProgress;
-exports.getKYCMessage = getKYCMessage;
-exports.getRecommendedAction = getRecommendedAction;
+
 // Tier Definitions
-exports.TIERS = {
+export const TIERS = {
     Basic: {
         tier: 'Basic',
         level: 1,
         color: 'text-gray-400',
         gradient: 'from-gray-500 to-gray-600',
-        icon: '🌱',
+        icon: '??',
         benefits: [
             'Basic escrow services',
             'Standard processing times',
@@ -51,7 +32,7 @@ exports.TIERS = {
         level: 2,
         color: 'text-green-400',
         gradient: 'from-green-500 to-emerald-600',
-        icon: '✓',
+        icon: '?',
         benefits: [
             'KYC verified status',
             'Higher transaction limits',
@@ -78,7 +59,7 @@ exports.TIERS = {
         level: 3,
         color: 'text-blue-400',
         gradient: 'from-blue-500 to-cyan-600',
-        icon: '⭐',
+        icon: '?',
         benefits: [
             'Pro trader status',
             'Maximum limits',
@@ -107,7 +88,7 @@ exports.TIERS = {
         level: 4,
         color: 'text-purple-400',
         gradient: 'from-purple-500 to-pink-600',
-        icon: '👑',
+        icon: '??',
         benefits: [
             'Elite status',
             'Unlimited transactions',
@@ -132,13 +113,14 @@ exports.TIERS = {
         ]
     }
 };
+
 // Achievement Definitions
-exports.ACHIEVEMENTS = [
+export const ACHIEVEMENTS = [
     {
         id: 'first_escrow',
         title: 'First Steps',
         description: 'Created your first escrow',
-        badge: '🎯',
+        badge: '??',
         unlocked: false,
         category: 'count'
     },
@@ -146,7 +128,7 @@ exports.ACHIEVEMENTS = [
         id: 'escrow_5',
         title: 'Getting Started',
         description: 'Completed 5 escrows',
-        badge: '🚀',
+        badge: '??',
         unlocked: false,
         category: 'count'
     },
@@ -154,7 +136,7 @@ exports.ACHIEVEMENTS = [
         id: 'escrow_25',
         title: 'Experienced Trader',
         description: 'Completed 25 escrows',
-        badge: '💼',
+        badge: '??',
         unlocked: false,
         category: 'count'
     },
@@ -162,7 +144,7 @@ exports.ACHIEVEMENTS = [
         id: 'escrow_100',
         title: 'Escrow Master',
         description: 'Completed 100 escrows',
-        badge: '🏆',
+        badge: '??',
         unlocked: false,
         category: 'count'
     },
@@ -170,7 +152,7 @@ exports.ACHIEVEMENTS = [
         id: 'volume_10k',
         title: 'Volume Starter',
         description: 'Processed $10,000 in escrows',
-        badge: '💰',
+        badge: '??',
         unlocked: false,
         category: 'volume'
     },
@@ -178,7 +160,7 @@ exports.ACHIEVEMENTS = [
         id: 'volume_100k',
         title: 'High Volume',
         description: 'Processed $100,000 in escrows',
-        badge: '💎',
+        badge: '??',
         unlocked: false,
         category: 'volume'
     },
@@ -186,7 +168,7 @@ exports.ACHIEVEMENTS = [
         id: 'volume_1m',
         title: 'Million Dollar Club',
         description: 'Processed $1,000,000 in escrows',
-        badge: '🌟',
+        badge: '??',
         unlocked: false,
         category: 'volume'
     },
@@ -194,7 +176,7 @@ exports.ACHIEVEMENTS = [
         id: 'speed_demon',
         title: 'Speed Demon',
         description: 'Average release time under 7 days',
-        badge: '⚡',
+        badge: '?',
         unlocked: false,
         category: 'speed'
     },
@@ -202,7 +184,7 @@ exports.ACHIEVEMENTS = [
         id: 'lightning_fast',
         title: 'Lightning Fast',
         description: 'Average release time under 3 days',
-        badge: '🔥',
+        badge: '??',
         unlocked: false,
         category: 'speed'
     },
@@ -210,7 +192,7 @@ exports.ACHIEVEMENTS = [
         id: 'dispute_free',
         title: 'Dispute Free',
         description: 'Zero disputes in 20+ transactions',
-        badge: '🛡️',
+        badge: '???',
         unlocked: false,
         category: 'quality'
     },
@@ -218,7 +200,7 @@ exports.ACHIEVEMENTS = [
         id: 'perfect_record',
         title: 'Perfect Record',
         description: '100% success rate with 50+ escrows',
-        badge: '⭐',
+        badge: '?',
         unlocked: false,
         category: 'quality'
     },
@@ -226,7 +208,7 @@ exports.ACHIEVEMENTS = [
         id: 'template_explorer',
         title: 'Template Explorer',
         description: 'Used 3 different templates',
-        badge: '📋',
+        badge: '??',
         unlocked: false,
         category: 'engagement'
     },
@@ -234,7 +216,7 @@ exports.ACHIEVEMENTS = [
         id: 'template_master',
         title: 'Template Master',
         description: 'Used all premium templates',
-        badge: '📚',
+        badge: '??',
         unlocked: false,
         category: 'engagement'
     },
@@ -242,7 +224,7 @@ exports.ACHIEVEMENTS = [
         id: 'kyc_verified',
         title: 'Verified Member',
         description: 'Completed KYC verification',
-        badge: '✅',
+        badge: '?',
         unlocked: false,
         category: 'engagement'
     },
@@ -250,19 +232,21 @@ exports.ACHIEVEMENTS = [
         id: 'early_adopter',
         title: 'Early Adopter',
         description: 'Joined in the first month',
-        badge: '🌟',
+        badge: '??',
         unlocked: false,
         category: 'engagement'
     }
 ];
+
 /**
  * Calculate user's current tier based on metrics
  */
-function calculateUserTier(isVerified, metrics) {
+export function calculateUserTier(isVerified, metrics) {
     // Basic tier - unverified users
     if (!isVerified) {
         return 'Basic';
     }
+    
     // Elite tier - exceptional users
     if (metrics.totalVolume >= 500000 &&
         metrics.completedEscrows >= 50 &&
@@ -270,21 +254,25 @@ function calculateUserTier(isVerified, metrics) {
         metrics.avgReleaseTime <= 5) {
         return 'Elite';
     }
+    
     // Pro tier - active verified users with good history
     if (metrics.totalVolume >= 50000 &&
         metrics.completedEscrows >= 10 &&
         metrics.disputeRate < 2) {
         return 'Pro';
     }
+    
     // Verified tier - KYC completed but building history
     return 'Verified';
 }
+
 /**
  * Calculate achievements based on user metrics
  */
-function calculateAchievements(metrics, isVerified) {
-    return exports.ACHIEVEMENTS.map(function (achievement) {
-        var unlocked = false;
+export function calculateAchievements(metrics, isVerified) {
+    return ACHIEVEMENTS.map(function (achievement) {
+        let unlocked = false;
+        
         switch (achievement.id) {
             case 'first_escrow':
                 unlocked = metrics.totalEscrows >= 1;
@@ -332,54 +320,61 @@ function calculateAchievements(metrics, isVerified) {
                 unlocked = metrics.lastActivityDays >= 30;
                 break;
         }
-        return __assign(__assign({}, achievement), { unlocked: unlocked, unlockedAt: unlocked ? new Date().toISOString() : undefined });
+        
+        return {
+            ...achievement,
+            unlocked: unlocked,
+            unlockedAt: unlocked ? new Date().toISOString() : undefined
+        };
     });
 }
+
 /**
  * Calculate progress to next tier
  */
-function calculateTierProgress(currentTier, metrics, isVerified) {
-    var current = exports.TIERS[currentTier];
-    var requirements = [];
-    var progress = 0;
-    var nextTier = null;
+export function calculateTierProgress(currentTier, metrics, isVerified) {
+    const current = TIERS[currentTier];
+    const requirements = [];
+    let progress = 0;
+    let nextTier = null;
+    
     if (currentTier === 'Basic') {
-        nextTier = exports.TIERS.Verified;
+        nextTier = TIERS.Verified;
         requirements.push('Complete KYC verification');
         progress = isVerified ? 100 : 0;
-    }
-    else if (currentTier === 'Verified') {
-        nextTier = exports.TIERS.Pro;
-        var volumeProgress = Math.min((metrics.totalVolume / 50000) * 100, 100);
-        var escrowProgress = Math.min((metrics.completedEscrows / 10) * 100, 100);
-        var qualityProgress = metrics.disputeRate < 2 ? 100 : 0;
+    } else if (currentTier === 'Verified') {
+        nextTier = TIERS.Pro;
+        const volumeProgress = Math.min((metrics.totalVolume / 50000) * 100, 100);
+        const escrowProgress = Math.min((metrics.completedEscrows / 10) * 100, 100);
+        const qualityProgress = metrics.disputeRate < 2 ? 100 : 0;
         progress = Math.round((volumeProgress + escrowProgress + qualityProgress) / 3);
+        
         if (metrics.totalVolume < 50000) {
-            var remaining = 50000 - metrics.totalVolume;
-            requirements.push("Process $".concat(remaining.toLocaleString(), " more in escrow volume"));
+            const remaining = 50000 - metrics.totalVolume;
+            requirements.push(`Process $${remaining.toLocaleString()} more in escrow volume`);
         }
         if (metrics.completedEscrows < 10) {
-            var remaining = 10 - metrics.completedEscrows;
-            requirements.push("Complete ".concat(remaining, " more escrow").concat(remaining > 1 ? 's' : ''));
+            const remaining = 10 - metrics.completedEscrows;
+            requirements.push(`Complete ${remaining} more escrow${remaining > 1 ? 's' : ''}`);
         }
         if (metrics.disputeRate >= 2) {
             requirements.push('Maintain dispute rate below 2%');
         }
-    }
-    else if (currentTier === 'Pro') {
-        nextTier = exports.TIERS.Elite;
-        var volumeProgress = Math.min((metrics.totalVolume / 500000) * 100, 100);
-        var escrowProgress = Math.min((metrics.completedEscrows / 50) * 100, 100);
-        var qualityProgress = metrics.disputeRate === 0 ? 100 : 0;
-        var speedProgress = metrics.avgReleaseTime <= 5 ? 100 : 0;
+    } else if (currentTier === 'Pro') {
+        nextTier = TIERS.Elite;
+        const volumeProgress = Math.min((metrics.totalVolume / 500000) * 100, 100);
+        const escrowProgress = Math.min((metrics.completedEscrows / 50) * 100, 100);
+        const qualityProgress = metrics.disputeRate === 0 ? 100 : 0;
+        const speedProgress = metrics.avgReleaseTime <= 5 ? 100 : 0;
         progress = Math.round((volumeProgress + escrowProgress + qualityProgress + speedProgress) / 4);
+        
         if (metrics.totalVolume < 500000) {
-            var remaining = 500000 - metrics.totalVolume;
-            requirements.push("Process $".concat(remaining.toLocaleString(), " more in escrow volume"));
+            const remaining = 500000 - metrics.totalVolume;
+            requirements.push(`Process $${remaining.toLocaleString()} more in escrow volume`);
         }
         if (metrics.completedEscrows < 50) {
-            var remaining = 50 - metrics.completedEscrows;
-            requirements.push("Complete ".concat(remaining, " more escrows"));
+            const remaining = 50 - metrics.completedEscrows;
+            requirements.push(`Complete ${remaining} more escrows`);
         }
         if (metrics.disputeRate > 0) {
             requirements.push('Achieve zero disputes');
@@ -387,13 +382,14 @@ function calculateTierProgress(currentTier, metrics, isVerified) {
         if (metrics.avgReleaseTime > 5) {
             requirements.push('Reduce average release time to 5 days or less');
         }
-    }
-    else {
+    } else {
         // Elite tier - no next tier
         progress = 100;
         requirements.push('You\'ve reached the highest tier!');
     }
-    var achievements = calculateAchievements(metrics, isVerified);
+    
+    const achievements = calculateAchievements(metrics, isVerified);
+    
     return {
         currentTier: current,
         nextTier: nextTier,
@@ -402,10 +398,11 @@ function calculateTierProgress(currentTier, metrics, isVerified) {
         achievements: achievements
     };
 }
+
 /**
  * Get personalized KYC messaging based on user journey
  */
-function getKYCMessage(metrics, tier) {
+export function getKYCMessage(metrics, tier) {
     // First-time users
     if (metrics.totalEscrows === 0) {
         return {
@@ -414,22 +411,25 @@ function getKYCMessage(metrics, tier) {
             urgency: 'low'
         };
     }
+    
     // Users with some activity but not verified
     if (metrics.totalEscrows >= 2 && metrics.totalEscrows < 5 && tier === 'Basic') {
         return {
             title: 'You\'re Building Momentum!',
-            message: "You've completed ".concat(metrics.completedEscrows, " escrows. Verify now to unlock 33x higher limits and premium features."),
+            message: `You've completed ${metrics.completedEscrows} escrows. Verify now to unlock 33x higher limits and premium features.`,
             urgency: 'medium'
         };
     }
+    
     // Active users hitting limits
     if (metrics.totalVolume > 7500 && tier === 'Basic') {
         return {
             title: 'You\'re Close to Your Limit',
-            message: "You've processed $".concat(metrics.totalVolume.toLocaleString(), " of your $10,000 monthly limit. Verify to increase to $200,000/month."),
+            message: `You've processed $${metrics.totalVolume.toLocaleString()} of your $10,000 monthly limit. Verify to increase to $200,000/month.`,
             urgency: 'high'
         };
     }
+    
     // Users ready for premium features
     if (metrics.completedEscrows >= 5 && tier === 'Basic') {
         return {
@@ -438,6 +438,7 @@ function getKYCMessage(metrics, tier) {
             urgency: 'high'
         };
     }
+    
     // Default message
     return {
         title: 'Unlock Your Full Potential',
@@ -445,32 +446,34 @@ function getKYCMessage(metrics, tier) {
         urgency: 'medium'
     };
 }
+
 /**
  * Calculate recommended next action for user
  */
-function getRecommendedAction(tier, metrics, isVerified) {
+export function getRecommendedAction(tier, metrics, isVerified) {
     if (!isVerified) {
         if (metrics.totalEscrows >= 3) {
             return {
                 action: 'Complete KYC Verification',
                 reason: 'You\'ve proven your commitment. Unlock 33x higher limits now.',
-                icon: '🚀',
+                icon: '??',
                 priority: 'high'
             };
         }
         return {
             action: 'Create Your First Escrow',
             reason: 'Start building your transaction history',
-            icon: '🎯',
+            icon: '??',
             priority: 'medium'
         };
     }
+    
     if (tier === 'Verified') {
         if (metrics.completedEscrows < 10) {
             return {
                 action: 'Complete More Transactions',
-                reason: "".concat(10 - metrics.completedEscrows, " more to reach Pro tier"),
-                icon: '📈',
+                reason: `${10 - metrics.completedEscrows} more to reach Pro tier`,
+                icon: '??',
                 priority: 'medium'
             };
         }
@@ -478,25 +481,27 @@ function getRecommendedAction(tier, metrics, isVerified) {
             return {
                 action: 'Increase Transaction Volume',
                 reason: '$50,000 total volume needed for Pro tier',
-                icon: '💰',
+                icon: '??',
                 priority: 'medium'
             };
         }
     }
+    
     if (tier === 'Pro') {
         if (metrics.avgReleaseTime > 5) {
             return {
                 action: 'Optimize Release Times',
                 reason: 'Faster releases improve your Elite tier progress',
-                icon: '⚡',
+                icon: '?',
                 priority: 'low'
             };
         }
     }
+    
     return {
         action: 'Explore Premium Features',
         reason: 'Make the most of your tier benefits',
-        icon: '✨',
+        icon: '?',
         priority: 'low'
     };
 }

@@ -1,4 +1,4 @@
-"use strict";
+
 var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -8,10 +8,10 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.KYC_CREATIVES = void 0;
+
+export const KYC_CREATIVES = void 0;
 // Creative messaging for KYC redirection
-exports.KYC_CREATIVES = {
+export const KYC_CREATIVES = {
     getActionBenefits: function (action, amount, asset) {
         var allBenefits = {
             buy: [
@@ -174,3 +174,6 @@ exports.KYC_CREATIVES = {
         return icons[action] || icons.default;
     }
 };
+
+
+

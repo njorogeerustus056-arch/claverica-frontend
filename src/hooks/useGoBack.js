@@ -1,5 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+
+
 var react_router_1 = require("react-router");
 var useGoBack = function () {
     var navigate = (0, react_router_1.useNavigate)();
@@ -13,4 +13,6 @@ var useGoBack = function () {
     };
     return goBack;
 };
-exports.default = useGoBack;
+export const default = useGoBack;
+
+

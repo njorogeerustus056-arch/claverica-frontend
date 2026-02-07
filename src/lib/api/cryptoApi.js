@@ -1,4 +1,4 @@
-"use strict";
+
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -55,8 +55,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchKYCLimits = exports.submitSellOrder = exports.submitBuyOrder = exports.fetchMarketData = exports.fetchTransactions = exports.fetchPortfolioData = exports.fetchFiatPlatforms = exports.fetchCryptoData = void 0;
+
+export const fetchKYCLimits = export const submitSellOrder = export const submitBuyOrder = export const fetchMarketData = export const fetchTransactions = export const fetchPortfolioData = export const fetchFiatPlatforms = export const fetchCryptoData = void 0;
 // src/lib/api/cryptoApi.ts - Mock API for crypto data
 var cryptoCoins_1 = require("../../data/cryptoCoins");
 var fiatPlatforms_1 = require("../../data/fiatPlatforms");
@@ -76,7 +76,7 @@ var fetchCryptoData = function () { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
-exports.fetchCryptoData = fetchCryptoData;
+export const fetchCryptoData = fetchCryptoData;
 // Fetch fiat platforms data
 var fetchFiatPlatforms = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
@@ -88,7 +88,7 @@ var fetchFiatPlatforms = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.fetchFiatPlatforms = fetchFiatPlatforms;
+export const fetchFiatPlatforms = fetchFiatPlatforms;
 // Fetch portfolio summary
 var fetchPortfolioData = function () { return __awaiter(void 0, void 0, void 0, function () {
     var totalCryptoValue, totalFiatValue, totalValue;
@@ -109,7 +109,7 @@ var fetchPortfolioData = function () { return __awaiter(void 0, void 0, void 0, 
         }
     });
 }); };
-exports.fetchPortfolioData = fetchPortfolioData;
+export const fetchPortfolioData = fetchPortfolioData;
 // Fetch transaction history
 var fetchTransactions = function () {
     var args_1 = [];
@@ -211,7 +211,7 @@ var fetchTransactions = function () {
         });
     });
 };
-exports.fetchTransactions = fetchTransactions;
+export const fetchTransactions = fetchTransactions;
 // Fetch market data (prices, changes)
 var fetchMarketData = function () { return __awaiter(void 0, void 0, void 0, function () {
     var marketData;
@@ -235,7 +235,7 @@ var fetchMarketData = function () { return __awaiter(void 0, void 0, void 0, fun
         }
     });
 }); };
-exports.fetchMarketData = fetchMarketData;
+export const fetchMarketData = fetchMarketData;
 // Submit buy order
 var submitBuyOrder = function (symbol, amount, price) { return __awaiter(void 0, void 0, void 0, function () {
     var _a;
@@ -257,7 +257,7 @@ var submitBuyOrder = function (symbol, amount, price) { return __awaiter(void 0,
         }
     });
 }); };
-exports.submitBuyOrder = submitBuyOrder;
+export const submitBuyOrder = submitBuyOrder;
 // Submit sell order
 var submitSellOrder = function (symbol, amount, price) { return __awaiter(void 0, void 0, void 0, function () {
     var _a;
@@ -278,7 +278,7 @@ var submitSellOrder = function (symbol, amount, price) { return __awaiter(void 0
         }
     });
 }); };
-exports.submitSellOrder = submitSellOrder;
+export const submitSellOrder = submitSellOrder;
 // Check KYC status and limits
 var fetchKYCLimits = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
@@ -299,4 +299,8 @@ var fetchKYCLimits = function () { return __awaiter(void 0, void 0, void 0, func
         }
     });
 }); };
-exports.fetchKYCLimits = fetchKYCLimits;
+export const fetchKYCLimits = fetchKYCLimits;
+
+
+
+
