@@ -1,3 +1,6 @@
+// ES Module - Clean API configuration
+import { apiFetch, uploadFormData, getToken, getRefreshToken, setToken, removeToken, ApiError } from "./utils/api.js";
+
 // ES Module - remove CommonJS exports
 import { apiFetch, uploadFormData, getToken, getRefreshToken, setToken, removeToken, ApiError } from "./utils/api.js";
 

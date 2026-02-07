@@ -79,7 +79,7 @@ function EscrowList() {
                         if (filterStatus !== "all") {
                             params.append("status", filterStatus);
                         }
-                        apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+                        apiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
                         url = "".concat(apiUrl, "/api/escrow/list/?").concat(params.toString());
                         return [4 /*yield*/, fetch(url, {
                                 headers: {
@@ -327,3 +327,4 @@ function EscrowList() {
       </div>
     </div>);
 }
+

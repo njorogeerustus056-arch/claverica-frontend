@@ -1,8 +1,8 @@
-﻿// src/lib/store/auth.ts - CLEAN VERSION WITH REDUCED LOGS
+// src/lib/store/auth.ts - CLEAN VERSION WITH REDUCED LOGS
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
 
 export interface User {
   id: string;
@@ -242,6 +242,7 @@ export const useAuthStore = create<AuthStore>()(
     }
   )
 );
+
 
 
 

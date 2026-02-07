@@ -1,4 +1,4 @@
-﻿import { apiFetch } from './api';
+import { apiFetch } from './api';
 import { useAuthStore } from '../lib/store/auth';
 
 export interface TransferRequest {
@@ -67,7 +67,7 @@ export interface WalletBalance {
   currency: string;
 }
 
-// ✅ ADDED: Transaction History Interface
+// ? ADDED: Transaction History Interface
 export interface TransactionRecord {
   id: string;
   transaction_type: 'credit' | 'debit' | 'fee' | 'refund';
@@ -86,7 +86,7 @@ export interface TransactionHistory {
   count: number;
 }
 
-// ✅ ADDED: KYC Interfaces
+// ? ADDED: KYC Interfaces
 export interface KYCRequest {
   document_type: string;
   full_name: string;
@@ -112,7 +112,7 @@ export interface KYCStatus {
 }
 
 export const transferAPI = {
-  // ✅ FIXED: Create transfer via TRANSFERS API with better response handling
+  // ? FIXED: Create transfer via TRANSFERS API with better response handling
   createTransfer: async (data: TransferRequest): Promise<{success: boolean; transfer_id: number; reference: string; message: string}> => {
     try {
       const { user } = useAuthStore.getState();
@@ -126,7 +126,7 @@ export const transferAPI = {
         };
       }
       
-      console.log('📋 User account:', user.account_number);
+      console.log('?? User account:', user.account_number);
       
       const cleanedData = { ...data };
       
@@ -151,27 +151,27 @@ export const transferAPI = {
         };
       }
       
-      console.log('📋 Sending to TRANSFERS API:', cleanedData);
+      console.log('?? Sending to TRANSFERS API:', cleanedData);
       
-      // ✅ FIXED ENDPOINT: TRANSFERS API (not compliance)
+      // ? FIXED ENDPOINT: TRANSFERS API (not compliance)
       const response = await apiFetch('/api/transfers/transfers/', {
         method: 'POST',
         body: JSON.stringify(cleanedData)
       });
       
-      console.log('🔥 TRANSFERS API Response:', response);
+      console.log('?? TRANSFERS API Response:', response);
       
-      // 🔍 ADDED: Debug logging to see exact response format
-      console.log('🔍 [DEBUG] Full response:', response);
-      console.log('🔍 [DEBUG] Response type:', typeof response);
-      console.log('🔍 [DEBUG] Has id?', response?.id);
-      console.log('🔍 [DEBUG] Has reference?', response?.reference);
-      console.log('🔍 [DEBUG] Response keys:', Object.keys(response || {}));
+      // ?? ADDED: Debug logging to see exact response format
+      console.log('?? [DEBUG] Full response:', response);
+      console.log('?? [DEBUG] Response type:', typeof response);
+      console.log('?? [DEBUG] Has id?', response?.id);
+      console.log('?? [DEBUG] Has reference?', response?.reference);
+      console.log('?? [DEBUG] Response keys:', Object.keys(response || {}));
       
       // Check multiple possible response formats
       if (response && response.id) {
         // Format 1: Direct TransferSerializer response
-        console.log('✅ Format 1: Direct TransferSerializer response');
+        console.log('? Format 1: Direct TransferSerializer response');
         return {
           success: true,
           transfer_id: response.id,
@@ -180,7 +180,7 @@ export const transferAPI = {
         };
       } else if (response && response.data && response.data.id) {
         // Format 2: Nested response with data object
-        console.log('✅ Format 2: Nested response with data object');
+        console.log('? Format 2: Nested response with data object');
         return {
           success: true,
           transfer_id: response.data.id,
@@ -189,7 +189,7 @@ export const transferAPI = {
         };
       } else if (response && response.transfer_id) {
         // Format 3: Alternative field name
-        console.log('✅ Format 3: Alternative field name (transfer_id)');
+        console.log('? Format 3: Alternative field name (transfer_id)');
         return {
           success: true,
           transfer_id: response.transfer_id,
@@ -198,7 +198,7 @@ export const transferAPI = {
         };
       } else if (response && response.status === 201) {
         // Format 4: HTTP status in response
-        console.log('✅ Format 4: HTTP status in response');
+        console.log('? Format 4: HTTP status in response');
         // Try to extract from response data
         const transferData = response.data || response;
         return {
@@ -208,7 +208,7 @@ export const transferAPI = {
           message: 'Transfer submitted successfully! Contact live agent for TAC code.'
         };
       } else {
-        console.error('❌ Unexpected response format:', response);
+        console.error('? Unexpected response format:', response);
         return {
           success: false,
           transfer_id: 0,
@@ -218,8 +218,8 @@ export const transferAPI = {
       }
       
     } catch (error: any) {
-      console.error('❌ Transfer creation error:', error);
-      console.error('❌ Error details:', error.response?.data || error.message);
+      console.error('? Transfer creation error:', error);
+      console.error('? Error details:', error.response?.data || error.message);
       
       return {
         success: false,
@@ -236,7 +236,7 @@ export const transferAPI = {
   // Get wallet balance (FIXED SYNTAX ERROR)
   getWalletBalance: async (): Promise<WalletBalance> => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
       const { tokens } = useAuthStore.getState();
       const url = `${API_URL}/api/transactions/wallet/balance/`;
       
@@ -276,10 +276,10 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfer status via TRANSFERS API
+  // ? FIXED: Get transfer status via TRANSFERS API
   getTransfer: async (transferId: number): Promise<TransferStatus> => {
     try {
-      // ✅ FIXED ENDPOINT: TRANSFERS API
+      // ? FIXED ENDPOINT: TRANSFERS API
       const transferData = await apiFetch(`/api/transfers/transfers/${transferId}/`);
       return transferData;
     } catch (error: any) {
@@ -287,18 +287,18 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Verify TAC via TRANSFERS API
+  // ? FIXED: Verify TAC via TRANSFERS API
   verifyTAC: async (transferId: number, tacCode: string): Promise<{success: boolean; message: string}> => {
     try {
-      console.log(`🔍 Verifying TAC ${tacCode} for transfer ${transferId}`);
+      console.log(`?? Verifying TAC ${tacCode} for transfer ${transferId}`);
       
-      // ✅ FIXED ENDPOINT: TRANSFERS API (note: underscore, not hyphen)
+      // ? FIXED ENDPOINT: TRANSFERS API (note: underscore, not hyphen)
       const response = await apiFetch(`/api/transfers/transfers/${transferId}/verify_tac/`, {
         method: 'POST',
         body: JSON.stringify({ tac_code: tacCode })
       });
       
-      console.log('🔥 TAC Verification Response:', response);
+      console.log('?? TAC Verification Response:', response);
       
       if (response && response.success !== false) {
         return {
@@ -312,7 +312,7 @@ export const transferAPI = {
         };
       }
     } catch (error: any) {
-      console.error('❌ TAC verification error:', error);
+      console.error('? TAC verification error:', error);
       return {
         success: false,
         message: error.message || 'Failed to verify TAC'
@@ -320,10 +320,10 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get user's transfer history via TRANSFERS API
+  // ? FIXED: Get user's transfer history via TRANSFERS API
   getTransfersHistory: async (page = 1, limit = 20): Promise<TransfersHistory> => {
     try {
-      // ✅ FIXED ENDPOINT: TRANSFERS API
+      // ? FIXED ENDPOINT: TRANSFERS API
       const historyData = await apiFetch(`/api/transfers/transfers/?page=${page}`);
       return historyData;
     } catch (error: any) {
@@ -331,14 +331,14 @@ export const transferAPI = {
     }
   },
 
-  // ✅ NEW: Get transaction history (CREDITS + DEBITS) via TRANSACTIONS API
+  // ? NEW: Get transaction history (CREDITS + DEBITS) via TRANSACTIONS API
   getTransactionHistory: async (limit = 20): Promise<TransactionHistory> => {
     try {
-      // ✅ ENDPOINT: TRANSACTIONS API - Shows ALL money movements
+      // ? ENDPOINT: TRANSACTIONS API - Shows ALL money movements
       const historyData = await apiFetch(`/api/transactions/recent/?limit=${limit}`);
       return historyData;
     } catch (error: any) {
-      console.error('❌ Transaction history error:', error);
+      console.error('? Transaction history error:', error);
       // Return empty but valid structure
       const { user } = useAuthStore.getState();
       return {
@@ -349,14 +349,14 @@ export const transferAPI = {
     }
   },
 
-  // ✅ NEW: Get transaction history by account number (if needed)
+  // ? NEW: Get transaction history by account number (if needed)
   getTransactionHistoryByAccount: async (accountNumber: string, limit = 50): Promise<TransactionHistory> => {
     try {
-      // ✅ ENDPOINT: TRANSACTIONS API with account number
+      // ? ENDPOINT: TRANSACTIONS API with account number
       const historyData = await apiFetch(`/api/transactions/history/${accountNumber}/?limit=${limit}`);
       return historyData;
     } catch (error: any) {
-      console.error('❌ Account transaction history error:', error);
+      console.error('? Account transaction history error:', error);
       return {
         account_number: accountNumber,
         transactions: [],
@@ -365,10 +365,10 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfers needing TAC (for admin)
+  // ? FIXED: Get transfers needing TAC (for admin)
   getPendingTransfers: async (): Promise<TransferStatus[]> => {
     try {
-      // ✅ FIXED ENDPOINT: TRANSFERS ADMIN API
+      // ? FIXED ENDPOINT: TRANSFERS ADMIN API
       const pendingData = await apiFetch('/api/transfers/admin/transfers/pending_tac/');
       return pendingData;
     } catch (error: any) {
@@ -376,10 +376,10 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Cancel transfer via TRANSFERS API
+  // ? FIXED: Cancel transfer via TRANSFERS API
   cancelTransfer: async (transferId: number): Promise<{success: boolean; message: string}> => {
     try {
-      // ✅ FIXED ENDPOINT: TRANSFERS API
+      // ? FIXED ENDPOINT: TRANSFERS API
       const response = await apiFetch(`/api/transfers/admin/transfers/${transferId}/cancel/`, {
         method: 'POST'
       });
@@ -403,12 +403,12 @@ export const transferAPI = {
     }
   },
 
-  // ✅ NEW: Submit KYC documents (FIXED SYNTAX ERROR)
+  // ? NEW: Submit KYC documents (FIXED SYNTAX ERROR)
   submitKYC: async (formData: FormData): Promise<KYCResponse> => {
     try {
-      console.log('📋 Submitting KYC documents...');
+      console.log('?? Submitting KYC documents...');
       
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
       const { tokens } = useAuthStore.getState();
       
       const response = await fetch(`${API_URL}/kyc/api/documents/`, {
@@ -436,7 +436,7 @@ export const transferAPI = {
       };
       
     } catch (error: any) {
-      console.error('❌ KYC submission error:', error);
+      console.error('? KYC submission error:', error);
       return {
         success: false,
         message: error.message || 'Failed to submit KYC'
@@ -444,7 +444,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ NEW: Check KYC status (unchanged)
+  // ? NEW: Check KYC status (unchanged)
   getKYCStatus: async (): Promise<KYCStatus> => {
     try {
       const response = await apiFetch('/kyc/api/documents/status/');
@@ -467,7 +467,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ NEW: Check if KYC is required for specific amount (unchanged)
+  // ? NEW: Check if KYC is required for specific amount (unchanged)
   checkKYCRequirement: async (amount: number, serviceType: string = 'transfer'): Promise<{requires_kyc: boolean; threshold: number; message: string}> => {
     try {
       const response = await apiFetch(`/kyc/api/check-requirement/?amount=${amount}&service_type=${serviceType}`);
@@ -494,7 +494,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ NEW: Get user's KYC submissions (unchanged)
+  // ? NEW: Get user's KYC submissions (unchanged)
   getKYCSubmissions: async (): Promise<any[]> => {
     try {
       const response = await apiFetch('/kyc/api/documents/submissions/');
@@ -506,6 +506,7 @@ export const transferAPI = {
 };
 
 export default transferAPI;
+
 
 
 

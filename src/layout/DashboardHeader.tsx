@@ -1,4 +1,4 @@
-ï»¿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { Bell, Search, CheckCircle, User, LogOut, ChevronDown, CreditCard, Wallet } from "lucide-react";
@@ -6,7 +6,7 @@ import { useAuthStore } from "../lib/store/auth";
 import { useNavigate } from "react-router-dom";
 import styles from './DashboardHeader.module.css';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
 
 type Props = {
   toggleSidebar: () => void;
@@ -354,7 +354,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
                             {user?.first_name} {user?.last_name}
                           </h4>
                           <p className={styles.userAccount}>
-                            {user?.account_number || 'â€¢â€¢â€¢â€¢ â€¢â€¢â€¢â€¢'}
+                            {user?.account_number || '•••• ••••'}
                           </p>
                           <p className={styles.userEmail}>
                             {user?.email || 'user@example.com'}
@@ -405,6 +405,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     </header>
   );
 }
+
 
 
 

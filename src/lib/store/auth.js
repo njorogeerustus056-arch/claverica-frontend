@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -50,7 +50,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 // src/lib/store/auth.ts - CLEAN VERSION WITH REDUCED LOGS
 var zustand_1 = require("zustand");
 var middleware_1 = require("zustand/middleware");
-var API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+var API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
 
 // Store creation
 var useAuthStore = (0, zustand_1.create)()((0, middleware_1.persist)(function (set, get) { return ({

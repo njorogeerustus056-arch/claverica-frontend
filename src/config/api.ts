@@ -1,6 +1,6 @@
-﻿// src/config/api.ts
+// src/config/api.ts
 const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || "http://localhost:8000",
+  BASE_URL: import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL,
   ENDPOINTS: {
     ACCOUNTS: {
       REGISTER: "/api/accounts/register/",
@@ -22,6 +22,7 @@ const API_CONFIG = {
 };
 
 export default API_CONFIG;
+
 
 
 

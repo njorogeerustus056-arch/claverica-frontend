@@ -1,7 +1,7 @@
-﻿// ✅ THIS IS CORRECT - all files are in same utils folder
+// ? THIS IS CORRECT - all files are in same utils folder
 import { getCookie } from './cookies';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -138,6 +138,7 @@ export const uploadFormData = async <T = any>(
     };
   }
 };
+
 
 
 

@@ -54,7 +54,7 @@ var lucide_react_1 = require("lucide-react");
 var auth_1 = require("../lib/store/auth");
 var react_router_dom_1 = require("react-router-dom");
 var DashboardHeader_module_css_1 = require("./DashboardHeader.module.css");
-var API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+var API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
 function DashboardHeader(_a) {
     var _this = this;
     var _b, _c, _d, _e;
@@ -412,3 +412,4 @@ function DashboardHeader(_a) {
       </div>
     </header>);
 }
+

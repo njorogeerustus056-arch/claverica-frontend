@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // src/config/api.ts
 var API_CONFIG = {
-    BASE_URL: import.meta.env.VITE_API_URL || "http://localhost:8000",
+    BASE_URL: import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL,
     ENDPOINTS: {
         ACCOUNTS: {
             REGISTER: "/api/accounts/register/",
@@ -22,3 +22,4 @@ var API_CONFIG = {
     }
 };
 exports.default = API_CONFIG;
+

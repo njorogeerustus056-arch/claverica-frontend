@@ -1,7 +1,7 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowUpRight, ArrowDownRight, Clock, CheckCircle2, AlertCircle, ChevronRight, TrendingUp, Search, ChevronLeft } from "lucide-react";
 
-// âœ… Match backend response structure exactly
+// ✅ Match backend response structure exactly
 interface Escrow {
   id: number;
   receiver_name: string;
@@ -33,7 +33,7 @@ export default function EscrowList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   
-  // âœ… Pagination state
+  // ✅ Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const pageSize = 10;
@@ -56,7 +56,7 @@ export default function EscrowList() {
     }
 
     try {
-      // âœ… Build query parameters correctly
+      // ✅ Build query parameters correctly
       const params = new URLSearchParams({
         user_id: userId,
         page: currentPage.toString(),
@@ -68,7 +68,7 @@ export default function EscrowList() {
         params.append("status", filterStatus);
       }
 
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const apiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
       const url = `${apiUrl}/api/escrow/list/?${params.toString()}`;
 
       const res = await fetch(url, {
@@ -85,7 +85,7 @@ export default function EscrowList() {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
 
-      // âœ… Handle paginated response correctly
+      // ✅ Handle paginated response correctly
       const data: EscrowListResponse = await res.json();
       setEscrows(data.escrows);
       setPagination(data.pagination);
@@ -118,7 +118,7 @@ export default function EscrowList() {
     return configs[status as keyof typeof configs] || configs.pending;
   };
 
-  // âœ… Client-side search filter (search happens after fetching)
+  // ✅ Client-side search filter (search happens after fetching)
   const filteredEscrows = escrows.filter((escrow) => {
     const matchesSearch =
       escrow.receiver_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -291,7 +291,7 @@ export default function EscrowList() {
 
                       <div className="flex items-center gap-4 text-xs text-slate-500">
                         <span>ID: #{escrow.id}</span>
-                        <span>â€¢</span>
+                        <span>•</span>
                         <span>{timeAgo}</span>
                       </div>
                     </div>
@@ -310,7 +310,7 @@ export default function EscrowList() {
           )}
         </div>
 
-        {/* âœ… Pagination Controls */}
+        {/* ✅ Pagination Controls */}
         {pagination && pagination.pages > 1 && (
           <div className="mt-8 flex items-center justify-between bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
             <button
@@ -360,6 +360,7 @@ export default function EscrowList() {
     </div>
   );
 }
+
 
 
 
