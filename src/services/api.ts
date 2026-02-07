@@ -1,7 +1,7 @@
-﻿// src/services/api.ts - COMPLETE VERSION
+// src/services/api.ts - COMPLETE VERSION
 import { useAuthStore } from '../lib/store/auth';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 export class ApiError extends Error {
   constructor(
@@ -48,7 +48,7 @@ export async function apiFetch<T = any>(
   return response.json();
 }
 
-// ✅ MUST HAVE THESE METHODS for Cards.tsx compatibility:
+// ? MUST HAVE THESE METHODS for Cards.tsx compatibility:
 export const api = {
   get: <T = any>(endpoint: string) => apiFetch<T>(endpoint, { method: 'GET' }),
   post: <T = any>(endpoint: string, data?: any) => apiFetch<T>(endpoint, {
@@ -66,6 +66,7 @@ export const api = {
 };
 
 export default api;
+
 
 
 

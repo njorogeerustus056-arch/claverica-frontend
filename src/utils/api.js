@@ -71,10 +71,10 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadFormData = exports.apiFetch = exports.ApiError = void 0;
+export const export const export const void 0;
 // ✅ THIS IS CORRECT - all files are in same utils folder
 var cookies_1 = require("./cookies");
-var API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+var API_URL = import.meta.env.VITE_API_URL || "";
 var ApiError = /** @class */ (function (_super) {
     __extends(ApiError, _super);
     function ApiError(status, message, data) {
@@ -87,7 +87,7 @@ var ApiError = /** @class */ (function (_super) {
     }
     return ApiError;
 }(Error));
-exports.ApiError = ApiError;
+
 // Standard API fetch with auth and CSRF
 var apiFetch = function (endpoint_1) {
     var args_1 = [];
@@ -145,7 +145,7 @@ var apiFetch = function (endpoint_1) {
         });
     });
 };
-exports.apiFetch = apiFetch;
+
 // Form data upload (for KYC documents)
 var uploadFormData = function (endpoint, formData) { return __awaiter(void 0, void 0, void 0, function () {
     var token, csrfToken, headers, response, data, error_2;
@@ -201,4 +201,5 @@ var uploadFormData = function (endpoint, formData) { return __awaiter(void 0, vo
         }
     });
 }); };
-exports.uploadFormData = uploadFormData;
+
+

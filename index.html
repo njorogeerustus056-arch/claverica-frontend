@@ -2,6 +2,34 @@
 <html lang="en">
   <head>
 <script>
+// NUCLEAR BLOCKER - Override everything
+(function() {
+    // Block any force-localhost code
+    window.forceLocalhostActive = undefined;
+    delete window.forceLocalhostActive;
+    
+    // Override module.exports to prevent errors
+    if (typeof module !== 'undefined') {
+        module.exports = {};
+    }
+    if (typeof exports !== 'undefined') {
+        Object.defineProperty(exports, '__esModule', { value: true });
+    }
+    
+    // Nuclear fetch override
+    const originalFetch = window.fetch;
+    window.fetch = function(url, options) {
+        if (url && (url.toString().includes('localhost:8000') || url.toString().includes('force-localhost'))) {
+            console.error('?? BLOCKED:', url);
+            return Promise.reject(new Error('Blocked by nuclear blocker'));
+        }
+        return originalFetch.apply(this, arguments);
+    };
+    
+    console.log('? Nuclear blocker active');
+})();
+</script>
+<script>
 // BLOCK force-localhost.js from executing
 Object.defineProperty(window, 'forceLocalhostActive', {
     get: function() { return false; },
@@ -28,5 +56,6 @@ console.log('force-localhost.js blocker active');
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
 
 
