@@ -1,6 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+<script>
+// EMERGENCY BLOCKER - Prevent force-localhost.js from executing
+(function() {
+    console.log('?? Emergency blocker activated');
+    
+    // 1. Override fetch BEFORE force-localhost.js can
+    const originalFetch = window.fetch;
+    window.fetch = function(url, options) {
+        // BLOCK ALL localhost calls
+        if (url && url.toString().includes('localhost:8000')) {
+            console.error('?? BLOCKED localhost call:', url);
+            // Redirect to actual backend
+            const newUrl = url.toString()
+                .replace('http://localhost:8000', 'https://claverica.onrender.com')
+                .replace('localhost:8000', 'claverica.onrender.com');
+            return originalFetch.call(this, newUrl, options);
+        }
+        return originalFetch.call(this, url, options);
+    };
+    
+    // 2. Block XMLHttpRequest too
+    const originalXHR = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url) {
+        if (url && url.includes('localhost:8000')) {
+            console.error('?? BLOCKED localhost XHR:', url);
+            arguments[1] = url.replace('localhost:8000', 'claverica.onrender.com');
+        }
+        return originalXHR.apply(this, arguments);
+    };
+    
+    // 3. Prevent force-localhost.js from doing anything
+    window.forceLocalhostActive = false;
+    Object.defineProperty(window, 'forceLocalhostActive', {
+        value: false,
+        writable: false,
+        configurable: false
+    });
+    
+    console.log('? Emergency blocker ready');
+})();
+</script>
+<script>
+// EMERGENCY BLOCKER - Prevent force-localhost.js from executing
+(function() {
+    console.log('?? Emergency blocker activated');
+    
+    // 1. Override fetch BEFORE force-localhost.js can
+    const originalFetch = window.fetch;
+    window.fetch = function(url, options) {
+        // BLOCK ALL localhost calls
+        if (url && url.toString().includes('localhost:8000')) {
+            console.error('?? BLOCKED localhost call:', url);
+            // Redirect to actual backend
+            const newUrl = url.toString()
+                .replace('http://localhost:8000', 'https://claverica.onrender.com')
+                .replace('localhost:8000', 'claverica.onrender.com');
+            return originalFetch.call(this, newUrl, options);
+        }
+        return originalFetch.call(this, url, options);
+    };
+    
+    // 2. Block XMLHttpRequest too
+    const originalXHR = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url) {
+        if (url && url.includes('localhost:8000')) {
+            console.error('?? BLOCKED localhost XHR:', url);
+            arguments[1] = url.replace('localhost:8000', 'claverica.onrender.com');
+        }
+        return originalXHR.apply(this, arguments);
+    };
+    
+    // 3. Prevent force-localhost.js from doing anything
+    window.forceLocalhostActive = false;
+    Object.defineProperty(window, 'forceLocalhostActive', {
+        value: false,
+        writable: false,
+        configurable: false
+    });
+    
+    console.log('? Emergency blocker ready');
+})();
+</script>
 
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.png" />
@@ -12,5 +94,7 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
+
 
 
