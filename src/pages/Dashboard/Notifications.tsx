@@ -1,7 +1,7 @@
 // src/pages/Dashboard/Notifications.tsx
 import React, { useState, useEffect } from 'react';
 import { Bell, Mail, Smartphone, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import { useNotifications } from '../../context/NotificationContext';
+import { useNotification } from '../../context/NotificationContext';
 
 interface NotificationPreference {
   id: number;
@@ -28,7 +28,7 @@ export default function NotificationsPage() {
     markAllNotificationsAsRead,
     refreshNotifications,
     clearNotificationError,
-  } = useNotifications();
+  } = useNotification();
 
   const [preferences, setPreferences] = useState<NotificationPreference | null>(null);
   const [savingPreferences, setSavingPreferences] = useState(false);

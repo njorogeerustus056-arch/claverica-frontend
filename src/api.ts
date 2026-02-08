@@ -1,7 +1,7 @@
-﻿// src/api.ts - FIXED VERSION WITH DEBUG LOGGING
+// src/api.ts - FIXED VERSION WITH DEBUG LOGGING
 import { useAuthStore } from './lib/store/auth';
 
-const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL || "`${import.meta.env.VITE_API_URL}`";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 // Get tokens from Zustand store
 export const getToken = (): string | null => {
@@ -286,27 +286,27 @@ export const notificationAPI = {
 
   // Get unread count for badge - FIXED WITH BETTER HANDLING
   getUnreadCount: async () => {
-    console.log('ðŸ” [API DEBUG] Calling /api/notifications/unread-count/');
+    console.log('🔍 [API DEBUG] Calling /api/notifications/unread-count/');
     
     try {
       const data = await apiFetch<any>("/api/notifications/unread-count/");
       
-      console.log('âœ… [API DEBUG] Raw unread count response:', data);
-      console.log('ðŸ“‹ [API DEBUG] Response type:', typeof data);
+      console.log('✅ [API DEBUG] Raw unread count response:', data);
+      console.log('📋 [API DEBUG] Response type:', typeof data);
       
       // Handle ALL possible response formats
       if (typeof data === 'object' && data !== null) {
         // Django REST Framework format: { "unread_count": 1 }
         if ('unread_count' in data) {
           const count = Number(data.unread_count) || 0;
-          console.log(`ðŸ“Š [API DEBUG] Found unread_count: ${count}`);
+          console.log(`📊 [API DEBUG] Found unread_count: ${count}`);
           return { unread_count: count };
         }
         
         // Alternative format: { "count": 1 }
         if ('count' in data) {
           const count = Number(data.count) || 0;
-          console.log(`ðŸ“Š [API DEBUG] Found count: ${count}`);
+          console.log(`📊 [API DEBUG] Found count: ${count}`);
           return { unread_count: count };
         }
         
@@ -314,7 +314,7 @@ export const notificationAPI = {
         const values = Object.values(data);
         if (values.length === 1 && typeof values[0] === 'number') {
           const count = values[0] as number;
-          console.log(`ðŸ“Š [API DEBUG] Found numeric value in object: ${count}`);
+          console.log(`📊 [API DEBUG] Found numeric value in object: ${count}`);
           return { unread_count: count };
         }
         
@@ -322,25 +322,25 @@ export const notificationAPI = {
         if (data.data && typeof data.data === 'object') {
           if ('unread_count' in data.data) {
             const count = Number(data.data.unread_count) || 0;
-            console.log(`ðŸ“Š [API DEBUG] Found nested unread_count: ${count}`);
+            console.log(`📊 [API DEBUG] Found nested unread_count: ${count}`);
             return { unread_count: count };
           }
           if ('count' in data.data) {
             const count = Number(data.data.count) || 0;
-            console.log(`ðŸ“Š [API DEBUG] Found nested count: ${count}`);
+            console.log(`📊 [API DEBUG] Found nested count: ${count}`);
             return { unread_count: count };
           }
         }
         
         // Check for results array with count
         if (data.results && typeof data.results === 'object') {
-          console.log(`ðŸ“Š [API DEBUG] Results object found, checking for count...`);
+          console.log(`📊 [API DEBUG] Results object found, checking for count...`);
         }
       } 
       
       // Direct number response
       else if (typeof data === 'number') {
-        console.log(`ðŸ“Š [API DEBUG] Direct number response: ${data}`);
+        console.log(`📊 [API DEBUG] Direct number response: ${data}`);
         return { unread_count: data };
       }
       
@@ -348,25 +348,25 @@ export const notificationAPI = {
       else if (typeof data === 'string') {
         const parsed = parseInt(data, 10);
         if (!isNaN(parsed)) {
-          console.log(`ðŸ“Š [API DEBUG] Parsed string to number: ${parsed}`);
+          console.log(`📊 [API DEBUG] Parsed string to number: ${parsed}`);
           return { unread_count: parsed };
         }
       }
       
-      console.warn('âš ï¸ [API DEBUG] Unexpected unread count format:', data);
-      console.warn('âš ï¸ [API DEBUG] Full response:', JSON.stringify(data, null, 2));
+      console.warn('⚠️ [API DEBUG] Unexpected unread count format:', data);
+      console.warn('⚠️ [API DEBUG] Full response:', JSON.stringify(data, null, 2));
       return { unread_count: 0 };
       
     } catch (error: any) {
-      console.error('âŒ [API DEBUG] Error fetching unread count:', error);
-      console.error('âŒ [API DEBUG] Error details:', {
+      console.error('❌ [API DEBUG] Error fetching unread count:', error);
+      console.error('❌ [API DEBUG] Error details:', {
         message: error.message,
         status: error.status,
         data: error.data
       });
       
       if (error.status === 401) {
-        console.log('ðŸ”’ [API DEBUG] Not authorized (401)');
+        console.log('🔒 [API DEBUG] Not authorized (401)');
         return { unread_count: 0 };
       }
       
