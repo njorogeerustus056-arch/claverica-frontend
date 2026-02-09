@@ -23,3 +23,4 @@ export function getApiUrl(endpoint = "") {
 
 // Export for backward compatibility
 export default API_CONFIG;
+

@@ -93,7 +93,7 @@ export default function Projects() {
         <div className="relative z-10 max-w-7xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/95 backdrop-blur-md text-blue-600 rounded-full text-sm font-bold mb-8 shadow-lg animate-pulse">
             <Sparkles className="w-4 h-4" />
-            20 Premium Fintech Solutions
+            {projects.length} Premium Fintech Solutions
           </div>
 
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight tracking-tight drop-shadow-2xl">

@@ -45,7 +45,7 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../lib/store/auth';
-import api from '../../services/api';
+import { api } from '../../services/api';
 
 interface CardData {
   id: number;
@@ -900,3 +900,6 @@ const Cards: React.FC = () => {
 };
 
 export default Cards;
+
+
+

@@ -187,35 +187,35 @@ export async function uploadFormData<T = any>(
 // Authentication API functions
 export const authAPI = {
   register: async (data: any) => {
-    return apiFetch("/api/accounts/register/", {
+    return apiFetch("/accounts/register/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   verifyActivation: async (data: { email: string; activation_code: string }) => {
-    return apiFetch("/api/accounts/activate/", {
+    return apiFetch("/accounts/activate/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   resendActivation: async (data: { email: string }) => {
-    return apiFetch("/api/accounts/resend-activation/", {
+    return apiFetch("/accounts/resend-activation/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   login: async (email: string, password: string) => {
-    return apiFetch("/api/accounts/login/", {
+    return apiFetch("/accounts/login/", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
   },
 
   logout: async () => {
-    const result = await apiFetch("/api/accounts/logout/", {
+    const result = await apiFetch("/accounts/logout/", {
       method: "POST",
     });
     removeToken();
@@ -227,7 +227,7 @@ export const authAPI = {
   },
 
   refresh: async (refreshToken: string) => {
-    return apiFetch("/api/accounts/refresh/", {
+    return apiFetch("/accounts/refresh/", {
       method: "POST",
       body: JSON.stringify({ refresh: refreshToken }),
     });
@@ -539,3 +539,5 @@ export interface Transaction {
   reference: string;
   created_at: string;
 }
+
+

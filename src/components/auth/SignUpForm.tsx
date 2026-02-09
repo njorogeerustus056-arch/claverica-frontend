@@ -1,4 +1,4 @@
-Ôªø// src/components/auth/SignUpForm.tsx - MODERN FINTECH STYLING
+// src/components/auth/SignUpForm.tsx - MODERN FINTECH STYLING
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
@@ -8,7 +8,7 @@ import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
-import { apiFetch } from "../../api";
+import { api } from "../../services/api";
 
 // Document types - International standards
 const documentTypes = [
@@ -22,27 +22,27 @@ const documentTypes = [
 // Currency options - Wise/Revolut style
 const currencies = [
   { value: "USD", label: "USD ($)", symbol: "$" },
-  { value: "EUR", label: "EUR (‚Ç¨)", symbol: "‚Ç¨" },
-  { value: "GBP", label: "GBP (¬£)", symbol: "¬£" },
+  { value: "EUR", label: "EUR (Ä)", symbol: "Ä" },
+  { value: "GBP", label: "GBP (£)", symbol: "£" },
   { value: "KES", label: "KES (KSh)", symbol: "KSh" },
   { value: "ZAR", label: "ZAR (R)", symbol: "R" },
-  { value: "NGN", label: "NGN (‚Ç¶)", symbol: "‚Ç¶" },
-  { value: "GHS", label: "GHS (GH‚Çµ)", symbol: "GH‚Çµ" },
+  { value: "NGN", label: "NGN (?)", symbol: "?" },
+  { value: "GHS", label: "GHS (GH?)", symbol: "GH?" },
   { value: "UGX", label: "UGX (USh)", symbol: "USh" },
   { value: "TZS", label: "TZS (TSh)", symbol: "TSh" },
-  { value: "INR", label: "INR (‚Çπ)", symbol: "‚Çπ" },
-  { value: "CNY", label: "CNY (¬•)", symbol: "¬•" },
+  { value: "INR", label: "INR (?)", symbol: "?" },
+  { value: "CNY", label: "CNY (•)", symbol: "•" },
 ];
 
 // Income ranges - Binance style with clear formatting
 const incomeRanges = [
   { value: "", label: "Select annual income range" },
-  { value: "<30000", label: "Below $30,000 / ‚Ç¨27,000 / ¬£22,500" },
-  { value: "30000-50000", label: "$30,000 - $50,000 / ‚Ç¨27,000 - ‚Ç¨45,000" },
-  { value: "50000-75000", label: "$50,000 - $75,000 / ‚Ç¨45,000 - ‚Ç¨68,000" },
-  { value: "75000-100000", label: "$75,000 - $100,000 / ‚Ç¨68,000 - ‚Ç¨90,000" },
-  { value: "100000-150000", label: "$100,000 - $150,000 / ‚Ç¨90,000 - ‚Ç¨135,000" },
-  { value: "150000+", label: "Above $150,000 / ‚Ç¨135,000" },
+  { value: "<30000", label: "Below $30,000 / Ä27,000 / £22,500" },
+  { value: "30000-50000", label: "$30,000 - $50,000 / Ä27,000 - Ä45,000" },
+  { value: "50000-75000", label: "$50,000 - $75,000 / Ä45,000 - Ä68,000" },
+  { value: "75000-100000", label: "$75,000 - $100,000 / Ä68,000 - Ä90,000" },
+  { value: "100000-150000", label: "$100,000 - $150,000 / Ä90,000 - Ä135,000" },
+  { value: "150000+", label: "Above $150,000 / Ä135,000" },
 ];
 
 // Gender options - Modern inclusive
@@ -287,13 +287,11 @@ export default function SignUpForm() {
                   income_range: showEmployment ? values.income_range : "",
                 };
 
-                const response = await apiFetch("/api/accounts/register/", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(payload),
-                });
+                const response = await api.post("/accounts/register/", payload, {
+  headers: {
+    "Content-Type": "application/json"
+  }
+});
 
                 localStorage.setItem("pendingVerificationEmail", values.email);
 
@@ -429,7 +427,7 @@ export default function SignUpForm() {
                           </Label>
                           <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
-                              üåç
+                              ??
                             </span>
                             <Input
                               name="phone"
@@ -996,3 +994,5 @@ export default function SignUpForm() {
     </div>
   );
 }
+
+

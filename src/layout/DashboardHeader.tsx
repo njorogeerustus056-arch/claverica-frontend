@@ -6,7 +6,7 @@ import { useAuthStore } from "../lib/store/auth";
 import { useNavigate } from "react-router-dom";
 import styles from './DashboardHeader.module.css';
 
-const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 type Props = {
   toggleSidebar: () => void;
@@ -405,6 +405,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     </header>
   );
 }
+
 
 
 

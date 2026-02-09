@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useAuthStore } from "../../lib/store/auth";
 import Cookies from "js-cookie";
-import { api } from "../../services/api";
 
-import { ChevronLeft, Eye, EyeOff } from "lucide-react";
+import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
@@ -89,7 +88,7 @@ export default function SignInForm() {
     try {
       if (forgotPasswordStep === "email") {
         // Step 1: Request OTP
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/accounts/password/reset/`, {
+        const response = await fetch("`${import.meta.env.VITE_API_URL}`/api/accounts/password/reset/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -122,7 +121,7 @@ export default function SignInForm() {
         });
       } else if (forgotPasswordStep === "newPassword") {
         // Step 3: Confirm password reset
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/accounts/password/reset/`, {
+        const response = await fetch("`${import.meta.env.VITE_API_URL}`/api/accounts/password/reset/confirm/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -205,7 +204,7 @@ export default function SignInForm() {
             to="/"
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 transition-all hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:gap-3 group"
           >
-            <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <ChevronLeftIcon className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             <span className="group-hover:underline underline-offset-2">Back to home</span>
           </Link>
         </div>
@@ -328,9 +327,9 @@ export default function SignInForm() {
                           className="absolute z-10 p-2 transition-all -translate-y-1/2 rounded-lg right-2 top-1/2 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95"
                         >
                           {showPassword ? (
-                            <Eye className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                            <EyeIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                           ) : (
-                            <EyeOff className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                            <EyeCloseIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                           )}
                         </button>
                       </div>
@@ -679,13 +678,3 @@ export default function SignInForm() {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
-

@@ -1,10 +1,10 @@
 // src/pages/dashboard/Crypto.tsx - MODERN BANKING EDITION with KYC Integration
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/lib/store/auth";
-import { useKYC } from "@/hooks/useKYC";
-import { KYC_CREATIVES } from "@/lib/utils/kycCreatives";
-import { KYCProgressBar } from "@/components/crypto/KYCProgressBar";
+import { useAuthStore } from '../../lib/store/auth';;
+import { useKYC } from "../../hooks/useKYC";;
+import { KYC_CREATIVES } from "../../lib/utils/kycCreatives";;
+import { KYCProgressBar } from "../../components/crypto/KYCProgressBar";;
 import { 
   TrendingUp, TrendingDown, Plus, Send, ArrowUpRight, ArrowDownRight, 
   Wallet, Eye, EyeOff, Sparkles, Zap, Shield, AlertCircle, CreditCard,
@@ -16,8 +16,8 @@ import {
 } from "lucide-react";
 
 // Import components
-import { PriceTicker } from "@/components/crypto/PriceTicker";
-import { TransactionHistory } from "@/components/crypto/TransactionHistory";
+import { PriceTicker } from "../../components/crypto/PriceTicker";;
+import { TransactionHistory } from "../../components/crypto/TransactionHistory";;
 import { QuickActions } from "@/components/crypto/QuickActions";
 import { AssetAllocationChart } from "@/components/crypto/AssetAllocationChart";
 import { CryptoWalletCard } from "@/components/crypto/CryptoWalletCard";
@@ -896,3 +896,7 @@ export default function Crypto() {
     </div>
   );
 }
+
+
+
+

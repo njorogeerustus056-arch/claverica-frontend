@@ -1,7 +1,6 @@
-// src/services/api.ts - COMPLETE VERSION
+// src/services/api.ts - UPDATED VERSION
+import { API_CONFIG, getApiUrl, DEFAULT_FETCH_OPTIONS } from '../config/api';
 import { useAuthStore } from '../lib/store/auth';
-
-const API_URL = import.meta.env.VITE_API_URL || "";
 
 export class ApiError extends Error {
   constructor(
@@ -18,55 +17,89 @@ export async function apiFetch<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_URL}${endpoint}`;
-  const { tokens } = useAuthStore.getState();
-
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string> || {}),
+  const url = getApiUrl(endpoint);
+  const authStore = useAuthStore.getState();
+  
+  // Merge options with defaults
+  const fetchOptions: RequestInit = {
+    ...DEFAULT_FETCH_OPTIONS,
+    ...options,
+    headers: {
+      ...DEFAULT_FETCH_OPTIONS.headers,
+      ...options.headers,
+      // Add auth token if available
+      ...(authStore.token ? { Authorization: `Bearer ${authStore.token}` } : {}),
+    },
   };
 
-  // Add auth token if available
-  if (tokens?.access) {
-    headers['Authorization'] = `Bearer ${tokens.access}`;
-  }
-
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
+  try {
+    const response = await fetch(url, fetchOptions);
+    
+    if (!response.ok) {
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch {
+        errorData = { detail: await response.text() };
+      }
+      
+      throw new ApiError(
+        errorData.detail || `API error: ${response.status}`,
+        response.status,
+        errorData
+      );
+    }
+    
+    // Handle empty responses
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json();
+    }
+    
+    return await response.text() as T;
+    
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
     throw new ApiError(
-      errorData.message || errorData.error || `API request failed (${response.status})`,
-      response.status,
-      errorData
+      error instanceof Error ? error.message : 'Network error',
+      undefined,
+      error
     );
   }
-
-  return response.json();
 }
 
-// ? MUST HAVE THESE METHODS for Cards.tsx compatibility:
+// Convenience methods
 export const api = {
-  get: <T = any>(endpoint: string) => apiFetch<T>(endpoint, { method: 'GET' }),
-  post: <T = any>(endpoint: string, data?: any) => apiFetch<T>(endpoint, {
-    method: 'POST',
-    body: JSON.stringify(data)
-  }),
-  put: <T = any>(endpoint: string, data?: any) => apiFetch<T>(endpoint, {
-    method: 'PUT',
-    body: JSON.stringify(data)
-  }),
-  delete: <T = any>(endpoint: string) => apiFetch<T>(endpoint, { method: 'DELETE' }),
-
-  // Optional: Add the fetch method too
-  fetch: apiFetch,
+  get: <T = any>(endpoint: string, options?: RequestInit) => 
+    apiFetch<T>(endpoint, { ...options, method: 'GET' }),
+  
+  post: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
+    apiFetch<T>(endpoint, { 
+      ...options, 
+      method: 'POST', 
+      body: JSON.stringify(data) 
+    }),
+  
+  put: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
+    apiFetch<T>(endpoint, { 
+      ...options, 
+      method: 'PUT', 
+      body: JSON.stringify(data) 
+    }),
+  
+  patch: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
+    apiFetch<T>(endpoint, { 
+      ...options, 
+      method: 'PATCH', 
+      body: JSON.stringify(data) 
+    }),
+  
+  delete: <T = any>(endpoint: string, options?: RequestInit) =>
+    apiFetch<T>(endpoint, { ...options, method: 'DELETE' }),
 };
 
+// Default export
 export default api;
-
-
-
 

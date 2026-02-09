@@ -236,7 +236,7 @@ export const transferAPI = {
   // Get wallet balance (FIXED SYNTAX ERROR)
   getWalletBalance: async (): Promise<WalletBalance> => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
+      const API_URL = import.meta.env.VITE_API_URL;
       const { tokens } = useAuthStore.getState();
       const url = `${API_URL}/api/transactions/wallet/balance/`;
       
@@ -408,7 +408,7 @@ export const transferAPI = {
     try {
       console.log('?? Submitting KYC documents...');
       
-      const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
+      const API_URL = import.meta.env.VITE_API_URL;
       const { tokens } = useAuthStore.getState();
       
       const response = await fetch(`${API_URL}/kyc/api/documents/`, {
@@ -506,6 +506,7 @@ export const transferAPI = {
 };
 
 export default transferAPI;
+
 
 
 

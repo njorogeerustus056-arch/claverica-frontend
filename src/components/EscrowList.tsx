@@ -68,7 +68,7 @@ export default function EscrowList() {
         params.append("status", filterStatus);
       }
 
-      const apiUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
+      const apiUrl = import.meta.env.VITE_API_URL;
       const url = `${apiUrl}/api/escrow/list/?${params.toString()}`;
 
       const res = await fetch(url, {
@@ -360,6 +360,7 @@ export default function EscrowList() {
     </div>
   );
 }
+
 
 
 
