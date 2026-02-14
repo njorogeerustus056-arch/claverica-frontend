@@ -66,8 +66,8 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          // ✅ FIXED: Use correct JWT endpoint
-          const response = await fetch(`${API_URL}/api/token/`, {
+          // ✅ FIXED: Remove double /api/ - API_URL already includes /api
+          const response = await fetch(`${API_URL}/token/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -90,7 +90,7 @@ export const useAuthStore = create<AuthStore>()(
             // Fetch user data after successful login
             let userData = null;
             try {
-              const userResponse = await fetch(`${API_URL}/api/users/me/`, {
+              const userResponse = await fetch(`${API_URL}/users/me/`, {
                 headers: { 
                   'Authorization': `Bearer ${data.access}`,
                   'Content-Type': 'application/json'
@@ -154,8 +154,8 @@ export const useAuthStore = create<AuthStore>()(
         if (!tokens?.refresh) return false;
 
         try {
-          // ✅ FIXED: Use correct refresh endpoint
-          const response = await fetch(`${API_URL}/api/token/refresh/`, {
+          // ✅ FIXED: Use correct refresh endpoint (no double /api/)
+          const response = await fetch(`${API_URL}/token/refresh/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh: tokens.refresh }),
@@ -212,7 +212,8 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         try {
-          const response = await fetch(`${API_URL}/api/users/me/`, {    
+          // ✅ FIXED: Remove double /api/
+          const response = await fetch(`${API_URL}/users/me/`, {    
             headers: {
               Authorization: `Bearer ${tokens.access}`,
               'Content-Type': 'application/json',
