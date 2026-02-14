@@ -1,5 +1,5 @@
 import api from '../services/api';
-// src/lib/store/auth.ts - CLEAN VERSION WITH REDUCED LOGS
+// src/lib/store/auth.ts - FIXED VERSION WITH CORRECT LOGIN ENDPOINT
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -49,12 +49,16 @@ export const useAuthStore = create<AuthStore>()(
       syncFromLocalStorage: () => {
         if (typeof window === 'undefined') return;
 
-        const localToken = localStorage.getItem('token');
-        const localRefresh = localStorage.getItem('refresh_token');     
+        const accessToken = localStorage.getItem('access_token');
+        const token = localStorage.getItem('token');
+        const localRefresh = localStorage.getItem('refresh_token');
+        
+        // Use access_token if available, otherwise fallback to token
+        const finalToken = accessToken || token;
 
-        if (localToken && localRefresh) {
+        if (finalToken && localRefresh) {
           set({
-            tokens: { access: localToken, refresh: localRefresh }       
+            tokens: { access: finalToken, refresh: localRefresh }       
           });
         }
       },
@@ -62,7 +66,8 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          const response = await fetch(`${API_URL}/accounts/login/`, {
+          // ✅ FIXED: Use correct JWT endpoint
+          const response = await fetch(`${API_URL}/api/token/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -75,21 +80,41 @@ export const useAuthStore = create<AuthStore>()(
 
           const data = await response.json();
 
-          if (data.tokens?.access) {
-            localStorage.setItem('token', data.tokens.access);
-          }
-          if (data.tokens?.refresh) {
-            localStorage.setItem('refresh_token', data.tokens.refresh); 
-          }
+          // ✅ FIXED: JWT returns access and refresh directly (not nested in tokens)
+          if (data.access) {
+            // Store in BOTH keys for maximum compatibility
+            localStorage.setItem('access_token', data.access);
+            localStorage.setItem('token', data.access);
+            localStorage.setItem('refresh_token', data.refresh);
+            
+            // Fetch user data after successful login
+            let userData = null;
+            try {
+              const userResponse = await fetch(`${API_URL}/api/users/me/`, {
+                headers: { 
+                  'Authorization': `Bearer ${data.access}`,
+                  'Content-Type': 'application/json'
+                }
+              });
+              if (userResponse.ok) {
+                userData = await userResponse.json();
+              }
+            } catch (e) {
+              console.warn('Could not fetch user data');
+            }
 
-          set({
-            user: data.account,
-            tokens: data.tokens,
-            isAuthenticated: true,
-            loading: false,
-          });
+            set({
+              user: userData,
+              tokens: { access: data.access, refresh: data.refresh },
+              isAuthenticated: true,
+              loading: false,
+            });
 
-          return true;
+            return true;
+          }
+          
+          throw new Error('Invalid response format');
+          
         } catch (error: any) {
           console.error('Login error:', error);
           set({ loading: false });
@@ -98,8 +123,11 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       logout: () => {
+        // Remove all token keys
+        localStorage.removeItem('access_token');
         localStorage.removeItem('token');
         localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
 
         set({
           user: null,
@@ -109,8 +137,10 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       clearAuth: () => {
+        localStorage.removeItem('access_token');
         localStorage.removeItem('token');
         localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
 
         set({
           user: null,
@@ -124,7 +154,8 @@ export const useAuthStore = create<AuthStore>()(
         if (!tokens?.refresh) return false;
 
         try {
-          const response = await fetch(`${API_URL}/accounts/refresh/`, {
+          // ✅ FIXED: Use correct refresh endpoint
+          const response = await fetch(`${API_URL}/api/token/refresh/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh: tokens.refresh }),
@@ -135,12 +166,14 @@ export const useAuthStore = create<AuthStore>()(
           const data = await response.json();
 
           if (data.access) {
+            // Update both storage keys
+            localStorage.setItem('access_token', data.access);
             localStorage.setItem('token', data.access);
+            
+            set({
+              tokens: { ...tokens, access: data.access },
+            });
           }
-
-          set({
-            tokens: { ...tokens, access: data.access },
-          });
 
           return true;
         } catch {
@@ -172,14 +205,14 @@ export const useAuthStore = create<AuthStore>()(
       verifyToken: async (): Promise<boolean> => {
         get().syncFromLocalStorage();
 
-        const { tokens, user } = get();
+        const { tokens } = get();
 
         if (!tokens?.access) {
           return false;
         }
 
         try {
-          const response = await fetch(`${API_URL}/users/me/`, {    
+          const response = await fetch(`${API_URL}/api/users/me/`, {    
             headers: {
               Authorization: `Bearer ${tokens.access}`,
               'Content-Type': 'application/json',
@@ -226,13 +259,16 @@ export const useAuthStore = create<AuthStore>()(
       }),
       migrate: (persistedState: any, version: number) => {
         if (typeof window !== 'undefined') {
-          const localToken = localStorage.getItem('token');
-          const localRefresh = localStorage.getItem('refresh_token');   
+          const accessToken = localStorage.getItem('access_token');
+          const token = localStorage.getItem('token');
+          const localRefresh = localStorage.getItem('refresh_token');
+          
+          const finalToken = accessToken || token;
 
-          if (localToken && localRefresh) {
+          if (finalToken && localRefresh) {
             if (!persistedState.tokens || !persistedState.tokens.access) {
               persistedState.tokens = {
-                access: localToken,
+                access: finalToken,
                 refresh: localRefresh
               };
             }

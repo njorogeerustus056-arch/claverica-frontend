@@ -1,4 +1,4 @@
-// src/services/api.ts - COMPLETE VERSION WITH NOTIFICATION METHODS
+// src/services/api.ts - FIXED VERSION WITH PROPER TOKEN HANDLING
 import { API_CONFIG, getApiUrl, DEFAULT_FETCH_OPTIONS } from '../config/api';
 import { useAuthStore } from '../lib/store/auth';
 
@@ -20,6 +20,18 @@ export async function apiFetch<T = any>(
   const url = getApiUrl(endpoint);
   const authStore = useAuthStore.getState();
   
+  // ✅ FIXED: Get token from store or localStorage with fallback
+  const getToken = (): string | null => {
+    // Try from store first
+    if (authStore.tokens?.access) {
+      return authStore.tokens.access;
+    }
+    // Fallback to localStorage (check both keys)
+    return localStorage.getItem('access_token') || localStorage.getItem('token') || null;
+  };
+  
+  const token = getToken();
+  
   // Merge options with defaults
   const fetchOptions: RequestInit = {
     ...DEFAULT_FETCH_OPTIONS,
@@ -27,8 +39,8 @@ export async function apiFetch<T = any>(
     headers: {
       ...DEFAULT_FETCH_OPTIONS.headers,
       ...options.headers,
-      // Add auth token if available
-      ...(authStore.token ? { Authorization: `Bearer ${authStore.token}` } : {}),
+      // ✅ Add auth token if available
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   };
 
@@ -44,7 +56,7 @@ export async function apiFetch<T = any>(
       }
       
       throw new ApiError(
-        errorData.detail || `API error: ${response.status}`,
+        errorData.detail || errorData.message || `API error: ${response.status}`,
         response.status,
         errorData
       );
@@ -125,50 +137,50 @@ export interface UnreadCountResponse {
 export const notificationApi = {
   // Get all notifications for current user
   getAll: () => 
-    apiFetch<Notification[]>('/notifications/'),
+    apiFetch<Notification[]>('/api/notifications/'),
   
   // Get unread notifications count
   getUnreadCount: () => 
-    apiFetch<UnreadCountResponse>('/notifications/unread-count/'),
+    apiFetch<UnreadCountResponse>('/api/notifications/unread-count/'),
   
   // Get only unread notifications
   getUnread: () => 
-    apiFetch<Notification[]>('/notifications/unread/'),
+    apiFetch<Notification[]>('/api/notifications/unread/'),
   
   // Mark a specific notification as read
   markAsRead: (id: number) => 
-    apiFetch<{ status: string }>(`/notifications/mark-read/${id}/`, { 
+    apiFetch<{ status: string }>(`/api/notifications/${id}/mark-read/`, { 
       method: 'POST' 
     }),
   
   // Mark all notifications as read
   markAllAsRead: () => 
-    apiFetch<{ status: string }>('/notifications/mark-all-read/', { 
+    apiFetch<{ status: string }>('/api/notifications/mark-all-read/', { 
       method: 'POST' 
     }),
   
   // Get notification preferences
   getPreferences: () => 
-    apiFetch<NotificationPreference>('/notifications/preferences/'),
+    apiFetch<NotificationPreference>('/api/notifications/preferences/'),
   
   // Update notification preferences
   updatePreferences: (data: Partial<NotificationPreference>) => 
-    apiFetch<NotificationPreference>('/notifications/preferences/', {
+    apiFetch<NotificationPreference>('/api/notifications/preferences/', {
       method: 'PUT',
       body: JSON.stringify(data)
     }),
   
   // Get a single notification by ID
   getById: (id: number) => 
-    apiFetch<Notification>(`/notifications/${id}/`),
+    apiFetch<Notification>(`/api/notifications/${id}/`),
   
   // Admin: Get admin alerts
   getAdminAlerts: () => 
-    apiFetch<Notification[]>('/notifications/admin/alerts/'),
+    apiFetch<Notification[]>('/api/notifications/admin/alerts/'),
   
   // Admin: Get action required count
   getActionRequiredCount: () => 
-    apiFetch<{ action_required_count: number }>('/notifications/admin/action-required/'),
+    apiFetch<{ action_required_count: number }>('/api/notifications/admin/action-required/'),
 };
 
 // Convenience methods - MAIN API OBJECT
