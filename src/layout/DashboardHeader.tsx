@@ -35,7 +35,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
   // Fetch wallet balance
   const fetchBalance = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/transactions/wallet/balance/`, {
+      const response = await fetch(`${API_URL}/transactions/wallet/balance/`, {
         headers: { 'Authorization': `Bearer ${tokens?.access}` }
       });
       if (response.ok) {
@@ -55,7 +55,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
         return;
       }
       
-      const response = await fetch(`${API_URL}/api/notifications/`, {
+      const response = await fetch(`${API_URL}/notifications/`, {
         headers: {
           'Authorization': `Bearer ${tokens.access}`,
         },
@@ -110,7 +110,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     try {
       if (!tokens?.access) return;
       
-      const response = await fetch(`${API_URL}/api/notifications/mark-read/${notificationId}/`, {
+      const response = await fetch(`${API_URL}/notifications/mark-read/${notificationId}/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${tokens.access}`,
@@ -132,7 +132,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     try {
       if (!tokens?.access) return;
       
-      const response = await fetch(`${API_URL}/api/notifications/mark-all-read/`, {
+      const response = await fetch(`${API_URL}/notifications/mark-all-read/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${tokens.access}`,

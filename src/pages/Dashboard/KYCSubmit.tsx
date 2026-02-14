@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Container,
@@ -158,11 +158,11 @@ const KYCSubmit = () => {
     try {
       const formDataToSend = new FormData();
       
-      // âœ… CORRECT FIELD NAMES (match backend exactly)
+      // ✅ CORRECT FIELD NAMES (match backend exactly)
       formDataToSend.append('document_type', documentType);
-      if (idFront) formDataToSend.append('id_front_image', idFront);  // âœ… Changed from 'id_front'
-      if (idBack) formDataToSend.append('id_back_image', idBack);    // âœ… Changed from 'id_back'
-      if (selfie) formDataToSend.append('facial_image', selfie);     // âœ… Changed from 'selfie'
+      if (idFront) formDataToSend.append('id_front_image', idFront);  // ✅ Changed from 'id_front'
+      if (idBack) formDataToSend.append('id_back_image', idBack);    // ✅ Changed from 'id_back'
+      if (selfie) formDataToSend.append('facial_image', selfie);     // ✅ Changed from 'selfie'
       
       // Get auth token (from context or localStorage)
       const authToken = token || localStorage.getItem('token');
@@ -173,11 +173,11 @@ const KYCSubmit = () => {
         return;
       }
 
-      // âœ…âœ…âœ… CRITICAL FIX: Correct API endpoint - After fixing backend urls.py
+      // ✅✅✅ CRITICAL FIX: Correct API endpoint - After fixing backend urls.py
       const response = await fetch('`${import.meta.env.VITE_API_URL}`/api/kyc/documents/', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${authToken}`  // âœ… Add auth header
+          'Authorization': `Bearer ${authToken}`  // ✅ Add auth header
           // NO 'Content-Type' header - browser sets it for FormData
         },
         body: formDataToSend
@@ -337,7 +337,7 @@ const KYCSubmit = () => {
             {/* Requirements */}
             <Alert severity="info" sx={{ mt: 3 }}>
               <Typography variant="body2">
-                <strong>Requirements:</strong> Clear, well-lit images â€¢ All text readable â€¢ No glare
+                <strong>Requirements:</strong> Clear, well-lit images • All text readable • No glare
               </Typography>
             </Alert>
           </Box>
@@ -405,7 +405,7 @@ const KYCSubmit = () => {
                         <input
                           type="file"
                           hidden
-                          accept="image/*"  // âœ… Remove .pdf (backend only accepts images)
+                          accept="image/*"  // ✅ Remove .pdf (backend only accepts images)
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) handleFileUpload(setIdFront, file, 'ID Front');
@@ -469,7 +469,7 @@ const KYCSubmit = () => {
                           <input
                             type="file"
                             hidden
-                            accept="image/*"  // âœ… Remove .pdf
+                            accept="image/*"  // ✅ Remove .pdf
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) handleFileUpload(setIdBack, file, 'ID Back');
@@ -553,7 +553,7 @@ const KYCSubmit = () => {
             {/* File Requirements */}
             <Alert severity="info" sx={{ mt: 3 }}>
               <Typography variant="body2">
-                <strong>Accepted formats:</strong> JPG, PNG only â€¢ <strong>Max size:</strong> 5MB per file
+                <strong>Accepted formats:</strong> JPG, PNG only • <strong>Max size:</strong> 5MB per file
               </Typography>
             </Alert>
           </Box>
@@ -684,7 +684,7 @@ const KYCSubmit = () => {
                       Benefits of Verification
                     </Typography>
                     <Typography variant="body2">
-                      â€¢ Higher transfer limits â€¢ Full platform access â€¢ Enhanced security
+                      • Higher transfer limits • Full platform access • Enhanced security
                     </Typography>
                   </Box>
                 </Box>

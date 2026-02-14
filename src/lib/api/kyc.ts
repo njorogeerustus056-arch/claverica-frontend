@@ -1,4 +1,4 @@
-﻿// KYC API client using existing endpoints
+// KYC API client using existing endpoints
 import { useAuthStore } from '../store/auth';
 
 export class KYCService {

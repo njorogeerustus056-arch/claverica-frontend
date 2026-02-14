@@ -488,7 +488,6 @@ const Transfer = () => {
     return true;
   };
 
-  // ✅ CORRECT FLOW: handleSubmit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -496,10 +495,8 @@ const Transfer = () => {
     
     const amount = parseFloat(formData.amount);
     
-    // ✅ CORRECT KYC LOGIC:
-    // Only require KYC for amounts ≥ $1,500 AND user not KYC verified
+    // Require KYC for amounts >= $1,500 AND user not KYC verified
     if (amount >= 1500 && kycStatus !== 'verified') {
-      // Large amount + unverified user = REQUIRE KYC
       requireKyc({
         service_type: 'transfer',
         transfer_amount: amount,
@@ -510,8 +507,7 @@ const Transfer = () => {
       return;
     }
     
-    // ✅ FOR ALL OTHER CASES (amount < $1,500 OR KYC verified):
-    // PROCEED DIRECTLY to TAC flow
+    // Proceed directly to TAC flow
     setLoading(true);
     setError('');
     setSuccess('');
@@ -525,6 +521,7 @@ const Transfer = () => {
         narration: formData.narration,
       });
 
+      // ✅ FIXED: Using correct endpoint (transferAPI will handle the URL)
       const response = await transferAPI.createTransfer({
         amount: amount,
         recipient_name: formData.recipient_name,
@@ -536,10 +533,9 @@ const Transfer = () => {
       console.log('📥 TRANSFER API RESPONSE:', response);
 
       if (response.success) {
-        // ✅ FIXED: Show success message briefly
         setSuccess(`Transfer #${response.transfer_id} submitted successfully! Redirecting to TAC page...`);
         
-        // ✅ CRITICAL FIX: AUTO-REDIRECT to TAC page after 2 seconds
+        // Auto-redirect to TAC page after 2 seconds
         setTimeout(() => {
           navigate(`/dashboard/transfer/verify-tac/${response.transfer_id}`);
         }, 2000);
@@ -585,7 +581,6 @@ const Transfer = () => {
       case 'bank':
         return (
           <>
-            {/* ✅ FIXED: Grid v2 syntax */}
             <Grid size={{ xs: 12 }}>
               <TextField
                 select
@@ -612,7 +607,6 @@ const Transfer = () => {
               </TextField>
             </Grid>
             
-            {/* ✅ FIXED: Grid v2 syntax */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -624,7 +618,6 @@ const Transfer = () => {
               />
             </Grid>
             
-            {/* ✅ FIXED: Grid v2 syntax */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 select
@@ -643,7 +636,6 @@ const Transfer = () => {
               </TextField>
             </Grid>
             
-            {/* ✅ FIXED: Grid v2 syntax */}
             <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
@@ -660,7 +652,6 @@ const Transfer = () => {
       case 'mobile_wallet':
         return (
           <>
-            {/* ✅ FIXED: Grid v2 syntax */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 select
@@ -678,7 +669,6 @@ const Transfer = () => {
               </TextField>
             </Grid>
             
-            {/* ✅ FIXED: Grid v2 syntax */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
@@ -696,7 +686,6 @@ const Transfer = () => {
       case 'crypto':
         return (
           <>
-            {/* ✅ FIXED: Grid v2 syntax */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 select
@@ -716,7 +705,6 @@ const Transfer = () => {
               </TextField>
             </Grid>
             
-            {/* ✅ FIXED: Grid v2 syntax */}
             <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
@@ -872,7 +860,6 @@ const Transfer = () => {
         </Paper>
       )}
 
-      {/* ✅ FIXED: Grid container with v2 syntax */}
       <Grid container spacing={4}>
         {/* Balance Card */}
         <Grid size={{ xs: 12, md: 4 }}>
@@ -982,7 +969,6 @@ const Transfer = () => {
                   </Alert>
                 )}
 
-                {/* ✅ FIXED: Inner Grid container with v2 syntax */}
                 <Grid container spacing={3}>
                   {/* Amount */}
                   <Grid size={{ xs: 12 }}>
@@ -1105,8 +1091,6 @@ const Transfer = () => {
               </form>
             </Box>
           </Paper>
-
-          {/* REMOVED INFO BOX - As requested */}
         </Grid>
       </Grid>
     </Container>

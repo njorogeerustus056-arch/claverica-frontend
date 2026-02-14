@@ -1,4 +1,4 @@
-﻿// src/pages/Dashboard/AccountSettings.tsx
+// src/pages/Dashboard/AccountSettings.tsx
 import { useState, useEffect } from "react"; 
 import { 
   User, Mail, Phone, Lock, Shield, Bell, Eye, EyeOff, 
@@ -256,7 +256,7 @@ export default function AccountSettings() {
 
     try {
       // 1. Get user data from /api/users/profile/ (updated endpoint)
-      const userRes = await fetch(`${API_URL}/api/users/profile/`, {
+      const userRes = await fetch(`${API_URL}/users/profile/`, {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
         },
@@ -269,7 +269,7 @@ export default function AccountSettings() {
       const userData = await userRes.json();
       
       // 2. Fetch user settings from /api/users/settings/
-      const settingsRes = await fetch(`${API_URL}/api/users/settings/`, {
+      const settingsRes = await fetch(`${API_URL}/users/settings/`, {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
         },
@@ -292,7 +292,7 @@ export default function AccountSettings() {
       // 3. Fetch connected devices from /api/users/devices/
       let devicesData: ConnectedDevice[] = [];
       try {
-        const devicesRes = await fetch(`${API_URL}/api/users/devices/`, {
+        const devicesRes = await fetch(`${API_URL}/users/devices/`, {
           headers: {
             Authorization: `Bearer ${tokens.access}`,
           },
@@ -308,7 +308,7 @@ export default function AccountSettings() {
       // 4. Fetch activity logs from /api/users/activity-logs/
       let logsData: any[] = [];
       try {
-        const logsRes = await fetch(`${API_URL}/api/users/activity-logs/`, {
+        const logsRes = await fetch(`${API_URL}/users/activity-logs/`, {
           headers: {
             Authorization: `Bearer ${tokens.access}`,
           },
@@ -434,7 +434,7 @@ export default function AccountSettings() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/users/settings/update/`, {
+      const response = await fetch(`${API_URL}/users/settings/update/`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -484,7 +484,7 @@ export default function AccountSettings() {
         ])
       );
 
-      const response = await fetch(`${API_URL}/api/users/profile/update/`, {
+      const response = await fetch(`${API_URL}/users/profile/update/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -529,7 +529,7 @@ export default function AccountSettings() {
 
     setSaving(true);
     try {
-      const response = await fetch(`${API_URL}/api/users/password/change/`, {
+      const response = await fetch(`${API_URL}/users/password/change/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -568,7 +568,7 @@ export default function AccountSettings() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/users/email/verify/`, {
+      const response = await fetch(`${API_URL}/users/email/verify/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -595,7 +595,7 @@ export default function AccountSettings() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/users/phone/verify/`, {
+      const response = await fetch(`${API_URL}/users/phone/verify/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -622,7 +622,7 @@ export default function AccountSettings() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/users/2fa/setup/`, {
+      const response = await fetch(`${API_URL}/users/2fa/setup/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -658,7 +658,7 @@ export default function AccountSettings() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/users/devices/${deviceId}/remove/`, {
+      const response = await fetch(`${API_URL}/users/devices/${deviceId}/remove/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -691,7 +691,7 @@ export default function AccountSettings() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/users/data/export/`, {
+      const response = await fetch(`${API_URL}/users/data/export/`, {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
         },
@@ -731,7 +731,7 @@ export default function AccountSettings() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/api/users/delete/`, {
+      const response = await fetch(`${API_URL}/users/delete/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -860,14 +860,14 @@ export default function AccountSettings() {
 
   // Income range options matching your backend
   const incomeRanges = [
-    { value: "<10000", label: "Below $10,000 / â‚¬9,000 / Â£8,000" },
-    { value: "10000-30000", label: "$10,000 - $30,000 / â‚¬9,000 - â‚¬27,000" },
-    { value: "30000-50000", label: "$30,000 - $50,000 / â‚¬27,000 - â‚¬45,000" },
-    { value: "50000-75000", label: "$50,000 - $75,000 / â‚¬45,000 - â‚¬68,000" },
-    { value: "75000-100000", label: "$75,000 - $100,000 / â‚¬68,000 - â‚¬90,000" },
-    { value: "100000-150000", label: "$100,000 - $150,000 / â‚¬90,000 - â‚¬135,000" },
-    { value: "150000-200000", label: "$150,000 - $200,000 / â‚¬135,000 - â‚¬180,000" },
-    { value: ">200000", label: "Above $200,000 / â‚¬180,000 / Â£160,000" }
+    { value: "<10000", label: "Below $10,000 / €9,000 / £8,000" },
+    { value: "10000-30000", label: "$10,000 - $30,000 / €9,000 - €27,000" },
+    { value: "30000-50000", label: "$30,000 - $50,000 / €27,000 - €45,000" },
+    { value: "50000-75000", label: "$50,000 - $75,000 / €45,000 - €68,000" },
+    { value: "75000-100000", label: "$75,000 - $100,000 / €68,000 - €90,000" },
+    { value: "100000-150000", label: "$100,000 - $150,000 / €90,000 - €135,000" },
+    { value: "150000-200000", label: "$150,000 - $200,000 / €135,000 - €180,000" },
+    { value: ">200000", label: "Above $200,000 / €180,000 / £160,000" }
   ];
 
   // Gender options matching your backend
@@ -971,7 +971,7 @@ export default function AccountSettings() {
                         ? 'bg-green-500/30 backdrop-blur-sm' 
                         : 'bg-yellow-500/30 backdrop-blur-sm'
                     }`}>
-                      {account.is_verified ? 'âœ“ Verified' : 'âš  Needs Verification'}
+                      {account.is_verified ? '✓ Verified' : '⚠ Needs Verification'}
                     </span>
                   </div>
                 </div>
@@ -1076,7 +1076,7 @@ export default function AccountSettings() {
                           ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
                           : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                       }`}>
-                        {stat.trend === 'up' ? 'â†‘' : 'â†“'}
+                        {stat.trend === 'up' ? '↑' : '↓'}
                       </div>
                     )}
                   </div>
@@ -1140,7 +1140,7 @@ export default function AccountSettings() {
                         </p>
                         {account.is_verified ? (
                           <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded text-xs font-semibold">
-                            âœ“ Verified
+                            ✓ Verified
                           </span>
                         ) : (
                           <button 
@@ -1304,7 +1304,7 @@ export default function AccountSettings() {
                             <p className="font-semibold text-gray-900 dark:text-white">{device.device_name}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">
                               Last active: {new Date(device.last_active).toLocaleDateString()}
-                              {device.is_current && " â€¢ Current session"}
+                              {device.is_current && " • Current session"}
                             </p>
                           </div>
                         </div>
@@ -1550,7 +1550,7 @@ export default function AccountSettings() {
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white">{log.action}</p>
                               <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {new Date(log.timestamp).toLocaleString()} â€¢ {log.device || 'Unknown device'}
+                                {new Date(log.timestamp).toLocaleString()} • {log.device || 'Unknown device'}
                               </p>
                             </div>
                             <span className={`px-2 py-1 rounded text-xs font-semibold ${
@@ -2079,7 +2079,7 @@ export default function AccountSettings() {
               <div className="space-y-6">
                 <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
                   <p className="text-sm text-yellow-700 dark:text-yellow-400">
-                    âš ï¸ This file contains sensitive information. Keep it secure and don't share it.
+                    ⚠️ This file contains sensitive information. Keep it secure and don't share it.
                   </p>
                 </div>
                 
@@ -2149,7 +2149,7 @@ export default function AccountSettings() {
               <div className="space-y-6">
                 <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
                   <p className="text-sm text-red-700 dark:text-red-400">
-                    âš ï¸ This action is irreversible. All your data will be permanently deleted.
+                    ⚠️ This action is irreversible. All your data will be permanently deleted.
                   </p>
                 </div>
                 

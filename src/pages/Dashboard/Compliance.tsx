@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import ProtectedRoute from '../../components/ProtectedRoute';
@@ -50,7 +50,7 @@ function ComplianceContent() {
     setError('');
 
     try {
-      const response = await fetch(`${API_URL}/api/transfers/transfers/${transferId}/verify_tac/`, {
+      const response = await fetch(`${API_URL}/transfers/transfers/${transferId}/verify_tac/`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${tokens.access}`,

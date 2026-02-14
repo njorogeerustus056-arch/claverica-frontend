@@ -1,4 +1,4 @@
-ï»¿import { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Eye,
@@ -141,7 +141,7 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
               onClick={onClose}
               className="text-gray-400 hover:text-white p-1 transition-colors"
             >
-              âœ•
+              ?
             </button>
           </div>
         </div>
@@ -549,7 +549,7 @@ export default function Home() {
                 <span className="text-5xl font-bold tracking-tight">
                   {showBalance 
                     ? `${wallet?.currency || "USD"} ${wallet?.balance?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}` 
-                    : "â€¢â€¢â€¢â€¢â€¢â€¢"}
+                    : "••••••"}
                 </span>
                 <span className="text-lg text-blue-200">{wallet?.currency || "USD"}</span>
               </div>
@@ -802,7 +802,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <span className="text-sm font-medium text-gray-700">Email</span>
-                    <span className="text-sm text-gray-900 truncate max-w-[120px]">{user?.email || "â€”"}</span>
+                    <span className="text-sm text-gray-900 truncate max-w-[120px]">{user?.email || "—"}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <span className="text-sm font-medium text-gray-700">Cards</span>

@@ -46,7 +46,7 @@ const TransferVerifyTAC = () => {
         const data = await transferAPI.getTransfer(transferId);
         setTransfer(data);
         
-        // ✅ FIXED: Check if already in tac_sent, tac_verified, or completed status
+        // ✅ FIXED: Check correct status names from backend (with underscore)
         if (['tac_sent', 'tac_verified', 'completed'].includes(data.status)) {
           navigate(`/dashboard/transfer/status/${transferId}`);
           return;

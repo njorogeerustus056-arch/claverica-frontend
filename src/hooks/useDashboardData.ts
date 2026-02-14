@@ -23,8 +23,8 @@ export function useDashboardData() {
 
       // ✅ USING YOUR ACTUAL ENDPOINTS
       const [walletRes, transactionsRes] = await Promise.all([
-        api.fetch('/api/transactions/wallet/balance/'), // ✅ CORRECT
-        api.fetch('/api/transactions/recent/'), // ✅ CORRECT
+        api.fetch('/transactions/wallet/balance/'), // ✅ CORRECT
+        api.fetch('/transactions/recent/'), // ✅ CORRECT
       ]);
 
       // Transform to match your Home.tsx UI

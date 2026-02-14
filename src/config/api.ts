@@ -1,7 +1,7 @@
 // src/config/api.ts - FIXED VERSION
 export const API_CONFIG = {
   // Base URL from environment variable with /api already included
-  BASE_URL: import.meta.env.VITE_API_URL || "http://localhost:8000/api",
+  BASE_URL: import.meta.env.VITE_API_URL,
   
   // API Endpoints
   ENDPOINTS: {

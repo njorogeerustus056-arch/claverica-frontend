@@ -1,4 +1,4 @@
-﻿// src/pages/Dashboard/Profile.tsx - UPDATED VERSION
+// src/pages/Dashboard/Profile.tsx - UPDATED VERSION
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth";
@@ -89,7 +89,7 @@ export default function Profile() {
       // 2. Get wallet balance from /api/transactions/wallet/balance/
       let walletBalance = 0;
       try {
-        const walletResponse = await apiClient.get('/api/transactions/wallet/balance/');
+        const walletResponse = await apiClient.get('/transactions/wallet/balance/');
         walletBalance = walletResponse.data.balance || 0;
       } catch (walletError) {
         console.log("Wallet endpoint not available");
@@ -101,7 +101,7 @@ export default function Profile() {
       let monthlyExpenses = 0;
       
       try {
-        const txResponse = await apiClient.get('/api/transactions/recent/');
+        const txResponse = await apiClient.get('/transactions/recent/');
         const transactions = txResponse.data.transactions || txResponse.data || [];
         
         // Calculate stats

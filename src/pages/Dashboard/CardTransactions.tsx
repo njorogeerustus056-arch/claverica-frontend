@@ -65,7 +65,7 @@ const CardTransactions: React.FC = () => {
       setError(null);
       
       // CORRECTED URL: /api/transactions/recent/
-      const response = await api.get('/api/transactions/recent/');
+      const response = await api.get('/transactions/recent/');
       console.log('Transactions API response:', response.data);
       
       setTransactions(response.data.transactions || []);

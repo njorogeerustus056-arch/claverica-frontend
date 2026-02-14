@@ -41,10 +41,10 @@ const TransferStatusPage = () => {
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
-  // Simplified status config - Only actual backend statuses
+  // ✅ FIXED: Status config with all backend statuses including 'tac_sent'
   const statusConfig: Record<string, { color: any; icon: any; label: string; progress: number }> = {
     pending: { color: 'warning', icon: <AccessTime />, label: 'Awaiting Processing', progress: 25 },
-    tac_sent: { color: 'info', icon: <CheckCircle />, label: 'TAC Sent', progress: 50 }, // ✅ ADDED THIS LINE
+    tac_sent: { color: 'info', icon: <CheckCircle />, label: 'TAC Sent', progress: 50 }, // ✅ ADDED
     tac_verified: { color: 'success', icon: <CheckCircle />, label: 'TAC Verified', progress: 60 },
     funds_deducted: { color: 'success', icon: <AccountBalanceWallet />, label: 'Funds Deducted', progress: 70 },
     pending_settlement: { color: 'info', icon: <Schedule />, label: 'Pending Settlement', progress: 80 },
@@ -77,10 +77,11 @@ const TransferStatusPage = () => {
     if (!autoRefresh || !transferId || !transfer) return;
 
     const intervalId = setInterval(() => {
+      // ✅ FIXED: Include 'tac_sent' in auto-refresh list
       if (['pending', 'tac_sent', 'pending_settlement', 'tac_verified', 'funds_deducted'].includes(transfer.status)) {
         fetchTransfer();
       }
-    }, 30000); // Reduced to 30 seconds (optional)
+    }, 30000);
 
     return () => clearInterval(intervalId);
   }, [autoRefresh, transferId, transfer]);

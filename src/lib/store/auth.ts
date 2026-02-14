@@ -1,3 +1,4 @@
+import api from '../services/api';
 // src/lib/store/auth.ts - CLEAN VERSION WITH REDUCED LOGS
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -61,7 +62,7 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          const response = await fetch(`${API_URL}/api/accounts/login/`, {
+          const response = await fetch(`${API_URL}/accounts/login/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -123,7 +124,7 @@ export const useAuthStore = create<AuthStore>()(
         if (!tokens?.refresh) return false;
 
         try {
-          const response = await fetch(`${API_URL}/api/accounts/refresh/`, {
+          const response = await fetch(`${API_URL}/accounts/refresh/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh: tokens.refresh }),
@@ -178,7 +179,7 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         try {
-          const response = await fetch(`${API_URL}/api/users/me/`, {    
+          const response = await fetch(`${API_URL}/users/me/`, {    
             headers: {
               Authorization: `Bearer ${tokens.access}`,
               'Content-Type': 'application/json',
@@ -242,8 +243,3 @@ export const useAuthStore = create<AuthStore>()(
     }
   )
 );
-
-
-
-
-

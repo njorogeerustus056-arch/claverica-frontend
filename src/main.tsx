@@ -1,4 +1,4 @@
-﻿// main.tsx - CLEAN VERSION WITH REDUCED LOGS
+// main.tsx - CLEAN VERSION WITH REDUCED LOGS
 import { StrictMode, Suspense, lazy, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -34,7 +34,7 @@ function InitializeAuth() {
     
     // Keep only essential logs or remove all
     if (process.env.NODE_ENV === 'development') {
-      console.log("🔧 App initializing...");
+      console.log("?? App initializing...");
     }
     
     authStore.syncFromLocalStorage();
@@ -56,7 +56,7 @@ function TawkToWidget() {
   useEffect(() => {
     // Only load in production
     if (process.env.NODE_ENV !== 'production') {
-      console.log('🚫 tawk.to: Skipped in development');
+      console.log('?? tawk.to: Skipped in development');
       return;
     }
 
@@ -69,7 +69,7 @@ function TawkToWidget() {
     // Load tawk.to script
     const script = document.createElement('script');
     script.async = true;
-    script.src = 'https://embed.tawk.to/YOUR_WEBSITE_ID_HERE/default'; // ⬅️ REPLACE WITH YOUR ID
+    script.src = 'https://embed.tawk.to/YOUR_WEBSITE_ID_HERE/default'; // ?? REPLACE WITH YOUR ID
     script.charset = 'UTF-8';
     script.setAttribute('crossorigin', '*');
     
@@ -98,7 +98,7 @@ if (!rootElement) {
         <ThemeProvider>
           <AppWrapper>
             <InitializeAuth />
-            <TawkToWidget /> {/* ⬅️ ADDED THIS LINE */}
+            <TawkToWidget /> {/* ?? ADDED THIS LINE */}
             <TransferProvider>
               <Suspense
                 fallback={

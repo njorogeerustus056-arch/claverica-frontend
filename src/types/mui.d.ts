@@ -1,4 +1,4 @@
-﻿declare module "@mui/icons-material" {
+declare module "@mui/icons-material" {
   import * as React from "react";
   export const Add: React.ComponentType<any>;
   export const Remove: React.ComponentType<any>;

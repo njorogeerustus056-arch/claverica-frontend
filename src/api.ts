@@ -104,7 +104,7 @@ export async function apiFetch<T = any>(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          const refreshResponse = await fetch(`${API_URL}/api/accounts/refresh/`, {
+          const refreshResponse = await fetch(`${API_URL}/accounts/refresh/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refresh: refreshToken }),
@@ -433,7 +433,7 @@ export const walletAPI = {
   },
 
   getTransactions: async () => {
-    return apiFetch("/api/transactions/");
+    return apiFetch("/transactions/");
   }
 };
 

@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import transferAPI, { TransferStatus } from "../services/transfer-api";
 import { TransferContextType } from '../utils/transfer-types';
 
