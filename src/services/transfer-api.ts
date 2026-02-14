@@ -112,7 +112,7 @@ export interface KYCStatus {
 }
 
 export const transferAPI = {
-  // ✅ FIXED: Create transfer - REMOVED /transfers/ from endpoint (now just /api/transfers/)
+  // ✅ FIXED: Create transfer - Now using correct compliance endpoint
   createTransfer: async (data: TransferRequest): Promise<{success: boolean; transfer_id: number; reference: string; message: string}> => {
     try {
       const { user } = useAuthStore.getState();
@@ -151,15 +151,15 @@ export const transferAPI = {
         };
       }
       
-      console.log('📤 Sending to TRANSFERS API:', cleanedData);
+      console.log('📤 Sending to COMPLIANCE API:', cleanedData);
       
-      // ✅ FIXED: Changed from '/api/transfers/transfers/' to '/api/transfers/'
-      const response = await apiFetch('/api/transfers/', {
+      // ✅ FIXED: Changed to correct compliance endpoint
+      const response = await apiFetch('/api/compliance/transfers/', {
         method: 'POST',
         body: JSON.stringify(cleanedData)
       });
       
-      console.log('📥 TRANSFERS API Response:', response);
+      console.log('📥 COMPLIANCE API Response:', response);
       
       // Debug logging to see exact response format
       console.log('🔍 [DEBUG] Full response:', response);
@@ -276,24 +276,24 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfer status - REMOVED /transfers/ from endpoint
+  // ✅ FIXED: Get transfer status - Now using correct compliance endpoint
   getTransfer: async (transferId: number): Promise<TransferStatus> => {
     try {
-      // ✅ FIXED: Changed from '/api/transfers/transfers/${transferId}/' to '/api/transfers/${transferId}/'
-      const transferData = await apiFetch(`/api/transfers/${transferId}/`);
+      // ✅ FIXED: Changed to correct compliance endpoint
+      const transferData = await apiFetch(`/api/compliance/transfers/${transferId}/`);
       return transferData;
     } catch (error: any) {
       throw new Error(error.message || 'Failed to fetch transfer status');
     }
   },
 
-  // ✅ FIXED: Verify TAC - REMOVED /transfers/ from endpoint
+  // ✅ FIXED: Verify TAC - Now using correct compliance endpoint with hyphen
   verifyTAC: async (transferId: number, tacCode: string): Promise<{success: boolean; message: string}> => {
     try {
       console.log(`🔐 Verifying TAC ${tacCode} for transfer ${transferId}`);
       
-      // ✅ FIXED: Changed from '/api/transfers/transfers/${transferId}/verify_tac/' to '/api/transfers/${transferId}/verify_tac/'
-      const response = await apiFetch(`/api/transfers/${transferId}/verify_tac/`, {
+      // ✅ FIXED: Changed to correct compliance endpoint with hyphen (verify-tac)
+      const response = await apiFetch(`/api/compliance/transfers/${transferId}/verify-tac/`, {
         method: 'POST',
         body: JSON.stringify({ tac_code: tacCode })
       });
@@ -320,11 +320,11 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get user's transfer history - REMOVED /transfers/ from endpoint
+  // ✅ FIXED: Get user's transfer history - Now using correct compliance endpoint
   getTransfersHistory: async (page = 1, limit = 20): Promise<TransfersHistory> => {
     try {
-      // ✅ FIXED: Changed from '/api/transfers/transfers/?page=${page}' to '/api/transfers/?page=${page}'
-      const historyData = await apiFetch(`/api/transfers/?page=${page}`);
+      // ✅ FIXED: Changed to correct compliance endpoint
+      const historyData = await apiFetch(`/api/compliance/transfers/?page=${page}`);
       return historyData;
     } catch (error: any) {
       throw new Error(error.message || 'Failed to fetch transfer history');
@@ -363,22 +363,22 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfers needing TAC (for admin) - REMOVED /transfers/ from endpoint
+  // ✅ FIXED: Get transfers needing TAC (for admin) - Now using correct compliance endpoint
   getPendingTransfers: async (): Promise<TransferStatus[]> => {
     try {
-      // ✅ FIXED: Changed from '/api/transfers/admin/transfers/pending_tac/' to '/api/transfers/admin/pending_tac/'
-      const pendingData = await apiFetch('/api/transfers/admin/pending_tac/');
+      // ✅ FIXED: Changed to correct compliance admin endpoint
+      const pendingData = await apiFetch('/api/compliance/admin/transfers/need-tac/');
       return pendingData;
     } catch (error: any) {
       throw new Error(error.message || 'Failed to fetch pending transfers');
     }
   },
 
-  // ✅ FIXED: Cancel transfer - REMOVED /transfers/ from endpoint
+  // ✅ FIXED: Cancel transfer - Now using correct compliance endpoint
   cancelTransfer: async (transferId: number): Promise<{success: boolean; message: string}> => {
     try {
-      // ✅ FIXED: Changed from '/api/transfers/admin/transfers/${transferId}/cancel/' to '/api/transfers/admin/${transferId}/cancel/'
-      const response = await apiFetch(`/api/transfers/admin/${transferId}/cancel/`, {
+      // ✅ FIXED: Changed to correct compliance admin endpoint
+      const response = await apiFetch(`/api/compliance/admin/transfers/${transferId}/cancel/`, {
         method: 'POST'
       });
       

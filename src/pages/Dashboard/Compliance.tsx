@@ -5,7 +5,8 @@ import ProtectedRoute from '../../components/ProtectedRoute';
 import { motion } from 'framer-motion';
 import { Shield, Lock, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
-const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL || "`${import.meta.env.VITE_API_URL}`";
+// ✅ FIXED: Clean up API_URL definition
+const API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
 
 function ComplianceContent() {
   const location = useLocation();
@@ -50,7 +51,8 @@ function ComplianceContent() {
     setError('');
 
     try {
-      const response = await fetch(`${API_URL}/transfers/transfers/${transferId}/verify_tac/`, {
+      // ✅ FIXED: Correct endpoint - /api/compliance/transfers/{id}/verify-tac/
+      const response = await fetch(`${API_URL}/api/compliance/transfers/${transferId}/verify-tac/`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${tokens.access}`,
