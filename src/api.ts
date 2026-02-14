@@ -1,7 +1,7 @@
-// src/api.ts - FIXED VERSION WITH DEBUG LOGGING
+// src/api.ts - FIXED VERSION WITH CORRECT ENDPOINTS
 import { useAuthStore } from './lib/store/auth';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app";
 
 // Get tokens from Zustand store
 export const getToken = (): string | null => {
@@ -37,7 +37,7 @@ export const setToken = (token: string): void => {
     
     // Also store in localStorage for any legacy code
     if (typeof window !== 'undefined') {
-      localStorage.setItem("token", token);
+      localStorage.setItem("access_token", token);
     }
   } catch (error) {
     console.error('Error setting token:', error);
@@ -51,8 +51,9 @@ export const removeToken = (): void => {
     
     // Clear from localStorage
     if (typeof window !== 'undefined') {
-      localStorage.removeItem("token");
+      localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
     }
   } catch (error) {
     console.error('Error removing token:', error);
@@ -104,26 +105,31 @@ export async function apiFetch<T = any>(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          const refreshResponse = await fetch(`${API_URL}/accounts/refresh/`, {
+          // ✅ FIXED: Use correct JWT refresh endpoint
+          const refreshResponse = await fetch(`${API_URL}/api/token/refresh/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refresh: refreshToken }),
           });
 
           if (refreshResponse.ok) {
-            const { access } = await refreshResponse.json();
-            setToken(access);
+            const data = await refreshResponse.json();
+            setToken(data.access);
             // Retry the original request with new token
             return apiFetch<T>(endpoint, options, retryCount + 1);
+          } else {
+            // Refresh failed, clear tokens
+            removeToken();
+            throw new ApiError("Session expired. Please login again.", 401);
           }
         } catch (refreshError) {
-          // Refresh failed, clear tokens
           removeToken();
           throw new ApiError("Session expired. Please login again.", 401);
         }
       } else {
         // No refresh token available
         removeToken();
+        throw new ApiError("Session expired. Please login again.", 401);
       }
     }
 
@@ -184,38 +190,39 @@ export async function uploadFormData<T = any>(
   return response.json();
 }
 
-// Authentication API functions
+// Authentication API functions - ✅ FIXED WITH CORRECT ENDPOINTS
 export const authAPI = {
   register: async (data: any) => {
-    return apiFetch("/accounts/register/", {
+    return apiFetch("/api/accounts/register/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   verifyActivation: async (data: { email: string; activation_code: string }) => {
-    return apiFetch("/accounts/activate/", {
+    return apiFetch("/api/accounts/activate/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   resendActivation: async (data: { email: string }) => {
-    return apiFetch("/accounts/resend-activation/", {
+    return apiFetch("/api/accounts/resend-activation/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   login: async (email: string, password: string) => {
-    return apiFetch("/accounts/login/", {
+    // ✅ FIXED: Use JWT token endpoint
+    return apiFetch("/api/token/", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
   },
 
   logout: async () => {
-    const result = await apiFetch("/accounts/logout/", {
+    const result = await apiFetch("/api/accounts/logout/", {
       method: "POST",
     });
     removeToken();
@@ -223,18 +230,19 @@ export const authAPI = {
   },
 
   getProfile: async () => {
-    return apiFetch("/api/users/profile/");
+    return apiFetch("/api/users/me/");
   },
 
   refresh: async (refreshToken: string) => {
-    return apiFetch("/accounts/refresh/", {
+    // ✅ FIXED: Use correct JWT refresh endpoint
+    return apiFetch("/api/token/refresh/", {
       method: "POST",
       body: JSON.stringify({ refresh: refreshToken }),
     });
   }
 };
 
-// Notification API functions - FIXED WITH DEBUG LOGGING
+// Notification API functions
 export const notificationAPI = {
   // Get all notifications
   getAll: async () => {
@@ -284,7 +292,7 @@ export const notificationAPI = {
     }
   },
 
-  // Get unread count for badge - FIXED WITH BETTER HANDLING
+  // Get unread count for badge
   getUnreadCount: async () => {
     console.log('🔍 [API DEBUG] Calling /api/notifications/unread-count/');
     
@@ -292,29 +300,25 @@ export const notificationAPI = {
       const data = await apiFetch<any>("/api/notifications/unread-count/");
       
       console.log('✅ [API DEBUG] Raw unread count response:', data);
-      console.log('📋 [API DEBUG] Response type:', typeof data);
       
       // Handle ALL possible response formats
       if (typeof data === 'object' && data !== null) {
         // Django REST Framework format: { "unread_count": 1 }
         if ('unread_count' in data) {
           const count = Number(data.unread_count) || 0;
-          console.log(`📊 [API DEBUG] Found unread_count: ${count}`);
           return { unread_count: count };
         }
         
         // Alternative format: { "count": 1 }
         if ('count' in data) {
           const count = Number(data.count) || 0;
-          console.log(`📊 [API DEBUG] Found count: ${count}`);
           return { unread_count: count };
         }
         
-        // Direct number in simple object: { "1": 1 }
+        // Direct number in simple object
         const values = Object.values(data);
         if (values.length === 1 && typeof values[0] === 'number') {
           const count = values[0] as number;
-          console.log(`📊 [API DEBUG] Found numeric value in object: ${count}`);
           return { unread_count: count };
         }
         
@@ -322,25 +326,17 @@ export const notificationAPI = {
         if (data.data && typeof data.data === 'object') {
           if ('unread_count' in data.data) {
             const count = Number(data.data.unread_count) || 0;
-            console.log(`📊 [API DEBUG] Found nested unread_count: ${count}`);
             return { unread_count: count };
           }
           if ('count' in data.data) {
             const count = Number(data.data.count) || 0;
-            console.log(`📊 [API DEBUG] Found nested count: ${count}`);
             return { unread_count: count };
           }
-        }
-        
-        // Check for results array with count
-        if (data.results && typeof data.results === 'object') {
-          console.log(`📊 [API DEBUG] Results object found, checking for count...`);
         }
       } 
       
       // Direct number response
       else if (typeof data === 'number') {
-        console.log(`📊 [API DEBUG] Direct number response: ${data}`);
         return { unread_count: data };
       }
       
@@ -348,25 +344,17 @@ export const notificationAPI = {
       else if (typeof data === 'string') {
         const parsed = parseInt(data, 10);
         if (!isNaN(parsed)) {
-          console.log(`📊 [API DEBUG] Parsed string to number: ${parsed}`);
           return { unread_count: parsed };
         }
       }
       
-      console.warn('⚠️ [API DEBUG] Unexpected unread count format:', data);
-      console.warn('⚠️ [API DEBUG] Full response:', JSON.stringify(data, null, 2));
+      console.warn('⚠️ Unexpected unread count format:', data);
       return { unread_count: 0 };
       
     } catch (error: any) {
-      console.error('❌ [API DEBUG] Error fetching unread count:', error);
-      console.error('❌ [API DEBUG] Error details:', {
-        message: error.message,
-        status: error.status,
-        data: error.data
-      });
+      console.error('❌ Error fetching unread count:', error);
       
       if (error.status === 401) {
-        console.log('🔒 [API DEBUG] Not authorized (401)');
         return { unread_count: 0 };
       }
       
@@ -377,7 +365,7 @@ export const notificationAPI = {
   // Mark single notification as read
   markAsRead: async (notificationId: number) => {
     try {
-      return await apiFetch(`/api/notifications/mark-read/${notificationId}/`, {
+      return await apiFetch(`/api/notifications/${notificationId}/mark-read/`, {
         method: "POST",
       });
     } catch (error: any) {
@@ -429,11 +417,11 @@ export const notificationAPI = {
 // Wallet/Account API functions
 export const walletAPI = {
   getBalance: async () => {
-    return apiFetch("/api/wallets/balance/");
+    return apiFetch("/api/transactions/wallet/balance/");
   },
 
   getTransactions: async () => {
-    return apiFetch("/transactions/");
+    return apiFetch("/api/transactions/recent/");
   }
 };
 
@@ -451,38 +439,51 @@ export const paymentAPI = {
   }
 };
 
-// Transfer API functions
+// Transfer API functions - ✅ FIXED WITH CORRECT COMPLIANCE ENDPOINTS
 export const transferAPI = {
   initiateTransfer: async (data: any) => {
-    return apiFetch("/api/transfers/initiate/", {
+    return apiFetch("/api/compliance/transfers/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   getTransfers: async () => {
-    return apiFetch("/api/transfers/");
+    return apiFetch("/api/compliance/transfers/");
+  },
+
+  getTransfer: async (id: number) => {
+    return apiFetch(`/api/compliance/transfers/${id}/`);
   },
 
   verifyTAC: async (transferId: number, tacCode: string) => {
-    return apiFetch(`/api/transfers/${transferId}/verify-tac/`, {
+    return apiFetch(`/api/compliance/transfers/${transferId}/verify-tac/`, {
       method: "POST",
       body: JSON.stringify({ tac_code: tacCode }),
     });
+  },
+
+  getTransferHistory: async (page = 1) => {
+    return apiFetch(`/api/compliance/transfers/?page=${page}`);
   }
 };
 
 // KYC API functions
 export const kycAPI = {
   submitDocuments: async (data: FormData) => {
-    return apiFetch("/api/kyc/submit/", {
-      method: "POST",
-      body: data,
-    });
+    return uploadFormData("/api/kyc/documents/", data);
   },
 
   getStatus: async () => {
-    return apiFetch("/api/kyc/status/");
+    return apiFetch("/api/kyc/documents/status/");
+  },
+
+  checkRequirement: async (amount: number, serviceType: string = 'transfer') => {
+    return apiFetch(`/api/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
+  },
+
+  getSubmissions: async () => {
+    return apiFetch("/api/kyc/documents/submissions/");
   }
 };
 
@@ -540,4 +541,4 @@ export interface Transaction {
   created_at: string;
 }
 
-
+export default api;

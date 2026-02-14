@@ -51,7 +51,8 @@ const KYC = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('`${import.meta.env.VITE_API_URL}`/api/kyc/simple-status/', {
+      // ✅ FIXED: Correct template literal syntax
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/simple-status/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -143,7 +144,7 @@ const KYC = () => {
 
       <Grid container spacing={3}>
         {/* Left Column: Status */}
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid item xs={12} md={8}>
           <Card sx={{ mb: 3 }}>
             <CardContent>
               <Box display="flex" alignItems="center" mb={2}>
@@ -300,7 +301,7 @@ const KYC = () => {
         </Grid>
 
         {/* Right Column: Benefits */}
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid item xs={12} md={4}>
           <Card sx={{ mb: 3 }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>

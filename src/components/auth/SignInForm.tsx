@@ -4,7 +4,6 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useAuthStore } from "../../lib/store/auth";
 import Cookies from "js-cookie";
-import { api } from "../../services/api";
 
 import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import Label from "../form/Label";
@@ -89,7 +88,7 @@ export default function SignInForm() {
     try {
       if (forgotPasswordStep === "email") {
         // Step 1: Request OTP
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/accounts/password/reset/`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/accounts/password/reset/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -122,7 +121,7 @@ export default function SignInForm() {
         });
       } else if (forgotPasswordStep === "newPassword") {
         // Step 3: Confirm password reset
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/accounts/password/reset/`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/accounts/password/reset/confirm/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -630,7 +629,7 @@ export default function SignInForm() {
                       </div>
                     )}
 
-                    {/* Action Buttons - FIXED: Simplified disabled logic */}
+                    {/* Action Buttons */}
                     <div className="flex gap-3 pt-4">
                       <button
                         type="button"
@@ -679,13 +678,3 @@ export default function SignInForm() {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
-

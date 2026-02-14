@@ -173,8 +173,8 @@ const KYCSubmit = () => {
         return;
       }
 
-      // ✅✅✅ CRITICAL FIX: Correct API endpoint - After fixing backend urls.py
-      const response = await fetch('`${import.meta.env.VITE_API_URL}`/api/kyc/documents/', {
+      // ✅✅✅ FIXED: Correct template literal syntax
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/documents/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authToken}`  // ✅ Add auth header
@@ -355,7 +355,7 @@ const KYCSubmit = () => {
             
             <Grid container spacing={3}>
               {/* ID Front */}
-              <Grid size={{ xs: 12, md: 6 }}>
+              <Grid item xs={12} md={6}>
                 <Card variant="outlined">
                   <CardContent>
                     <Box display="flex" alignItems="center" mb={2}>
@@ -419,7 +419,7 @@ const KYCSubmit = () => {
               
               {/* ID Back (not required for passport) */}
               {documentType !== 'passport' && (
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid item xs={12} md={6}>
                   <Card variant="outlined">
                     <CardContent>
                       <Box display="flex" alignItems="center" mb={2}>
@@ -483,7 +483,7 @@ const KYCSubmit = () => {
               )}
               
               {/* Selfie */}
-              <Grid size={{ xs: 12 }}>
+              <Grid item xs={12}>
                 <Card variant="outlined">
                   <CardContent>
                     <Box display="flex" alignItems="center" mb={2}>
@@ -571,7 +571,7 @@ const KYCSubmit = () => {
             
             <Grid container spacing={3}>
               {/* User Information (Read-only) */}
-              <Grid size={{ xs: 12, md: 6 }}>
+              <Grid item xs={12} md={6}>
                 <Card variant="outlined">
                   <CardContent>
                     <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
@@ -609,7 +609,7 @@ const KYCSubmit = () => {
               </Grid>
               
               {/* Document Summary */}
-              <Grid size={{ xs: 12, md: 6 }}>
+              <Grid item xs={12} md={6}>
                 <Card variant="outlined">
                   <CardContent>
                     <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
