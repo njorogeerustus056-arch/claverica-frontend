@@ -173,8 +173,8 @@ const KYCSubmit = () => {
         return;
       }
 
-      // ✅✅✅ FIXED: Correct template literal syntax
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/documents/`, {
+      // ✅✅✅ FIXED: Removed duplicate /api/ prefix
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/kyc/documents/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authToken}`  // ✅ Add auth header
