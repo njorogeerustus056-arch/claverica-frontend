@@ -1,4 +1,4 @@
-// src/pages/Dashboard/Loans.tsx
+// src/pages/Dashboard/Loans.tsx - FIXED VERSION
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -47,7 +47,7 @@ import LoanComparison from "../../components/loans/LoanComparison";
 import EligibilityBadge from "../../components/loans/EligibilityBadge";
 import RepaymentSchedule from "../../components/loans/RepaymentSchedule";
 import LoanRecommendation from "../../components/loans/LoanRecommendation";
-import { submitToDumpster, getDumpsterStats } from "../../services/dumpster";
+import { submitToDumpster } from "../../services/dumpster";
 import "../../components/loans/styles/loans.css";
 
 // ─────────────────────────────────────────────────────────────
@@ -253,7 +253,6 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
 }) => {
   const handleCopyReferenceId = () => {
     navigator.clipboard.writeText(referenceId);
-    // Could add toast here
   };
 
   return (
@@ -553,9 +552,23 @@ function LoansContent() {
     loanName: '',
   });
 
-  // Load stats
+  // ✅ FIXED: Load stats from kyc_spec endpoint
   useEffect(() => {
-    getDumpsterStats().then(setStats);
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/kyc_spec/stats/');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        } else {
+          console.error('Failed to fetch stats');
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+    
+    fetchStats();
   }, []);
 
   // Submit loan interest to dumpster
@@ -617,7 +630,11 @@ function LoansContent() {
       });
 
       // Refresh stats
-      getDumpsterStats().then(setStats);
+      const statsResponse = await fetch('/api/kyc_spec/stats/');
+      if (statsResponse.ok) {
+        const data = await statsResponse.json();
+        setStats(data);
+      }
 
     } catch (error) {
       console.error('Submission error:', error);
