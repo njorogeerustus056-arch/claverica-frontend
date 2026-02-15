@@ -1,10 +1,10 @@
-// src/App.tsx - CORRECTED (Fixed Crypto route issue)
+// src/App.tsx - UPDATED (Removed AuthProvider, using Zustand only)
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
-// Import Providers
-import { AuthProvider } from "./context/AuthContext";
+// Import Providers - REMOVED AuthProvider
 import { NotificationProvider } from "./context/NotificationContext";
+import AuthInitializer from "./components/AuthInitializer";
 
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
@@ -24,7 +24,7 @@ import TransfersHistory from "./pages/Dashboard/TransfersHistory";
 
 // ⭐ IMPORTANT: Direct imports for debugging problematic components
 import Escrow from "./pages/Dashboard/Escrow"; 
-import Crypto from "./pages/Dashboard/Crypto"; // ⭐ DIRECT IMPORT FOR NOW
+import Crypto from "./pages/Dashboard/Crypto";
 
 // Public Pages (lazy loaded)
 const Home = lazy(() => import("./pages/Public/Home"));
@@ -37,7 +37,6 @@ const Contact = lazy(() => import("./pages/Public/Contact"));
 const DashboardIndex = lazy(() => import("./pages/Dashboard"));
 const DashboardHome = lazy(() => import("./pages/Dashboard/Home"));
 const Transfer = lazy(() => import("./pages/Dashboard/Transfer"));
-// ⭐ REMOVED: const Crypto = lazy(() => import("./pages/Dashboard/Crypto")); // Using direct import above
 const Compliance = lazy(() => import("./pages/Dashboard/Compliance"));
 const KYCSubmit = lazy(() => import("./pages/Dashboard/KYCSubmit"));
 const AccountSettings = lazy(() => import("./pages/Dashboard/AccountSettings"));
@@ -60,7 +59,7 @@ const CardTransactions = lazy(() => import("./pages/Dashboard/CardTransactions")
 const Profile = lazy(() => import("./pages/Dashboard/Profile"));
 const Settings = lazy(() => import("./pages/Dashboard/Settings"));
 
-// ⭐ ADD: Create a simple Loading component
+// Loading component
 function LoadingSpinner() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
@@ -75,7 +74,8 @@ function LoadingSpinner() {
 export default function App() {
   return (
     <Router>
-      <AuthProvider>
+      {/* REMOVED AuthProvider - using Zustand store instead */}
+      <AuthInitializer>
         <NotificationProvider pollInterval={30000}>
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
@@ -167,35 +167,21 @@ export default function App() {
                 <Route path="transfer/status/:id" element={<TransferStatus />} />
                 <Route path="transfer/history" element={<TransfersHistory />} />
                 
-                {/* ⭐ FIXED: Crypto Route - Using directly imported component */}
                 <Route path="crypto" element={<Crypto />} />
-                
                 <Route path="savings" element={<Savings />} />
                 <Route path="loans" element={<Loans />} />
                 <Route path="insurance" element={<Insurance />} />
-                
-                {/* FIXED: Escrow Route - Using directly imported component */}
                 <Route path="escrow" element={<Escrow />} />
-                
                 <Route path="compliance" element={<Compliance />} />
-                
-                {/* KYC Routes */}
                 <Route path="kyc" element={<KYC />} />
                 <Route path="kyc/submit" element={<KYCSubmit />} />
-                
                 <Route path="account-settings" element={<AccountSettings />} />
                 <Route path="notifications" element={<Notifications />} />
-                
-                {/* Support Routes */}
                 <Route path="support" element={<ContactSupport />} />
                 <Route path="contact" element={<ContactSupport />} />
                 <Route path="help" element={<ContactSupport />} />
-                
-                {/* Card Routes */}
                 <Route path="cards" element={<Cards />} />
                 <Route path="cards/transactions" element={<CardTransactions />} />
-                
-                {/* Profile & Settings */}
                 <Route path="profile" element={<Profile />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
@@ -205,7 +191,7 @@ export default function App() {
             </Routes>
           </Suspense>
         </NotificationProvider>
-      </AuthProvider>
+      </AuthInitializer>
     </Router>
   );
 }
