@@ -1,7 +1,7 @@
 // src/context/NotificationContext.tsx
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '../lib/store/auth';
-import { notificationAPI, Notification } from '../services/api';
+import api, { Notification } from '../services/api';
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -40,7 +40,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const { isAuthenticated, tokens } = useAuthStore();
 
   const fetchNotifications = useCallback(async () => {
-    // ✅ FIX: Only fetch if authenticated AND token exists
+    // Only fetch if authenticated AND token exists
     if (!isAuthenticated || !tokens?.access) {
       return;
     }
@@ -49,11 +49,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     setError(null);
     
     try {
-      const data = await notificationAPI.getAll();
+      // ✅ FIXED: Use api.notifications instead of notificationAPI
+      const data = await api.notifications.getAll();
       setNotifications(data);
       
       // Also fetch unread count
-      const countData = await notificationAPI.getUnreadCount();
+      const countData = await api.notifications.getUnreadCount();
       setUnreadCount(countData.unread_count);
     } catch (err: any) {
       // Don't show error for 401 - just ignore
@@ -66,7 +67,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     }
   }, [isAuthenticated, tokens?.access]);
 
-  // ✅ FIX: Add delay to ensure token is loaded
+  // Add delay to ensure token is loaded
   useEffect(() => {
     if (isAuthenticated && tokens?.access) {
       // Add small delay to ensure everything is initialized
@@ -91,7 +92,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   const markAsRead = async (id: number) => {
     try {
-      await notificationAPI.markAsRead(id);
+      // ✅ FIXED: Use api.notifications instead of notificationAPI
+      await api.notifications.markAsRead(id);
       // Update local state
       setNotifications(prev =>
         prev.map(n =>
@@ -106,7 +108,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   const markAllAsRead = async () => {
     try {
-      await notificationAPI.markAllAsRead();
+      // ✅ FIXED: Use api.notifications instead of notificationAPI
+      await api.notifications.markAllAsRead();
       // Update local state
       setNotifications(prev =>
         prev.map(n => ({ ...n, status: 'READ', is_read: true }))

@@ -1,7 +1,7 @@
 // src/pages/Dashboard/Notifications.tsx
 import React, { useState, useEffect } from 'react';
 import { Bell, Mail, Smartphone, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import { useNotification } from '../../context/NotificationContext';
+import { useNotifications } from '../../context/NotificationContext';
 
 interface NotificationPreference {
   id: number;
