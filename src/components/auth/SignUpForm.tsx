@@ -22,27 +22,27 @@ const documentTypes = [
 // Currency options - Wise/Revolut style
 const currencies = [
   { value: "USD", label: "USD ($)", symbol: "$" },
-  { value: "EUR", label: "EUR (€)", symbol: "€" },
-  { value: "GBP", label: "GBP (£)", symbol: "£" },
+  { value: "EUR", label: "EUR (â‚¬)", symbol: "â‚¬" },
+  { value: "GBP", label: "GBP (Â£)", symbol: "Â£" },
   { value: "KES", label: "KES (KSh)", symbol: "KSh" },
   { value: "ZAR", label: "ZAR (R)", symbol: "R" },
-  { value: "NGN", label: "NGN (?)", symbol: "?" },
-  { value: "GHS", label: "GHS (GH?)", symbol: "GH?" },
+  { value: "NGN", label: "NGN (â‚¦)", symbol: "â‚¦" },
+  { value: "GHS", label: "GHS (GHâ‚µ)", symbol: "GHâ‚µ" },
   { value: "UGX", label: "UGX (USh)", symbol: "USh" },
   { value: "TZS", label: "TZS (TSh)", symbol: "TSh" },
-  { value: "INR", label: "INR (?)", symbol: "?" },
-  { value: "CNY", label: "CNY (¥)", symbol: "¥" },
+  { value: "INR", label: "INR (â‚¹)", symbol: "â‚¹" },
+  { value: "CNY", label: "CNY (Â¥)", symbol: "Â¥" },
 ];
 
 // Income ranges - Binance style with clear formatting
 const incomeRanges = [
   { value: "", label: "Select annual income range" },
-  { value: "<30000", label: "Below $30,000 / €27,000 / £22,500" },
-  { value: "30000-50000", label: "$30,000 - $50,000 / €27,000 - €45,000" },
-  { value: "50000-75000", label: "$50,000 - $75,000 / €45,000 - €68,000" },
-  { value: "75000-100000", label: "$75,000 - $100,000 / €68,000 - €90,000" },
-  { value: "100000-150000", label: "$100,000 - $150,000 / €90,000 - €135,000" },
-  { value: "150000+", label: "Above $150,000 / €135,000" },
+  { value: "<30000", label: "Below $30,000 / â‚¬27,000 / Â£22,500" },
+  { value: "30000-50000", label: "$30,000 - $50,000 / â‚¬27,000 - â‚¬45,000" },
+  { value: "50000-75000", label: "$50,000 - $75,000 / â‚¬45,000 - â‚¬68,000" },
+  { value: "75000-100000", label: "$75,000 - $100,000 / â‚¬68,000 - â‚¬90,000" },
+  { value: "100000-150000", label: "$100,000 - $150,000 / â‚¬90,000 - â‚¬135,000" },
+  { value: "150000+", label: "Above $150,000 / â‚¬135,000" },
 ];
 
 // Gender options - Modern inclusive
@@ -261,7 +261,7 @@ export default function SignUpForm() {
               setSubmitting(true);
 
               try {
-                console.log("?? [DEBUG] Submitting form data:", values);
+                console.log("ðŸ“ [DEBUG] Submitting form data:", values);
                 
                 const payload = {
                   email: values.email.trim().toLowerCase(),
@@ -287,11 +287,12 @@ export default function SignUpForm() {
                   income_range: showEmployment ? values.income_range : "",
                 };
 
-                const response = await api.post("/accounts/register/", payload, {
-  headers: {
-    "Content-Type": "application/json"
-  }
-});
+                // âœ… FIXED: Added /api/ prefix to endpoint
+                const response = await api.post("/api/accounts/register/", payload, {
+                  headers: {
+                    "Content-Type": "application/json"
+                  }
+                });
 
                 localStorage.setItem("pendingVerificationEmail", values.email);
 
@@ -299,7 +300,7 @@ export default function SignUpForm() {
                   state: { email: values.email }
                 });
               } catch (err: any) {
-                console.error("? [DEBUG] Registration error:", err);
+                console.error("âŒ [DEBUG] Registration error:", err);
                 
                 let errorMessage = "Registration failed. Please check your details and try again.";
                 
@@ -427,7 +428,7 @@ export default function SignUpForm() {
                           </Label>
                           <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
-                              ??
+                              ðŸ“ž
                             </span>
                             <Input
                               name="phone"
@@ -813,7 +814,7 @@ export default function SignUpForm() {
                             {touched.postal_code && errors.postal_code && (
                               <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
                                 {errors.postal_code}
-                            </p>
+                              </p>
                             )}
                           </div>
                         </div>
@@ -994,5 +995,3 @@ export default function SignUpForm() {
     </div>
   );
 }
-
-
