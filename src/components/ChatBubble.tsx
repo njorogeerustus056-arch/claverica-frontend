@@ -62,34 +62,159 @@ export default function ChatBubble() {
     };
   }, [propertyId, widgetId, isEnabled]);
 
-  // Hide default widget with CSS
+  // 🚀 AGGRESSIVE TAWK.TO HIDER - This will kill the green button
   useEffect(() => {
+    // Create style element with ultra-aggressive CSS
     const style = document.createElement('style');
-    style.id = 'tawk-hide-style';
+    style.id = 'tawk-to-annihilator';
     style.textContent = `
+      /* ===== COMPLETELY DESTROY ALL TAWK.TO ELEMENTS ===== */
+      
+      /* Target everything tawk.to related */
       iframe[src*="tawk.to"],
+      iframe[id*="tawk"],
+      iframe[class*="tawk"],
       .tawk-min-container,
       .tawk-max-container,
-      .tawk-widget-container {
+      .tawk-widget-container,
+      .tawk-bubble-container,
+      .tawk-button,
+      .tawk-branding,
+      .tawk-visitor,
+      .tawk-chat,
+      .tawk-widget,
+      .tawk-close,
+      .tawk-header,
+      .tawk-body,
+      .tawk-footer,
+      .tawk-branding-container,
+      .tawk-bubble,
+      .tawk-chat-bubble,
+      .tawk-widget-icon,
+      .tawk-minimized,
+      .tawk-maximized,
+      div[id*="tawk"],
+      div[class*="tawk"],
+      a[href*="tawk.to"],
+      img[src*="tawk.to"] {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
         pointer-events: none !important;
+        width: 0px !important;
+        height: 0px !important;
+        max-width: 0px !important;
+        max-height: 0px !important;
+        min-width: 0px !important;
+        min-height: 0px !important;
+        position: fixed !important;
+        top: -999999px !important;
+        left: -999999px !important;
+        right: auto !important;
+        bottom: auto !important;
+        z-index: -999999 !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 none !important;
+        background: transparent !important;
+        transform: scale(0) !important;
+        -webkit-transform: scale(0) !important;
+        -moz-transform: scale(0) !important;
+        -ms-transform: scale(0) !important;
+        -o-transform: scale(0) !important;
+      }
+
+      /* Periodically check and remove any new tawk elements */
+      @keyframes tawk-hide {
+        0% { opacity: 1; }
+        100% { opacity: 1; }
+      }
+
+      /* Hide any element that might have tawk in its class or id */
+      [class*="tawk"]:not(#custom-chat-btn):not([class*="custom"]),
+      [id*="tawk"]:not(#custom-chat-btn):not([id*="custom"]) {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
         width: 0 !important;
         height: 0 !important;
+        pointer-events: none !important;
+      }
+
+      /* Make sure your blue button is invincible */
+      .fixed.bottom-6.right-6,
+      button[class*="ChatBubble"],
+      button[aria-label*="chat"],
+      button[aria-label*="Chat"],
+      #custom-chat-btn {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: auto !important;
+        height: auto !important;
         position: fixed !important;
-        top: -9999px !important;
-        left: -9999px !important;
+        bottom: 1.5rem !important;
+        right: 1.5rem !important;
+        z-index: 999999999 !important;
       }
     `;
     
-    if (!document.getElementById('tawk-hide-style')) {
-      document.head.appendChild(style);
-    }
+    // Remove any existing style first
+    const existingStyle = document.getElementById('tawk-to-annihilator');
+    if (existingStyle) existingStyle.remove();
+    
+    // Add our new style
+    document.head.appendChild(style);
+
+    // 🚨 KILL SWITCH: Also periodically check and remove any tawk elements
+    const killInterval = setInterval(() => {
+      // Find any tawk.to iframes or elements that might have appeared
+      const tawkElements = document.querySelectorAll(
+        'iframe[src*="tawk.to"], [class*="tawk"], [id*="tawk"]'
+      );
+      
+      tawkElements.forEach(el => {
+        // Skip if it's our custom button
+        if (el.id === 'custom-chat-btn' || el.classList.contains('custom-chat-btn')) {
+          return;
+        }
+        
+        // Hide it by force
+        if (el instanceof HTMLElement) {
+          el.style.setProperty('display', 'none', 'important');
+          el.style.setProperty('visibility', 'hidden', 'important');
+          el.style.setProperty('opacity', '0', 'important');
+          el.style.setProperty('width', '0px', 'important');
+          el.style.setProperty('height', '0px', 'important');
+          el.style.setProperty('pointer-events', 'none', 'important');
+          el.style.setProperty('z-index', '-999999', 'important');
+          el.style.setProperty('position', 'fixed', 'important');
+          el.style.setProperty('top', '-999999px', 'important');
+          el.style.setProperty('left', '-999999px', 'important');
+        }
+      });
+      
+      // Double-check our blue button is visible
+      const blueBtn = document.querySelector('.fixed.bottom-6.right-6');
+      if (blueBtn instanceof HTMLElement) {
+        blueBtn.style.setProperty('display', 'flex', 'important');
+        blueBtn.style.setProperty('visibility', 'visible', 'important');
+        blueBtn.style.setProperty('opacity', '1', 'important');
+        blueBtn.style.setProperty('z-index', '999999999', 'important');
+        blueBtn.style.setProperty('position', 'fixed', 'important');
+        blueBtn.style.setProperty('bottom', '1.5rem', 'important');
+        blueBtn.style.setProperty('right', '1.5rem', 'important');
+      }
+    }, 500); // Check every 500ms
 
     return () => {
-      const styleEl = document.getElementById('tawk-hide-style');
+      // Cleanup
+      const styleEl = document.getElementById('tawk-to-annihilator');
       if (styleEl) styleEl.remove();
+      clearInterval(killInterval);
     };
   }, []);
 
@@ -123,7 +248,7 @@ export default function ChatBubble() {
   const buttonHoverColor = agentStatus === 'online' ? 'hover:bg-blue-700' : 'hover:bg-gray-600';
 
   return (
-    <div className="fixed bottom-6 right-6 z-[999999] group">
+    <div className="fixed bottom-6 right-6 z-[999999999] group">
       <button 
         onClick={handleOpenChat}
         onMouseEnter={() => setIsHovered(true)}

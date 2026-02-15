@@ -114,11 +114,11 @@ const Cards: React.FC = () => {
     try {
       setLoading(true);
       console.log('Fetching cards...');
-      // CORRECTED URL: /api/cards/user-cards/
-      const response = await api.get('/api/cards/user-cards/');
+      // ✅ FIXED: Removed duplicate /api/ prefix
+      const response = await api.get('/cards/user-cards/');
       console.log('Cards API response:', response.data);
       
-      // ✅ FIXED: Handle both array and object responses
+      // Handle both array and object responses
       let cardsArray = [];
       if (Array.isArray(response.data)) {
         cardsArray = response.data;
@@ -182,8 +182,8 @@ const Cards: React.FC = () => {
       };
       
       console.log('Creating card with payload:', payload);
-      // CORRECTED URL: /api/cards/
-      const response = await api.post('/api/cards/', payload);
+      // ✅ FIXED: Removed duplicate /api/ prefix
+      const response = await api.post('/cards/', payload);
       console.log('Card creation response:', response.data);
       
       const newCardData: CardData = {
@@ -231,8 +231,8 @@ const Cards: React.FC = () => {
 
   const handleFreezeCard = async (cardId: number) => {
     try {
-      // CORRECTED URL: /api/cards/{id}/freeze/
-      await api.post(`/api/cards/${cardId}/freeze/`);
+      // ✅ FIXED: Removed duplicate /api/ prefix
+      await api.post(`/cards/${cardId}/freeze/`);
       setCards(cards.map(card => 
         card.id === cardId ? { ...card, isActive: false } : card
       ));
@@ -253,8 +253,8 @@ const Cards: React.FC = () => {
 
   const handleUnfreezeCard = async (cardId: number) => {
     try {
-      // CORRECTED URL: /api/cards/{id}/unfreeze/
-      await api.post(`/api/cards/${cardId}/unfreeze/`);
+      // ✅ FIXED: Removed duplicate /api/ prefix
+      await api.post(`/cards/${cardId}/unfreeze/`);
       setCards(cards.map(card => 
         card.id === cardId ? { ...card, isActive: true } : card
       ));

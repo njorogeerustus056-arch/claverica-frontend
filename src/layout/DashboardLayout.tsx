@@ -1,3 +1,4 @@
+// src/components/DashboardLayout.tsx
 "use client";
 
 import { useState } from "react";
@@ -6,6 +7,7 @@ import LiveTicker from "./LiveTicker";
 import DashboardHeader from "./DashboardHeader";
 import DashboardSidebar from "./DashboardSidebar";
 import ChatBubble from "../components/ChatBubble";
+// ✅ REMOVED: import TawkToWrapper from "../components/TawkToWrapper";
 import { useTheme } from "../context/ThemeContext";
 import ProtectedRoute from "../components/ProtectedRoute";
 
@@ -45,8 +47,9 @@ function DashboardLayoutContent() {
           </div>
         </div>
 
-        {/* Chat Bubble */}
+        {/* Only ChatBubble remains - TawkToWrapper removed */}
         <ChatBubble />
+        {/* ✅ REMOVED: <TawkToWrapper /> */}
       </div>
     </div>
   );
