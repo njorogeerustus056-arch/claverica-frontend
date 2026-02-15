@@ -20,61 +20,63 @@ html, body, #root, [data-vite-dev-id] {
 }
 
 /* ============================================= */
-/* TAILWIND THEME (Your excellent theme config) */
+/* TAILWIND THEME                                */
 /* ============================================= */
 @theme {
-  /* Your theme configuration from earlier */
   --font-outfit: 'Outfit', sans-serif;
   --color-white: #ffffff;
   --color-black: #101828;
   --color-brand-500: #465fff;
-  /* ... rest of your theme ... */
 }
 
 /* ============================================= */
-/* 💀 CONSOLE-TESTED TAWK.TO KILLER              */
+/* ☢️ ULTIMATE TAWK.TO DESTROYER - NO MERCY     */
 /* ============================================= */
 
-/* Exact CSS that worked in the console */
-iframe[src*="tawk"], 
-[class*="tawk"], 
-[id*="tawk"],
-.tawk-min-container, 
-.tawk-max-container,
-iframe[src*="tawk.to"] {
+/* Target every possible tawk.to element with maximum specificity */
+html body iframe[src*="tawk"],
+html body iframe[src*="tawk.to"],
+html body [class*="tawk"],
+html body [id*="tawk"],
+html body div[class*="tawk"],
+html body div[id*="tawk"],
+html body .tawk-min-container,
+html body .tawk-max-container,
+html body .tawk-widget-container,
+html body .tawk-bubble-container,
+html body .tawk-button,
+html body .tawk-branding,
+html body .tawk-visitor,
+html body .tawk-chat,
+html body .tawk-widget {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
+    position: fixed !important;
+    top: -9999999px !important;
+    left: -9999999px !important;
+    z-index: -9999999 !important;
     width: 0px !important;
     height: 0px !important;
-    position: fixed !important;
-    top: -99999px !important;
-    left: -99999px !important;
-    z-index: -99999 !important;
     pointer-events: none !important;
 }
 
-/* ============================================= */
-/* 💙 PROTECT YOUR CUSTOM BLUE BUTTON            */
-/* ============================================= */
-
-.fixed.bottom-6.right-6,
-button[aria-label="Open live chat support"],
-button[class*="ChatBubble"] {
+/* Protect your blue button */
+html body .fixed.bottom-6.right-6,
+html body button[aria-label="Open live chat support"],
+html body button[class*="ChatBubble"] {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-    pointer-events: auto !important;
-    width: auto !important;
-    height: auto !important;
     position: fixed !important;
     bottom: 1.5rem !important;
     right: 1.5rem !important;
     z-index: 9999999999 !important;
+    pointer-events: auto !important;
 }
 
 /* ============================================= */
-/* 🎨 YOUR CUSTOM BLUE BUTTON STYLES            */
+/* YOUR CUSTOM BLUE BUTTON STYLES                */
 /* ============================================= */
 
 button[class*="ChatBubble"] {
@@ -88,12 +90,12 @@ button[class*="ChatBubble"]:hover {
 }
 
 /* ============================================= */
-/* 📱 MOBILE SPECIFIC FIXES                      */
+/* MOBILE SPECIFIC FIXES                         */
 /* ============================================= */
 
 @media (max-width: 768px) {
-    .fixed.bottom-6.right-6,
-    button[class*="ChatBubble"] {
+    html body .fixed.bottom-6.right-6,
+    html body button[class*="ChatBubble"] {
         bottom: 1rem !important;
         right: 1rem !important;
         z-index: 9999999999 !important;

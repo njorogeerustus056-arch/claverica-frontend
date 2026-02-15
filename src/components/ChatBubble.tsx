@@ -62,71 +62,106 @@ export default function ChatBubble() {
     };
   }, [propertyId, widgetId, isEnabled]);
 
-  // 💣 CONSOLE-TESTED KILLER - This uses the exact code that worked
+  // 💣 NUCLEAR OPTION - Force remove Tawk.to elements
   useEffect(() => {
-    // Create style element with the exact CSS that worked in console
+    // Create a really aggressive style tag
     const style = document.createElement('style');
-    style.id = 'tawk-killer-style';
+    style.id = 'tawk-nuclear-option';
     style.textContent = `
-      iframe[src*="tawk"], 
-      [class*="tawk"], 
-      [id*="tawk"],
-      .tawk-min-container, 
-      .tawk-max-container,
-      iframe[src*="tawk.to"] {
+      /* Target everything with maximum specificity */
+      html body iframe[src*="tawk"],
+      html body [class*="tawk"],
+      html body [id*="tawk"],
+      html body .tawk-min-container,
+      html body .tawk-max-container,
+      html body iframe[src*="tawk.to"] {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
+        position: fixed !important;
+        top: -999999px !important;
+        left: -999999px !important;
+        right: auto !important;
+        bottom: auto !important;
+        z-index: -999999 !important;
         width: 0px !important;
         height: 0px !important;
-        position: fixed !important;
-        top: -99999px !important;
-        left: -99999px !important;
-        z-index: -99999 !important;
+        min-width: 0px !important;
+        min-height: 0px !important;
+        max-width: 0px !important;
+        max-height: 0px !important;
         pointer-events: none !important;
+        overflow: hidden !important;
+        clip: rect(0,0,0,0) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
       }
       
-      /* Make sure your blue button is visible */
-      .fixed.bottom-6.right-6,
-      button[aria-label="Open live chat support"] {
+      /* Make sure our blue button is visible */
+      .fixed.bottom-6.right-6 {
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
-        z-index: 999999999 !important;
+        position: fixed !important;
+        bottom: 1.5rem !important;
+        right: 1.5rem !important;
+        z-index: 9999999999 !important;
       }
     `;
     document.head.appendChild(style);
-    
-    // Run the killer function every 100ms (what worked in console)
-    const killInterval = setInterval(() => {
-      // Find all tawk elements - exactly like console command
-      const tawkElements = document.querySelectorAll(
-        'iframe[src*="tawk"], [class*="tawk"], [id*="tawk"], .tawk-min-container, .tawk-max-container'
-      );
+
+    // Function to completely remove tawk elements
+    const removeTawkElements = () => {
+      // Find all tawk elements
+      const selectors = [
+        'iframe[src*="tawk"]',
+        '[class*="tawk"]',
+        '[id*="tawk"]',
+        '.tawk-min-container',
+        '.tawk-max-container',
+        '.tawk-widget'
+      ];
       
-      tawkElements.forEach(el => {
-        if (el instanceof HTMLElement) {
-          // Apply the same styles that worked in console
-          el.style.setProperty('display', 'none', 'important');
-          el.style.setProperty('visibility', 'hidden', 'important');
-          el.style.setProperty('opacity', '0', 'important');
-          el.style.setProperty('width', '0px', 'important');
-          el.style.setProperty('height', '0px', 'important');
-          el.style.setProperty('position', 'fixed', 'important');
-          el.style.setProperty('top', '-99999px', 'important');
-          el.style.setProperty('left', '-99999px', 'important');
-          el.style.setProperty('z-index', '-99999', 'important');
-          el.style.setProperty('pointer-events', 'none', 'important');
-        }
+      selectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+          if (el instanceof HTMLElement) {
+            // Try to remove it completely
+            if (el.remove) {
+              el.remove();
+            } else {
+              // If can't remove, hide it
+              el.style.setProperty('display', 'none', 'important');
+              el.style.setProperty('visibility', 'hidden', 'important');
+            }
+          }
+        });
       });
-    }, 100); // Check every 100ms for new elements
+    };
+
+    // Run immediately
+    removeTawkElements();
     
+    // Also run on DOM changes
+    const observer = new MutationObserver(() => {
+      removeTawkElements();
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    // And run every 100ms as backup
+    const interval = setInterval(removeTawkElements, 100);
+
     return () => {
-      clearInterval(killInterval);
-      const styleEl = document.getElementById('tawk-killer-style');
+      clearInterval(interval);
+      observer.disconnect();
+      const styleEl = document.getElementById('tawk-nuclear-option');
       if (styleEl) styleEl.remove();
     };
-  }, []); // Empty dependency array - run once on mount
+  }, []);
 
   const handleOpenChat = useCallback(() => {
     if (!isEnabled) {
