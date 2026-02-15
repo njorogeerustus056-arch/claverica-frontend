@@ -20,6 +20,7 @@ import {
   Card as MuiCard,
   CardContent,
   Grid,
+  Snackbar,
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -54,6 +55,11 @@ const CardTransactions: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error' | 'info' | 'warning';
+  }>({ open: false, message: '', severity: 'info' });
 
   useEffect(() => {
     fetchTransactions();
@@ -64,8 +70,8 @@ const CardTransactions: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      // CORRECTED URL: /api/transactions/recent/
-      const response = await api.get('/transactions/recent/');
+      // ✅ FIXED: Added /api/ prefix
+      const response = await api.get('/api/transactions/recent/');
       console.log('Transactions API response:', response.data);
       
       setTransactions(response.data.transactions || []);
@@ -162,19 +168,12 @@ const CardTransactions: React.FC = () => {
     a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     
-    // Show success message
     setSnackbar({
       open: true,
       message: 'CSV exported successfully!',
       severity: 'success',
     });
   };
-
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-    severity: 'success' | 'error' | 'info' | 'warning';
-  }>({ open: false, message: '', severity: 'info' });
 
   if (loading) {
     return (

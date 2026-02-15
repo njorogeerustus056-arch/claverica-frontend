@@ -900,6 +900,3 @@ const Cards: React.FC = () => {
 };
 
 export default Cards;
-
-
-
