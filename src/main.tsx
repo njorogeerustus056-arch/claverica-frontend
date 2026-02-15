@@ -34,7 +34,7 @@ function InitializeAuth() {
     
     // Keep only essential logs or remove all
     if (process.env.NODE_ENV === 'development') {
-      console.log("?? App initializing...");
+      console.log("📱 App initializing...");
     }
     
     authStore.syncFromLocalStorage();
@@ -56,7 +56,7 @@ function TawkToWidget() {
   useEffect(() => {
     // Only load in production
     if (process.env.NODE_ENV !== 'production') {
-      console.log('?? tawk.to: Skipped in development');
+      console.log('📱 tawk.to: Skipped in development');
       return;
     }
 
@@ -69,7 +69,8 @@ function TawkToWidget() {
     // Load tawk.to script
     const script = document.createElement('script');
     script.async = true;
-    script.src = 'https://embed.tawk.to/YOUR_WEBSITE_ID_HERE/default'; // ?? REPLACE WITH YOUR ID
+    // ✅ FIXED: Use your actual property ID (not a placeholder)
+    script.src = 'https://embed.tawk.to/6990e9d3e68ce71c379eec8d/default';
     script.charset = 'UTF-8';
     script.setAttribute('crossorigin', '*');
     
@@ -98,7 +99,7 @@ if (!rootElement) {
         <ThemeProvider>
           <AppWrapper>
             <InitializeAuth />
-            <TawkToWidget /> {/* ?? ADDED THIS LINE */}
+            <TawkToWidget /> {/* ✅ FIXED: Tawk.to widget with correct ID */}
             <TransferProvider>
               <Suspense
                 fallback={
