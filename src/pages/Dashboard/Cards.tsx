@@ -118,20 +118,32 @@ const Cards: React.FC = () => {
       const response = await api.get('/api/cards/user-cards/');
       console.log('Cards API response:', response.data);
       
-      const transformedCards = response.data.cards?.map((card: any) => ({
+      // ✅ FIXED: Handle both array and object responses
+      let cardsArray = [];
+      if (Array.isArray(response.data)) {
+        cardsArray = response.data;
+      } else if (response.data && Array.isArray(response.data.cards)) {
+        cardsArray = response.data.cards;
+      } else if (response.data && Array.isArray(response.data.results)) {
+        cardsArray = response.data.results;
+      } else {
+        cardsArray = [];
+      }
+      
+      const transformedCards = cardsArray.map((card: any) => ({
         id: card.id,
-        type: card.type || 'virtual',
-        last4: card.last4 || (card.last_four || '4242').slice(-4),
+        type: card.card_type || card.type || 'virtual',
+        last4: card.last_four || card.last4 || '4242',
         balance: card.balance || 0,
-        expiry: card.expiry || card.expiry_date || '12/25',
-        isActive: card.isActive !== undefined ? card.isActive : (card.status === 'active'),
-        color: card.color || card.color_scheme || 'blue-gradient',
-        brand: card.brand || (card.card_type === 'visa' ? 'Visa' : 'Mastercard'),
-        cardholderName: card.cardholderName || card.display_name || card.cardholder_name,
-        maskedNumber: card.maskedNumber || card.masked_number || `**** **** **** ${card.last_four || '4242'}`,
-        isPrimary: card.isPrimary || card.is_primary || false,
-        accountNumber: card.accountNumber || user?.account_number,
-      })) || [];
+        expiry: card.expiry_date || card.expiry || '12/25',
+        isActive: card.status === 'active' || card.isActive === true,
+        color: card.color_scheme || card.color || 'blue-gradient',
+        brand: card.brand || (card.card_number?.startsWith('4') ? 'Visa' : 'Mastercard'),
+        cardholderName: card.cardholder_name || card.cardholderName || card.display_name,
+        maskedNumber: card.masked_number || card.maskedNumber || `**** **** **** ${card.last_four || '4242'}`,
+        isPrimary: card.is_primary || card.isPrimary || false,
+        accountNumber: card.account_number || user?.account_number,
+      }));
       
       setCards(transformedCards);
       setError(null);

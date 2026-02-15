@@ -51,7 +51,7 @@ const KYC = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      // ✅ FIXED: Correct template literal syntax
+      // ✅ FIXED: Correct endpoint (removed double /api/)
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/simple-status/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
