@@ -1,93 +1,164 @@
 // src/components/ChatBubble.tsx
 import { MessageCircle } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
-import { loadTawkTo, openChat, isChatLoaded } from "../services/tawkTo";
+
+// Tawk.to API types
+declare global {
+  interface Window {
+    Tawk_API?: any;
+    Tawk_LoadStart?: Date;
+  }
+}
 
 export default function ChatBubble() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [agentStatus, setAgentStatus] = useState<'online' | 'offline'>('offline');
 
   // Get environment variables
-  const propertyId = import.meta.env.VITE_TAWK_PROPERTY_ID;
-  const widgetId = import.meta.env.VITE_TAWK_WIDGET_ID;
-  const isEnabled = import.meta.env.VITE_TAWK_ENABLED === 'true';
+  const propertyId = import.meta.env.VITE_TAWK_PROPERTY_ID || '6990e9d3e68ce71c379eec8d';
+  const widgetId = import.meta.env.VITE_TAWK_WIDGET_ID || '1jhhluieo';
+  const isEnabled = import.meta.env.VITE_TAWK_ENABLED !== 'false';
   const appEnv = import.meta.env.VITE_APP_ENV;
 
-  // Load tawk.to when component mounts (only if enabled)
+  // Load tawk.to script once
   useEffect(() => {
-    if (isEnabled && propertyId && widgetId) {
-      console.log(`📱 Loading tawk.to for ${appEnv} environment...`);
-      loadTawkTo(propertyId, widgetId)
-        .then(() => {
-          setIsLoaded(true);
-          console.log('✅ Tawk.to ready');
-        })
-        .catch(error => console.error('Failed to load chat:', error));
-    } else {
-      console.log(`🔧 Tawk.to disabled in ${appEnv} mode`);
+    if (!isEnabled) return;
+
+    // Check if script already exists
+    if (document.querySelector('script[src*="tawk.to"]')) {
+      setIsLoaded(true);
+      return;
     }
-  }, [isEnabled, propertyId, widgetId, appEnv]);
+
+    // Create and load tawk.to script
+    const script = document.createElement('script');
+    script.src = `https://embed.tawk.to/${propertyId}/${widgetId}`;
+    script.async = true;
+    script.charset = 'UTF-8';
+    script.setAttribute('crossorigin', '*');
+    
+    script.onload = () => {
+      console.log('✅ Tawk.to loaded');
+      setIsLoaded(true);
+      
+      // Hide default widget
+      if (window.Tawk_API) {
+        window.Tawk_API.hideWidget = function() {};
+        
+        // Listen for agent status
+        window.Tawk_API.onStatusChange = function(status: string) {
+          setAgentStatus(status === 'online' ? 'online' : 'offline');
+        };
+      }
+    };
+
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup if needed
+      const scriptEl = document.querySelector('script[src*="tawk.to"]');
+      if (scriptEl) scriptEl.remove();
+    };
+  }, [propertyId, widgetId, isEnabled]);
+
+  // Hide default widget with CSS
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.id = 'tawk-hide-style';
+    style.textContent = `
+      iframe[src*="tawk.to"],
+      .tawk-min-container,
+      .tawk-max-container,
+      .tawk-widget-container {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        position: fixed !important;
+        top: -9999px !important;
+        left: -9999px !important;
+      }
+    `;
+    
+    if (!document.getElementById('tawk-hide-style')) {
+      document.head.appendChild(style);
+    }
+
+    return () => {
+      const styleEl = document.getElementById('tawk-hide-style');
+      if (styleEl) styleEl.remove();
+    };
+  }, []);
 
   const handleOpenChat = useCallback(() => {
-    if (isEnabled) {
-      if (isLoaded || isChatLoaded()) {
-        openChat();
-      } else {
-        // If not loaded yet, load and then open
-        loadTawkTo(propertyId, widgetId)
-          .then(() => {
-            setIsLoaded(true);
-            setTimeout(openChat, 500);
-          })
-          .catch(console.error);
-      }
-    } else {
-      // Development/disabled fallback
-      console.log('💬 Chat would open in production');
-      
+    if (!isEnabled) {
       if (appEnv === 'development') {
-        alert('🔧 Development Mode\n\nLive chat is disabled in development.\n\nIt will work when deployed to production!');
-      } else {
-        alert('💬 Live chat coming soon!\n\nPlease contact us via email in the meantime.');
+        alert('🔧 Development Mode\n\nLive chat is disabled in development.');
       }
+      return;
     }
-  }, [isEnabled, isLoaded, propertyId, widgetId, appEnv]);
 
-  // Determine badge color based on environment
-  const badgeColor = isEnabled ? 'bg-red-500' : 'bg-yellow-500';
-  const badgeText = isEnabled ? '1' : '⚡';
+    if (window.Tawk_API && typeof window.Tawk_API.toggle === 'function') {
+      window.Tawk_API.toggle(); // Opens the chat
+    } else {
+      // If not loaded yet, wait and try again
+      console.log('⏳ Waiting for Tawk.to to load...');
+      const checkInterval = setInterval(() => {
+        if (window.Tawk_API && typeof window.Tawk_API.toggle === 'function') {
+          window.Tawk_API.toggle();
+          clearInterval(checkInterval);
+        }
+      }, 500);
+      
+      // Timeout after 5 seconds
+      setTimeout(() => clearInterval(checkInterval), 5000);
+    }
+  }, [isEnabled, appEnv]);
+
+  // Button color based on agent status
+  const buttonColor = agentStatus === 'online' ? 'bg-blue-600' : 'bg-gray-500';
+  const buttonHoverColor = agentStatus === 'online' ? 'hover:bg-blue-700' : 'hover:bg-gray-600';
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 group">
+    <div className="fixed bottom-6 right-6 z-[999999] group">
       <button 
         onClick={handleOpenChat}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative bg-blue-600 hover:bg-blue-700 text-white rounded-full p-5 shadow-2xl transition-all duration-300 hover:scale-110 active:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50"
+        className={`
+          relative ${buttonColor} ${buttonHoverColor}
+          text-white rounded-full p-5 shadow-2xl 
+          transition-all duration-300 hover:scale-110 active:scale-105 
+          focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50
+        `}
         aria-label="Open live chat support"
       >
         <MessageCircle size={32} className="drop-shadow-lg" />
         
-        {/* Notification badge - shows different color in dev/prod */}
+        {/* Status indicator */}
         <span className={`
           absolute -top-2 -right-2 
-          ${badgeColor} text-white text-xs font-bold 
+          ${agentStatus === 'online' ? 'bg-green-500' : 'bg-yellow-500'}
+          text-white text-xs font-bold 
           rounded-full w-7 h-7 flex items-center justify-center 
-          animate-pulse ring-4 ${badgeColor} ring-opacity-50
+          animate-pulse ring-4 ${agentStatus === 'online' ? 'ring-green-200' : 'ring-yellow-200'}
         `}>
-          {badgeText}
+          {agentStatus === 'online' ? '1' : '⚡'}
         </span>
 
-        {/* Dynamic tooltip based on environment */}
+        {/* Tooltip */}
         <span className={`
-          absolute -left-28 top-1/2 -translate-y-1/2 
+          absolute -left-32 top-1/2 -translate-y-1/2 
           bg-gray-900 text-white px-4 py-2 rounded-lg 
           text-sm font-medium whitespace-nowrap 
           shadow-lg transition-all duration-200
           ${isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-2'}
           pointer-events-none
         `}>
-          {isEnabled ? 'Live Support 💬' : 'Coming Soon 🔧'}
+          {agentStatus === 'online' ? 'Live Support 💬' : 'Leave a message ✉️'}
           <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-gray-900 rotate-45"></div>
         </span>
       </button>
