@@ -1,4 +1,4 @@
-// src/pages/Dashboard/Profile.tsx - UPDATED VERSION
+// src/pages/Dashboard/Profile.tsx - FIXED VERSION
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth";
@@ -82,8 +82,8 @@ export default function Profile() {
       setLoading(true);
       setError(null);
 
-      // 1. Get COMPLETE user profile from /api/users/profile/
-      const userResponse = await apiClient.get('/api/users/profile/');
+      // ✅ FIXED: Removed duplicate /api/ from endpoint
+      const userResponse = await apiClient.get('/users/profile/');
       const userData = userResponse.data;
       
       // 2. Get wallet balance from /api/transactions/wallet/balance/
