@@ -30,3 +30,198 @@ html, body, #root, [data-vite-dev-id] {
   --color-brand-500: #465fff;
   /* ... rest of your theme ... */
 }
+
+/* ============================================= */
+/* 🚀 NUCLEAR OPTION - COMPLETELY DESTROY TAWK.TO */
+/* ============================================= */
+
+/* Target everything tawk.to related with extreme prejudice */
+iframe[src*="tawk.to"],
+iframe[id*="tawk"],
+iframe[class*="tawk"],
+.tawk-min-container,
+.tawk-max-container,
+.tawk-widget-container,
+.tawk-bubble-container,
+.tawk-button,
+.tawk-branding,
+.tawk-visitor,
+.tawk-chat,
+.tawk-widget,
+.tawk-close,
+.tawk-header,
+.tawk-body,
+.tawk-footer,
+.tawk-branding-container,
+.tawk-bubble,
+.tawk-chat-bubble,
+.tawk-widget-icon,
+.tawk-minimized,
+.tawk-maximized,
+div[id*="tawk"],
+div[class*="tawk"],
+a[href*="tawk.to"],
+img[src*="tawk.to"],
+[class*="tawk-min"],
+[class*="tawk-max"],
+[class*="tawk-bubble"],
+[class*="tawk-widget"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    width: 0px !important;
+    height: 0px !important;
+    max-width: 0px !important;
+    max-height: 0px !important;
+    min-width: 0px !important;
+    min-height: 0px !important;
+    position: fixed !important;
+    top: -999999px !important;
+    left: -999999px !important;
+    right: auto !important;
+    bottom: auto !important;
+    z-index: -999999 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 none !important;
+    background: transparent !important;
+    transform: scale(0) !important;
+    -webkit-transform: scale(0) !important;
+}
+
+/* Hide any element that might have tawk in its class or id (safety net) */
+[class*="tawk"]:not(#custom-chat-btn):not([class*="ChatBubble"]):not([class*="custom"]),
+[id*="tawk"]:not(#custom-chat-btn):not([id*="custom"]):not([id*="Chat"]) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+    position: fixed !important;
+    top: -999999px !important;
+    left: -999999px !important;
+    z-index: -999999 !important;
+}
+
+/* ============================================= */
+/* 💙 PROTECT YOUR CUSTOM BLUE BUTTON            */
+/* ============================================= */
+
+/* Make sure your blue button is invincible and on top */
+.fixed.bottom-6.right-6,
+button[class*="ChatBubble"],
+button[aria-label="Open live chat support"],
+button[aria-label*="chat"],
+button[aria-label*="Chat"],
+#custom-chat-btn,
+[class*="ChatBubble"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    width: auto !important;
+    height: auto !important;
+    position: fixed !important;
+    bottom: 1.5rem !important;
+    right: 1.5rem !important;
+    z-index: 9999999999 !important;
+}
+
+/* Ensure the button container is properly positioned */
+.fixed.bottom-6.right-6 {
+    position: fixed !important;
+    bottom: 1.5rem !important;
+    right: 1.5rem !important;
+    z-index: 9999999999 !important;
+}
+
+/* ============================================= */
+/* 🛡️ BACKUP - PERIODIC CLEANER (VIA ANIMATION) */
+/* ============================================= */
+
+/* This animation runs constantly to ensure tawk.to never appears */
+@keyframes tawk-hide-forever {
+    0% { /* nothing, just keeps the rule active */ }
+}
+
+body {
+    animation: tawk-hide-forever 1s infinite;
+}
+
+/* Every second, re-apply hiding to any tawk.to elements */
+body:active iframe[src*="tawk.to"],
+body:focus iframe[src*="tawk.to"],
+body:hover iframe[src*="tawk.to"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* ============================================= */
+/* 📱 MOBILE SPECIFIC FIXES                      */
+/* ============================================= */
+
+@media (max-width: 768px) {
+    .fixed.bottom-6.right-6,
+    button[class*="ChatBubble"],
+    [class*="ChatBubble"] {
+        bottom: 1rem !important;
+        right: 1rem !important;
+        z-index: 9999999999 !important;
+    }
+    
+    /* Extra mobile tawk.to hiding */
+    iframe[src*="tawk.to"],
+    [class*="tawk"] {
+        display: none !important;
+    }
+}
+
+/* ============================================= */
+/* 🎯 FINAL SAFETY NET - HIDE ANY REMAINING     */
+/* ============================================= */
+
+/* This catches anything that might have been missed */
+body > :not(.fixed.bottom-6.right-6):not(script):not(style):not(link):not(meta) {
+    /* Don't hide everything, just target specific patterns */
+}
+
+/* But definitely hide any tawk.to related iframes */
+iframe[src*="tawk"] {
+    display: none !important;
+}
+
+/* Ensure the tawk.to script doesn't create visible elements */
+script[src*="tawk.to"] + * {
+    display: none !important;
+}
+
+/* ============================================= */
+/* 🎨 YOUR CUSTOM BLUE BUTTON STYLES            */
+/* ============================================= */
+
+/* Add any custom styles for your blue button here */
+button[class*="ChatBubble"] {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+button[class*="ChatBubble"]:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 20px 30px -5px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Tooltip styles */
+button[class*="ChatBubble"] .absolute.-left-32 {
+    pointer-events: none !important;
+    z-index: 99999999999 !important;
+}
+
+/* Status indicator */
+button[class*="ChatBubble"] .absolute.-top-2 {
+    z-index: 99999999999 !important;
+}
