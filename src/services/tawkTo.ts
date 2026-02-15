@@ -100,6 +100,23 @@ export const toggleChat = (): void => {
 };
 
 /**
+ * Show/hide the chat widget
+ */
+export const showWidget = (): void => {
+  if (typeof window.Tawk_API !== 'undefined') {
+    window.Tawk_API.showWidget();
+    console.log('💬 Widget shown');
+  }
+};
+
+export const hideWidget = (): void => {
+  if (typeof window.Tawk_API !== 'undefined') {
+    window.Tawk_API.hideWidget();
+    console.log('💬 Widget hidden');
+  }
+};
+
+/**
  * Check if chat is loaded
  */
 export const isChatLoaded = (): boolean => {

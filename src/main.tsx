@@ -51,43 +51,6 @@ function InitializeAuth() {
   return null;
 }
 
-// Tawk.to Widget - Only loads in production
-function TawkToWidget() {
-  useEffect(() => {
-    // Only load in production
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('📱 tawk.to: Skipped in development');
-      return;
-    }
-
-    // Hide tawk.to's default bubble
-    window.Tawk_API = window.Tawk_API || {};
-    window.Tawk_API.onLoad = function() {
-      window.Tawk_API.hideWidget();
-    };
-
-    // Load tawk.to script
-    const script = document.createElement('script');
-    script.async = true;
-    // ✅ FIXED: Use your actual property ID (not a placeholder)
-    script.src = 'https://embed.tawk.to/6990e9d3e68ce71c379eec8d/default';
-    script.charset = 'UTF-8';
-    script.setAttribute('crossorigin', '*');
-    
-    const firstScript = document.getElementsByTagName('script')[0];
-    firstScript.parentNode?.insertBefore(script, firstScript);
-
-    return () => {
-      // Cleanup if needed
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, []);
-
-  return null;
-}
-
 if (!rootElement) {
   console.error("Root element with id='root' not found.");
 } else {
@@ -99,7 +62,6 @@ if (!rootElement) {
         <ThemeProvider>
           <AppWrapper>
             <InitializeAuth />
-            <TawkToWidget /> {/* ✅ FIXED: Tawk.to widget with correct ID */}
             <TransferProvider>
               <Suspense
                 fallback={
