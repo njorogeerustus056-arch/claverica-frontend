@@ -39,7 +39,6 @@ export default function Landing() {
   const [selectedUseCase, setSelectedUseCase] = useState("freelancer");
   const [liveFeedType, setLiveFeedType] = useState("all");
   const [feedVisible, setFeedVisible] = useState(true);
-  const [videoState, setVideoState] = useState<string>('initializing');
   
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -110,94 +109,65 @@ export default function Landing() {
     },
   ];
 
-
-  // Video debugging and event handling
+  // Simple video initialization - FIXED VERSION
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    console.log('=== VIDEO DEBUG START ===');
-    
-    const handleLoadStart = () => {
-      console.log('✓ loadstart');
-      setVideoState('loading');
-    };
-
-    const handleLoadedMetadata = () => {
-      console.log('✓ loadedmetadata - Dimensions:', video.videoWidth, 'x', video.videoHeight);
-      setVideoState('metadata-loaded');
-    };
-
-    const handleLoadedData = () => {
-      console.log('✓ loadeddata - First frame loaded');
-      setVideoLoaded(true);
-      setVideoState('data-loaded');
-    };
-
     const handleCanPlay = () => {
-      console.log('✓ canplay - Ready to play');
-      setVideoState('can-play');
+      console.log('Video ready, attempting to play');
+      setVideoLoaded(true);
       
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise
+      // Try to play with a small delay to ensure everything is ready
+      setTimeout(() => {
+        video.play()
           .then(() => {
-            console.log('✓ Playing successfully');
-            setVideoState('playing');
+            console.log('Video playing successfully');
+            setVideoError(false);
           })
           .catch((err) => {
-            console.warn('⚠ Autoplay prevented:', err);
-            setVideoState('play-failed');
+            console.log('Autoplay prevented:', err);
+            // Autoplay was prevented - this is normal in some browsers
+            setVideoError(false); // Not really an error, just autoplay policy
           });
-      }
-    };
-
-    const handlePlaying = () => {
-      console.log('✓ playing');
-      setVideoState('playing');
-    };
-
-    const handleStalled = () => {
-      console.warn('⚠ stalled');
-      setVideoState('stalled');
+      }, 100);
     };
 
     const handleError = (e: Event) => {
-      console.error('❌ VIDEO ERROR');
-      const target = e.target as HTMLVideoElement;
-      if (target.error) {
-        const errors: { [key: number]: string } = {
-          1: 'MEDIA_ERR_ABORTED',
-          2: 'MEDIA_ERR_NETWORK',
-          3: 'MEDIA_ERR_DECODE',
-          4: 'MEDIA_ERR_SRC_NOT_SUPPORTED'
-        };
-        console.error('Error:', errors[target.error.code] || 'Unknown');
-      }
+      console.error('Video error:', e);
       setVideoError(true);
-      setVideoState('error');
+      setVideoLoaded(false);
     };
 
-    video.addEventListener('loadstart', handleLoadStart);
-    video.addEventListener('loadedmetadata', handleLoadedMetadata);
-    video.addEventListener('loadeddata', handleLoadedData);
+    const handleStalled = () => {
+      console.log('Video stalled, attempting to recover');
+      // Try to reload if stalled
+      setTimeout(() => {
+        if (video.readyState < 3) { // HAVE_FUTURE_DATA
+          video.load();
+        }
+      }, 1000);
+    };
+
+    // Add event listeners
     video.addEventListener('canplay', handleCanPlay);
-    video.addEventListener('playing', handlePlaying);
-    video.addEventListener('stalled', handleStalled);
     video.addEventListener('error', handleError);
-
+    video.addEventListener('stalled', handleStalled);
+    
+    // Set video attributes for better performance
+    video.preload = 'auto';
+    video.muted = true; // Ensure muted for autoplay
+    video.playsInline = true;
+    video.loop = true;
+    
+    // Load the video
     video.load();
-    console.log('Video load() called');
-    console.log('=== VIDEO DEBUG END ===');
 
+    // Cleanup
     return () => {
-      video.removeEventListener('loadstart', handleLoadStart);
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('canplay', handleCanPlay);
-      video.removeEventListener('playing', handlePlaying);
-      video.removeEventListener('stalled', handleStalled);
       video.removeEventListener('error', handleError);
+      video.removeEventListener('stalled', handleStalled);
     };
   }, []);
 
@@ -385,8 +355,8 @@ export default function Landing() {
 
       {/* HERO SECTION WITH VIDEO BACKGROUND - FIXED */}
       <section className={styles.heroSection}>
-        {/* VIDEO BACKGROUND ONLY - NO OVERLAY */}
-        <div className={styles.videoContainer} style={{ backgroundColor: 'red' }}>
+        {/* VIDEO BACKGROUND */}
+        <div className={styles.videoContainer}>
           <video 
             ref={videoRef}
             autoPlay 
@@ -394,54 +364,19 @@ export default function Landing() {
             muted 
             playsInline
             preload="auto"
-            crossOrigin="anonymous"
-            controls
             className={styles.videoBackground}
-            onLoadedData={() => {
-              console.log('Video loaded successfully');
-              setVideoLoaded(true);
-            }}
-            onError={(e) => {
-              console.error('Video failed to load:', e);
-              setVideoError(true);
-            }}
           >
             <source src="/videos/Home1.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
           
-          {/* Fallback gradient if video fails */}
-          {!videoLoaded && (
+          {/* Simple fallback if video fails */}
+          {videoError && !videoLoaded && (
             <div className={styles.videoFallback} />
-          )}
-          
-          {videoError && (
-            <>
-              <div className={styles.videoFallback}>
-                <div style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  color: 'white',
-                  textAlign: 'center'
-                }}>
-                  Video failed to load. Check console for errors.
-                </div>
-              </div>
-            
-              {/* Debug overlay */}
-              <div className={styles.debugOverlay}>
-                <p><strong>State:</strong> {videoState}</p>
-                <p><strong>Loaded:</strong> {videoLoaded ? 'Yes' : 'No'}</p>
-                <p><strong>Error:</strong> {videoError ? 'Yes' : 'No'}</p>
-              </div>
-            </>
           )}
         </div>
         
-        {/* NO OVERLAY DIV - REMOVED */}
-        
+        {/* Hero Content */}
         <div className={styles.heroContent}>
           {/* Trust Badge with Live Counter */}
           <motion.div

@@ -1,7 +1,17 @@
-// src/pages/Dashboard/Notifications.tsx
+// src/pages/Dashboard/Notifications.tsx - FIXED VERSION
 import React, { useState, useEffect } from 'react';
 import { Bell, Mail, Smartphone, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import { useNotifications } from '../../context/NotificationContext';
+import { useNotifications } from '../../context/NotificationContext'; // ✅ FIXED import
+
+// Add missing interface
+interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  type: "success" | "warning" | "error" | "info";
+  created_at: string;
+  is_read: boolean;
+}
 
 interface NotificationPreference {
   id: number;
@@ -19,16 +29,16 @@ interface NotificationPreference {
 }
 
 export default function NotificationsPage() {
+  // ✅ FIXED: Use the correct hook name
   const {
     notifications,
     unreadCount,
     loading,
     error,
-    markNotificationAsRead,
-    markAllNotificationsAsRead,
-    refreshNotifications,
-    clearNotificationError,
-  } = useNotification();
+    markAsRead,        // Changed from markNotificationAsRead
+    markAllAsRead,     // Changed from markAllNotificationsAsRead
+    fetchNotifications, // Changed from refreshNotifications
+  } = useNotifications(); // ✅ CORRECT hook name
 
   const [preferences, setPreferences] = useState<NotificationPreference | null>(null);
   const [savingPreferences, setSavingPreferences] = useState(false);
@@ -40,13 +50,9 @@ export default function NotificationsPage() {
     ? notifications.filter(n => !n.is_read)
     : notifications;
 
-  // Fetch notification preferences (you'll need to implement this API)
+  // Fetch notification preferences
   const fetchPreferences = async () => {
     try {
-      // This would come from your API
-      // const data = await api.notifications.getPreferences();
-      // setPreferences(data);
-      
       // Mock data for now
       setPreferences({
         id: 1,
@@ -76,14 +82,10 @@ export default function NotificationsPage() {
       const updatedPrefs = { ...preferences, [key]: value };
       setPreferences(updatedPrefs);
       
-      // This would be an API call
-      // await api.notifications.updatePreferences(updatedPrefs);
-      
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
     } catch (error) {
       console.error('Failed to update preferences:', error);
-      // Revert on error
       fetchPreferences();
     } finally {
       setSavingPreferences(false);
@@ -122,7 +124,7 @@ export default function NotificationsPage() {
           <div className="flex justify-between items-center">
             <p className="text-red-600 dark:text-red-400">{error}</p>
             <button
-              onClick={() => { clearNotificationError(); refreshNotifications(); }}
+              onClick={fetchNotifications}
               className="text-sm text-red-700 dark:text-red-300 hover:text-red-900"
             >
               Retry
@@ -266,7 +268,7 @@ export default function NotificationsPage() {
 
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={refreshNotifications}
+                    onClick={fetchNotifications}
                     disabled={loading}
                     className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50"
                   >
@@ -333,7 +335,7 @@ export default function NotificationsPage() {
                           </div>
                           {!notification.is_read && (
                             <button
-                              onClick={() => markNotificationAsRead(notification.id)}
+                              onClick={() => markAsRead(notification.id)}
                               className="text-xs text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300"
                             >
                               Mark as read
@@ -389,7 +391,7 @@ export default function NotificationsPage() {
               </button>
               <button
                 onClick={() => {
-                  markAllNotificationsAsRead();
+                  markAllAsRead();
                   setShowMarkAllConfirm(false);
                 }}
                 className="px-4 py-2 text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg"

@@ -1,6 +1,6 @@
 // src/context/NotificationContext.tsx
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { useAuthStore } from '../lib/store/auth';
+import { useAuthStore } from '../lib/store/auth'; // Using Zustand store
 import api, { Notification } from '../services/api';
 
 interface NotificationContextType {
@@ -36,12 +36,22 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [initialFetchDone, setInitialFetchDone] = useState<boolean>(false);
   
-  const { isAuthenticated, tokens } = useAuthStore();
+  // Get auth state from Zustand store
+  const { isAuthenticated, tokens, syncFromLocalStorage } = useAuthStore();
+
+  // Sync tokens from localStorage on mount
+  useEffect(() => {
+    syncFromLocalStorage();
+  }, [syncFromLocalStorage]);
 
   const fetchNotifications = useCallback(async () => {
+    // Get fresh tokens from store
+    const { tokens: currentTokens } = useAuthStore.getState();
+    
     // Only fetch if authenticated AND token exists
-    if (!isAuthenticated || !tokens?.access) {
+    if (!isAuthenticated || !currentTokens?.access) {
       return;
     }
 
@@ -49,13 +59,14 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     setError(null);
     
     try {
-      // ✅ FIXED: Use api.notifications instead of notificationAPI
+      // Use api.notifications to fetch data
       const data = await api.notifications.getAll();
       setNotifications(data);
       
       // Also fetch unread count
       const countData = await api.notifications.getUnreadCount();
       setUnreadCount(countData.unread_count);
+      setInitialFetchDone(true);
     } catch (err: any) {
       // Don't show error for 401 - just ignore
       if (err.status !== 401) {
@@ -65,11 +76,11 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated, tokens?.access]);
+  }, [isAuthenticated]); // Remove tokens?.access from deps since we get fresh inside
 
   // Add delay to ensure token is loaded
   useEffect(() => {
-    if (isAuthenticated && tokens?.access) {
+    if (isAuthenticated && tokens?.access && !initialFetchDone) {
       // Add small delay to ensure everything is initialized
       const timer = setTimeout(() => {
         fetchNotifications();
@@ -77,7 +88,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       
       return () => clearTimeout(timer);
     }
-  }, [isAuthenticated, tokens?.access, fetchNotifications]);
+  }, [isAuthenticated, tokens?.access, fetchNotifications, initialFetchDone]);
 
   // Polling for updates (only when authenticated)
   useEffect(() => {
@@ -92,7 +103,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   const markAsRead = async (id: number) => {
     try {
-      // ✅ FIXED: Use api.notifications instead of notificationAPI
       await api.notifications.markAsRead(id);
       // Update local state
       setNotifications(prev =>
@@ -108,7 +118,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   const markAllAsRead = async () => {
     try {
-      // ✅ FIXED: Use api.notifications instead of notificationAPI
       await api.notifications.markAllAsRead();
       // Update local state
       setNotifications(prev =>
