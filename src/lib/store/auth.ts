@@ -2,8 +2,7 @@ import api from '../services/api';
 // src/lib/store/auth.ts - FIXED VERSION WITH CORRECT LOGIN ENDPOINT
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL;
+import { getApiUrl } from '../../config/api';  // ✅ FIXED: Two dots (../..) to go up two levels to src/
 
 export interface User {
   id: string;
@@ -66,8 +65,8 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          // ✅ FIXED: Remove double /api/ - API_URL already includes /api
-          const response = await fetch(`${API_URL}/token/`, {
+          // ✅ FIXED: Using getApiUrl
+          const response = await fetch(getApiUrl('/api/token/'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -90,7 +89,8 @@ export const useAuthStore = create<AuthStore>()(
             // Fetch user data after successful login
             let userData = null;
             try {
-              const userResponse = await fetch(`${API_URL}/users/me/`, {
+              // ✅ FIXED: Using getApiUrl
+              const userResponse = await fetch(getApiUrl('/api/users/me/'), {
                 headers: { 
                   'Authorization': `Bearer ${data.access}`,
                   'Content-Type': 'application/json'
@@ -154,8 +154,8 @@ export const useAuthStore = create<AuthStore>()(
         if (!tokens?.refresh) return false;
 
         try {
-          // ✅ FIXED: Use correct refresh endpoint (no double /api/)
-          const response = await fetch(`${API_URL}/token/refresh/`, {
+          // ✅ FIXED: Using getApiUrl
+          const response = await fetch(getApiUrl('/api/token/refresh/'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh: tokens.refresh }),
@@ -212,8 +212,8 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         try {
-          // ✅ FIXED: Remove double /api/
-          const response = await fetch(`${API_URL}/users/me/`, {    
+          // ✅ FIXED: Using getApiUrl
+          const response = await fetch(getApiUrl('/api/users/me/'), {    
             headers: {
               Authorization: `Bearer ${tokens.access}`,
               'Content-Type': 'application/json',

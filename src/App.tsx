@@ -1,4 +1,4 @@
-// src/App.tsx - UPDATED (Removed AuthProvider, using Zustand only)
+// src/App.tsx - UPDATED with Activation Route
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
@@ -9,6 +9,7 @@ import AuthInitializer from "./components/AuthInitializer";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import VerifyEmail from "./pages/AuthPages/VerifyEmail";
+import ActivateAccount from "./pages/AuthPages/ActivateAccount"; // ✅ ADD THIS IMPORT
 import NotFound from "./pages/OtherPage/NotFound";
 import PublicNavbar from "./components/PublicNavbar";
 import Footer from "./components/Footer";
@@ -156,6 +157,9 @@ export default function App() {
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
+              {/* ✅ ADDED: Activation Route */}
+              <Route path="/activate" element={<ActivateAccount />} />
+              <Route path="/activate-account" element={<ActivateAccount />} />
 
               {/* Dashboard — wrapper with Outlet */}
               <Route path="/dashboard" element={<DashboardIndex />}>
