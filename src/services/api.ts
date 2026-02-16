@@ -20,7 +20,7 @@ export async function apiFetch<T = any>(
   const url = getApiUrl(endpoint);
   const authStore = useAuthStore.getState();
   
-  // ✅ FIXED: Get token from store or localStorage with fallback
+  // Get token from store or localStorage with fallback
   const getToken = (): string | null => {
     // Try from store first
     if (authStore.tokens?.access) {
@@ -39,7 +39,7 @@ export async function apiFetch<T = any>(
     headers: {
       ...DEFAULT_FETCH_OPTIONS.headers,
       ...options.headers,
-      // ✅ Add auth token if available
+      // Add auth token if available
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   };
@@ -92,7 +92,7 @@ export interface Notification {
   notification_type: string;
   priority: 'HIGH' | 'MEDIUM' | 'LOW';
   status: 'UNREAD' | 'READ' | 'ARCHIVED';
-  is_read?: boolean; // Computed property from status
+  is_read?: boolean;
   metadata?: any;
   created_at: string;
   read_at: string | null;
@@ -183,7 +183,7 @@ export const notificationApi = {
     apiFetch<{ action_required_count: number }>('/notifications/admin/action-required/'),
 };
 
-// Convenience methods - MAIN API OBJECT
+// MAIN API OBJECT with all methods
 export const api = {
   // Core HTTP methods
   get: <T = any>(endpoint: string, options?: RequestInit) => 
@@ -213,12 +213,45 @@ export const api = {
   delete: <T = any>(endpoint: string, options?: RequestInit) =>
     apiFetch<T>(endpoint, { ...options, method: 'DELETE' }),
   
-  // Account activation - ADD THIS
+  // Account activation
   activate: (email: string, activation_code: string) =>
     apiFetch('/accounts/activate/', {
       method: 'POST',
       body: JSON.stringify({ email, activation_code })
     }),
+  
+  // Resend activation code - ADDED
+  resendActivation: (email: string) =>
+    apiFetch('/accounts/resend-activation/', {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    }),
+  
+  // Auth methods
+  login: (email: string, password: string) =>
+    apiFetch('/token/', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    }),
+  
+  refreshToken: (refresh: string) =>
+    apiFetch('/token/refresh/', {
+      method: 'POST',
+      body: JSON.stringify({ refresh })
+    }),
+  
+  logout: (refresh: string) =>
+    apiFetch('/accounts/logout/', {
+      method: 'POST',
+      body: JSON.stringify({ refresh })
+    }),
+  
+  // User methods
+  getUser: () =>
+    apiFetch('/users/me/'),
+  
+  getUserProfile: () =>
+    apiFetch('/users/profile/'),
   
   // Notification methods (direct access)
   notifications: notificationApi,

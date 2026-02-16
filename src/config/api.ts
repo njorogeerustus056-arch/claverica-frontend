@@ -3,7 +3,7 @@ export const API_CONFIG = {
   // Base URL from environment variable - should NOT include /api
   BASE_URL: import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app',
   
-  // API Endpoints - NOW WITH /api PREFIX
+  // API Endpoints - WITH /api PREFIX
   ENDPOINTS: {
     AUTH: {
       REGISTER: "/api/accounts/register/",
@@ -11,15 +11,23 @@ export const API_CONFIG = {
       LOGOUT: "/api/accounts/logout/",
       VERIFY_EMAIL: "/api/accounts/verify-email/",
       RESET_PASSWORD: "/api/accounts/reset-password/",
-      ACTIVATE: "/api/accounts/activate/", // ADD THIS
+      ACTIVATE: "/api/accounts/activate/",
+      RESEND_ACTIVATION: "/api/accounts/resend-activation/",
     },
     USER: {
-      PROFILE: "/api/users/profile/", // FIXED: should be /users/ not /accounts/
-      ME: "/api/users/me/", // ADD THIS
+      PROFILE: "/api/users/profile/",
+      ME: "/api/users/me/",
+      SETTINGS: "/api/users/settings/",
     },
     NOTIFICATIONS: {
       LIST: "/api/notifications/",
       UNREAD_COUNT: "/api/notifications/unread-count/",
+      UNREAD: "/api/notifications/unread/",
+      PREFERENCES: "/api/notifications/preferences/",
+    },
+    TOKEN: {
+      OBTAIN: "/api/token/",
+      REFRESH: "/api/token/refresh/",
     }
   },
   
@@ -30,7 +38,7 @@ export const API_CONFIG = {
   },
 };
 
-// FIXED: Helper function to get full URL
+// Helper function to get full URL
 export const getApiUrl = (endpoint: string): string => {
   const base = API_CONFIG.BASE_URL.replace(/\/$/, "");
   
@@ -39,9 +47,6 @@ export const getApiUrl = (endpoint: string): string => {
   
   return `${base}${cleanEndpoint}`;
 };
-
-// Remove the complex cleaning functions - they're not needed now
-// export const getApiUrlSimple = ... (remove this)
 
 // Default fetch configuration
 export const DEFAULT_FETCH_OPTIONS: RequestInit = {
