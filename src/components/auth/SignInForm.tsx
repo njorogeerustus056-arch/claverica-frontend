@@ -87,8 +87,8 @@ export default function SignInForm() {
 
     try {
       if (forgotPasswordStep === "email") {
-        // Step 1: Request OTP
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/accounts/password/reset/`, {
+        // Step 1: Request OTP - FIXED: Added /api to endpoint
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/accounts/password/reset/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -120,8 +120,8 @@ export default function SignInForm() {
           text: "OTP verified. Now set your new password."
         });
       } else if (forgotPasswordStep === "newPassword") {
-        // Step 3: Confirm password reset
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/accounts/password/reset/confirm/`, {
+        // Step 3: Confirm password reset - FIXED: Added /api to endpoint
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/accounts/password/reset/confirm/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
