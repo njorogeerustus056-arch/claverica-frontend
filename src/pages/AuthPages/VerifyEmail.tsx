@@ -1,4 +1,4 @@
-// src/pages/AuthPages/VerifyEmail.tsx - FIXED with centralized API
+// src/pages/AuthPages/VerifyEmail.tsx - FIXED with correct endpoints (no /api prefix)
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import PageMeta from "../../components/common/PageMeta";
@@ -34,8 +34,8 @@ export default function VerifyEmail() {
     }
 
     try {
-      // ✅ FIXED: Using centralized api.post
-      const response = await api.post("/api/accounts/activate/", {
+      // ✅ FIXED: Removed /api prefix - now using "/accounts/activate/"
+      const response = await api.post("/accounts/activate/", {
         email: email,
         activation_code: otp
       });
@@ -89,8 +89,8 @@ export default function VerifyEmail() {
     setMessage("");
 
     try {
-      // ✅ FIXED: Using centralized api.post
-      const response = await api.post("/api/accounts/resend-activation/", {
+      // ✅ FIXED: Removed /api prefix - now using "/accounts/resend-activation/"
+      const response = await api.post("/accounts/resend-activation/", {
         email: email
       });
       
