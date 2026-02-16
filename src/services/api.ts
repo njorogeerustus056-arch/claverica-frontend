@@ -1,4 +1,4 @@
-// src/services/api.ts - FIXED VERSION WITH PROPER TOKEN HANDLING
+// src/services/api.ts - FIXED VERSION WITH PROPER /api PREFIXES
 import { API_CONFIG, getApiUrl, DEFAULT_FETCH_OPTIONS } from '../config/api';
 import { useAuthStore } from '../lib/store/auth';
 
@@ -133,57 +133,57 @@ export interface UnreadCountResponse {
   unread_count: number;
 }
 
-// Notification-specific API methods - FIXED: Removed duplicate /api/ prefix
+// Notification-specific API methods - FIXED: Added /api prefix to all endpoints
 export const notificationApi = {
   // Get all notifications for current user
   getAll: () => 
-    apiFetch<Notification[]>('/notifications/'),
+    apiFetch<Notification[]>('/api/notifications/'),
   
   // Get unread notifications count
   getUnreadCount: () => 
-    apiFetch<UnreadCountResponse>('/notifications/unread-count/'),
+    apiFetch<UnreadCountResponse>('/api/notifications/unread-count/'),
   
   // Get only unread notifications
   getUnread: () => 
-    apiFetch<Notification[]>('/notifications/unread/'),
+    apiFetch<Notification[]>('/api/notifications/unread/'),
   
   // Mark a specific notification as read
   markAsRead: (id: number) => 
-    apiFetch<{ status: string }>(`/notifications/${id}/mark-read/`, { 
+    apiFetch<{ status: string }>(`/api/notifications/${id}/mark-read/`, { 
       method: 'POST' 
     }),
   
   // Mark all notifications as read
   markAllAsRead: () => 
-    apiFetch<{ status: string }>('/notifications/mark-all-read/', { 
+    apiFetch<{ status: string }>('/api/notifications/mark-all-read/', { 
       method: 'POST' 
     }),
   
   // Get notification preferences
   getPreferences: () => 
-    apiFetch<NotificationPreference>('/notifications/preferences/'),
+    apiFetch<NotificationPreference>('/api/notifications/preferences/'),
   
   // Update notification preferences
   updatePreferences: (data: Partial<NotificationPreference>) => 
-    apiFetch<NotificationPreference>('/notifications/preferences/', {
+    apiFetch<NotificationPreference>('/api/notifications/preferences/', {
       method: 'PUT',
       body: JSON.stringify(data)
     }),
   
   // Get a single notification by ID
   getById: (id: number) => 
-    apiFetch<Notification>(`/notifications/${id}/`),
+    apiFetch<Notification>(`/api/notifications/${id}/`),
   
   // Admin: Get admin alerts
   getAdminAlerts: () => 
-    apiFetch<Notification[]>('/notifications/admin/alerts/'),
+    apiFetch<Notification[]>('/api/notifications/admin/alerts/'),
   
   // Admin: Get action required count
   getActionRequiredCount: () => 
-    apiFetch<{ action_required_count: number }>('/notifications/admin/action-required/'),
+    apiFetch<{ action_required_count: number }>('/api/notifications/admin/action-required/'),
 };
 
-// MAIN API OBJECT with all methods
+// MAIN API OBJECT with all methods - FIXED: Added /api prefix to all endpoints
 export const api = {
   // Core HTTP methods
   get: <T = any>(endpoint: string, options?: RequestInit) => 
@@ -213,45 +213,45 @@ export const api = {
   delete: <T = any>(endpoint: string, options?: RequestInit) =>
     apiFetch<T>(endpoint, { ...options, method: 'DELETE' }),
   
-  // Account activation
+  // Account activation - FIXED: Added /api prefix
   activate: (email: string, activation_code: string) =>
-    apiFetch('/accounts/activate/', {
+    apiFetch('/api/accounts/activate/', {
       method: 'POST',
       body: JSON.stringify({ email, activation_code })
     }),
   
-  // Resend activation code - ADDED
+  // Resend activation code - FIXED: Added /api prefix
   resendActivation: (email: string) =>
-    apiFetch('/accounts/resend-activation/', {
+    apiFetch('/api/accounts/resend-activation/', {
       method: 'POST',
       body: JSON.stringify({ email })
     }),
   
-  // Auth methods
+  // Auth methods - FIXED: Added /api prefix
   login: (email: string, password: string) =>
-    apiFetch('/token/', {
+    apiFetch('/api/token/', {
       method: 'POST',
       body: JSON.stringify({ email, password })
     }),
   
   refreshToken: (refresh: string) =>
-    apiFetch('/token/refresh/', {
+    apiFetch('/api/token/refresh/', {
       method: 'POST',
       body: JSON.stringify({ refresh })
     }),
   
   logout: (refresh: string) =>
-    apiFetch('/accounts/logout/', {
+    apiFetch('/api/accounts/logout/', {
       method: 'POST',
       body: JSON.stringify({ refresh })
     }),
   
-  // User methods
+  // User methods - FIXED: Added /api prefix
   getUser: () =>
-    apiFetch('/users/me/'),
+    apiFetch('/api/users/me/'),
   
   getUserProfile: () =>
-    apiFetch('/users/profile/'),
+    apiFetch('/api/users/profile/'),
   
   // Notification methods (direct access)
   notifications: notificationApi,
