@@ -1,9 +1,9 @@
-// src/pages/AuthPages/VerifyEmail.tsx
+// src/pages/AuthPages/VerifyEmail.tsx - FIXED with centralized API
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import PageMeta from "../../components/common/PageMeta";
 import AuthLayout from "./AuthPageLayout";
-import { authAPI } from "../../api";  // CHANGED IMPORT
+import { api } from "../../services/api";  // ✅ CHANGED: Use centralized API
 
 export default function VerifyEmail() {
   const [otp, setOtp] = useState("");
@@ -12,8 +12,8 @@ export default function VerifyEmail() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
-  const [accountNumber, setAccountNumber] = useState(""); // ✅ ADDED: Store account number
-  const [responseData, setResponseData] = useState<any>(null); // ✅ ADDED: Store full response
+  const [accountNumber, setAccountNumber] = useState("");
+  const [responseData, setResponseData] = useState<any>(null);
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,11 +34,8 @@ export default function VerifyEmail() {
     }
 
     try {
-      // ✅ ADDED: Debug log to check the URL
-      console.log('🔍 API_URL from env:', import.meta.env.VITE_API_URL);
-      console.log('🔍 Full activation URL:', `${import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app"}/api/accounts/activate/`);
-      
-      const response = await authAPI.verifyActivation({
+      // ✅ FIXED: Using centralized api.post
+      const response = await api.post("/api/accounts/activate/", {
         email: email,
         activation_code: otp
       });
@@ -48,7 +45,7 @@ export default function VerifyEmail() {
       if (response.success || response.message) {
         setSuccess(true);
         setMessage(response.message || "Account activated successfully!");
-        setResponseData(response); // ✅ STORE: Save response for later use
+        setResponseData(response);
         
         // Store account number if available
         if (response.account?.account_number) {
@@ -61,7 +58,7 @@ export default function VerifyEmail() {
         // Clear pending email
         localStorage.removeItem("pendingVerificationEmail");
         
-        // ✅ CRITICAL: Save tokens and account number
+        // Save tokens
         if (response.tokens) {
           localStorage.setItem("token", response.tokens.access);
           localStorage.setItem("access_token", response.tokens.access);
@@ -92,10 +89,11 @@ export default function VerifyEmail() {
     setMessage("");
 
     try {
-      // ✅ ADDED: Debug log for resend
-      console.log('🔍 Resend URL:', `${import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app"}/api/accounts/resend-activation/`);
+      // ✅ FIXED: Using centralized api.post
+      const response = await api.post("/api/accounts/resend-activation/", {
+        email: email
+      });
       
-      const response = await authAPI.resendActivation({ email });
       console.log('✅ Resend response:', response);
       
       setMessage(response.message || "New activation code sent to your email!");
@@ -155,7 +153,6 @@ export default function VerifyEmail() {
               </svg>
               <span className="text-green-700 dark:text-green-400 font-medium">{message}</span>
             </div>
-            {/* ✅ FIXED: Use accountNumber state instead of response variable */}
             {accountNumber && (
               <p className="text-green-600 dark:text-green-300 text-sm mt-2">
                 Your account number: <strong>{accountNumber}</strong>

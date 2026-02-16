@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { getApiUrl } from '../../config/api';
+import { api } from '../../services/api';  // ✅ CHANGED: Use centralized API
 import toast from 'react-hot-toast';
 
 export default function ActivateAccount() {
@@ -23,25 +23,20 @@ export default function ActivateAccount() {
     setLoading(true);
 
     try {
-      const response = await fetch(getApiUrl('/api/accounts/activate/'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email, 
-          activation_code: code 
-        }),
+      // ✅ FIXED: Using centralized api.post
+      const response = await api.post("/api/accounts/activate/", {
+        email, 
+        activation_code: code 
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (response.success || response.message) {
         toast.success('Account activated successfully!');
         navigate('/signin');
       } else {
-        toast.error(data.detail || data.message || 'Activation failed');
+        toast.error(response.detail || response.message || 'Activation failed');
       }
-    } catch (error) {
-      toast.error('Network error. Please try again.');
+    } catch (error: any) {
+      toast.error(error.message || 'Network error. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -55,20 +50,14 @@ export default function ActivateAccount() {
 
     setLoading(true);
     try {
-      const response = await fetch(getApiUrl('/api/accounts/resend-activation/'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      // ✅ FIXED: Using centralized api.post
+      const response = await api.post("/api/accounts/resend-activation/", {
+        email
       });
 
-      if (response.ok) {
-        toast.success('Activation code resent!');
-      } else {
-        const data = await response.json();
-        toast.error(data.detail || 'Failed to resend code');
-      }
-    } catch (error) {
-      toast.error('Network error');
+      toast.success('Activation code resent!');
+    } catch (error: any) {
+      toast.error(error.message || 'Network error');
     } finally {
       setLoading(false);
     }
