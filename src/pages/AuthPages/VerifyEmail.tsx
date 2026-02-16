@@ -34,10 +34,16 @@ export default function VerifyEmail() {
     }
 
     try {
+      // ✅ ADDED: Debug log to check the URL
+      console.log('🔍 API_URL from env:', import.meta.env.VITE_API_URL);
+      console.log('🔍 Full activation URL:', `${import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app"}/api/accounts/activate/`);
+      
       const response = await authAPI.verifyActivation({
         email: email,
         activation_code: otp
       });
+      
+      console.log('✅ Activation response:', response);
       
       if (response.success || response.message) {
         setSuccess(true);
@@ -58,6 +64,7 @@ export default function VerifyEmail() {
         // ✅ CRITICAL: Save tokens and account number
         if (response.tokens) {
           localStorage.setItem("token", response.tokens.access);
+          localStorage.setItem("access_token", response.tokens.access);
           localStorage.setItem("refresh_token", response.tokens.refresh);
         }
         
@@ -72,6 +79,7 @@ export default function VerifyEmail() {
         }, 3000);
       }
     } catch (err: any) {
+      console.error('❌ Activation error:', err);
       setError(err.message || "Activation failed. Please check your code and try again.");
     } finally {
       setLoading(false);
@@ -84,12 +92,18 @@ export default function VerifyEmail() {
     setMessage("");
 
     try {
+      // ✅ ADDED: Debug log for resend
+      console.log('🔍 Resend URL:', `${import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app"}/api/accounts/resend-activation/`);
+      
       const response = await authAPI.resendActivation({ email });
+      console.log('✅ Resend response:', response);
+      
       setMessage(response.message || "New activation code sent to your email!");
 
       // Clear message after 5 seconds
       setTimeout(() => setMessage(""), 5000);
     } catch (err: any) {
+      console.error('❌ Resend error:', err);
       setError(err.message || "Failed to resend activation code. Please try again.");
     } finally {
       setResendLoading(false);

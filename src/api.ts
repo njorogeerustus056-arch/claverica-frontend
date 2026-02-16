@@ -1,7 +1,8 @@
 // src/api.ts - FIXED VERSION WITH CORRECT ENDPOINTS
 import { useAuthStore } from './lib/store/auth';
 
-const API_URL = import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app";
+// ✅ FIXED: Remove any trailing /api from the URL
+const API_URL = (import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app").replace(/\/api$/, '');
 
 // Get tokens from Zustand store
 export const getToken = (): string | null => {
@@ -81,6 +82,9 @@ export async function apiFetch<T = any>(
   const url = `${API_URL}${endpoint}`;
   const token = getToken();
 
+  // ✅ Log the URL for debugging
+  console.log(`🌐 API Request: ${url}`);
+
   const defaultHeaders: HeadersInit = {
     "Content-Type": "application/json",
   };
@@ -105,7 +109,6 @@ export async function apiFetch<T = any>(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          // ✅ FIXED: Use correct JWT refresh endpoint
           const refreshResponse = await fetch(`${API_URL}/api/token/refresh/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -214,7 +217,6 @@ export const authAPI = {
   },
 
   login: async (email: string, password: string) => {
-    // ✅ FIXED: Use JWT token endpoint
     return apiFetch("/api/token/", {
       method: "POST",
       body: JSON.stringify({ email, password }),
@@ -234,7 +236,6 @@ export const authAPI = {
   },
 
   refresh: async (refreshToken: string) => {
-    // ✅ FIXED: Use correct JWT refresh endpoint
     return apiFetch("/api/token/refresh/", {
       method: "POST",
       body: JSON.stringify({ refresh: refreshToken }),
@@ -244,12 +245,9 @@ export const authAPI = {
 
 // Notification API functions
 export const notificationAPI = {
-  // Get all notifications
   getAll: async () => {
     try {
       const data = await apiFetch<any>("/api/notifications/");
-      
-      // Handle different response formats
       if (Array.isArray(data)) {
         return data;
       } else if (data && Array.isArray(data.notifications)) {
@@ -261,7 +259,6 @@ export const notificationAPI = {
         return [];
       }
     } catch (error: any) {
-      // Don't throw on 401 - return empty array
       if (error.status === 401) {
         console.warn('Not authorized to fetch notifications');
         return [];
@@ -270,11 +267,9 @@ export const notificationAPI = {
     }
   },
 
-  // Get unread notifications
   getUnread: async () => {
     try {
       const data = await apiFetch<any>("/api/notifications/unread/");
-      
       if (Array.isArray(data)) {
         return data;
       } else if (data && Array.isArray(data.notifications)) {
@@ -292,7 +287,6 @@ export const notificationAPI = {
     }
   },
 
-  // Get unread count for badge
   getUnreadCount: async () => {
     console.log('🔍 [API DEBUG] Calling /api/notifications/unread-count/');
     
@@ -301,28 +295,20 @@ export const notificationAPI = {
       
       console.log('✅ [API DEBUG] Raw unread count response:', data);
       
-      // Handle ALL possible response formats
       if (typeof data === 'object' && data !== null) {
-        // Django REST Framework format: { "unread_count": 1 }
         if ('unread_count' in data) {
           const count = Number(data.unread_count) || 0;
           return { unread_count: count };
         }
-        
-        // Alternative format: { "count": 1 }
         if ('count' in data) {
           const count = Number(data.count) || 0;
           return { unread_count: count };
         }
-        
-        // Direct number in simple object
         const values = Object.values(data);
         if (values.length === 1 && typeof values[0] === 'number') {
           const count = values[0] as number;
           return { unread_count: count };
         }
-        
-        // Check for nested data
         if (data.data && typeof data.data === 'object') {
           if ('unread_count' in data.data) {
             const count = Number(data.data.unread_count) || 0;
@@ -333,15 +319,9 @@ export const notificationAPI = {
             return { unread_count: count };
           }
         }
-      } 
-      
-      // Direct number response
-      else if (typeof data === 'number') {
+      } else if (typeof data === 'number') {
         return { unread_count: data };
-      }
-      
-      // String response (parse if possible)
-      else if (typeof data === 'string') {
+      } else if (typeof data === 'string') {
         const parsed = parseInt(data, 10);
         if (!isNaN(parsed)) {
           return { unread_count: parsed };
@@ -353,16 +333,13 @@ export const notificationAPI = {
       
     } catch (error: any) {
       console.error('❌ Error fetching unread count:', error);
-      
       if (error.status === 401) {
         return { unread_count: 0 };
       }
-      
       throw error;
     }
   },
 
-  // Mark single notification as read
   markAsRead: async (notificationId: number) => {
     try {
       return await apiFetch(`/api/notifications/${notificationId}/mark-read/`, {
@@ -377,7 +354,6 @@ export const notificationAPI = {
     }
   },
 
-  // Mark all notifications as read
   markAllAsRead: async () => {
     try {
       return await apiFetch("/api/notifications/mark-all-read/", {
@@ -392,12 +368,10 @@ export const notificationAPI = {
     }
   },
 
-  // Get notification preferences
   getPreferences: async () => {
     return apiFetch("/api/notifications/preferences/");
   },
 
-  // Update notification preferences
   updatePreferences: async (data: any) => {
     return apiFetch("/api/notifications/preferences/", {
       method: "PUT",
@@ -439,7 +413,7 @@ export const paymentAPI = {
   }
 };
 
-// Transfer API functions - ✅ FIXED WITH CORRECT COMPLIANCE ENDPOINTS
+// Transfer API functions
 export const transferAPI = {
   initiateTransfer: async (data: any) => {
     return apiFetch("/api/compliance/transfers/", {
