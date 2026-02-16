@@ -79,11 +79,11 @@ export default function App() {
         <NotificationProvider pollInterval={30000}>
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
-              {/* Public Pages */}
+              {/* Public Pages - FIXED: Replaced inline style with responsive Tailwind classes */}
               <Route path="/" element={
                 <>
                   <PublicNavbar />
-                  <div style={{ paddingTop: "80px" }}>
+                  <div className="pt-16 md:pt-20 lg:pt-24">
                     <Home />
                   </div>
                   <Footer />
@@ -93,7 +93,7 @@ export default function App() {
               <Route path="/about" element={
                 <>
                   <PublicNavbar />
-                  <div style={{ paddingTop: "80px" }}>
+                  <div className="pt-16 md:pt-20 lg:pt-24">
                     <About />
                   </div>
                   <Footer />
@@ -103,7 +103,7 @@ export default function App() {
               <Route path="/services" element={
                 <>
                   <PublicNavbar />
-                  <div style={{ paddingTop: "80px" }}>
+                  <div className="pt-16 md:pt-20 lg:pt-24">
                     <Services />
                   </div>
                   <Footer />
@@ -113,7 +113,7 @@ export default function App() {
               <Route path="/projects" element={
                 <>
                   <PublicNavbar />
-                  <div style={{ paddingTop: "80px" }}>
+                  <div className="pt-16 md:pt-20 lg:pt-24">
                     <Projects />
                   </div>
                   <Footer />
@@ -123,7 +123,7 @@ export default function App() {
               <Route path="/contact" element={
                 <>
                   <PublicNavbar />
-                  <div style={{ paddingTop: "80px" }}>
+                  <div className="pt-16 md:pt-20 lg:pt-24">
                     <Contact />
                   </div>
                   <Footer />
@@ -134,7 +134,7 @@ export default function App() {
               <Route path="/features" element={
                 <>
                   <PublicNavbar />
-                  <div style={{ paddingTop: "80px" }}>
+                  <div className="pt-16 md:pt-20 lg:pt-24">
                     <FeatureDetails />
                   </div>
                   <Footer />
@@ -145,7 +145,7 @@ export default function App() {
               <Route path="/projects/:slug" element={
                 <>
                   <PublicNavbar />
-                  <div style={{ paddingTop: "80px" }}>
+                  <div className="pt-16 md:pt-20 lg:pt-24">
                     <ProjectDetails />
                   </div>
                   <Footer />

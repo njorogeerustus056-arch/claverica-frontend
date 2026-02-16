@@ -15,9 +15,9 @@ export default function ChatBubble() {
   const [isHovered, setIsHovered] = useState(false);
   const [agentStatus, setAgentStatus] = useState<'online' | 'offline'>('offline');
 
-  // Get environment variables
-  const propertyId = import.meta.env.VITE_TAWK_PROPERTY_ID || '6990e9d3e68ce71c379eec8d';
-  const widgetId = import.meta.env.VITE_TAWK_WIDGET_ID || '1jhhluieo';
+  // ✅ FIXED: Using the CORRECT property ID from your dashboard
+  const propertyId = import.meta.env.VITE_TAWK_PROPERTY_ID || '69911599e68ce71c379eed61';
+  const widgetId = import.meta.env.VITE_TAWK_WIDGET_ID || 'default';
   const isEnabled = import.meta.env.VITE_TAWK_ENABLED !== 'false';
   const appEnv = import.meta.env.VITE_APP_ENV;
 

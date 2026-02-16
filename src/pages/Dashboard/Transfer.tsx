@@ -41,7 +41,7 @@ import {
   Warning,
   CheckCircle,
 } from '@mui/icons-material';
-import { useAuth } from '../../context/AuthContext';
+import { useAuthStore } from '../../lib/store/auth'; // ✅ FIXED: Using Zustand store
 import transferAPI from '../../services/transfer-api';
 import styles from './Transfer.module.css';
 
@@ -308,7 +308,7 @@ const KycModal = ({
 
 const Transfer = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState<WalletBalance | null>(null);
   const [error, setError] = useState('');

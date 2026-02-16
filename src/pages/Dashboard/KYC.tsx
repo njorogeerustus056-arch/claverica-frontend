@@ -32,11 +32,11 @@ import {
   HourglassEmpty,
   VerifiedUser,
 } from '@mui/icons-material';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../lib/store/auth';
 
 const KYC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   
   const [loading, setLoading] = useState(true);
   const [kycStatus, setKycStatus] = useState<any>(null);

@@ -2279,3 +2279,38 @@
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
+/* Add these mobile-specific fixes */
+@media (max-width: 640px) {
+  .heroContent {
+    padding: 2rem 1rem;
+  }
+  
+  .featuresSection,
+  .appPreviewSection,
+  .securitySection,
+  .testimonialsSection {
+    padding: 3rem 1rem;
+  }
+  
+  .featureCard {
+    padding: 1.5rem;
+  }
+  
+  .appMockup {
+    padding: 1.5rem;
+  }
+  
+  .statsGrid {
+    gap: 1rem;
+  }
+  
+  .statValueLarge {
+    font-size: 1.5rem;
+  }
+  
+  .partnerLogoCircle {
+    width: 60px;
+    height: 60px;
+    padding: 0.75rem;
+  }
+}
