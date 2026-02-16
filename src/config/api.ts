@@ -1,22 +1,26 @@
 // src/config/api.ts - FIXED VERSION
 export const API_CONFIG = {
-  // Base URL from environment variable with /api already included
-  BASE_URL: import.meta.env.VITE_API_URL,
+  // Base URL from environment variable - should NOT include /api
+  BASE_URL: import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app',
   
-  // API Endpoints
+  // API Endpoints - NOW WITH /api PREFIX
   ENDPOINTS: {
     AUTH: {
-      REGISTER: "/accounts/register/",
-      LOGIN: "/accounts/login/",
-      LOGOUT: "/accounts/logout/",
-      VERIFY_EMAIL: "/accounts/verify-email/",
-      RESET_PASSWORD: "/accounts/reset-password/",
+      REGISTER: "/api/accounts/register/",
+      LOGIN: "/api/accounts/login/",
+      LOGOUT: "/api/accounts/logout/",
+      VERIFY_EMAIL: "/api/accounts/verify-email/",
+      RESET_PASSWORD: "/api/accounts/reset-password/",
+      ACTIVATE: "/api/accounts/activate/", // ADD THIS
     },
     USER: {
-      PROFILE: "/accounts/profile/",
-      UPDATE_PROFILE: "/accounts/update-profile/",
+      PROFILE: "/api/users/profile/", // FIXED: should be /users/ not /accounts/
+      ME: "/api/users/me/", // ADD THIS
     },
-    // Add other endpoints as needed
+    NOTIFICATIONS: {
+      LIST: "/api/notifications/",
+      UNREAD_COUNT: "/api/notifications/unread-count/",
+    }
   },
   
   // Common headers
@@ -28,40 +32,16 @@ export const API_CONFIG = {
 
 // FIXED: Helper function to get full URL
 export const getApiUrl = (endpoint: string): string => {
-  // Remove any duplicate /api prefix from endpoint
-  let cleanEndpoint = endpoint;
-  
-  // If endpoint starts with /api, remove it (since BASE_URL already has it)
-  if (cleanEndpoint.startsWith("/api")) {
-    cleanEndpoint = cleanEndpoint.substring(4); // Remove "/api"
-  } else if (cleanEndpoint.startsWith("api")) {
-    cleanEndpoint = cleanEndpoint.substring(3); // Remove "api"
-  }
-  
-  // Ensure cleanEndpoint starts with /
-  if (!cleanEndpoint.startsWith("/")) {
-    cleanEndpoint = "/" + cleanEndpoint;
-  }
-  
-  // Remove trailing slash from BASE_URL and combine
   const base = API_CONFIG.BASE_URL.replace(/\/$/, "");
+  
+  // Ensure endpoint starts with /
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  
   return `${base}${cleanEndpoint}`;
 };
 
-// Alternative simpler fix:
-export const getApiUrlSimple = (endpoint: string): string => {
-  // Just ensure proper concatenation without double /api
-  const base = API_CONFIG.BASE_URL.replace(/\/$/, "");
-  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-  
-  // If endpoint already contains /api and base also has /api, remove from endpoint
-  if (base.includes("/api") && cleanEndpoint.includes("/api")) {
-    const fixedEndpoint = cleanEndpoint.replace(/^\/api/, "");
-    return `${base}${fixedEndpoint}`;
-  }
-  
-  return `${base}${cleanEndpoint}`;
-};
+// Remove the complex cleaning functions - they're not needed now
+// export const getApiUrlSimple = ... (remove this)
 
 // Default fetch configuration
 export const DEFAULT_FETCH_OPTIONS: RequestInit = {
