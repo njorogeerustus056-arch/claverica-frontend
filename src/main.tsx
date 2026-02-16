@@ -1,6 +1,7 @@
-// main.tsx - CLEAN VERSION WITH REDUCED LOGS
+// main.tsx - FIXED VERSION WITH BROWSERROUTER
 import { StrictMode, Suspense, lazy, useEffect } from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";  // ✅ ADDED THIS IMPORT
 
 // CSS imports
 import "./styles/index.css";
@@ -59,23 +60,25 @@ if (!rootElement) {
   root.render(
     <StrictMode>
       <ErrorBoundary>
-        <ThemeProvider>
-          <AppWrapper>
-            <InitializeAuth />
-            <TransferProvider>
-              <Suspense
-                fallback={
-                  <div className="flex items-center justify-center h-screen text-gray-500 dark:text-gray-300">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
-                    <span className="ml-3">Loading...</span>
-                  </div>
-                }
-              >
-                <App />
-              </Suspense>
-            </TransferProvider>
-          </AppWrapper>
-        </ThemeProvider>
+        <BrowserRouter>  {/* ✅ ADDED - Router wraps everything */}
+          <ThemeProvider>
+            <AppWrapper>
+              <InitializeAuth />
+              <TransferProvider>
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center h-screen text-gray-500 dark:text-gray-300">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
+                      <span className="ml-3">Loading...</span>
+                    </div>
+                  }
+                >
+                  <App />
+                </Suspense>
+              </TransferProvider>
+            </AppWrapper>
+          </ThemeProvider>
+        </BrowserRouter>  {/* ✅ CLOSED HERE */}
       </ErrorBoundary>
     </StrictMode>
   );
