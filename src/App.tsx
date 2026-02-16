@@ -1,5 +1,5 @@
-// src/App.tsx - UPDATED with Activation Route
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// src/App.tsx - FIXED: Removed duplicate Router
+import { Routes, Route } from "react-router-dom";  // ✅ CHANGED: Removed BrowserRouter
 import { Suspense, lazy } from "react";
 
 // Import Providers - REMOVED AuthProvider
@@ -74,7 +74,7 @@ function LoadingSpinner() {
 
 export default function App() {
   return (
-    <Router>
+    <>
       {/* REMOVED AuthProvider - using Zustand store instead */}
       <AuthInitializer>
         <NotificationProvider pollInterval={30000}>
@@ -196,6 +196,6 @@ export default function App() {
           </Suspense>
         </NotificationProvider>
       </AuthInitializer>
-    </Router>
+    </>
   );
 }
