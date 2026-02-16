@@ -65,8 +65,8 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          // ✅ FIXED: Using getApiUrl
-          const response = await fetch(getApiUrl('/api/token/'), {
+          // ✅ FIXED: Using getApiUrl - REMOVED /api
+          const response = await fetch(getApiUrl('/token/'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -89,8 +89,8 @@ export const useAuthStore = create<AuthStore>()(
             // Fetch user data after successful login
             let userData = null;
             try {
-              // ✅ FIXED: Using getApiUrl
-              const userResponse = await fetch(getApiUrl('/api/users/me/'), {
+              // ✅ FIXED: Using getApiUrl - REMOVED /api
+              const userResponse = await fetch(getApiUrl('/users/me/'), {
                 headers: { 
                   'Authorization': `Bearer ${data.access}`,
                   'Content-Type': 'application/json'
@@ -154,8 +154,8 @@ export const useAuthStore = create<AuthStore>()(
         if (!tokens?.refresh) return false;
 
         try {
-          // ✅ FIXED: Using getApiUrl
-          const response = await fetch(getApiUrl('/api/token/refresh/'), {
+          // ✅ FIXED: Using getApiUrl - REMOVED /api
+          const response = await fetch(getApiUrl('/token/refresh/'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh: tokens.refresh }),
@@ -212,8 +212,8 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         try {
-          // ✅ FIXED: Using getApiUrl
-          const response = await fetch(getApiUrl('/api/users/me/'), {    
+          // ✅ FIXED: Using getApiUrl - REMOVED /api
+          const response = await fetch(getApiUrl('/users/me/'), {    
             headers: {
               Authorization: `Bearer ${tokens.access}`,
               'Content-Type': 'application/json',

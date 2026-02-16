@@ -1,33 +1,33 @@
-// src/config/api.ts - FIXED VERSION
+// src/config/api.ts - FIXED VERSION (REMOVED /api from endpoints)
 export const API_CONFIG = {
   // Base URL from environment variable - should NOT include /api
   BASE_URL: import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app',
   
-  // API Endpoints - WITH /api PREFIX
+  // API Endpoints - WITHOUT /api PREFIX (getApiUrl adds base URL only)
   ENDPOINTS: {
     AUTH: {
-      REGISTER: "/api/accounts/register/",
-      LOGIN: "/api/accounts/login/",
-      LOGOUT: "/api/accounts/logout/",
-      VERIFY_EMAIL: "/api/accounts/verify-email/",
-      RESET_PASSWORD: "/api/accounts/reset-password/",
-      ACTIVATE: "/api/accounts/activate/",
-      RESEND_ACTIVATION: "/api/accounts/resend-activation/",
+      REGISTER: "/accounts/register/",           // ✅ REMOVED /api
+      LOGIN: "/accounts/login/",                 // ✅ REMOVED /api
+      LOGOUT: "/accounts/logout/",               // ✅ REMOVED /api
+      VERIFY_EMAIL: "/accounts/verify-email/",   // ✅ REMOVED /api
+      RESET_PASSWORD: "/accounts/reset-password/", // ✅ REMOVED /api
+      ACTIVATE: "/accounts/activate/",           // ✅ REMOVED /api
+      RESEND_ACTIVATION: "/accounts/resend-activation/", // ✅ REMOVED /api
     },
     USER: {
-      PROFILE: "/api/users/profile/",
-      ME: "/api/users/me/",
-      SETTINGS: "/api/users/settings/",
+      PROFILE: "/users/profile/",                 // ✅ REMOVED /api
+      ME: "/users/me/",                           // ✅ REMOVED /api
+      SETTINGS: "/users/settings/",               // ✅ REMOVED /api
     },
     NOTIFICATIONS: {
-      LIST: "/api/notifications/",
-      UNREAD_COUNT: "/api/notifications/unread-count/",
-      UNREAD: "/api/notifications/unread/",
-      PREFERENCES: "/api/notifications/preferences/",
+      LIST: "/notifications/",                     // ✅ REMOVED /api
+      UNREAD_COUNT: "/notifications/unread-count/", // ✅ REMOVED /api
+      UNREAD: "/notifications/unread/",            // ✅ REMOVED /api
+      PREFERENCES: "/notifications/preferences/",  // ✅ REMOVED /api
     },
     TOKEN: {
-      OBTAIN: "/api/token/",
-      REFRESH: "/api/token/refresh/",
+      OBTAIN: "/token/",                           // ✅ REMOVED /api
+      REFRESH: "/token/refresh/",                  // ✅ REMOVED /api
     }
   },
   
