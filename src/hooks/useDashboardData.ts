@@ -21,10 +21,10 @@ export function useDashboardData() {
       setLoading(true);
       setError(null);
 
-      // ✅ USING YOUR ACTUAL ENDPOINTS
+      // ✅ FIXED: Added /api prefix to both endpoints
       const [walletRes, transactionsRes] = await Promise.all([
-        api.fetch('/transactions/wallet/balance/'), // ✅ CORRECT
-        api.fetch('/transactions/recent/'), // ✅ CORRECT
+        api.fetch('/api/transactions/wallet/balance/'),
+        api.fetch('/api/transactions/recent/'),
       ]);
 
       // Transform to match your Home.tsx UI

@@ -44,7 +44,8 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     if (!isAuthenticated || !tokens?.access) return; // ✅ Guard clause
     
     try {
-      const response = await fetch(`${API_URL}/transactions/wallet/balance/`, {
+      // ✅ FIXED: Added /api prefix to match backend endpoint
+      const response = await fetch(`${API_URL}/api/transactions/wallet/balance/`, {
         headers: { 'Authorization': `Bearer ${tokens?.access}` }
       });
       if (response.ok) {
