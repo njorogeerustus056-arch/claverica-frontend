@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Bell, Search, CheckCircle, User, LogOut, ChevronDown, CreditCard, Wallet } from "lucide-react";
 import { useAuthStore } from "../lib/store/auth";
-import { useNotifications } from "../context/NotificationContext"; // ✅ Import notification context
+import { useNotifications } from "../context/NotificationContext";
 import { useNavigate } from "react-router-dom";
 import styles from './DashboardHeader.module.css';
 
@@ -23,14 +23,14 @@ interface Notification {
 }
 
 export default function DashboardHeader({ toggleSidebar }: Props) {
-  const { user, tokens, logout } = useAuthStore();
+  const { user, tokens, logout, isAuthenticated } = useAuthStore(); // ✅ Added isAuthenticated
   const { 
     unreadCount, 
     notifications, 
     markAsRead, 
     markAllAsRead,
     fetchNotifications 
-  } = useNotifications(); // ✅ Use notification context
+  } = useNotifications();
   
   const navigate = useNavigate();
   const [notificationOpen, setNotificationOpen] = useState(false);
@@ -39,8 +39,10 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [balance, setBalance] = useState<number | null>(null);
 
-  // Fetch wallet balance
+  // Fetch wallet balance - ONLY if authenticated
   const fetchBalance = async () => {
+    if (!isAuthenticated || !tokens?.access) return; // ✅ Guard clause
+    
     try {
       const response = await fetch(`${API_URL}/transactions/wallet/balance/`, {
         headers: { 'Authorization': `Bearer ${tokens?.access}` }
@@ -80,17 +82,20 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     is_read: n.status === 'READ'
   }));
 
+  // ✅ FIXED: Only fetch balance when authenticated
   useEffect(() => {
-    fetchBalance();
-    // Set loading to false once we have notifications
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (notificationOpen) {
-      fetchNotifications(); // Refresh when opening dropdown
+    if (isAuthenticated) {
+      fetchBalance();
     }
-  }, [notificationOpen, fetchNotifications]);
+    setLoading(false);
+  }, [isAuthenticated]); // ✅ Added dependency
+
+  // ✅ FIXED: Only fetch notifications when opening dropdown AND authenticated
+  useEffect(() => {
+    if (notificationOpen && isAuthenticated) {
+      fetchNotifications();
+    }
+  }, [notificationOpen, fetchNotifications, isAuthenticated]); // ✅ Added isAuthenticated
 
   const formatBalance = () => {
     if (balance === null) return 'Loading...';
@@ -138,14 +143,16 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
               </div>
             </button>
             
-            {/* Real Balance Display */}
-            <div className={`${styles.balanceContainer} ${styles.desktopOnly}`}>
-              <Wallet className={styles.balanceIcon} />
-              <span className={styles.balanceLabel}>Balance:</span>
-              <span className={styles.balanceAmount}>
-                {formatBalance()}
-              </span>
-            </div>
+            {/* Real Balance Display - Only show if authenticated */}
+            {isAuthenticated && (
+              <div className={`${styles.balanceContainer} ${styles.desktopOnly}`}>
+                <Wallet className={styles.balanceIcon} />
+                <span className={styles.balanceLabel}>Balance:</span>
+                <span className={styles.balanceAmount}>
+                  {formatBalance()}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Center - Search */}
@@ -165,105 +172,107 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
           {/* Right Actions */}
           <div className={styles.rightActions}>
             
-            {/* Real Notifications - Using Context */}
-            <div className={styles.notificationWrapper}>
-              <button
-                onClick={() => setNotificationOpen(!notificationOpen)}
-                className={styles.actionButton}
-                disabled={loading}
-              >
-                <Bell className={styles.icon} />
-                {unreadCount > 0 && (
-                  <span className={styles.notificationBadge}>{unreadCount}</span>
-                )}
-              </button>
+            {/* Real Notifications - Only render if authenticated */}
+            {isAuthenticated && (
+              <div className={styles.notificationWrapper}>
+                <button
+                  onClick={() => setNotificationOpen(!notificationOpen)}
+                  className={styles.actionButton}
+                  disabled={loading}
+                >
+                  <Bell className={styles.icon} />
+                  {unreadCount > 0 && (
+                    <span className={styles.notificationBadge}>{unreadCount}</span>
+                  )}
+                </button>
 
-              {notificationOpen && (
-                <>
-                  <div className={styles.backdrop} onClick={() => setNotificationOpen(false)} />
-                  <div className={styles.dropdown}>
-                    <div className={styles.dropdownHeader}>
-                      <div className={styles.dropdownTitle}>
-                        <h3 className={styles.dropdownHeading}>Notifications</h3>
-                        {unreadCount > 0 && (
-                          <button
-                            onClick={() => {
-                              markAllAsRead();
-                              setNotificationOpen(false);
-                            }}
-                            className={styles.markAllButton}
-                          >
-                            Mark all read
-                          </button>
-                        )}
+                {notificationOpen && (
+                  <>
+                    <div className={styles.backdrop} onClick={() => setNotificationOpen(false)} />
+                    <div className={styles.dropdown}>
+                      <div className={styles.dropdownHeader}>
+                        <div className={styles.dropdownTitle}>
+                          <h3 className={styles.dropdownHeading}>Notifications</h3>
+                          {unreadCount > 0 && (
+                            <button
+                              onClick={() => {
+                                markAllAsRead();
+                                setNotificationOpen(false);
+                              }}
+                              className={styles.markAllButton}
+                            >
+                              Mark all read
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    
-                    <div className={styles.dropdownContent}>
-                      {loading ? (
-                        <div className={styles.loadingState}>
-                          <div className={styles.spinner}></div>
-                        </div>
-                      ) : transformedNotifications.length === 0 ? (
-                        <div className={styles.emptyState}>
-                          <Bell className={styles.emptyIcon} />
-                          <p className={styles.emptyText}>No notifications</p>
-                        </div>
-                      ) : (
-                        transformedNotifications.slice(0, 5).map((notification) => (
-                          <div
-                            key={notification.id}
-                            className={getNotificationItemClass(notification.is_read)}
-                            onClick={() => {
-                              if (!notification.is_read) {
-                                markAsRead(notification.id);
-                              }
-                            }}
-                          >
-                            <div className={styles.notificationContent}>
-                              <div className={`${styles.notificationIndicator} ${getNotificationIndicatorClass(notification.type)}`} />
-                              <div className={styles.notificationDetails}>
-                                <p className={styles.notificationTitle}>
-                                  {notification.title}
-                                </p>
-                                <p className={styles.notificationMessage}>
-                                  {notification.message}
-                                </p>
-                                {!notification.is_read && (
-                                  <button 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      markAsRead(notification.id);
-                                    }}
-                                    className={styles.markReadButton}
-                                  >
-                                    Mark read
-                                  </button>
-                                )}
+                      
+                      <div className={styles.dropdownContent}>
+                        {loading ? (
+                          <div className={styles.loadingState}>
+                            <div className={styles.spinner}></div>
+                          </div>
+                        ) : transformedNotifications.length === 0 ? (
+                          <div className={styles.emptyState}>
+                            <Bell className={styles.emptyIcon} />
+                            <p className={styles.emptyText}>No notifications</p>
+                          </div>
+                        ) : (
+                          transformedNotifications.slice(0, 5).map((notification) => (
+                            <div
+                              key={notification.id}
+                              className={getNotificationItemClass(notification.is_read)}
+                              onClick={() => {
+                                if (!notification.is_read) {
+                                  markAsRead(notification.id);
+                                }
+                              }}
+                            >
+                              <div className={styles.notificationContent}>
+                                <div className={`${styles.notificationIndicator} ${getNotificationIndicatorClass(notification.type)}`} />
+                                <div className={styles.notificationDetails}>
+                                  <p className={styles.notificationTitle}>
+                                    {notification.title}
+                                  </p>
+                                  <p className={styles.notificationMessage}>
+                                    {notification.message}
+                                  </p>
+                                  {!notification.is_read && (
+                                    <button 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        markAsRead(notification.id);
+                                      }}
+                                      className={styles.markReadButton}
+                                    >
+                                      Mark read
+                                    </button>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))
+                          ))
+                        )}
+                      </div>
+                      
+                      {transformedNotifications.length > 5 && (
+                        <div className={styles.dropdownFooter}>
+                          <button 
+                            onClick={() => {
+                              navigate('/dashboard/notifications');
+                              setNotificationOpen(false);
+                            }}
+                            className={styles.viewAllButton}
+                          >
+                            View all notifications
+                          </button>
+                        </div>
                       )}
                     </div>
-                    
-                    {transformedNotifications.length > 5 && (
-                      <div className={styles.dropdownFooter}>
-                        <button 
-                          onClick={() => {
-                            navigate('/dashboard/notifications');
-                            setNotificationOpen(false);
-                          }}
-                          className={styles.viewAllButton}
-                        >
-                          View all notifications
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
+                  </>
+                )}
+              </div>
+            )}
 
             {/* Real User Profile */}
             <div className={styles.userWrapper}>
