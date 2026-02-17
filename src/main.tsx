@@ -1,7 +1,7 @@
-// main.tsx - FIXED VERSION WITH BROWSERROUTER
+// main.tsx - FIXED VERSION WITH BROWSERROUTER AND PUSHER
 import { StrictMode, Suspense, lazy, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";  // ✅ ADDED THIS IMPORT
+import { BrowserRouter } from "react-router-dom";
 
 // CSS imports
 import "./styles/index.css";
@@ -12,6 +12,7 @@ import "flatpickr/dist/flatpickr.css";
 import { AppWrapper } from "./components/common/PageMeta";
 import { ThemeProvider } from "./context/ThemeContext";
 import { TransferProvider } from "./context/TransferContext.tsx";
+import { PusherProvider } from "./context/PusherContext";  // ✅ ADDED
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { useAuthStore } from "./lib/store/auth";
 
@@ -33,7 +34,6 @@ function InitializeAuth() {
   useEffect(() => {
     const authStore = useAuthStore.getState();
     
-    // Keep only essential logs or remove all
     if (process.env.NODE_ENV === 'development') {
       console.log("📱 App initializing...");
     }
@@ -60,25 +60,27 @@ if (!rootElement) {
   root.render(
     <StrictMode>
       <ErrorBoundary>
-        <BrowserRouter>  {/* ✅ ADDED - Router wraps everything */}
+        <BrowserRouter>
           <ThemeProvider>
             <AppWrapper>
               <InitializeAuth />
-              <TransferProvider>
-                <Suspense
-                  fallback={
-                    <div className="flex items-center justify-center h-screen text-gray-500 dark:text-gray-300">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
-                      <span className="ml-3">Loading...</span>
-                    </div>
-                  }
-                >
-                  <App />
-                </Suspense>
-              </TransferProvider>
+              <PusherProvider>  {/* ✅ ADDED - Real-time notifications */}
+                <TransferProvider>
+                  <Suspense
+                    fallback={
+                      <div className="flex items-center justify-center h-screen text-gray-500 dark:text-gray-300">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
+                        <span className="ml-3">Loading...</span>
+                      </div>
+                    }
+                  >
+                    <App />
+                  </Suspense>
+                </TransferProvider>
+              </PusherProvider>  {/* ✅ ADDED */}
             </AppWrapper>
           </ThemeProvider>
-        </BrowserRouter>  {/* ✅ CLOSED HERE */}
+        </BrowserRouter>
       </ErrorBoundary>
     </StrictMode>
   );
