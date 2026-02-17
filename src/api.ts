@@ -1,4 +1,4 @@
-// src/api.ts - COMPLETE FIXED VERSION (ADDED /api prefix to walletAPI)
+// src/api.ts - COMPLETE FIXED VERSION (REMOVED /api prefix from walletAPI)
 import { useAuthStore } from './lib/store/auth';
 
 // ✅ FIXED: Remove any trailing /api from the URL
@@ -388,14 +388,14 @@ export const notificationAPI = {
   }
 };
 
-// ✅ FIXED: Wallet/Account API functions - ADDED /api prefix
+// ✅ FIXED: Wallet/Account API functions - REMOVED /api prefix
 export const walletAPI = {
   getBalance: async () => {
-    return apiFetch("/api/transactions/wallet/balance/");  // ✅ ADDED /api prefix
+    return apiFetch("/transactions/wallet/balance/");  // ✅ REMOVED /api prefix
   },
 
   getTransactions: async () => {
-    return apiFetch("/api/transactions/recent/");  // ✅ ADDED /api prefix
+    return apiFetch("/transactions/recent/");  // ✅ REMOVED /api prefix
   }
 };
 
