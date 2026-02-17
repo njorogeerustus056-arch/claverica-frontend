@@ -1,4 +1,4 @@
-// src/api.ts - COMPLETE FIXED VERSION (REMOVED /api prefix from walletAPI)
+// src/api.ts - COMPLETE FIXED VERSION
 import { useAuthStore } from './lib/store/auth';
 
 // ✅ FIXED: Remove any trailing /api from the URL
@@ -193,7 +193,7 @@ export async function uploadFormData<T = any>(
   return response.json();
 }
 
-// Authentication API functions - ✅ FIXED: REMOVED /api prefix
+// Authentication API functions - WITHOUT /api prefix
 export const authAPI = {
   register: async (data: any) => {
     return apiFetch("/accounts/register/", {
@@ -243,7 +243,7 @@ export const authAPI = {
   }
 };
 
-// Notification API functions - ✅ FIXED: REMOVED /api prefix
+// Notification API functions - WITHOUT /api prefix
 export const notificationAPI = {
   getAll: async () => {
     try {
@@ -388,18 +388,18 @@ export const notificationAPI = {
   }
 };
 
-// ✅ FIXED: Wallet/Account API functions - REMOVED /api prefix
+// ✅ FIXED: Wallet/Account API functions - WITH /api prefix (since API_URL has no /api)
 export const walletAPI = {
   getBalance: async () => {
-    return apiFetch("/transactions/wallet/balance/");  // ✅ REMOVED /api prefix
+    return apiFetch("/api/transactions/wallet/balance/");  // ✅ Added /api prefix
   },
 
   getTransactions: async () => {
-    return apiFetch("/transactions/recent/");  // ✅ REMOVED /api prefix
+    return apiFetch("/api/transactions/recent/");  // ✅ Added /api prefix
   }
 };
 
-// Payment API functions - ✅ FIXED: REMOVED /api prefix
+// Payment API functions - WITHOUT /api prefix
 export const paymentAPI = {
   processPayment: async (data: any) => {
     return apiFetch("/payments/process/", {
@@ -413,7 +413,7 @@ export const paymentAPI = {
   }
 };
 
-// Transfer API functions - ✅ FIXED: REMOVED /api prefix
+// Transfer API functions - WITHOUT /api prefix
 export const transferAPI = {
   initiateTransfer: async (data: any) => {
     return apiFetch("/compliance/transfers/", {
@@ -442,7 +442,7 @@ export const transferAPI = {
   }
 };
 
-// KYC API functions - ✅ FIXED: REMOVED /api prefix
+// KYC API functions - WITHOUT /api prefix
 export const kycAPI = {
   submitDocuments: async (data: FormData) => {
     return uploadFormData("/kyc/documents/", data);
@@ -461,15 +461,23 @@ export const kycAPI = {
   }
 };
 
-// Export all APIs as a single object
+// ✅ FIXED: Export all APIs as a single object - wallet is now properly included!
 export const api = {
   auth: authAPI,
   notifications: notificationAPI,
-  wallet: walletAPI,
+  wallet: walletAPI,      // ✅ This was missing/undefined before!
   payments: paymentAPI,
   transfers: transferAPI,
   kyc: kycAPI,
   fetch: apiFetch,
+  get: <T = any>(endpoint: string, options?: RequestInit) => 
+    apiFetch<T>(endpoint, { ...options, method: 'GET' }),
+  post: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
+    apiFetch<T>(endpoint, { ...options, method: 'POST', body: data ? JSON.stringify(data) : undefined }),
+  put: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
+    apiFetch<T>(endpoint, { ...options, method: 'PUT', body: data ? JSON.stringify(data) : undefined }),
+  delete: <T = any>(endpoint: string, options?: RequestInit) =>
+    apiFetch<T>(endpoint, { ...options, method: 'DELETE' }),
 };
 
 // Type definitions for better TypeScript support
