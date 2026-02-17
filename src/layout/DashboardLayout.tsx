@@ -1,4 +1,4 @@
-// src/components/DashboardLayout.tsx
+// Copy and paste this entire file
 "use client";
 
 import { useState } from "react";
@@ -6,7 +6,6 @@ import { Outlet } from "react-router-dom";
 import LiveTicker from "./LiveTicker";
 import DashboardHeader from "./DashboardHeader";
 import DashboardSidebar from "./DashboardSidebar";
-// ✅ IMPORT the new TawkToWidget (ChatBubble is deleted)
 import TawkToWidget from "../components/TawkToWidget";
 import { useTheme } from "../context/ThemeContext";
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -47,7 +46,7 @@ function DashboardLayoutContent() {
           </div>
         </div>
 
-        {/* ✅ ADD TawkToWidget here - only shows in dashboard */}
+        {/* Tawk.to Widget - only shows after login */}
         <TawkToWidget />
       </div>
     </div>

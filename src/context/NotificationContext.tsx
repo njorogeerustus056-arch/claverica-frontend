@@ -1,4 +1,4 @@
-// src/context/NotificationContext.tsx
+// src/context/NotificationContext.tsx - FIXED VERSION (ADDED CLEANUP)
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '../lib/store/auth'; // Using Zustand store
 import api, { Notification } from '../services/api';
@@ -90,15 +90,22 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     }
   }, [isAuthenticated, tokens?.access, fetchNotifications, initialFetchDone]);
 
-  // Polling for updates (only when authenticated)
+  // ✅ FIXED: Polling with proper cleanup to prevent memory leaks
   useEffect(() => {
     if (!isAuthenticated || !tokens?.access) return;
     
+    console.log('🔄 Starting notification polling every', pollInterval, 'ms');
+    
     const interval = setInterval(() => {
+      console.log('⏰ Polling notifications...');
       fetchNotifications();
     }, pollInterval);
     
-    return () => clearInterval(interval);
+    // ✅ IMPORTANT: Cleanup function to clear interval on unmount
+    return () => {
+      console.log('🧹 Cleaning up notification polling');
+      clearInterval(interval);
+    };
   }, [isAuthenticated, tokens?.access, pollInterval, fetchNotifications]);
 
   const markAsRead = async (id: number) => {

@@ -5,7 +5,7 @@ import { Bell, Search, CheckCircle, User, LogOut, ChevronDown, CreditCard, Walle
 import { useAuthStore } from "../lib/store/auth";
 import { useNotifications } from "../context/NotificationContext";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api"; // ✅ ADDED: Import centralized API
+import api from "../services/api"; // ✅ Import centralized API
 import styles from './DashboardHeader.module.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -41,7 +41,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [balance, setBalance] = useState<number | null>(null);
 
-  // ✅ FIXED: Using centralized API instead of direct fetch
+  // ✅ FIXED: Using walletAPI (SAME as Home.tsx)
   const fetchBalance = async () => {
     if (!isAuthenticated || !tokens?.access) {
       console.log('⏭️ Skipping balance fetch - not authenticated');
@@ -49,17 +49,19 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     }
     
     try {
-      console.log('🔍 Fetching balance via API...');
+      console.log('🔍 Fetching balance via walletAPI...');
       
-      // ✅ USING CENTRALIZED API - CORRECT
-      const response = await api.get('/api/transactions/wallet/balance/');
+      // ✅ USING SAME API CALL AS Home.tsx
+      const response = await api.wallet.getBalance();
       
       console.log('📥 Balance response:', response);
       
+      // ✅ PARSE THE SAME WAY AS useDashboardData.ts
       if (response && typeof response === 'object') {
-        const balanceValue = response.balance ?? response.amount ?? response.value ?? 0;
-        setBalance(Number(balanceValue));
-        console.log('💰 Balance set to:', Number(balanceValue));
+        // In useDashboardData.ts they do: parseFloat(walletRes.balance || "0")
+        const balanceValue = parseFloat(response.balance || "0");
+        setBalance(balanceValue);
+        console.log('💰 Balance set to:', balanceValue);
       } else {
         console.warn('⚠️ Unexpected balance format:', response);
         setBalance(0);
@@ -202,7 +204,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
               </div>
             </button>
             
-            {/* Balance Display - Using centralized API */}
+            {/* Balance Display - Using walletAPI (same as Home.tsx) */}
             {isAuthenticated && (
               <div className={`${styles.balanceContainer} ${styles.desktopOnly}`}>
                 <Wallet className={styles.balanceIcon} />

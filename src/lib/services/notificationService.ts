@@ -1,4 +1,4 @@
-// src/lib/services/notificationService.ts - ORIGINAL VERSION (NO WEBSOCKET)
+// src/lib/services/notificationService.ts - FIXED VERSION (REMOVED DUPLICATE HOOK)
 import { api, Notification } from '../../api';
 import { useAuthStore } from '../store/auth';
 
@@ -356,35 +356,5 @@ export class NotificationService {
   }
 }
 
-// Hook for using notification service in components
-export const useNotifications = () => {
-  const { tokens } = useAuthStore();
-
-  const fetchNotifications = async () => {
-    if (!tokens?.access) {
-      return [];
-    }
-    return NotificationService.getNotifications();
-  };
-
-  const fetchUnreadCount = async () => {
-    if (!tokens?.access) {
-      return 0;
-    }
-    return NotificationService.getUnreadCount();
-  };
-
-  return {
-    fetchNotifications,
-    fetchUnreadCount,
-    markAsRead: NotificationService.markAsRead,
-    markAllAsRead: NotificationService.markAllAsRead,
-    getPreferences: NotificationService.getPreferences,
-    updatePreferences: NotificationService.updatePreferences,
-    formatDate: NotificationService.formatDate,
-    getNotificationIconClasses: NotificationService.getNotificationIconClasses,
-    getNotificationIconPath: NotificationService.getNotificationIconPath,
-    getPriorityLabel: NotificationService.getPriorityLabel,
-    getPriorityClasses: NotificationService.getPriorityClasses,
-  };
-};
+// ⚠️ IMPORTANT: useNotifications HOOK REMOVED - Use the one from context/NotificationContext instead
+// This prevents duplicate polling and infinite loops
