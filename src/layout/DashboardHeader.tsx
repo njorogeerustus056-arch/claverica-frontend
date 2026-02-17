@@ -8,6 +8,11 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api"; // ✅ Import centralized API
 import styles from './DashboardHeader.module.css';
 
+// ✅ ADD DEBUG LOGS HERE
+console.log('🔍 DashboardHeader - api object:', api);
+console.log('🔍 DashboardHeader - api.wallet:', api.wallet);
+console.log('🔍 DashboardHeader - api.wallet.getBalance:', api.wallet?.getBalance);
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 type Props = {
@@ -51,7 +56,13 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     try {
       console.log('🔍 Fetching balance via walletAPI...');
       
-      // Using api.wallet.getBalance() - ✅ CORRECT (defined in services/api.ts)
+      // Check if api.wallet exists
+      if (!api.wallet) {
+        console.error('❌ api.wallet is undefined!');
+        return;
+      }
+      
+      // Using api.wallet.getBalance()
       const response = await api.wallet.getBalance();
       
       console.log('📥 Balance response:', response);
