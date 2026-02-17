@@ -41,13 +41,13 @@ import {
   Visibility,
   Delete,
 } from '@mui/icons-material';
-import { useAuth } from '../../lib/store/auth';
+import { useAuthStore } from '../../lib/store/auth';  // ✅ FIXED import
 import styles from './KYCSubmit.module.css';
 
 const KYCSubmit = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuthStore();
+  const { user } = useAuthStore();  // ✅ Now correctly using useAuthStore
   const token = localStorage.getItem('token'); // Get token from auth
   
   const [activeStep, setActiveStep] = useState(0);
