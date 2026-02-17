@@ -112,7 +112,7 @@ export interface KYCStatus {
 }
 
 export const transferAPI = {
-  // ✅ FIXED: Create transfer - Now using correct compliance endpoint
+  // Create transfer - Using correct compliance endpoint
   createTransfer: async (data: TransferRequest): Promise<{success: boolean; transfer_id: number; reference: string; message: string}> => {
     try {
       const { user } = useAuthStore.getState();
@@ -153,7 +153,7 @@ export const transferAPI = {
       
       console.log('📤 Sending to COMPLIANCE API:', cleanedData);
       
-      // ✅ FIXED: Changed to correct compliance endpoint
+      // Using correct compliance endpoint
       const response = await apiFetch('/api/compliance/transfers/', {
         method: 'POST',
         body: JSON.stringify(cleanedData)
@@ -233,35 +233,15 @@ export const transferAPI = {
     }
   },
 
-  // Get wallet balance
+  // ✅ FIXED: Get wallet balance - Now using apiFetch instead of direct fetch
   getWalletBalance: async (): Promise<WalletBalance> => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL;
-      const { tokens } = useAuthStore.getState();
-      const url = `${API_URL}/transactions/wallet/balance/`;
+      const response = await apiFetch('/transactions/wallet/balance/');
       
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(tokens?.access ? { 
-            'Authorization': `Bearer ${tokens.access}` 
-          } : {})
-        }
-      });
-
-      if (!response.ok) {
-        return {
-          balance: '0.00',
-          currency: 'USD'
-        };
-      }
-
-      const rawData = await response.json();
-      const balanceValue = typeof rawData.balance === 'number' ? rawData.balance : 
-                          typeof rawData.balance === 'string' ? parseFloat(rawData.balance) : 0.00;
+      const balanceValue = typeof response.balance === 'number' ? response.balance : 
+                          typeof response.balance === 'string' ? parseFloat(response.balance) : 0.00;
       
-      const currency = rawData.currency || 'USD';
+      const currency = response.currency || 'USD';
       
       return {
         balance: isNaN(balanceValue) ? '0.00' : balanceValue.toFixed(2),
@@ -269,6 +249,7 @@ export const transferAPI = {
       };
       
     } catch (error: any) {
+      console.error('Error fetching wallet balance:', error);
       return {
         balance: '0.00',
         currency: 'USD'
@@ -276,10 +257,9 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfer status - Now using correct compliance endpoint
+  // Get transfer status - Using correct compliance endpoint
   getTransfer: async (transferId: number): Promise<TransferStatus> => {
     try {
-      // ✅ FIXED: Changed to correct compliance endpoint
       const transferData = await apiFetch(`/api/compliance/transfers/${transferId}/`);
       return transferData;
     } catch (error: any) {
@@ -287,12 +267,11 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Verify TAC - Now using correct compliance endpoint with hyphen
+  // Verify TAC - Using correct compliance endpoint with hyphen
   verifyTAC: async (transferId: number, tacCode: string): Promise<{success: boolean; message: string}> => {
     try {
       console.log(`🔐 Verifying TAC ${tacCode} for transfer ${transferId}`);
       
-      // ✅ FIXED: Changed to correct compliance endpoint with hyphen (verify-tac)
       const response = await apiFetch(`/api/compliance/transfers/${transferId}/verify-tac/`, {
         method: 'POST',
         body: JSON.stringify({ tac_code: tacCode })
@@ -320,10 +299,9 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get user's transfer history - Now using correct compliance endpoint
+  // Get user's transfer history - Using correct compliance endpoint
   getTransfersHistory: async (page = 1, limit = 20): Promise<TransfersHistory> => {
     try {
-      // ✅ FIXED: Changed to correct compliance endpoint
       const historyData = await apiFetch(`/api/compliance/transfers/?page=${page}`);
       return historyData;
     } catch (error: any) {
@@ -363,10 +341,9 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfers needing TAC (for admin) - Now using correct compliance endpoint
+  // Get transfers needing TAC (for admin) - Using correct compliance endpoint
   getPendingTransfers: async (): Promise<TransferStatus[]> => {
     try {
-      // ✅ FIXED: Changed to correct compliance admin endpoint
       const pendingData = await apiFetch('/api/compliance/admin/transfers/need-tac/');
       return pendingData;
     } catch (error: any) {
@@ -374,10 +351,9 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Cancel transfer - Now using correct compliance endpoint
+  // Cancel transfer - Using correct compliance endpoint
   cancelTransfer: async (transferId: number): Promise<{success: boolean; message: string}> => {
     try {
-      // ✅ FIXED: Changed to correct compliance admin endpoint
       const response = await apiFetch(`/api/compliance/admin/transfers/${transferId}/cancel/`, {
         method: 'POST'
       });
