@@ -1,4 +1,4 @@
-// src/api.ts - FIXED VERSION WITH CORRECT ENDPOINTS
+// src/api.ts - COMPLETE FIXED VERSION (REMOVED ALL /api prefixes)
 import { useAuthStore } from './lib/store/auth';
 
 // ✅ FIXED: Remove any trailing /api from the URL
@@ -109,7 +109,7 @@ export async function apiFetch<T = any>(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          const refreshResponse = await fetch(`${API_URL}/api/token/refresh/`, {
+          const refreshResponse = await fetch(`${API_URL}/token/refresh/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refresh: refreshToken }),
@@ -193,38 +193,38 @@ export async function uploadFormData<T = any>(
   return response.json();
 }
 
-// Authentication API functions - ✅ FIXED WITH CORRECT ENDPOINTS
+// Authentication API functions - ✅ FIXED: REMOVED /api prefix
 export const authAPI = {
   register: async (data: any) => {
-    return apiFetch("/api/accounts/register/", {
+    return apiFetch("/accounts/register/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   verifyActivation: async (data: { email: string; activation_code: string }) => {
-    return apiFetch("/api/accounts/activate/", {
+    return apiFetch("/accounts/activate/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   resendActivation: async (data: { email: string }) => {
-    return apiFetch("/api/accounts/resend-activation/", {
+    return apiFetch("/accounts/resend-activation/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   login: async (email: string, password: string) => {
-    return apiFetch("/api/token/", {
+    return apiFetch("/token/", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
   },
 
   logout: async () => {
-    const result = await apiFetch("/api/accounts/logout/", {
+    const result = await apiFetch("/accounts/logout/", {
       method: "POST",
     });
     removeToken();
@@ -232,22 +232,22 @@ export const authAPI = {
   },
 
   getProfile: async () => {
-    return apiFetch("/api/users/me/");
+    return apiFetch("/users/me/");
   },
 
   refresh: async (refreshToken: string) => {
-    return apiFetch("/api/token/refresh/", {
+    return apiFetch("/token/refresh/", {
       method: "POST",
       body: JSON.stringify({ refresh: refreshToken }),
     });
   }
 };
 
-// Notification API functions
+// Notification API functions - ✅ FIXED: REMOVED /api prefix
 export const notificationAPI = {
   getAll: async () => {
     try {
-      const data = await apiFetch<any>("/api/notifications/");
+      const data = await apiFetch<any>("/notifications/");
       if (Array.isArray(data)) {
         return data;
       } else if (data && Array.isArray(data.notifications)) {
@@ -269,7 +269,7 @@ export const notificationAPI = {
 
   getUnread: async () => {
     try {
-      const data = await apiFetch<any>("/api/notifications/unread/");
+      const data = await apiFetch<any>("/notifications/unread/");
       if (Array.isArray(data)) {
         return data;
       } else if (data && Array.isArray(data.notifications)) {
@@ -288,10 +288,10 @@ export const notificationAPI = {
   },
 
   getUnreadCount: async () => {
-    console.log('🔍 [API DEBUG] Calling /api/notifications/unread-count/');
+    console.log('🔍 [API DEBUG] Calling /notifications/unread-count/');
     
     try {
-      const data = await apiFetch<any>("/api/notifications/unread-count/");
+      const data = await apiFetch<any>("/notifications/unread-count/");
       
       console.log('✅ [API DEBUG] Raw unread count response:', data);
       
@@ -342,7 +342,7 @@ export const notificationAPI = {
 
   markAsRead: async (notificationId: number) => {
     try {
-      return await apiFetch(`/api/notifications/${notificationId}/mark-read/`, {
+      return await apiFetch(`/notifications/${notificationId}/mark-read/`, {
         method: "POST",
       });
     } catch (error: any) {
@@ -356,7 +356,7 @@ export const notificationAPI = {
 
   markAllAsRead: async () => {
     try {
-      return await apiFetch("/api/notifications/mark-all-read/", {
+      return await apiFetch("/notifications/mark-all-read/", {
         method: "POST",
       });
     } catch (error: any) {
@@ -369,95 +369,95 @@ export const notificationAPI = {
   },
 
   getPreferences: async () => {
-    return apiFetch("/api/notifications/preferences/");
+    return apiFetch("/notifications/preferences/");
   },
 
   updatePreferences: async (data: any) => {
-    return apiFetch("/api/notifications/preferences/", {
+    return apiFetch("/notifications/preferences/", {
       method: "PUT",
       body: JSON.stringify(data),
     });
   },
 
   getAdminAlerts: async () => {
-    return apiFetch("/api/notifications/admin/alerts/");
+    return apiFetch("/notifications/admin/alerts/");
   },
 
   getAdminActionRequired: async () => {
-    return apiFetch<{ action_required_count: number }>("/api/notifications/admin/action-required/");
+    return apiFetch<{ action_required_count: number }>("/notifications/admin/action-required/");
   }
 };
 
-// Wallet/Account API functions
+// Wallet/Account API functions - ✅ FIXED: REMOVED /api prefix
 export const walletAPI = {
   getBalance: async () => {
-    return apiFetch("/api/transactions/wallet/balance/");
+    return apiFetch("/transactions/wallet/balance/");
   },
 
   getTransactions: async () => {
-    return apiFetch("/api/transactions/recent/");
+    return apiFetch("/transactions/recent/");
   }
 };
 
-// Payment API functions
+// Payment API functions - ✅ FIXED: REMOVED /api prefix
 export const paymentAPI = {
   processPayment: async (data: any) => {
-    return apiFetch("/api/payments/process/", {
+    return apiFetch("/payments/process/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   getPaymentHistory: async () => {
-    return apiFetch("/api/payments/history/");
+    return apiFetch("/payments/history/");
   }
 };
 
-// Transfer API functions
+// Transfer API functions - ✅ FIXED: REMOVED /api prefix
 export const transferAPI = {
   initiateTransfer: async (data: any) => {
-    return apiFetch("/api/compliance/transfers/", {
+    return apiFetch("/compliance/transfers/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   getTransfers: async () => {
-    return apiFetch("/api/compliance/transfers/");
+    return apiFetch("/compliance/transfers/");
   },
 
   getTransfer: async (id: number) => {
-    return apiFetch(`/api/compliance/transfers/${id}/`);
+    return apiFetch(`/compliance/transfers/${id}/`);
   },
 
   verifyTAC: async (transferId: number, tacCode: string) => {
-    return apiFetch(`/api/compliance/transfers/${transferId}/verify-tac/`, {
+    return apiFetch(`/compliance/transfers/${transferId}/verify-tac/`, {
       method: "POST",
       body: JSON.stringify({ tac_code: tacCode }),
     });
   },
 
   getTransferHistory: async (page = 1) => {
-    return apiFetch(`/api/compliance/transfers/?page=${page}`);
+    return apiFetch(`/compliance/transfers/?page=${page}`);
   }
 };
 
-// KYC API functions
+// KYC API functions - ✅ FIXED: REMOVED /api prefix
 export const kycAPI = {
   submitDocuments: async (data: FormData) => {
-    return uploadFormData("/api/kyc/documents/", data);
+    return uploadFormData("/kyc/documents/", data);
   },
 
   getStatus: async () => {
-    return apiFetch("/api/kyc/documents/status/");
+    return apiFetch("/kyc/documents/status/");
   },
 
   checkRequirement: async (amount: number, serviceType: string = 'transfer') => {
-    return apiFetch(`/api/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
+    return apiFetch(`/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
   },
 
   getSubmissions: async () => {
-    return apiFetch("/api/kyc/documents/submissions/");
+    return apiFetch("/kyc/documents/submissions/");
   }
 };
 
