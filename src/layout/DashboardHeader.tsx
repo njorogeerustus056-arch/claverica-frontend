@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bell, Search, CheckCircle, User, LogOut, ChevronDown, CreditCard, Wallet } from "lucide-react";
+import { Bell, Search, CheckCircle, User, LogOut, ChevronDown, CreditCard, Wallet, RefreshCw } from "lucide-react";
 import { useAuthStore } from "../lib/store/auth";
 import { useNotifications } from "../context/NotificationContext";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api"; // ✅ ADDED: Import centralized API
 import styles from './DashboardHeader.module.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -20,6 +21,7 @@ interface Notification {
   type: "success" | "warning" | "error" | "info";
   created_at: string;
   is_read: boolean;
+  metadata?: any;
 }
 
 export default function DashboardHeader({ toggleSidebar }: Props) {
@@ -39,7 +41,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [balance, setBalance] = useState<number | null>(null);
 
-  // ✅ FIXED: Fetch wallet balance with proper error handling and debugging
+  // ✅ FIXED: Using centralized API instead of direct fetch
   const fetchBalance = async () => {
     if (!isAuthenticated || !tokens?.access) {
       console.log('⏭️ Skipping balance fetch - not authenticated');
@@ -47,44 +49,19 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     }
     
     try {
-      const url = `${API_URL}/api/transactions/wallet/balance/`;
-      console.log('🔍 Fetching balance from:', url);
+      console.log('🔍 Fetching balance via API...');
       
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 
-          'Authorization': `Bearer ${tokens.access}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      // ✅ USING CENTRALIZED API - CORRECT
+      const response = await api.get('/api/transactions/wallet/balance/');
       
-      console.log('📥 Balance response status:', response.status);
+      console.log('📥 Balance response:', response);
       
-      if (response.ok) {
-        const data = await response.json();
-        console.log('✅ Balance data received:', data);
-        
-        // Handle different response formats
-        if (data && typeof data === 'object') {
-          // Try different possible field names
-          const balanceValue = data.balance ?? data.amount ?? data.value ?? 0;
-          setBalance(Number(balanceValue));
-          console.log('💰 Balance set to:', Number(balanceValue));
-        } else if (typeof data === 'number') {
-          setBalance(data);
-          console.log('💰 Balance set to (number):', data);
-        } else if (typeof data === 'string') {
-          const parsed = parseFloat(data);
-          setBalance(isNaN(parsed) ? 0 : parsed);
-          console.log('💰 Balance set to (parsed string):', parsed);
-        } else {
-          console.warn('⚠️ Unexpected balance format:', data);
-          setBalance(0);
-        }
+      if (response && typeof response === 'object') {
+        const balanceValue = response.balance ?? response.amount ?? response.value ?? 0;
+        setBalance(Number(balanceValue));
+        console.log('💰 Balance set to:', Number(balanceValue));
       } else {
-        // Log error response
-        const errorText = await response.text();
-        console.error('❌ Balance fetch failed:', response.status, errorText);
+        console.warn('⚠️ Unexpected balance format:', response);
         setBalance(0);
       }
     } catch (error) {
@@ -93,44 +70,70 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     }
   };
 
-  // Map notification type for styling
-  const mapNotificationType = (backendType: string): "success" | "warning" | "error" | "info" => {
-    const typeMap: Record<string, "success" | "warning" | "error" | "info"> = {
-      'PAYMENT_RECEIVED': 'success',
-      'TRANSFER_COMPLETED': 'success',
-      'KYC_APPROVED': 'success',
-      'TRANSFER_FAILED': 'error',
-      'KYC_REJECTED': 'error',
-      'ADMIN_TAC_REQUIRED': 'warning',
-      'ADMIN_KYC_REVIEW_REQUIRED': 'warning',
-      'TAC_SENT': 'info',
-      'KYC_SUBMITTED': 'info',
-    };
-    return typeMap[backendType] || 'info';
+  // ✅ Map notification types for all events (wallet, transfers, TAC, etc.)
+  const mapNotificationType = (notification: any): "success" | "warning" | "error" | "info" => {
+    const type = notification.notification_type || '';
+    const priority = notification.priority || '';
+    const metadata = notification.metadata || {};
+    
+    // Wallet related notifications
+    if (type.includes('PAYMENT') || type.includes('DEPOSIT') || type.includes('CREDIT')) {
+      return 'success';
+    }
+    
+    // Transfer related notifications
+    if (type.includes('TRANSFER_COMPLETED')) return 'success';
+    if (type.includes('TRANSFER_INITIATED')) return 'info';
+    if (type.includes('TRANSFER_FAILED')) return 'error';
+    
+    // TAC related notifications
+    if (type.includes('TAC_SENT')) return 'info';
+    if (type.includes('TAC_VERIFIED')) return 'success';
+    if (type.includes('TAC_EXPIRED')) return 'warning';
+    
+    // KYC related
+    if (type.includes('KYC_APPROVED')) return 'success';
+    if (type.includes('KYC_REJECTED')) return 'error';
+    if (type.includes('KYC_SUBMITTED')) return 'info';
+    if (type.includes('KYC_REVIEW')) return 'warning';
+    
+    // Admin actions
+    if (type.includes('ADMIN_TAC_REQUIRED')) return 'warning';
+    if (type.includes('ADMIN_KYC_REVIEW')) return 'warning';
+    if (type.includes('ADMIN_SETTLEMENT')) return 'info';
+    
+    // Priority based
+    if (priority === 'HIGH') return 'warning';
+    if (priority === 'MEDIUM') return 'info';
+    
+    return 'info';
   };
 
-  // Transform notifications from context
+  // ✅ Transform notifications with all metadata
   const transformedNotifications = notifications.map((n: any) => ({
     id: n.id,
-    title: n.title,
-    message: n.message,
-    type: mapNotificationType(n.notification_type),
-    created_at: n.created_at,
-    is_read: n.status === 'READ'
+    title: n.title || 'Notification',
+    message: n.message || '',
+    type: mapNotificationType(n),
+    created_at: n.created_at || new Date().toISOString(),
+    is_read: n.status === 'READ' || n.is_read === true,
+    metadata: n.metadata || {},
+    priority: n.priority || 'NORMAL',
+    action_url: n.action_url || null,
+    requires_action: n.requires_admin_action || false
   }));
 
-  // ✅ FIXED: Only fetch balance when authenticated
+  // ✅ Fetch balance when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       fetchBalance();
     } else {
-      console.log('⏭️ User not authenticated, skipping balance fetch');
       setBalance(null);
     }
     setLoading(false);
-  }, [isAuthenticated, tokens?.access]); // ✅ Added tokens?.access as dependency
+  }, [isAuthenticated, tokens?.access]);
 
-  // ✅ FIXED: Only fetch notifications when opening dropdown AND authenticated
+  // ✅ Fetch notifications when opening dropdown
   useEffect(() => {
     if (notificationOpen && isAuthenticated) {
       fetchNotifications();
@@ -165,6 +168,21 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     return `${styles.notificationItem} ${!is_read ? styles.notificationUnread : ''}`;
   };
 
+  // ✅ Get icon for notification type
+  const getNotificationIcon = (type: string, notification: any) => {
+    const typeLower = type.toLowerCase();
+    const metadata = notification.metadata || {};
+    
+    if (typeLower.includes('tac')) return '🔐';
+    if (typeLower.includes('transfer')) return '💸';
+    if (typeLower.includes('payment')) return '💰';
+    if (typeLower.includes('kyc')) return '📋';
+    if (typeLower.includes('wallet')) return '👛';
+    if (typeLower.includes('admin')) return '⚙️';
+    if (notification.requires_action) return '⚠️';
+    return '📌';
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -184,7 +202,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
               </div>
             </button>
             
-            {/* Real Balance Display - Only show if authenticated */}
+            {/* Balance Display - Using centralized API */}
             {isAuthenticated && (
               <div className={`${styles.balanceContainer} ${styles.desktopOnly}`}>
                 <Wallet className={styles.balanceIcon} />
@@ -192,6 +210,13 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
                 <span className={styles.balanceAmount}>
                   {formatBalance()}
                 </span>
+                <button
+                  onClick={fetchBalance}
+                  className="ml-2 p-1 hover:bg-white/10 rounded-full transition-colors"
+                  title="Refresh balance"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
               </div>
             )}
           </div>
@@ -213,7 +238,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
           {/* Right Actions */}
           <div className={styles.rightActions}>
             
-            {/* Real Notifications - Only render if authenticated */}
+            {/* Notifications Dropdown - With all types */}
             {isAuthenticated && (
               <div className={styles.notificationWrapper}>
                 <button
@@ -267,13 +292,27 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
                                 if (!notification.is_read) {
                                   markAsRead(notification.id);
                                 }
+                                // Navigate if action URL exists
+                                if (notification.action_url) {
+                                  navigate(notification.action_url);
+                                  setNotificationOpen(false);
+                                }
                               }}
                             >
                               <div className={styles.notificationContent}>
-                                <div className={`${styles.notificationIndicator} ${getNotificationIndicatorClass(notification.type)}`} />
+                                <div className={`${styles.notificationIndicator} ${getNotificationIndicatorClass(notification.type)}`}>
+                                  <span className="text-xs">
+                                    {getNotificationIcon(notification.type, notification)}
+                                  </span>
+                                </div>
                                 <div className={styles.notificationDetails}>
                                   <p className={styles.notificationTitle}>
                                     {notification.title}
+                                    {notification.priority === 'HIGH' && (
+                                      <span className="ml-2 text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded-full">
+                                        Urgent
+                                      </span>
+                                    )}
                                   </p>
                                   <p className={styles.notificationMessage}>
                                     {notification.message}
@@ -315,7 +354,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
               </div>
             )}
 
-            {/* Real User Profile */}
+            {/* User Profile */}
             <div className={styles.userWrapper}>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}

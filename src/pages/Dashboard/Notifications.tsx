@@ -1,7 +1,8 @@
-// src/pages/Dashboard/Notifications.tsx - FIXED VERSION
+// src/pages/Dashboard/Notifications.tsx - FIXED VERSION WITH REAL API
 import React, { useState, useEffect } from 'react';
 import { Bell, Mail, Smartphone, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import { useNotifications } from '../../context/NotificationContext'; // ✅ FIXED import
+import { useNotifications } from '../../context/NotificationContext';
+import api from '../../services/api'; // ✅ ADDED: Real API import
 
 // Add missing interface
 interface Notification {
@@ -16,6 +17,7 @@ interface Notification {
 interface NotificationPreference {
   id: number;
   account: number;
+  account_number?: string;
   email_enabled: boolean;
   email_high_priority: boolean;
   email_medium_priority: boolean;
@@ -24,21 +26,30 @@ interface NotificationPreference {
   push_high_priority: boolean;
   push_medium_priority: boolean;
   push_low_priority: boolean;
+  in_app_enabled?: boolean;
+  receive_payment_notifications?: boolean;
+  receive_transfer_notifications?: boolean;
+  receive_tac_notifications?: boolean;
+  receive_account_notifications?: boolean;
+  receive_admin_notifications?: boolean;
+  immediate_delivery?: boolean;
+  daily_digest?: boolean;
+  digest_time?: string;
   created_at: string;
   updated_at: string;
 }
 
 export default function NotificationsPage() {
-  // ✅ FIXED: Use the correct hook name
+  // Use the correct hook name
   const {
     notifications,
     unreadCount,
     loading,
     error,
-    markAsRead,        // Changed from markNotificationAsRead
-    markAllAsRead,     // Changed from markAllNotificationsAsRead
-    fetchNotifications, // Changed from refreshNotifications
-  } = useNotifications(); // ✅ CORRECT hook name
+    markAsRead,
+    markAllAsRead,
+    fetchNotifications,
+  } = useNotifications();
 
   const [preferences, setPreferences] = useState<NotificationPreference | null>(null);
   const [savingPreferences, setSavingPreferences] = useState(false);
@@ -50,42 +61,28 @@ export default function NotificationsPage() {
     ? notifications.filter(n => !n.is_read)
     : notifications;
 
-  // Fetch notification preferences
+  // ✅ FIXED: Fetch real notification preferences from API
   const fetchPreferences = async () => {
     try {
-      // Mock data for now
-      setPreferences({
-        id: 1,
-        account: 1,
-        email_enabled: true,
-        email_high_priority: true,
-        email_medium_priority: true,
-        email_low_priority: false,
-        push_enabled: true,
-        push_high_priority: true,
-        push_medium_priority: true,
-        push_low_priority: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
+      const response = await api.notifications.getPreferences();
+      setPreferences(response);
     } catch (error) {
       console.error('Failed to fetch preferences:', error);
     }
   };
 
-  // Update preferences
+  // ✅ FIXED: Update preferences using real API
   const updatePreference = async (key: keyof NotificationPreference, value: boolean) => {
     if (!preferences) return;
 
     setSavingPreferences(true);
     try {
       const updatedPrefs = { ...preferences, [key]: value };
+      await api.notifications.updatePreferences(updatedPrefs);
       setPreferences(updatedPrefs);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
     } catch (error) {
       console.error('Failed to update preferences:', error);
+      // Re-fetch to ensure UI is in sync
       fetchPreferences();
     } finally {
       setSavingPreferences(false);
@@ -232,8 +229,62 @@ export default function NotificationsPage() {
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
                   </label>
                 </div>
+
+                {preferences?.push_enabled && (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">High Priority</span>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={preferences?.push_high_priority || false}
+                          onChange={(e) => updatePreference('push_high_priority', e.target.checked)}
+                          disabled={savingPreferences}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                      </label>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Medium Priority</span>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={preferences?.push_medium_priority || false}
+                          onChange={(e) => updatePreference('push_medium_priority', e.target.checked)}
+                          disabled={savingPreferences}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                      </label>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Low Priority</span>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={preferences?.push_low_priority || false}
+                          onChange={(e) => updatePreference('push_low_priority', e.target.checked)}
+                          disabled={savingPreferences}
+                          className="sr-only peer"
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 dark:peer-focus:ring-teal-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div>
+                      </label>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
+
+            {/* Saving indicator */}
+            {savingPreferences && (
+              <div className="mt-4 text-sm text-teal-600 dark:text-teal-400 flex items-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-500"></div>
+                Saving preferences...
+              </div>
+            )}
           </div>
         </div>
 
