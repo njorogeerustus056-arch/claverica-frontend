@@ -1,4 +1,5 @@
-import { apiFetch } from '../api';  // ✅ FIXED: Import from main api.ts, not ./api
+// src/services/transfer-api.ts - COMPLETE FIXED VERSION
+import { apiFetch } from '../api';  // Import from main api.ts
 import { useAuthStore } from '../lib/store/auth';
 
 export interface TransferRequest {
@@ -112,7 +113,7 @@ export interface KYCStatus {
 }
 
 export const transferAPI = {
-  // ✅ FIXED: Create transfer - REMOVED extra /api prefix
+  // ✅ FIXED: Create transfer - ADDED /api prefix
   createTransfer: async (data: TransferRequest): Promise<{success: boolean; transfer_id: number; reference: string; message: string}> => {
     try {
       const { user } = useAuthStore.getState();
@@ -153,8 +154,8 @@ export const transferAPI = {
       
       console.log('📤 Sending to COMPLIANCE API:', cleanedData);
       
-      // ✅ FIXED: Removed extra /api prefix
-      const response = await apiFetch('/compliance/transfers/', {
+      // ✅ FIXED: Added /api prefix to match backend structure
+      const response = await apiFetch('/api/compliance/transfers/', {
         method: 'POST',
         body: JSON.stringify(cleanedData)
       });
@@ -233,10 +234,9 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get wallet balance - ADDED /api prefix
+  // ✅ FIXED: Get wallet balance - Already has /api prefix (correct)
   getWalletBalance: async (): Promise<WalletBalance> => {
     try {
-      // ✅ FIXED: Added /api prefix
       const response = await apiFetch('/api/transactions/wallet/balance/');
       
       const balanceValue = typeof response.balance === 'number' ? response.balance : 
@@ -258,22 +258,22 @@ export const transferAPI = {
     }
   },
 
-  // Get transfer status - Using correct compliance endpoint (no /api prefix)
+  // ✅ FIXED: Get transfer status - ADDED /api prefix
   getTransfer: async (transferId: number): Promise<TransferStatus> => {
     try {
-      const transferData = await apiFetch(`/compliance/transfers/${transferId}/`);
+      const transferData = await apiFetch(`/api/compliance/transfers/${transferId}/`);
       return transferData;
     } catch (error: any) {
       throw new Error(error.message || 'Failed to fetch transfer status');
     }
   },
 
-  // Verify TAC - Using correct compliance endpoint with hyphen (no /api prefix)
+  // ✅ FIXED: Verify TAC - ADDED /api prefix
   verifyTAC: async (transferId: number, tacCode: string): Promise<{success: boolean; message: string}> => {
     try {
       console.log(`🔐 Verifying TAC ${tacCode} for transfer ${transferId}`);
       
-      const response = await apiFetch(`/compliance/transfers/${transferId}/verify-tac/`, {
+      const response = await apiFetch(`/api/compliance/transfers/${transferId}/verify-tac/`, {
         method: 'POST',
         body: JSON.stringify({ tac_code: tacCode })
       });
@@ -300,17 +300,17 @@ export const transferAPI = {
     }
   },
 
-  // Get user's transfer history - Using correct compliance endpoint (no /api prefix)
+  // ✅ FIXED: Get user's transfer history - ADDED /api prefix
   getTransfersHistory: async (page = 1, limit = 20): Promise<TransfersHistory> => {
     try {
-      const historyData = await apiFetch(`/compliance/transfers/?page=${page}`);
+      const historyData = await apiFetch(`/api/compliance/transfers/?page=${page}`);
       return historyData;
     } catch (error: any) {
       throw new Error(error.message || 'Failed to fetch transfer history');
     }
   },
 
-  // Get transaction history (CREDITS + DEBITS) via TRANSACTIONS API
+  // ✅ FIXED: Get transaction history - Already has /api prefix (correct)
   getTransactionHistory: async (limit = 20): Promise<TransactionHistory> => {
     try {
       const historyData = await apiFetch(`/api/transactions/recent/?limit=${limit}`);
@@ -327,7 +327,7 @@ export const transferAPI = {
     }
   },
 
-  // Get transaction history by account number (if needed)
+  // ✅ FIXED: Get transaction history by account - Already has /api prefix (correct)
   getTransactionHistoryByAccount: async (accountNumber: string, limit = 50): Promise<TransactionHistory> => {
     try {
       const historyData = await apiFetch(`/api/transactions/history/${accountNumber}/?limit=${limit}`);
@@ -342,20 +342,20 @@ export const transferAPI = {
     }
   },
 
-  // Get transfers needing TAC (for admin) - Using correct compliance endpoint
+  // ✅ FIXED: Get transfers needing TAC - ADDED /api prefix
   getPendingTransfers: async (): Promise<TransferStatus[]> => {
     try {
-      const pendingData = await apiFetch('/compliance/admin/transfers/need-tac/');
+      const pendingData = await apiFetch('/api/compliance/admin/transfers/need-tac/');
       return pendingData;
     } catch (error: any) {
       throw new Error(error.message || 'Failed to fetch pending transfers');
     }
   },
 
-  // Cancel transfer - Using correct compliance endpoint
+  // ✅ FIXED: Cancel transfer - ADDED /api prefix
   cancelTransfer: async (transferId: number): Promise<{success: boolean; message: string}> => {
     try {
-      const response = await apiFetch(`/compliance/admin/transfers/${transferId}/cancel/`, {
+      const response = await apiFetch(`/api/compliance/admin/transfers/${transferId}/cancel/`, {
         method: 'POST'
       });
       

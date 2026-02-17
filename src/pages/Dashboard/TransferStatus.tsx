@@ -44,7 +44,7 @@ const TransferStatusPage = () => {
   // ✅ FIXED: Status config with all backend statuses including 'tac_sent'
   const statusConfig: Record<string, { color: any; icon: any; label: string; progress: number }> = {
     pending: { color: 'warning', icon: <AccessTime />, label: 'Awaiting Processing', progress: 25 },
-    tac_sent: { color: 'info', icon: <CheckCircle />, label: 'TAC Sent', progress: 50 }, // ✅ ADDED
+    tac_sent: { color: 'info', icon: <CheckCircle />, label: 'TAC Sent', progress: 50 },
     tac_verified: { color: 'success', icon: <CheckCircle />, label: 'TAC Verified', progress: 60 },
     funds_deducted: { color: 'success', icon: <AccountBalanceWallet />, label: 'Funds Deducted', progress: 70 },
     pending_settlement: { color: 'info', icon: <Schedule />, label: 'Pending Settlement', progress: 80 },
@@ -56,6 +56,7 @@ const TransferStatusPage = () => {
   // Fetch transfer details
   const fetchTransfer = async () => {
     try {
+      // ✅ FIXED: Using transferAPI with correct /api prefix
       const data = await transferAPI.getTransfer(transferId);
       setTransfer(data);
     } catch (error) {
@@ -494,7 +495,7 @@ const getStatusMessage = (status: string): string => {
   switch (status) {
     case 'pending':
       return 'Transfer submitted. Contact live agent for TAC code to proceed.';
-    case 'tac_sent': // ✅ ADDED
+    case 'tac_sent':
       return 'TAC code has been sent. Enter the code to verify and proceed with the transfer.';
     case 'tac_verified':
       return 'TAC verified successfully. Funds will be deducted from your wallet.';
@@ -518,7 +519,7 @@ const getNextSteps = (status: string): string => {
   switch (status) {
     case 'pending':
       return '1. Contact live agent for TAC code → 2. Enter TAC code → 3. Funds deducted → 4. Admin processes external transfer';
-    case 'tac_sent': // ✅ ADDED
+    case 'tac_sent':
       return '1. Enter the TAC code you received → 2. Funds will be deducted → 3. Admin processes external transfer';
     case 'tac_verified':
       return 'Funds have been reserved. Admin will process the external transfer shortly.';

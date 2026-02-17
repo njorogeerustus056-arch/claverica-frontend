@@ -8,11 +8,6 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api"; // ✅ Import centralized API
 import styles from './DashboardHeader.module.css';
 
-// ✅ ADD DEBUG LOGS HERE
-console.log('🔍 DashboardHeader - api object:', api);
-console.log('🔍 DashboardHeader - api.wallet:', api.wallet);
-console.log('🔍 DashboardHeader - api.wallet.getBalance:', api.wallet?.getBalance);
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 type Props = {
@@ -46,7 +41,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [balance, setBalance] = useState<number | null>(null);
 
-  // Fetch balance using walletAPI
+  // Fetch balance using direct fetch to avoid double /api
   const fetchBalance = async () => {
     if (!isAuthenticated || !tokens?.access) {
       console.log('⏭️ Skipping balance fetch - not authenticated');
@@ -54,26 +49,30 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     }
     
     try {
-      console.log('🔍 Fetching balance via walletAPI...');
+      console.log('🔍 Fetching balance via direct fetch...');
       
-      // Check if api.wallet exists
-      if (!api.wallet) {
-        console.error('❌ api.wallet is undefined!');
-        return;
+      // ✅ FIXED: Use direct fetch with correct URL (single /api)
+      const response = await fetch('https://claverica-backend-production.up.railway.app/api/transactions/wallet/balance/', {
+        headers: {
+          'Authorization': `Bearer ${tokens.access}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      // Using api.wallet.getBalance()
-      const response = await api.wallet.getBalance();
-      
-      console.log('📥 Balance response:', response);
+      const data = await response.json();
+      console.log('📥 Balance response:', data);
       
       // Parse the response
-      if (response && typeof response === 'object') {
-        const balanceValue = parseFloat(response.balance || "0");
+      if (data && typeof data === 'object') {
+        const balanceValue = parseFloat(data.balance || "0");
         setBalance(balanceValue);
         console.log('💰 Balance set to:', balanceValue);
       } else {
-        console.warn('⚠️ Unexpected balance format:', response);
+        console.warn('⚠️ Unexpected balance format:', data);
         setBalance(0);
       }
     } catch (error) {
@@ -214,7 +213,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
               </div>
             </button>
             
-            {/* Balance Display - Using walletAPI */}
+            {/* Balance Display - Using direct fetch */}
             {isAuthenticated && (
               <div className={`${styles.balanceContainer} ${styles.desktopOnly}`}>
                 <Wallet className={styles.balanceIcon} />

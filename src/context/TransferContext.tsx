@@ -25,6 +25,7 @@ export const TransferProvider: React.FC<TransferProviderProps> = ({ children }) 
   // Poll transfer status
   const pollTransfer = useCallback(async (transferId: number) => {
     try {
+      // ✅ FIXED: Using transferAPI which already has correct /api prefix
       const transfer = await transferAPI.getTransfer(transferId);
       setCurrentTransfer(transfer);
     } catch (err: any) {
@@ -38,6 +39,7 @@ export const TransferProvider: React.FC<TransferProviderProps> = ({ children }) 
     setLoading(true);
     setError(null);
     try {
+      // ✅ FIXED: Using transferAPI which already has correct /api prefix
       const result = await transferAPI.createTransfer(data);
       if (result.success) {
         // Immediately fetch the created transfer
@@ -58,6 +60,7 @@ export const TransferProvider: React.FC<TransferProviderProps> = ({ children }) 
     setLoading(true);
     setError(null);
     try {
+      // ✅ FIXED: Using transferAPI which already has correct /api prefix
       const result = await transferAPI.verifyTAC(transferId, tacCode);
       if (result.success) {
         // Refresh transfer status
@@ -77,8 +80,9 @@ export const TransferProvider: React.FC<TransferProviderProps> = ({ children }) 
   const refreshTransfers = useCallback(async () => {
     setLoading(true);
     try {
+      // ✅ FIXED: Using transferAPI which already has correct /api prefix
       const history = await transferAPI.getTransfersHistory();
-      setTransfers(history.results);
+      setTransfers(history.results || []);
     } catch (err: any) {
       console.error('Error refreshing transfers:', err);
     } finally {

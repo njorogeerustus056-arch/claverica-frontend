@@ -45,7 +45,7 @@ const TransfersHistory = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [transfers, setTransfers] = useState<any[]>([]); // ✅ Initialize as empty array
+  const [transfers, setTransfers] = useState<any[]>([]);
   const [pagination, setPagination] = useState({
     page: 1,
     totalPages: 1,
@@ -64,6 +64,7 @@ const TransfersHistory = () => {
     setLoading(true);
     setError(null);
     try {
+      // ✅ FIXED: Using transferAPI with correct /api prefix
       const history: TransfersHistoryType = await transferAPI.getTransfersHistory(page, 20);
       
       // ✅ SAFE ACCESS: Handle different API response structures
@@ -82,7 +83,7 @@ const TransfersHistory = () => {
     } catch (error: any) {
       console.error('Error fetching transfers:', error);
       setError(error?.message || 'Failed to load transfer history. Please try again.');
-      setTransfers([]); // ✅ Reset to empty array on error
+      setTransfers([]);
     } finally {
       setLoading(false);
     }
@@ -141,7 +142,7 @@ const TransfersHistory = () => {
 
   // ✅ SAFE FILTER: Use optional chaining and null check
   const filteredTransfers = (transfers || []).filter(transfer => {
-    if (!transfer) return false; // ✅ Skip null/undefined transfers
+    if (!transfer) return false;
     
     // Search filter
     if (searchTerm) {
