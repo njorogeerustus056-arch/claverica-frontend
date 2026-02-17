@@ -41,14 +41,14 @@ import {
   Visibility,
   Delete,
 } from '@mui/icons-material';
-import { useAuthStore } from '../../lib/store/auth';  // ✅ FIXED import
+import { useAuthStore } from '../../lib/store/auth';
 import styles from './KYCSubmit.module.css';
 
 const KYCSubmit = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuthStore();  // ✅ Now correctly using useAuthStore
-  const token = localStorage.getItem('token'); // Get token from auth
+  const { user } = useAuthStore();
+  const token = localStorage.getItem('token');
   
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -70,6 +70,26 @@ const KYCSubmit = () => {
   
   // Extract from location state
   const { amount, service_type, redirectTo } = location.state || {};
+
+  // ✅ FIXED: Clean up aria-hidden when component unmounts
+  useEffect(() => {
+    return () => {
+      // Clean up any stray aria-hidden attributes
+      const root = document.getElementById('root');
+      if (root && root.getAttribute('aria-hidden') === 'true') {
+        root.removeAttribute('aria-hidden');
+      }
+    };
+  }, []);
+
+  // Clean up preview URL when component unmounts
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const steps = ['Document Type', 'Upload Documents', 'Review & Submit'];
 
@@ -99,6 +119,10 @@ const KYCSubmit = () => {
   // Open preview
   const handlePreview = (file: File | null, title: string) => {
     if (file) {
+      // Clean up previous preview URL
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
       setPreviewTitle(title);
@@ -159,11 +183,11 @@ const KYCSubmit = () => {
     try {
       const formDataToSend = new FormData();
       
-      // ✅ CORRECT FIELD NAMES (match backend exactly)
+      // CORRECT FIELD NAMES (match backend exactly)
       formDataToSend.append('document_type', documentType);
-      if (idFront) formDataToSend.append('id_front_image', idFront);  // ✅ Changed from 'id_front'
-      if (idBack) formDataToSend.append('id_back_image', idBack);    // ✅ Changed from 'id_back'
-      if (selfie) formDataToSend.append('facial_image', selfie);     // ✅ Changed from 'selfie'
+      if (idFront) formDataToSend.append('id_front_image', idFront);
+      if (idBack) formDataToSend.append('id_back_image', idBack);
+      if (selfie) formDataToSend.append('facial_image', selfie);
       
       // Get auth token (from context or localStorage)
       const authToken = token || localStorage.getItem('token');
@@ -174,12 +198,10 @@ const KYCSubmit = () => {
         return;
       }
 
-      // ✅✅✅ FIXED: Removed duplicate /api/ prefix
       const response = await fetch(`${import.meta.env.VITE_API_URL}/kyc/documents/`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${authToken}`  // ✅ Add auth header
-          // NO 'Content-Type' header - browser sets it for FormData
+          'Authorization': `Bearer ${authToken}`
         },
         body: formDataToSend
       });
@@ -406,7 +428,7 @@ const KYCSubmit = () => {
                         <input
                           type="file"
                           hidden
-                          accept="image/*"  // ✅ Remove .pdf (backend only accepts images)
+                          accept="image/*"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) handleFileUpload(setIdFront, file, 'ID Front');
@@ -470,7 +492,7 @@ const KYCSubmit = () => {
                           <input
                             type="file"
                             hidden
-                            accept="image/*"  // ✅ Remove .pdf
+                            accept="image/*"
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) handleFileUpload(setIdBack, file, 'ID Back');
@@ -806,12 +828,22 @@ const KYCSubmit = () => {
         </Box>
       </Paper>
 
-      {/* File Preview Dialog */}
-      <Dialog open={!!previewUrl} onClose={handleClosePreview} maxWidth="md">
+      {/* ✅ FIXED: File Preview Dialog with proper focus management */}
+      <Dialog 
+        open={!!previewUrl} 
+        onClose={handleClosePreview} 
+        maxWidth="md"
+        // ✅ Added these props to fix focus management and aria-hidden warning
+        disableEnforceFocus
+        disableAutoFocus
+        keepMounted={false}
+        // ✅ Add transition to prevent focus trapping
+        transitionDuration={300}
+      >
         <DialogTitle>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6">{previewTitle}</Typography>
-            <IconButton onClick={handleClosePreview}>
+            <IconButton onClick={handleClosePreview} size="small">
               <Close />
             </IconButton>
           </Box>
