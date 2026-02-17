@@ -287,8 +287,8 @@ export default function SignUpForm() {
                   income_range: showEmployment ? values.income_range : "",
                 };
 
-                // ✅ FIXED: Added /api/ prefix to endpoint
-                const response = await api.post("/api/accounts/register/", payload, {
+                // ✅ FIXED: Removed /api prefix (api.post already adds base URL)
+                const response = await api.post("/accounts/register/", payload, {
                   headers: {
                     "Content-Type": "application/json"
                   }
