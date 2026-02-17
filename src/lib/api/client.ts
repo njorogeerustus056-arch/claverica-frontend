@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/auth';
 
-const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL || "`${import.meta.env.VITE_API_URL}`";
+// ✅ FIXED: Clean API_URL definition
+const API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
 
 const apiClient = axios.create({
-  baseURL: API_URL,
+  baseURL: API_URL,  // ✅ No /api here - should be just the base URL
   headers: {
     'Content-Type': 'application/json',
   },
