@@ -1,4 +1,4 @@
-// src/services/api.ts - COMPLETE FIXED VERSION (REMOVED ALL /api prefixes)
+// src/services/api.ts - COMPLETE FIXED VERSION WITH WALLET
 import { API_CONFIG, getApiUrl, DEFAULT_FETCH_OPTIONS } from '../config/api';
 import { useAuthStore } from '../lib/store/auth';
 
@@ -133,7 +133,7 @@ export interface UnreadCountResponse {
   unread_count: number;
 }
 
-// Notification-specific API methods - ✅ FIXED: REMOVED /api prefix
+// Notification-specific API methods
 export const notificationApi = {
   // Get all notifications for current user
   getAll: () => 
@@ -183,7 +183,13 @@ export const notificationApi = {
     apiFetch<{ action_required_count: number }>('/notifications/admin/action-required/'),
 };
 
-// MAIN API OBJECT with all methods - ✅ FIXED: REMOVED /api prefix
+// ✅ ADDED: Wallet API methods
+export const walletApi = {
+  getBalance: () => apiFetch('/api/transactions/wallet/balance/'),
+  getTransactions: () => apiFetch('/api/transactions/recent/')
+};
+
+// MAIN API OBJECT with all methods - NOW INCLUDES WALLET
 export const api = {
   // Core HTTP methods
   get: <T = any>(endpoint: string, options?: RequestInit) => 
@@ -213,21 +219,21 @@ export const api = {
   delete: <T = any>(endpoint: string, options?: RequestInit) =>
     apiFetch<T>(endpoint, { ...options, method: 'DELETE' }),
   
-  // Account activation - ✅ FIXED: REMOVED /api prefix
+  // Account activation
   activate: (email: string, activation_code: string) =>
     apiFetch('/accounts/activate/', {
       method: 'POST',
       body: JSON.stringify({ email, activation_code })
     }),
   
-  // Resend activation code - ✅ FIXED: REMOVED /api prefix
+  // Resend activation code
   resendActivation: (email: string) =>
     apiFetch('/accounts/resend-activation/', {
       method: 'POST',
       body: JSON.stringify({ email })
     }),
   
-  // Auth methods - ✅ FIXED: REMOVED /api prefix
+  // Auth methods
   login: (email: string, password: string) =>
     apiFetch('/token/', {
       method: 'POST',
@@ -246,15 +252,18 @@ export const api = {
       body: JSON.stringify({ refresh })
     }),
   
-  // User methods - ✅ FIXED: REMOVED /api prefix
+  // User methods
   getUser: () =>
     apiFetch('/users/me/'),
   
   getUserProfile: () =>
     apiFetch('/users/profile/'),
   
-  // Notification methods (direct access)
+  // Notification methods
   notifications: notificationApi,
+  
+  // ✅ ADDED: Wallet methods
+  wallet: walletApi
 };
 
 // Also export as default for backward compatibility

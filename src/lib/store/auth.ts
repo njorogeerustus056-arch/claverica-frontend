@@ -1,8 +1,7 @@
-import api from '../services/api';
-// src/lib/store/auth.ts - FIXED VERSION WITH CORRECT LOGIN ENDPOINT
+// src/lib/store/auth.ts - FIXED VERSION WITH CORRECT IMPORT
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { getApiUrl } from '../../config/api';  // ✅ FIXED: Two dots (../..) to go up two levels to src/
+import { getApiUrl } from '../../config/api';  // ✅ FIXED: Correct path to config/api
 
 export interface User {
   id: string;
@@ -65,7 +64,7 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          // ✅ FIXED: Using getApiUrl - REMOVED /api
+          // Using getApiUrl - REMOVED /api
           const response = await fetch(getApiUrl('/token/'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -79,7 +78,7 @@ export const useAuthStore = create<AuthStore>()(
 
           const data = await response.json();
 
-          // ✅ FIXED: JWT returns access and refresh directly (not nested in tokens)
+          // JWT returns access and refresh directly (not nested in tokens)
           if (data.access) {
             // Store in BOTH keys for maximum compatibility
             localStorage.setItem('access_token', data.access);
@@ -89,7 +88,6 @@ export const useAuthStore = create<AuthStore>()(
             // Fetch user data after successful login
             let userData = null;
             try {
-              // ✅ FIXED: Using getApiUrl - REMOVED /api
               const userResponse = await fetch(getApiUrl('/users/me/'), {
                 headers: { 
                   'Authorization': `Bearer ${data.access}`,
@@ -154,7 +152,6 @@ export const useAuthStore = create<AuthStore>()(
         if (!tokens?.refresh) return false;
 
         try {
-          // ✅ FIXED: Using getApiUrl - REMOVED /api
           const response = await fetch(getApiUrl('/token/refresh/'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -212,7 +209,6 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         try {
-          // ✅ FIXED: Using getApiUrl - REMOVED /api
           const response = await fetch(getApiUrl('/users/me/'), {    
             headers: {
               Authorization: `Bearer ${tokens.access}`,
