@@ -1,4 +1,4 @@
-// src/hooks/useDashboardData.ts
+// src/hooks/useDashboardData.ts - FIXED VERSION
 import { useState, useEffect } from 'react';
 import { api } from '../api'; // Your existing api.ts
 import { useAuthStore } from '../lib/store/auth';
@@ -21,17 +21,17 @@ export function useDashboardData() {
       setLoading(true);
       setError(null);
 
-      // ✅ FIXED: Added /api prefix to both endpoints
+      // ✅ FIXED: Use walletAPI instead of api.fetch with /api prefix
       const [walletRes, transactionsRes] = await Promise.all([
-        api.fetch('/api/transactions/wallet/balance/'),
-        api.fetch('/api/transactions/recent/'),
+        api.wallet.getBalance(),  // ✅ CORRECT - uses /transactions/wallet/balance/
+        api.wallet.getTransactions(), // ✅ CORRECT - uses /transactions/recent/
       ]);
 
       // Transform to match your Home.tsx UI
       setWallet({
         balance: parseFloat(walletRes.balance || "0"),
-        available: parseFloat(walletRes.balance || "0"), // Same as balance
-        pending: 0, // No pending field in response
+        available: parseFloat(walletRes.balance || "0"),
+        pending: 0,
         currency: walletRes.currency || "USD"
       });
 
@@ -43,10 +43,10 @@ export function useDashboardData() {
       setTransactions(txList.map((tx: any) => ({
         id: tx.id,
         amount: parseFloat(tx.amount),
-        transaction_type: tx.transaction_type, // 'credit' or 'debit'
+        transaction_type: tx.transaction_type,
         description: tx.description || tx.reference,
         created_at: tx.created_at || tx.timestamp,
-        status: "completed",
+        status: tx.status || "completed",
         reference: tx.reference
       })));
 

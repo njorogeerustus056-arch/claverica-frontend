@@ -6,8 +6,8 @@ import { Outlet } from "react-router-dom";
 import LiveTicker from "./LiveTicker";
 import DashboardHeader from "./DashboardHeader";
 import DashboardSidebar from "./DashboardSidebar";
-import ChatBubble from "../components/ChatBubble";
-// ✅ REMOVED: import TawkToWrapper from "../components/TawkToWrapper";
+// ✅ IMPORT the new TawkToWidget (ChatBubble is deleted)
+import TawkToWidget from "../components/TawkToWidget";
 import { useTheme } from "../context/ThemeContext";
 import ProtectedRoute from "../components/ProtectedRoute";
 
@@ -47,9 +47,8 @@ function DashboardLayoutContent() {
           </div>
         </div>
 
-        {/* Only ChatBubble remains - TawkToWrapper removed */}
-        <ChatBubble />
-        {/* ✅ REMOVED: <TawkToWrapper /> */}
+        {/* ✅ ADD TawkToWidget here - only shows in dashboard */}
+        <TawkToWidget />
       </div>
     </div>
   );
