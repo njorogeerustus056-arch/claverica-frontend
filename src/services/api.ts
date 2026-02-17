@@ -1,4 +1,4 @@
-// src/services/api.ts - COMPLETE FIXED VERSION WITH WALLET
+// src/services/api.ts - COMPLETE FIXED VERSION
 import { API_CONFIG, getApiUrl, DEFAULT_FETCH_OPTIONS } from '../config/api';
 import { useAuthStore } from '../lib/store/auth';
 
@@ -183,13 +183,13 @@ export const notificationApi = {
     apiFetch<{ action_required_count: number }>('/notifications/admin/action-required/'),
 };
 
-// ✅ ADDED: Wallet API methods
+// ✅ FIXED: Wallet API methods - REMOVED /api prefix
 export const walletApi = {
-  getBalance: () => apiFetch('/api/transactions/wallet/balance/'),
-  getTransactions: () => apiFetch('/api/transactions/recent/')
+  getBalance: () => apiFetch('/transactions/wallet/balance/'),  // ✅ Fixed - no /api prefix
+  getTransactions: () => apiFetch('/transactions/recent/'),     // ✅ Fixed - no /api prefix
 };
 
-// MAIN API OBJECT with all methods - NOW INCLUDES WALLET
+// MAIN API OBJECT with all methods
 export const api = {
   // Core HTTP methods
   get: <T = any>(endpoint: string, options?: RequestInit) => 
@@ -262,7 +262,7 @@ export const api = {
   // Notification methods
   notifications: notificationApi,
   
-  // ✅ ADDED: Wallet methods
+  // Wallet methods - NOW FIXED
   wallet: walletApi
 };
 
