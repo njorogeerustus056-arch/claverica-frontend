@@ -4,7 +4,7 @@ import {
   User, Mail, Phone, Lock, Shield, Bell, Eye, EyeOff, 
   Smartphone, Globe, Download, Trash2, ChevronRight,
   Check, X, MapPin, Monitor, AlertCircle, Key, Camera,
-  Save, Loader2, QrCode, Upload, Globe as Earth,
+  Save, Loader2, QrCode, Upload, Earth,
   Database, CreditCard, Building, ShieldCheck,
   Smartphone as Mobile, Laptop, Tablet, Calendar,
   LogOut, HelpCircle, Users, FileText, Percent,
@@ -84,9 +84,6 @@ interface UserProfile {
 }
 
 interface UserSettings {
-  theme: string;
-  language: string;
-  timezone: string;
   profile_visibility: string;
   email_notifications: boolean;
   sms_notifications: boolean;
@@ -186,9 +183,6 @@ export default function AccountSettings() {
   });
 
   const [settingsForm, setSettingsForm] = useState({
-    theme: 'light',
-    language: 'en',
-    timezone: 'UTC',
     profile_visibility: 'public',
     email_notifications: true,
     sms_notifications: false,
@@ -211,9 +205,6 @@ export default function AccountSettings() {
   });
 
   const [userSettings, setUserSettings] = useState<UserSettings>({
-    theme: 'light',
-    language: 'en',
-    timezone: 'UTC',
     profile_visibility: 'public',
     email_notifications: true,
     sms_notifications: false,
@@ -276,9 +267,6 @@ export default function AccountSettings() {
       });
 
       let settingsData: UserSettings = {
-        theme: 'light',
-        language: 'en',
-        timezone: 'UTC',
         profile_visibility: 'public',
         email_notifications: true,
         sms_notifications: false,
@@ -1383,7 +1371,7 @@ export default function AccountSettings() {
                     </button>
                   </div>
 
-                  {/* Notifications */}
+                  {/* Email Notifications */}
                   <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
                     <div className="flex items-center gap-3">
                       <Bell className="w-5 h-5 text-purple-600" />
@@ -1433,45 +1421,7 @@ export default function AccountSettings() {
                     </button>
                   </div>
 
-                  {/* Theme */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <Monitor className="w-5 h-5 text-orange-600" />
-                      <div>
-                        <p className="font-semibold text-gray-900 dark:text-white">Theme</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Appearance</p>
-                      </div>
-                    </div>
-                    <select
-                      value={settingsForm.theme}
-                      onChange={(e) => updateSettings({ theme: e.target.value })}
-                      className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    >
-                      <option value="light">Light</option>
-                      <option value="dark">Dark</option>
-                      <option value="auto">Auto</option>
-                    </select>
-                  </div>
-
-                  {/* Language */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <Globe className="w-5 h-5 text-cyan-600" />
-                      <div>
-                        <p className="font-semibold text-gray-900 dark:text-white">Language</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Display language</p>
-                      </div>
-                    </div>
-                    <select
-                      value={settingsForm.language}
-                      onChange={(e) => updateSettings({ language: e.target.value })}
-                      className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    >
-                      <option value="en">English</option>
-                      <option value="sw">Swahili</option>
-                      <option value="fr">French</option>
-                    </select>
-                  </div>
+                  {/* ⚠️ THEME AND LANGUAGE REMOVED AS REQUESTED ⚠️ */}
                 </div>
               </motion.div>
 
@@ -1658,7 +1608,7 @@ export default function AccountSettings() {
         </div>
       </div>
 
-      {/* Modals */}
+      {/* Modals - All modals remain the same */}
       <AnimatePresence>
         {/* Profile Modal */}
         {showProfileModal && (
