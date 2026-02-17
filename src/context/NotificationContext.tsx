@@ -1,6 +1,7 @@
-// src/context/NotificationContext.tsx - COMPLETE FIXED VERSION
+// src/context/NotificationContext.tsx - COMPLETE FIXED VERSION WITH PUSHER
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '../lib/store/auth';
+import { usePusher } from './PusherContext'; // ✅ ADDED
 import api, { Notification } from '../services/api';
 
 interface NotificationContextType {
@@ -39,6 +40,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [initialFetchDone, setInitialFetchDone] = useState<boolean>(false);
   
   const { isAuthenticated, tokens, syncFromLocalStorage } = useAuthStore();
+  const { connected: pusherConnected } = usePusher(); // ✅ ADDED
 
   useEffect(() => {
     syncFromLocalStorage();
@@ -286,21 +288,25 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     }
   }, [isAuthenticated, tokens?.access, fetchNotifications, initialFetchDone]);
 
+  // ✅ UPDATED: Polling with Pusher awareness
   useEffect(() => {
     if (!isAuthenticated || !tokens?.access) return;
     
-    console.log('🔄 Starting notification polling every', pollInterval, 'ms');
+    // If Pusher is connected, use longer polling interval as backup
+    const intervalTime = pusherConnected ? 60000 : pollInterval; // 60s if Pusher connected, else 30s
+    
+    console.log(`🔄 Starting notification polling every ${intervalTime}ms (Pusher: ${pusherConnected ? 'connected' : 'disconnected'})`);
     
     const interval = setInterval(() => {
       console.log('⏰ Polling notifications...');
       fetchNotifications();
-    }, pollInterval);
+    }, intervalTime);
     
     return () => {
       console.log('🧹 Cleaning up notification polling');
       clearInterval(interval);
     };
-  }, [isAuthenticated, tokens?.access, pollInterval, fetchNotifications]);
+  }, [isAuthenticated, tokens?.access, pollInterval, fetchNotifications, pusherConnected]);
 
   const markAsRead = async (id: number) => {
     try {

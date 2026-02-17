@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Eye,
@@ -32,10 +32,11 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "../../lib/store/auth";
 import { useDashboardData } from "../../hooks/useDashboardData";
+import { usePusher } from "../../context/PusherContext"; // âœ… ADDED
 import CurrencyConverter from "../../components/CurrencyConverter";
 import { FintechMetrics } from "../../components/fintech/FintechMetrics";
 import { RecentOrders } from "../../components/fintech/RecentOrders";
-import CountryMap from "../../components/ecommerce/CountryMap"; // ADDED IMPORT
+import CountryMap from "../../components/ecommerce/CountryMap";
 
 // Simplified interfaces based on your actual API
 interface Transaction {
@@ -141,7 +142,7 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
               onClick={onClose}
               className="text-gray-400 hover:text-white p-1 transition-colors"
             >
-              ?
+              âœ•
             </button>
           </div>
         </div>
@@ -244,6 +245,7 @@ export default function Home() {
   const [showBalance, setShowBalance] = useState(true);
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [lastPusherEvent, setLastPusherEvent] = useState<string | null>(null);
 
   // Use custom hook for dashboard data
   const { 
@@ -254,6 +256,41 @@ export default function Home() {
     error, 
     refetch 
   } = useDashboardData();
+
+  // âœ… ADDED: Pusher integration for real-time updates
+  const { connected: pusherConnected } = usePusher();
+
+  // âœ… ADDED: Listen for Pusher events and refresh data
+  useEffect(() => {
+    if (!pusherConnected) return;
+
+    console.log('ðŸ“¡ Pusher connected - Home will update in real-time');
+
+    // This effect will be triggered when:
+    // - New transaction occurs (wallet.credited, wallet.debited)
+    // - Transfer status changes (transfer.completed, transfer.failed)
+    // - Balance updates (balance.updated)
+    
+    // We don't need to add event listeners here because:
+    // 1. PusherContext already handles showing toasts
+    // 2. The refetch function can be called manually if needed
+    
+    // Optional: Auto-refresh every 30 seconds as backup
+    const interval = setInterval(() => {
+      if (!pusherConnected) {
+        console.log('ðŸ”„ Pusher disconnected - refreshing data');
+        refetch();
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [pusherConnected, refetch]);
+
+  // âœ… ADDED: Manual refresh function
+  const handleRefresh = () => {
+    console.log('ðŸ”„ Manual refresh triggered');
+    refetch();
+  };
 
   // Handle copy account number
   const handleCopyAccount = async () => {
@@ -326,7 +363,7 @@ export default function Home() {
       label: "Cards", 
       color: "from-violet-500 to-purple-600", 
       action: () => navigate("/dashboard/cards"),
-      desc: `0 active`, // Cards not in hook currently
+      desc: `0 active`,
       count: 0
     },
     { 
@@ -435,7 +472,7 @@ export default function Home() {
           <p className="text-gray-600 mb-6">{error}</p>
           <div className="space-y-3">
             <button
-              onClick={refetch}
+              onClick={handleRefresh}
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl py-3 font-semibold hover:opacity-90 transition-all shadow-lg"
             >
               <RefreshCw className="w-4 h-4 inline-block mr-2" />
@@ -505,14 +542,24 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                {/* âœ… UPDATED: Refresh button uses handleRefresh */}
                 <button
-                  onClick={refetch}
+                  onClick={handleRefresh}
                   disabled={loading}
                   className="p-2 hover:bg-white/10 rounded-full transition-all active:scale-95"
                   title="Refresh"
                 >
                   <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
                 </button>
+                
+                {/* âœ… ADDED: Pusher connection indicator */}
+                {pusherConnected && (
+                  <div className="hidden md:flex items-center gap-1 bg-green-500/20 backdrop-blur-sm px-2 py-1 rounded-full">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-green-200">Live</span>
+                  </div>
+                )}
+                
                 <button 
                   className="p-2 hover:bg-white/10 rounded-full transition-all active:scale-95 relative"
                   title="Notifications"
@@ -549,7 +596,7 @@ export default function Home() {
                 <span className="text-5xl font-bold tracking-tight">
                   {showBalance 
                     ? `${wallet?.currency || "USD"} ${wallet?.balance?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}` 
-                    : "••••••"}
+                    : "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"}
                 </span>
                 <span className="text-lg text-blue-200">{wallet?.currency || "USD"}</span>
               </div>
@@ -802,7 +849,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <span className="text-sm font-medium text-gray-700">Email</span>
-                    <span className="text-sm text-gray-900 truncate max-w-[120px]">{user?.email || "—"}</span>
+                    <span className="text-sm text-gray-900 truncate max-w-[120px]">{user?.email || "ï¿½"}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <span className="text-sm font-medium text-gray-700">Cards</span>

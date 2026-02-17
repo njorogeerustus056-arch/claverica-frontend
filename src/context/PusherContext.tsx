@@ -38,9 +38,9 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
 
     console.log('🔌 Initializing Pusher for user:', user.account_number);
 
-    // Initialize Pusher
-    const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY || 'your-pusher-key', {
-      cluster: import.meta.env.VITE_PUSHER_CLUSTER || 'eu',
+    // ✅ UPDATED: Initialize Pusher with your actual credentials from .env
+    const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
+      cluster: import.meta.env.VITE_PUSHER_CLUSTER,
       authEndpoint: `${import.meta.env.VITE_API_URL}/pusher/auth`,
       auth: {
         headers: {
