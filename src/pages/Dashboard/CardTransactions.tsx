@@ -70,8 +70,9 @@ const CardTransactions: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      // ✅ FIXED: Added /api/ prefix
-      const response = await api.get('/api/transactions/recent/');
+      // ✅ FIXED: Removed duplicate /api prefix
+      // api.get() already adds the base URL which includes /api
+      const response = await api.get('/transactions/recent/');
       console.log('Transactions API response:', response.data);
       
       setTransactions(response.data.transactions || []);

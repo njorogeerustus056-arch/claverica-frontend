@@ -41,7 +41,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [balance, setBalance] = useState<number | null>(null);
 
-  // ✅ FIXED: Using walletAPI (SAME as Home.tsx)
+  // Fetch balance using walletAPI
   const fetchBalance = async () => {
     if (!isAuthenticated || !tokens?.access) {
       console.log('⏭️ Skipping balance fetch - not authenticated');
@@ -51,14 +51,13 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     try {
       console.log('🔍 Fetching balance via walletAPI...');
       
-      // ✅ USING SAME API CALL AS Home.tsx
+      // Using api.wallet.getBalance() - ✅ CORRECT (defined in services/api.ts)
       const response = await api.wallet.getBalance();
       
       console.log('📥 Balance response:', response);
       
-      // ✅ PARSE THE SAME WAY AS useDashboardData.ts
+      // Parse the response
       if (response && typeof response === 'object') {
-        // In useDashboardData.ts they do: parseFloat(walletRes.balance || "0")
         const balanceValue = parseFloat(response.balance || "0");
         setBalance(balanceValue);
         console.log('💰 Balance set to:', balanceValue);
@@ -72,7 +71,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     }
   };
 
-  // ✅ Map notification types for all events (wallet, transfers, TAC, etc.)
+  // Map notification types for all events (wallet, transfers, TAC, etc.)
   const mapNotificationType = (notification: any): "success" | "warning" | "error" | "info" => {
     const type = notification.notification_type || '';
     const priority = notification.priority || '';
@@ -111,7 +110,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     return 'info';
   };
 
-  // ✅ Transform notifications with all metadata
+  // Transform notifications with all metadata
   const transformedNotifications = notifications.map((n: any) => ({
     id: n.id,
     title: n.title || 'Notification',
@@ -125,7 +124,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     requires_action: n.requires_admin_action || false
   }));
 
-  // ✅ Fetch balance when authenticated
+  // Fetch balance when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       fetchBalance();
@@ -135,7 +134,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     setLoading(false);
   }, [isAuthenticated, tokens?.access]);
 
-  // ✅ Fetch notifications when opening dropdown
+  // Fetch notifications when opening dropdown
   useEffect(() => {
     if (notificationOpen && isAuthenticated) {
       fetchNotifications();
@@ -170,7 +169,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     return `${styles.notificationItem} ${!is_read ? styles.notificationUnread : ''}`;
   };
 
-  // ✅ Get icon for notification type
+  // Get icon for notification type
   const getNotificationIcon = (type: string, notification: any) => {
     const typeLower = type.toLowerCase();
     const metadata = notification.metadata || {};
@@ -204,7 +203,7 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
               </div>
             </button>
             
-            {/* Balance Display - Using walletAPI (same as Home.tsx) */}
+            {/* Balance Display - Using walletAPI */}
             {isAuthenticated && (
               <div className={`${styles.balanceContainer} ${styles.desktopOnly}`}>
                 <Wallet className={styles.balanceIcon} />
