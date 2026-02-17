@@ -23,7 +23,7 @@ interface Notification {
 }
 
 export default function DashboardHeader({ toggleSidebar }: Props) {
-  const { user, tokens, logout, isAuthenticated } = useAuthStore(); // ✅ Added isAuthenticated
+  const { user, tokens, logout, isAuthenticated } = useAuthStore();
   const { 
     unreadCount, 
     notifications, 
@@ -39,21 +39,57 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [balance, setBalance] = useState<number | null>(null);
 
-  // Fetch wallet balance - ONLY if authenticated
+  // ✅ FIXED: Fetch wallet balance with proper error handling and debugging
   const fetchBalance = async () => {
-    if (!isAuthenticated || !tokens?.access) return; // ✅ Guard clause
+    if (!isAuthenticated || !tokens?.access) {
+      console.log('⏭️ Skipping balance fetch - not authenticated');
+      return;
+    }
     
     try {
-      // ✅ FIXED: Added /api prefix to match backend endpoint
-      const response = await fetch(`${API_URL}/api/transactions/wallet/balance/`, {
-        headers: { 'Authorization': `Bearer ${tokens?.access}` }
+      const url = `${API_URL}/api/transactions/wallet/balance/`;
+      console.log('🔍 Fetching balance from:', url);
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 
+          'Authorization': `Bearer ${tokens.access}`,
+          'Content-Type': 'application/json'
+        }
       });
+      
+      console.log('📥 Balance response status:', response.status);
+      
       if (response.ok) {
         const data = await response.json();
-        setBalance(data.balance);
+        console.log('✅ Balance data received:', data);
+        
+        // Handle different response formats
+        if (data && typeof data === 'object') {
+          // Try different possible field names
+          const balanceValue = data.balance ?? data.amount ?? data.value ?? 0;
+          setBalance(Number(balanceValue));
+          console.log('💰 Balance set to:', Number(balanceValue));
+        } else if (typeof data === 'number') {
+          setBalance(data);
+          console.log('💰 Balance set to (number):', data);
+        } else if (typeof data === 'string') {
+          const parsed = parseFloat(data);
+          setBalance(isNaN(parsed) ? 0 : parsed);
+          console.log('💰 Balance set to (parsed string):', parsed);
+        } else {
+          console.warn('⚠️ Unexpected balance format:', data);
+          setBalance(0);
+        }
+      } else {
+        // Log error response
+        const errorText = await response.text();
+        console.error('❌ Balance fetch failed:', response.status, errorText);
+        setBalance(0);
       }
     } catch (error) {
-      console.error("Failed to fetch balance:", error);
+      console.error("❌ Failed to fetch balance:", error);
+      setBalance(0);
     }
   };
 
@@ -87,19 +123,23 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
   useEffect(() => {
     if (isAuthenticated) {
       fetchBalance();
+    } else {
+      console.log('⏭️ User not authenticated, skipping balance fetch');
+      setBalance(null);
     }
     setLoading(false);
-  }, [isAuthenticated]); // ✅ Added dependency
+  }, [isAuthenticated, tokens?.access]); // ✅ Added tokens?.access as dependency
 
   // ✅ FIXED: Only fetch notifications when opening dropdown AND authenticated
   useEffect(() => {
     if (notificationOpen && isAuthenticated) {
       fetchNotifications();
     }
-  }, [notificationOpen, fetchNotifications, isAuthenticated]); // ✅ Added isAuthenticated
+  }, [notificationOpen, fetchNotifications, isAuthenticated]);
 
   const formatBalance = () => {
     if (balance === null) return 'Loading...';
+    if (balance === 0) return '$0.00';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
