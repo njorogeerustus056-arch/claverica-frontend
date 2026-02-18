@@ -1,4 +1,4 @@
-// src/context/PusherContext.tsx - FIXED VERSION
+// src/context/PusherContext.tsx - FIXED VERSION WITH CORRECT AUTH ENDPOINT
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAuthStore } from '../lib/store/auth';
@@ -42,10 +42,10 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
 
     console.log('🔌 Initializing Pusher for user:', user.account_number);
 
-    // ✅ FIXED: Removed duplicate /api prefix
+    // ✅ FIXED: Added /api prefix to match backend endpoint
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
-      authEndpoint: `${import.meta.env.VITE_API_URL}/pusher/auth`,
+      authEndpoint: `${import.meta.env.VITE_API_URL}/api/pusher/auth`,  // ✅ Added /api prefix
       auth: {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
