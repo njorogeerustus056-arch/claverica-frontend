@@ -13,7 +13,7 @@ import { AppWrapper } from "./components/common/PageMeta";
 import { ThemeProvider } from "./context/ThemeContext";
 import { TransferProvider } from "./context/TransferContext.tsx";
 import { PusherProvider } from "./context/PusherContext";
-import { NotificationProvider } from "./context/NotificationContext";  // ✅ ADD THIS
+import { NotificationProvider } from "./context/NotificationContext";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { useAuthStore } from "./lib/store/auth";
 
@@ -65,10 +65,12 @@ if (!rootElement) {
           <ThemeProvider>
             <AppWrapper>
               <InitializeAuth />
-              <PusherProvider>
-                <TransferProvider>
-                  {/* ✅ ADD NOTIFICATIONPROVIDER HERE - WRAP EVERYTHING */}
-                  <NotificationProvider pollInterval={30000}>
+              {/* ✅ PROVIDER ORDER IS IMPORTANT: 
+                  NotificationProvider must be outermost to make useNotifications available everywhere
+                  PusherProvider depends on auth, TransferProvider depends on both */}
+              <NotificationProvider pollInterval={30000}>
+                <PusherProvider>
+                  <TransferProvider>
                     <Suspense
                       fallback={
                         <div className="flex items-center justify-center h-screen text-gray-500 dark:text-gray-300">
@@ -79,10 +81,9 @@ if (!rootElement) {
                     >
                       <App />
                     </Suspense>
-                  </NotificationProvider>
-                  {/* ✅ CLOSE NOTIFICATIONPROVIDER */}
-                </TransferProvider>
-              </PusherProvider>
+                  </TransferProvider>
+                </PusherProvider>
+              </NotificationProvider>
             </AppWrapper>
           </ThemeProvider>
         </BrowserRouter>
