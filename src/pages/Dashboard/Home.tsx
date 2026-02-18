@@ -245,7 +245,7 @@ export default function Home() {
   const [showBalance, setShowBalance] = useState(true);
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [lastPusherEvent, setLastPusherEvent] = useState<string | null>(null);
+  const [pusherConnected, setPusherConnected] = useState(false);
 
   // Use custom hook for dashboard data
   const { 
@@ -257,23 +257,35 @@ export default function Home() {
     refetch 
   } = useDashboardData();
 
-  // ✅ FIXED: Safely use Pusher with error handling
-  let pusherConnected = false;
-  try {
-    const { connected } = usePusher();
-    pusherConnected = connected;
-  } catch (error) {
-    // Provider not ready yet - this is fine during initial load
-    console.log('⏳ Pusher provider not ready yet');
-  }
+  // ✅ FIXED: Safely use Pusher inside useEffect after component mounts
+  useEffect(() => {
+    try {
+      const { connected } = usePusher();
+      setPusherConnected(connected);
+      console.log('✅ Pusher connected after mount');
+    } catch (error) {
+      console.log('⏳ Pusher provider not ready yet - will retry');
+      // Retry after a short delay
+      const timer = setTimeout(() => {
+        try {
+          const { connected } = usePusher();
+          setPusherConnected(connected);
+          console.log('✅ Pusher connected on retry');
+        } catch (retryError) {
+          console.log('❌ Pusher still not available');
+        }
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, []); // Empty dependency array = runs once after mount
 
-  // ✅ ADDED: Listen for Pusher events and refresh data
+  // Listen for Pusher events and refresh data
   useEffect(() => {
     if (!pusherConnected) return;
 
     console.log('📡 Pusher connected - Home will update in real-time');
 
-    // Optional: Auto-refresh every 30 seconds as backup
     const interval = setInterval(() => {
       if (!pusherConnected) {
         console.log('🔄 Pusher disconnected - refreshing data');
@@ -284,7 +296,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [pusherConnected, refetch]);
 
-  // ✅ ADDED: Manual refresh function
+  // Manual refresh function
   const handleRefresh = () => {
     console.log('🔄 Manual refresh triggered');
     refetch();
@@ -540,7 +552,6 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {/* ✅ UPDATED: Refresh button uses handleRefresh */}
                 <button
                   onClick={handleRefresh}
                   disabled={loading}
@@ -550,7 +561,6 @@ export default function Home() {
                   <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
                 </button>
                 
-                {/* ✅ ADDED: Pusher connection indicator */}
                 {pusherConnected && (
                   <div className="hidden md:flex items-center gap-1 bg-green-500/20 backdrop-blur-sm px-2 py-1 rounded-full">
                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
