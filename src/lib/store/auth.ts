@@ -1,7 +1,16 @@
-// src/lib/store/auth.ts - FIXED VERSION WITH CORRECT IMPORT
+// src/lib/store/auth.ts - FIXED VERSION WITHOUT CONFIG IMPORT
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { getApiUrl } from '../../config/api';  // ✅ FIXED: Correct path to config/api
+
+// ✅ FIXED: Define API_URL directly instead of importing from deleted config
+const API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
+
+// Helper function to get full API URL
+const getApiUrl = (endpoint: string): string => {
+  const base = API_URL.replace(/\/$/, "");
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  return `${base}${cleanEndpoint}`;
+};
 
 export interface User {
   id: string;
@@ -64,7 +73,6 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          // Using getApiUrl - REMOVED /api
           const response = await fetch(getApiUrl('/token/'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -78,7 +86,7 @@ export const useAuthStore = create<AuthStore>()(
 
           const data = await response.json();
 
-          // JWT returns access and refresh directly (not nested in tokens)
+          // JWT returns access and refresh directly
           if (data.access) {
             // Store in BOTH keys for maximum compatibility
             localStorage.setItem('access_token', data.access);

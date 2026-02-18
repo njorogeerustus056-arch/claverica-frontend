@@ -45,7 +45,7 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../../lib/store/auth';
-import { api } from '../../services/api';
+import api from '../../api';   // ✅ Correct - imports from main api.ts
 
 interface CardData {
   id: number;

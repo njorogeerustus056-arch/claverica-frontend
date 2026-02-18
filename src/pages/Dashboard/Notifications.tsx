@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Mail, Smartphone, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
-import api from '../../services/api'; // ✅ ADDED: Real API import
+import api from '../../api'; // ✅ FIXED: Changed from '../../services/api' to '../../api'
 
 // Add missing interface
 interface Notification {

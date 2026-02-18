@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { api } from '../../services/api';  // ✅ CHANGED: Use centralized API
+import { api } from '../../api';  // ✅ FIXED: Changed from '../../services/api' to '../../api'
 import toast from 'react-hot-toast';
 
 export default function ActivateAccount() {
@@ -23,8 +23,8 @@ export default function ActivateAccount() {
     setLoading(true);
 
     try {
-      // ✅ FIXED: Using centralized api.post
-      const response = await api.post("/api/accounts/activate/", {
+      // ✅ FIXED: Removed /api prefix (api.post already adds it)
+      const response = await api.post("/accounts/activate/", {
         email, 
         activation_code: code 
       });
@@ -50,8 +50,8 @@ export default function ActivateAccount() {
 
     setLoading(true);
     try {
-      // ✅ FIXED: Using centralized api.post
-      const response = await api.post("/api/accounts/resend-activation/", {
+      // ✅ FIXED: Removed /api prefix
+      const response = await api.post("/accounts/resend-activation/", {
         email
       });
 

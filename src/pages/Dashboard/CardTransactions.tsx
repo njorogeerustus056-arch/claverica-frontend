@@ -35,7 +35,7 @@ import {
   FilterList as FilterIcon,
 } from '@mui/icons-material';
 import { useAuthStore } from '../../lib/store/auth';
-import api from '../../services/api';
+import api from '../../api';  // ✅ FIXED: Changed from '../../services/api' to '../../api'
 import { motion } from 'framer-motion';
 
 interface Transaction {
@@ -70,9 +70,8 @@ const CardTransactions: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      // ✅ FIXED: Removed duplicate /api prefix
-      // api.get() already adds the base URL which includes /api
-      const response = await api.get('/transactions/recent/');
+      // ✅ FIXED: Added /api prefix to endpoint
+      const response = await api.get('/api/transactions/recent/');
       console.log('Transactions API response:', response.data);
       
       setTransactions(response.data.transactions || []);

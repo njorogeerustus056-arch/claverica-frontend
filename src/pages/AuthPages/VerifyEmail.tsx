@@ -1,9 +1,9 @@
-// src/pages/AuthPages/VerifyEmail.tsx - FIXED with correct endpoints (no /api prefix)
+// src/pages/AuthPages/VerifyEmail.tsx - FIXED with correct import
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import PageMeta from "../../components/common/PageMeta";
 import AuthLayout from "./AuthPageLayout";
-import { api } from "../../services/api";  // ✅ CHANGED: Use centralized API
+import { api } from "../../api";  // ✅ FIXED: Changed from '../../services/api' to '../../api'
 
 export default function VerifyEmail() {
   const [otp, setOtp] = useState("");

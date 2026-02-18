@@ -8,7 +8,7 @@ import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
-import { api } from "../../services/api";
+import api from '../../api';   // ✅ Correct - imports from main api.ts
 
 // Document types - International standards
 const documentTypes = [
