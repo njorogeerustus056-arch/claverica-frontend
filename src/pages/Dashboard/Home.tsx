@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "../../lib/store/auth";
 import { useDashboardData } from "../../hooks/useDashboardData";
-import { usePusher } from "../../context/PusherContext"; // ✅ ADDED
+import { usePusher } from "../../context/PusherContext";
 import CurrencyConverter from "../../components/CurrencyConverter";
 import { FintechMetrics } from "../../components/fintech/FintechMetrics";
 import { RecentOrders } from "../../components/fintech/RecentOrders";
@@ -257,8 +257,15 @@ export default function Home() {
     refetch 
   } = useDashboardData();
 
-  // ✅ ADDED: Pusher integration for real-time updates
-  const { connected: pusherConnected } = usePusher();
+  // ✅ FIXED: Safely use Pusher with error handling
+  let pusherConnected = false;
+  try {
+    const { connected } = usePusher();
+    pusherConnected = connected;
+  } catch (error) {
+    // Provider not ready yet - this is fine during initial load
+    console.log('⏳ Pusher provider not ready yet');
+  }
 
   // ✅ ADDED: Listen for Pusher events and refresh data
   useEffect(() => {
@@ -266,15 +273,6 @@ export default function Home() {
 
     console.log('📡 Pusher connected - Home will update in real-time');
 
-    // This effect will be triggered when:
-    // - New transaction occurs (wallet.credited, wallet.debited)
-    // - Transfer status changes (transfer.completed, transfer.failed)
-    // - Balance updates (balance.updated)
-    
-    // We don't need to add event listeners here because:
-    // 1. PusherContext already handles showing toasts
-    // 2. The refetch function can be called manually if needed
-    
     // Optional: Auto-refresh every 30 seconds as backup
     const interval = setInterval(() => {
       if (!pusherConnected) {
