@@ -42,10 +42,17 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
 
     console.log('🔌 Initializing Pusher for user:', user.account_number);
 
-    // ✅ FIXED: Added /api prefix to match backend endpoint
+    // ✅ FIXED: Get API URL from env with fallback
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
+    console.log('📡 API URL:', apiUrl);
+    
+    // ✅ FIXED: Construct auth endpoint correctly - ensure no double slashes
+    const authEndpoint = `${apiUrl.replace(/\/$/, '')}/api/pusher/auth`;
+    console.log('🔐 Auth endpoint:', authEndpoint);
+
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
-      authEndpoint: `${import.meta.env.VITE_API_URL}/api/pusher/auth`,  // ✅ Added /api prefix
+      authEndpoint: authEndpoint,
       auth: {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
