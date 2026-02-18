@@ -4,7 +4,8 @@ import { useAuthStore } from '../store/auth';
 export class KYCService {
   static async checkRequirement(serviceType: string, amount: number) {
     try {
-      const response = await fetch('`${import.meta.env.VITE_API_URL}`/kyc/api/check-requirement/', {
+      // ✅ FIXED: Remove quotes outside template literal and add /api prefix
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/check-requirement/`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -41,8 +42,8 @@ export class KYCService {
       const token = localStorage.getItem('token');
       if (!token) return { is_verified: false, verification_level: 'unverified' };
       
-      // Try simple status first
-      const response = await fetch('`${import.meta.env.VITE_API_URL}`/kyc/api/simple-status/', {
+      // ✅ FIXED: Remove quotes outside template literal and add /api prefix
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/simple-status/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -50,8 +51,8 @@ export class KYCService {
         return await response.json();
       }
       
-      // Fallback to documents status
-      const docsResponse = await fetch('`${import.meta.env.VITE_API_URL}`/kyc/api/documents/status/', {
+      // Fallback to documents status - ✅ FIXED
+      const docsResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/documents/status/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -75,7 +76,8 @@ export class KYCService {
       const token = localStorage.getItem('token');
       if (!token) return { documents: [] };
       
-      const response = await fetch('`${import.meta.env.VITE_API_URL}`/kyc/api/documents/', {
+      // ✅ FIXED: Remove quotes outside template literal and add /api prefix
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/documents/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       
@@ -95,7 +97,8 @@ export class KYCService {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Authentication required');
       
-      const response = await fetch('`${import.meta.env.VITE_API_URL}`/kyc/api/documents/', {
+      // ✅ FIXED: Remove quotes outside template literal and add /api prefix
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/documents/`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData
@@ -118,7 +121,8 @@ export class KYCService {
       const token = localStorage.getItem('token');
       if (!token) return { submissions: [] };
       
-      const response = await fetch('`${import.meta.env.VITE_API_URL}`/kyc/api/documents/submissions/', {
+      // ✅ FIXED: Remove quotes outside template literal and add /api prefix
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/documents/submissions/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

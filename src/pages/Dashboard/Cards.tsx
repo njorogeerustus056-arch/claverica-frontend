@@ -114,8 +114,8 @@ const Cards: React.FC = () => {
     try {
       setLoading(true);
       console.log('Fetching cards...');
-      // ✅ FIXED: Removed duplicate /api/ prefix
-      const response = await api.get('/cards/user-cards/');
+      // ✅ FIXED: Added /api prefix
+      const response = await api.get('/api/cards/user-cards/');
       console.log('Cards API response:', response.data);
       
       // Handle both array and object responses
@@ -182,8 +182,8 @@ const Cards: React.FC = () => {
       };
       
       console.log('Creating card with payload:', payload);
-      // ✅ FIXED: Removed duplicate /api/ prefix
-      const response = await api.post('/cards/', payload);
+      // ✅ FIXED: Added /api prefix
+      const response = await api.post('/api/cards/', payload);
       console.log('Card creation response:', response.data);
       
       const newCardData: CardData = {
@@ -231,8 +231,8 @@ const Cards: React.FC = () => {
 
   const handleFreezeCard = async (cardId: number) => {
     try {
-      // ✅ FIXED: Removed duplicate /api/ prefix
-      await api.post(`/cards/${cardId}/freeze/`);
+      // ✅ FIXED: Added /api prefix
+      await api.post(`/api/cards/${cardId}/freeze/`);
       setCards(cards.map(card => 
         card.id === cardId ? { ...card, isActive: false } : card
       ));
@@ -253,8 +253,8 @@ const Cards: React.FC = () => {
 
   const handleUnfreezeCard = async (cardId: number) => {
     try {
-      // ✅ FIXED: Removed duplicate /api/ prefix
-      await api.post(`/cards/${cardId}/unfreeze/`);
+      // ✅ FIXED: Added /api prefix
+      await api.post(`/api/cards/${cardId}/unfreeze/`);
       setCards(cards.map(card => 
         card.id === cardId ? { ...card, isActive: true } : card
       ));
