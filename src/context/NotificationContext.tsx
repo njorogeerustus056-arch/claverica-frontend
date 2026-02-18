@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '../lib/store/auth';
 import { usePusher } from './PusherContext';
-import api, { Notification } from '../services/api';
+import api, { Notification } from '../api';  // ✅ UPDATED: from '../services/api' to '../api'
 
 interface NotificationContextType {
   notifications: Notification[];

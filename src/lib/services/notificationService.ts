@@ -1,5 +1,5 @@
 // src/lib/services/notificationService.ts - FIXED VERSION (REMOVED DUPLICATE HOOK)
-import { api, Notification } from '../../api';
+import { api, Notification } from '../../api';  // ✅ This is already correct
 import { useAuthStore } from '../store/auth';
 
 export interface FrontendNotification {
