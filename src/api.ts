@@ -1,4 +1,4 @@
-// src/api.ts - COMPLETE FIXED VERSION
+// src/api.ts - COMPLETE FIXED VERSION WITH CORRECT NOTIFICATION ENDPOINTS
 import { useAuthStore } from './lib/store/auth';
 
 // ✅ FIXED: Remove any trailing /api from the URL
@@ -243,11 +243,11 @@ export const authAPI = {
   }
 };
 
-// Notification API functions - WITHOUT /api prefix
+// ✅ FIXED: Notification API functions - WITH /api prefix
 export const notificationAPI = {
   getAll: async () => {
     try {
-      const data = await apiFetch<any>("/notifications/");
+      const data = await apiFetch<any>("/api/notifications/");  // ✅ Added /api prefix
       if (Array.isArray(data)) {
         return data;
       } else if (data && Array.isArray(data.notifications)) {
@@ -269,7 +269,7 @@ export const notificationAPI = {
 
   getUnread: async () => {
     try {
-      const data = await apiFetch<any>("/notifications/unread/");
+      const data = await apiFetch<any>("/api/notifications/unread/");  // ✅ Added /api prefix
       if (Array.isArray(data)) {
         return data;
       } else if (data && Array.isArray(data.notifications)) {
@@ -288,10 +288,10 @@ export const notificationAPI = {
   },
 
   getUnreadCount: async () => {
-    console.log('🔍 [API DEBUG] Calling /notifications/unread-count/');
+    console.log('🔍 [API DEBUG] Calling /api/notifications/unread-count/');
     
     try {
-      const data = await apiFetch<any>("/notifications/unread-count/");
+      const data = await apiFetch<any>("/api/notifications/unread-count/");  // ✅ Added /api prefix
       
       console.log('✅ [API DEBUG] Raw unread count response:', data);
       
@@ -342,7 +342,7 @@ export const notificationAPI = {
 
   markAsRead: async (notificationId: number) => {
     try {
-      return await apiFetch(`/notifications/${notificationId}/mark-read/`, {
+      return await apiFetch(`/api/notifications/${notificationId}/mark-read/`, {  // ✅ Added /api prefix
         method: "POST",
       });
     } catch (error: any) {
@@ -356,7 +356,7 @@ export const notificationAPI = {
 
   markAllAsRead: async () => {
     try {
-      return await apiFetch("/notifications/mark-all-read/", {
+      return await apiFetch("/api/notifications/mark-all-read/", {  // ✅ Added /api prefix
         method: "POST",
       });
     } catch (error: any) {
@@ -369,22 +369,22 @@ export const notificationAPI = {
   },
 
   getPreferences: async () => {
-    return apiFetch("/notifications/preferences/");
+    return apiFetch("/api/notifications/preferences/");  // ✅ Added /api prefix
   },
 
   updatePreferences: async (data: any) => {
-    return apiFetch("/notifications/preferences/", {
+    return apiFetch("/api/notifications/preferences/", {  // ✅ Added /api prefix
       method: "PUT",
       body: JSON.stringify(data),
     });
   },
 
   getAdminAlerts: async () => {
-    return apiFetch("/notifications/admin/alerts/");
+    return apiFetch("/api/notifications/admin/alerts/");  // ✅ Added /api prefix
   },
 
   getAdminActionRequired: async () => {
-    return apiFetch<{ action_required_count: number }>("/notifications/admin/action-required/");
+    return apiFetch<{ action_required_count: number }>("/api/notifications/admin/action-required/");  // ✅ Added /api prefix
   }
 };
 
