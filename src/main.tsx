@@ -65,9 +65,8 @@ if (!rootElement) {
           <ThemeProvider>
             <AppWrapper>
               <InitializeAuth />
-              {/* ✅ CORRECT PROVIDER ORDER:
-                  PusherProvider must be OUTSIDE NotificationProvider
-                  because PusherProvider uses useNotifications? */}
+              {/* ✅ CORRECT ORDER: 
+                  PusherProvider → NotificationProvider → TransferProvider */}
               <PusherProvider>
                 <NotificationProvider pollInterval={30000}>
                   <TransferProvider>
