@@ -1,5 +1,5 @@
-// main.tsx - CORRECTED PROVIDER ORDER
-import { StrictMode, Suspense, lazy, useEffect } from "react";
+// main.tsx - FINAL FIX WITH LOADING WRAPPER
+import { StrictMode, Suspense, lazy, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
@@ -53,6 +53,39 @@ function InitializeAuth() {
   return null;
 }
 
+// ✅ ADDED: Provider wrapper with ready state
+function Providers({ children }: { children: React.ReactNode }) {
+  const [providersReady, setProvidersReady] = useState(false);
+
+  useEffect(() => {
+    // Small delay to ensure providers are mounted
+    const timer = setTimeout(() => {
+      setProvidersReady(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!providersReady) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
+        <span className="ml-3 text-gray-600">Initializing app...</span>
+      </div>
+    );
+  }
+
+  return (
+    <NotificationProvider pollInterval={30000}>
+      <PusherProvider>
+        <TransferProvider>
+          {children}
+        </TransferProvider>
+      </PusherProvider>
+    </NotificationProvider>
+  );
+}
+
 if (!rootElement) {
   console.error("Root element with id='root' not found.");
 } else {
@@ -65,26 +98,18 @@ if (!rootElement) {
           <ThemeProvider>
             <AppWrapper>
               <InitializeAuth />
-              {/* ✅ CORRECT ORDER: 
-                  NotificationProvider FIRST (outermost)
-                  PusherProvider SECOND (can use Notifications)
-                  TransferProvider INNERMOST */}
-              <NotificationProvider pollInterval={30000}>
-                <PusherProvider>
-                  <TransferProvider>
-                    <Suspense
-                      fallback={
-                        <div className="flex items-center justify-center h-screen text-gray-500 dark:text-gray-300">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
-                          <span className="ml-3">Loading...</span>
-                        </div>
-                      }
-                    >
-                      <App />
-                    </Suspense>
-                  </TransferProvider>
-                </PusherProvider>
-              </NotificationProvider>
+              <Providers>
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center h-screen text-gray-500 dark:text-gray-300">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
+                      <span className="ml-3">Loading...</span>
+                    </div>
+                  }
+                >
+                  <App />
+                </Suspense>
+              </Providers>
             </AppWrapper>
           </ThemeProvider>
         </BrowserRouter>
