@@ -1,8 +1,7 @@
-// src/context/PusherContext.tsx - FIXED VERSION
+// src/context/PusherContext.tsx - FIXED VERSION WITH CORRECT AUTH ENDPOINT
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAuthStore } from '../lib/store/auth';
-// ❌ REMOVE this import: import { useNotifications } from './NotificationContext';
 import toast from 'react-hot-toast';
 
 interface PusherContextType {
@@ -28,7 +27,6 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user, tokens } = useAuthStore();
-  // ❌ REMOVE this line: const { fetchNotifications, unreadCount } = useNotifications();
 
   // Create a local function to refresh data via custom events
   const triggerRefresh = () => {
@@ -44,9 +42,10 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
 
     console.log('🔌 Initializing Pusher for user:', user.account_number);
 
+    // ✅ FIXED: Added /api prefix to auth endpoint
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
-      authEndpoint: `${import.meta.env.VITE_API_URL}/pusher/auth`,
+      authEndpoint: `${import.meta.env.VITE_API_URL}/api/pusher/auth`,
       auth: {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -241,7 +240,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       pusher.unsubscribe(channelName);
       pusher.disconnect();
     };
-  }, [user?.account_number, user?.is_staff, user?.is_superuser, tokens?.access]); // ❌ Remove fetchNotifications from dependencies
+  }, [user?.account_number, user?.is_staff, user?.is_superuser, tokens?.access]);
 
   return (
     <PusherContext.Provider value={{ connected, error }}>
