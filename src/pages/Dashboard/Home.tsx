@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "../../lib/store/auth";
 import { useDashboardData } from "../../hooks/useDashboardData";
-import { usePusher } from "../../context/PusherContext";
+import { useSafePusher } from "../../hooks/useSafePusher";
 import CurrencyConverter from "../../components/CurrencyConverter";
 import { FintechMetrics } from "../../components/fintech/FintechMetrics";
 import { RecentOrders } from "../../components/fintech/RecentOrders";
@@ -245,7 +245,6 @@ export default function Home() {
   const [showBalance, setShowBalance] = useState(true);
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [pusherConnected, setPusherConnected] = useState(false);
 
   // Use custom hook for dashboard data
   const { 
@@ -257,28 +256,8 @@ export default function Home() {
     refetch 
   } = useDashboardData();
 
-  // ✅ FIXED: Safely use Pusher inside useEffect after component mounts
-  useEffect(() => {
-    try {
-      const { connected } = usePusher();
-      setPusherConnected(connected);
-      console.log('✅ Pusher connected after mount');
-    } catch (error) {
-      console.log('⏳ Pusher provider not ready yet - will retry');
-      // Retry after a short delay
-      const timer = setTimeout(() => {
-        try {
-          const { connected } = usePusher();
-          setPusherConnected(connected);
-          console.log('✅ Pusher connected on retry');
-        } catch (retryError) {
-          console.log('❌ Pusher still not available');
-        }
-      }, 500);
-      
-      return () => clearTimeout(timer);
-    }
-  }, []); // Empty dependency array = runs once after mount
+  // ✅ NEW: Use safe Pusher hook
+  const { pusherConnected, isReady } = useSafePusher();
 
   // Listen for Pusher events and refresh data
   useEffect(() => {
