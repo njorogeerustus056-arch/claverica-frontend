@@ -1,8 +1,8 @@
-// src/context/PusherContext.tsx
+// src/context/PusherContext.tsx - FIXED VERSION
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAuthStore } from '../lib/store/auth';
-import { useNotifications } from './NotificationContext';
+// ❌ REMOVE this import: import { useNotifications } from './NotificationContext';
 import toast from 'react-hot-toast';
 
 interface PusherContextType {
@@ -28,7 +28,13 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user, tokens } = useAuthStore();
-  const { fetchNotifications, unreadCount } = useNotifications();
+  // ❌ REMOVE this line: const { fetchNotifications, unreadCount } = useNotifications();
+
+  // Create a local function to refresh data via custom events
+  const triggerRefresh = () => {
+    // Dispatch a custom event that components can listen to
+    window.dispatchEvent(new CustomEvent('pusher:data-refresh'));
+  };
 
   useEffect(() => {
     if (!user?.account_number || !tokens?.access) {
@@ -38,7 +44,6 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
 
     console.log('🔌 Initializing Pusher for user:', user.account_number);
 
-    // ✅ UPDATED: Initialize Pusher with your actual credentials from .env
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
       authEndpoint: `${import.meta.env.VITE_API_URL}/pusher/auth`,
@@ -93,13 +98,13 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         duration: 5000,
       });
       
-      // Refresh notifications
-      fetchNotifications();
+      // Trigger refresh instead of calling fetchNotifications directly
+      triggerRefresh();
     });
 
     channel.bind('notification.updated', (data: any) => {
       console.log('📨 Notification updated:', data);
-      fetchNotifications();
+      triggerRefresh();
     });
 
     // ===== TRANSFER EVENTS =====
@@ -108,7 +113,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       toast.success(`Transfer of $${data.amount} initiated`, {
         icon: '💸',
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     channel.bind('transfer.tac_sent', (data: any) => {
@@ -117,7 +122,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         icon: '🔐',
         duration: 8000,
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     channel.bind('transfer.completed', (data: any) => {
@@ -125,7 +130,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       toast.success(`Transfer of $${data.amount} completed!`, {
         icon: '✅',
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     channel.bind('transfer.failed', (data: any) => {
@@ -133,7 +138,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       toast.error(`Transfer failed: ${data.reason || 'Unknown error'}`, {
         icon: '❌',
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     // ===== WALLET EVENTS =====
@@ -142,7 +147,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       toast.success(`You received $${data.amount}!`, {
         icon: '💰',
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     channel.bind('wallet.debited', (data: any) => {
@@ -150,12 +155,12 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       toast(`$${data.amount} sent to ${data.recipient}`, {
         icon: '💸',
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     channel.bind('balance.updated', (data: any) => {
       console.log('💰 Balance updated:', data);
-      // You can trigger a balance refresh here if needed
+      triggerRefresh();
     });
 
     channel.bind('low_balance', (data: any) => {
@@ -163,7 +168,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       toast.error(`Low balance: $${data.balance} remaining`, {
         icon: '⚠️',
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     // ===== KYC EVENTS =====
@@ -173,7 +178,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         icon: '✅',
         duration: 8000,
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     channel.bind('kyc.rejected', (data: any) => {
@@ -181,7 +186,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       toast.error(`KYC rejected: ${data.reason || 'Please resubmit'}`, {
         icon: '❌',
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     channel.bind('kyc.pending', (data: any) => {
@@ -189,7 +194,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       toast('KYC documents under review', {
         icon: '⏳',
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     // ===== ACCOUNT EVENTS =====
@@ -198,7 +203,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       toast.success('Account activated! You can now send money.', {
         icon: '✅',
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     channel.bind('login.new', (data: any) => {
@@ -207,7 +212,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         icon: '⚠️',
         duration: 10000,
       });
-      fetchNotifications();
+      triggerRefresh();
     });
 
     // ===== ADMIN EVENTS (if user is admin) =====
@@ -217,7 +222,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         toast.success(`TAC required for transfer #${data.transfer_id}`, {
           icon: '🔐',
         });
-        fetchNotifications();
+        triggerRefresh();
       });
 
       channel.bind('admin.kyc_review', (data: any) => {
@@ -225,7 +230,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         toast(`KYC submission from ${data.user} needs review`, {
           icon: '📋',
         });
-        fetchNotifications();
+        triggerRefresh();
       });
     }
 
@@ -236,7 +241,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       pusher.unsubscribe(channelName);
       pusher.disconnect();
     };
-  }, [user?.account_number, user?.is_staff, user?.is_superuser, tokens?.access, fetchNotifications]);
+  }, [user?.account_number, user?.is_staff, user?.is_superuser, tokens?.access]); // ❌ Remove fetchNotifications from dependencies
 
   return (
     <PusherContext.Provider value={{ connected, error }}>
