@@ -1,4 +1,4 @@
-// main.tsx - FIXED VERSION WITH NOTIFICATIONPROVIDER
+// main.tsx - CORRECT PROVIDER ORDER
 import { StrictMode, Suspense, lazy, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
@@ -65,11 +65,11 @@ if (!rootElement) {
           <ThemeProvider>
             <AppWrapper>
               <InitializeAuth />
-              {/* ✅ PROVIDER ORDER IS IMPORTANT: 
-                  NotificationProvider must be outermost to make useNotifications available everywhere
-                  PusherProvider depends on auth, TransferProvider depends on both */}
-              <NotificationProvider pollInterval={30000}>
-                <PusherProvider>
+              {/* ✅ CORRECT PROVIDER ORDER:
+                  PusherProvider must be OUTSIDE NotificationProvider
+                  because PusherProvider uses useNotifications? */}
+              <PusherProvider>
+                <NotificationProvider pollInterval={30000}>
                   <TransferProvider>
                     <Suspense
                       fallback={
@@ -82,8 +82,8 @@ if (!rootElement) {
                       <App />
                     </Suspense>
                   </TransferProvider>
-                </PusherProvider>
-              </NotificationProvider>
+                </NotificationProvider>
+              </PusherProvider>
             </AppWrapper>
           </ThemeProvider>
         </BrowserRouter>
