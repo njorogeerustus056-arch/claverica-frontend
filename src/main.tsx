@@ -1,5 +1,5 @@
-// main.tsx - FINAL FIXED VERSION
-import { StrictMode, Suspense, lazy } from "react";
+// main.tsx - FINAL FIXED VERSION WITH CORRECT REACT IMPORT
+import React, { StrictMode, Suspense, lazy } from "react";  // ✅ Added React to imports
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
@@ -32,7 +32,7 @@ if (savedTheme === "dark") {
 
 // InitializeAuth component
 function InitializeAuth() {
-  React.useEffect(() => {
+  React.useEffect(() => {  // ✅ Now React is imported, this works
     const authStore = useAuthStore.getState();
     
     if (process.env.NODE_ENV === 'development') {
