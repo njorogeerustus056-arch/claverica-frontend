@@ -1,5 +1,5 @@
-// main.tsx - FINAL FIX WITH LOADING WRAPPER
-import { StrictMode, Suspense, lazy, useEffect, useState } from "react";
+// main.tsx - FINAL FIXED VERSION
+import { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
@@ -32,7 +32,7 @@ if (savedTheme === "dark") {
 
 // InitializeAuth component
 function InitializeAuth() {
-  useEffect(() => {
+  React.useEffect(() => {
     const authStore = useAuthStore.getState();
     
     if (process.env.NODE_ENV === 'development') {
@@ -53,36 +53,16 @@ function InitializeAuth() {
   return null;
 }
 
-// ✅ ADDED: Provider wrapper with ready state
+// ✅ FIXED: Provider wrapper with correct order
 function Providers({ children }: { children: React.ReactNode }) {
-  const [providersReady, setProvidersReady] = useState(false);
-
-  useEffect(() => {
-    // Small delay to ensure providers are mounted
-    const timer = setTimeout(() => {
-      setProvidersReady(true);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!providersReady) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
-        <span className="ml-3 text-gray-600">Initializing app...</span>
-      </div>
-    );
-  }
-
   return (
-    <NotificationProvider pollInterval={30000}>
-      <PusherProvider>
+    <PusherProvider>           {/* ✅ Pusher first */}
+      <NotificationProvider>   {/* ✅ Then Notification can use Pusher */}
         <TransferProvider>
           {children}
         </TransferProvider>
-      </PusherProvider>
-    </NotificationProvider>
+      </NotificationProvider>
+    </PusherProvider>
   );
 }
 

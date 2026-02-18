@@ -1,7 +1,7 @@
-// src/context/NotificationContext.tsx - COMPLETE FIXED VERSION WITH PUSHER
+// src/context/NotificationContext.tsx - FIXED VERSION WITH SAFETY WRAPPER
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '../lib/store/auth';
-import { usePusher } from './PusherContext'; // ✅ ADDED
+import { usePusher } from './PusherContext';
 import api, { Notification } from '../services/api';
 
 interface NotificationContextType {
@@ -40,7 +40,15 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [initialFetchDone, setInitialFetchDone] = useState<boolean>(false);
   
   const { isAuthenticated, tokens, syncFromLocalStorage } = useAuthStore();
-  const { connected: pusherConnected } = usePusher(); // ✅ ADDED
+  
+  // ✅ SAFETY: Try-catch for Pusher
+  let pusherConnected = false;
+  try {
+    const { connected } = usePusher();
+    pusherConnected = connected;
+  } catch (e) {
+    console.log('⚠️ Pusher not available yet - using polling only');
+  }
 
   useEffect(() => {
     syncFromLocalStorage();
@@ -261,7 +269,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     
     try {
       const data = await api.notifications.getAll();
-      // Format each notification for better display
       const formattedNotifications = data.map(formatNotification);
       setNotifications(formattedNotifications);
       
@@ -288,12 +295,11 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     }
   }, [isAuthenticated, tokens?.access, fetchNotifications, initialFetchDone]);
 
-  // ✅ UPDATED: Polling with Pusher awareness
+  // ✅ FIXED: Polling with Pusher awareness
   useEffect(() => {
     if (!isAuthenticated || !tokens?.access) return;
     
-    // If Pusher is connected, use longer polling interval as backup
-    const intervalTime = pusherConnected ? 60000 : pollInterval; // 60s if Pusher connected, else 30s
+    const intervalTime = pusherConnected ? 60000 : pollInterval;
     
     console.log(`🔄 Starting notification polling every ${intervalTime}ms (Pusher: ${pusherConnected ? 'connected' : 'disconnected'})`);
     

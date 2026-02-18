@@ -1,9 +1,8 @@
-// src/App.tsx - FIXED: NotificationProvider only wraps dashboard routes
+// src/App.tsx - FIXED: Removed duplicate NotificationProvider
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
 // Import Providers - REMOVED AuthProvider
-import { NotificationProvider } from "./context/NotificationContext";
 import AuthInitializer from "./components/AuthInitializer";
 
 import SignIn from "./pages/AuthPages/SignIn";
@@ -75,7 +74,6 @@ function LoadingSpinner() {
 export default function App() {
   return (
     <>
-      {/* REMOVED AuthProvider - using Zustand store instead */}
       <AuthInitializer>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
@@ -159,12 +157,8 @@ export default function App() {
             <Route path="/activate" element={<ActivateAccount />} />
             <Route path="/activate-account" element={<ActivateAccount />} />
 
-            {/* ✅ FIXED: Dashboard routes WITH NotificationProvider */}
-            <Route path="/dashboard" element={
-              <NotificationProvider pollInterval={30000}>
-                <DashboardIndex />
-              </NotificationProvider>
-            }>
+            {/* ✅ FIXED: Dashboard routes WITHOUT NotificationProvider (now in main.tsx) */}
+            <Route path="/dashboard" element={<DashboardIndex />}>
               <Route index element={<DashboardHome />} />
               <Route path="transfer" element={<Transfer />} />
               
