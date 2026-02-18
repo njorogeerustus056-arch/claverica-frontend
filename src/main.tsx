@@ -1,4 +1,4 @@
-// main.tsx - FIXED VERSION WITH BROWSERROUTER AND PUSHER
+// main.tsx - FIXED VERSION WITH NOTIFICATIONPROVIDER
 import { StrictMode, Suspense, lazy, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
@@ -12,7 +12,8 @@ import "flatpickr/dist/flatpickr.css";
 import { AppWrapper } from "./components/common/PageMeta";
 import { ThemeProvider } from "./context/ThemeContext";
 import { TransferProvider } from "./context/TransferContext.tsx";
-import { PusherProvider } from "./context/PusherContext";  // ✅ ADDED
+import { PusherProvider } from "./context/PusherContext";
+import { NotificationProvider } from "./context/NotificationContext";  // ✅ ADD THIS
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import { useAuthStore } from "./lib/store/auth";
 
@@ -64,20 +65,24 @@ if (!rootElement) {
           <ThemeProvider>
             <AppWrapper>
               <InitializeAuth />
-              <PusherProvider>  {/* ✅ ADDED - Real-time notifications */}
+              <PusherProvider>
                 <TransferProvider>
-                  <Suspense
-                    fallback={
-                      <div className="flex items-center justify-center h-screen text-gray-500 dark:text-gray-300">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
-                        <span className="ml-3">Loading...</span>
-                      </div>
-                    }
-                  >
-                    <App />
-                  </Suspense>
+                  {/* ✅ ADD NOTIFICATIONPROVIDER HERE - WRAP EVERYTHING */}
+                  <NotificationProvider pollInterval={30000}>
+                    <Suspense
+                      fallback={
+                        <div className="flex items-center justify-center h-screen text-gray-500 dark:text-gray-300">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
+                          <span className="ml-3">Loading...</span>
+                        </div>
+                      }
+                    >
+                      <App />
+                    </Suspense>
+                  </NotificationProvider>
+                  {/* ✅ CLOSE NOTIFICATIONPROVIDER */}
                 </TransferProvider>
-              </PusherProvider>  {/* ✅ ADDED */}
+              </PusherProvider>
             </AppWrapper>
           </ThemeProvider>
         </BrowserRouter>
