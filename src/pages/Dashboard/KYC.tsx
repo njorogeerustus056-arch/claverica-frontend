@@ -51,8 +51,8 @@ const KYC = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      // ✅ FIXED: Removed duplicate /api/ prefix
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/kyc/simple-status/`, {
+      // ✅ FIXED: Added /api prefix to match backend structure
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/simple-status/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

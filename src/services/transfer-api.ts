@@ -378,7 +378,7 @@ export const transferAPI = {
     }
   },
 
-  // Submit KYC documents
+  // ✅ FIXED: Submit KYC documents - NOW WITH CORRECT /api PREFIX
   submitKYC: async (formData: FormData): Promise<KYCResponse> => {
     try {
       console.log('📤 Submitting KYC documents...');
@@ -386,7 +386,8 @@ export const transferAPI = {
       const API_URL = import.meta.env.VITE_API_URL;
       const { tokens } = useAuthStore.getState();
       
-      const response = await fetch(`${API_URL}/kyc/api/documents/`, {
+      // ✅ FIXED: Added missing /api prefix
+      const response = await fetch(`${API_URL}/api/kyc/documents/`, {
         method: 'POST',
         headers: {
           ...(tokens?.access ? { 
@@ -419,10 +420,10 @@ export const transferAPI = {
     }
   },
 
-  // Check KYC status
+  // ✅ FIXED: Check KYC status - USING apiFetch
   getKYCStatus: async (): Promise<KYCStatus> => {
     try {
-      const response = await apiFetch('/kyc/api/documents/status/');
+      const response = await apiFetch('/api/kyc/documents/status/');
       
       if (response && response.status) {
         return response;
@@ -442,10 +443,10 @@ export const transferAPI = {
     }
   },
 
-  // Check if KYC is required for specific amount
+  // ✅ FIXED: Check if KYC is required for specific amount
   checkKYCRequirement: async (amount: number, serviceType: string = 'transfer'): Promise<{requires_kyc: boolean; threshold: number; message: string}> => {
     try {
-      const response = await apiFetch(`/kyc/api/check-requirement/?amount=${amount}&service_type=${serviceType}`);
+      const response = await apiFetch(`/api/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
       
       if (response && response.requires_kyc !== undefined) {
         return {
@@ -469,10 +470,10 @@ export const transferAPI = {
     }
   },
 
-  // Get user's KYC submissions
+  // ✅ FIXED: Get user's KYC submissions
   getKYCSubmissions: async (): Promise<any[]> => {
     try {
-      const response = await apiFetch('/kyc/api/documents/submissions/');
+      const response = await apiFetch('/api/kyc/documents/submissions/');
       return response || [];
     } catch (error) {
       return [];

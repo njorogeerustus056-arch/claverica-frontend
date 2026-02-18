@@ -198,7 +198,8 @@ const KYCSubmit = () => {
         return;
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/kyc/documents/`, {
+      // ✅ FIXED: Added /api prefix to match backend structure
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/documents/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authToken}`
