@@ -37,6 +37,7 @@ import CurrencyConverter from "../../components/CurrencyConverter";
 import { FintechMetrics } from "../../components/fintech/FintechMetrics";
 import { RecentOrders } from "../../components/fintech/RecentOrders";
 import CountryMap from "../../components/ecommerce/CountryMap";
+import api from "../../api"; // ✅ ADDED for cards API
 
 // Simplified interfaces based on your actual API
 interface Transaction {
@@ -91,6 +92,11 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
       onClose();
     }
   };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleCopy = async () => {
     if (user?.account_number) {
@@ -245,6 +251,7 @@ export default function Home() {
   const [showBalance, setShowBalance] = useState(true);
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [cardsCount, setCardsCount] = useState(0); // ✅ ADDED for cards count
 
   // Use custom hook for dashboard data
   const { 
@@ -258,6 +265,29 @@ export default function Home() {
 
   // ✅ NEW: Use safe Pusher hook
   const { pusherConnected, isReady } = useSafePusher();
+
+  // ✅ ADDED: Fetch cards count
+  useEffect(() => {
+    const fetchCardsCount = async () => {
+      try {
+        const response = await api.get('/api/cards/user-cards/');
+        let cardsArray = [];
+        if (Array.isArray(response.data)) {
+          cardsArray = response.data;
+        } else if (response.data && Array.isArray(response.data.cards)) {
+          cardsArray = response.data.cards;
+        }
+        setCardsCount(cardsArray.length);
+      } catch (err) {
+        console.error('Failed to fetch cards:', err);
+        setCardsCount(0);
+      }
+    };
+    
+    if (user) {
+      fetchCardsCount();
+    }
+  }, [user]);
 
   // Listen for Pusher events and refresh data
   useEffect(() => {
@@ -352,8 +382,8 @@ export default function Home() {
       label: "Cards", 
       color: "from-violet-500 to-purple-600", 
       action: () => navigate("/dashboard/cards"),
-      desc: `0 active`,
-      count: 0
+      desc: `${cardsCount} active`, // ✅ FIXED: Now shows actual count
+      count: cardsCount // ✅ FIXED: Now shows actual count
     },
     { 
       icon: History, 
@@ -840,7 +870,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <span className="text-sm font-medium text-gray-700">Cards</span>
-                    <span className="text-sm font-bold text-gray-900">0</span>
+                    <span className="text-sm font-bold text-gray-900">{cardsCount}</span> {/* ✅ FIXED */}
                   </div>
                 </div>
               </div>

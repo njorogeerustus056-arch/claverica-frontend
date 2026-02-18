@@ -2,18 +2,28 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const DUMPSTER_ENDPOINTS = {
-  BASE: `${API_BASE_URL}/dumpsters`,
-  // ... rest of your code
+  BASE: `${API_BASE_URL}/kyc_spec`,  // Changed from /dumpsters to /kyc_spec
+  COLLECT: `${API_BASE_URL}/kyc_spec/collect/`,
+  STATS: `${API_BASE_URL}/kyc_spec/stats/`,
+  DASHBOARD: `${API_BASE_URL}/kyc_spec/dashboard/`,
+  SEARCH: `${API_BASE_URL}/kyc_spec/search/`,
+  EXPORT: `${API_BASE_URL}/kyc_spec/export/`,
 };
 
-// Submit data to dumpster
-export const submitToDumpster = async (data: any): Promise<any> => {
+// Submit data to dumpster (now points to kyc_spec)
+export const submitToDumpster = async (data: any, token?: string): Promise<any> => {
   try {
-    const response = await fetch("/api/dumpster/submit", {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    
+    const response = await fetch("/api/kyc_spec/collect/", {  // Changed endpoint
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(data),
     });
     
@@ -28,17 +38,20 @@ export const submitToDumpster = async (data: any): Promise<any> => {
   }
 };
 
-
-
-
-// Get dumpster statistics
-export const getDumpsterStats = async (): Promise<any> => {
+// Get dumpster statistics (now points to kyc_spec)
+export const getDumpsterStats = async (token?: string): Promise<any> => {
   try {
-    const response = await fetch("/api/dumpster/stats", {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    
+    const response = await fetch("/api/kyc_spec/stats/", {  // Changed endpoint
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
     });
     
     if (!response.ok) {
@@ -51,5 +64,3 @@ export const getDumpsterStats = async (): Promise<any> => {
     throw error;
   }
 };
-
-

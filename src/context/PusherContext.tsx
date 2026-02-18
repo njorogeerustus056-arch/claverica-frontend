@@ -41,6 +41,10 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     }
 
     console.log('🔌 Initializing Pusher for user:', user.account_number);
+    
+    // ✅ ADDED: Token debugging
+    console.log('🔑 Token available:', !!tokens.access);
+    console.log('🔑 Token preview:', tokens.access?.substring(0, 20) + '...');
 
     // ✅ FIXED: Get raw env value first
     const rawApiUrl = import.meta.env.VITE_API_URL;

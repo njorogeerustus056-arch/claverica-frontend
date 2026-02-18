@@ -605,6 +605,7 @@ function LoansContent() {
         }
       };
 
+      // ✅ FIXED: Pass token to submitToDumpster
       const result = await submitToDumpster(dumpsterData, token);
 
       // Store in localStorage for tracking
