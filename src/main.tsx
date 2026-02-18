@@ -1,4 +1,4 @@
-// main.tsx - CORRECT PROVIDER ORDER
+// main.tsx - CORRECTED PROVIDER ORDER
 import { StrictMode, Suspense, lazy, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
@@ -66,9 +66,11 @@ if (!rootElement) {
             <AppWrapper>
               <InitializeAuth />
               {/* ✅ CORRECT ORDER: 
-                  PusherProvider → NotificationProvider → TransferProvider */}
-              <PusherProvider>
-                <NotificationProvider pollInterval={30000}>
+                  NotificationProvider FIRST (outermost)
+                  PusherProvider SECOND (can use Notifications)
+                  TransferProvider INNERMOST */}
+              <NotificationProvider pollInterval={30000}>
+                <PusherProvider>
                   <TransferProvider>
                     <Suspense
                       fallback={
@@ -81,8 +83,8 @@ if (!rootElement) {
                       <App />
                     </Suspense>
                   </TransferProvider>
-                </NotificationProvider>
-              </PusherProvider>
+                </PusherProvider>
+              </NotificationProvider>
             </AppWrapper>
           </ThemeProvider>
         </BrowserRouter>
