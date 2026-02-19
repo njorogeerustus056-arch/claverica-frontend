@@ -1,2 +1,0 @@
-﻿tsconfig.json(21,18): error TS6306: Referenced project 'D:/Erustus/claverica-frontend/tsconfig.node.json' must have setting "composite": true.
-tsconfig.json(21,18): error TS6310: Referenced project 'D:/Erustus/claverica-frontend/tsconfig.node.json' may not disable emit.
