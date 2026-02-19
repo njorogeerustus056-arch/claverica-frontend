@@ -1,4 +1,4 @@
-// src/context/PusherContext.tsx - FIXED WITH POST METHOD
+// src/context/PusherContext.tsx - COMPLETELY FIXED VERSION
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAuthStore } from '../lib/store/auth';
@@ -50,15 +50,16 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const rawApiUrl = import.meta.env.VITE_API_URL;
     console.log('📡 Raw VITE_API_URL from env:', rawApiUrl);
     
-    // ✅ Ensure we remove any trailing /api if present
-    let baseUrl = rawApiUrl || 'https://claverica-backend-production.up.railway.app';
-    baseUrl = baseUrl.replace(/\/api\/?$/, ''); // Remove /api or /api/ from end
-    baseUrl = baseUrl.replace(/\/$/, ''); // Remove trailing slash
+    // ✅ CRITICAL FIX: Just remove trailing slash, don't remove /api
+    let baseUrl = (rawApiUrl || 'https://claverica-backend-production.up.railway.app').replace(/\/$/, '');
     
-    console.log('📡 Cleaned base URL:', baseUrl);
+    console.log('📡 Base URL:', baseUrl);
     
-    // ✅ Construct auth endpoint with SINGLE /api
-    const authEndpoint = `${baseUrl}/api/pusher/auth`;
+    // ✅ Construct auth endpoint - DON'T add /api if baseUrl already has it
+    const authEndpoint = baseUrl.includes('/api') 
+      ? `${baseUrl}/pusher/auth`  // If baseUrl has /api, just add /pusher/auth
+      : `${baseUrl}/api/pusher/auth`; // If no /api, add /api/pusher/auth
+    
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
     // ✅ FIXED: Added method: 'POST' to force POST requests
