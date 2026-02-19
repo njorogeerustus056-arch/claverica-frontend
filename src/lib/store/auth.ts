@@ -1,21 +1,17 @@
-// src/lib/store/auth.ts - COMPLETELY FIXED VERSION
+// src/lib/store/auth.ts - FIXED VERSION
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// ✅ CRITICAL FIX: Remove any trailing /api from the URL
-const RAW_API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
-// Remove any trailing /api or /api/ from the URL
-const API_URL = RAW_API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
+// ✅ FIXED: Match api.ts - ONLY remove trailing slash, keep /api if present
+const API_URL = (import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app').replace(/\/$/, '');
 
-console.log('🔧 Auth Store - Raw API URL:', RAW_API_URL);
-console.log('🔧 Auth Store - Cleaned API URL:', API_URL);
+console.log('🔧 Auth Store - API URL:', API_URL);
 
-// Helper function to get full API URL - now adds /api prefix automatically
+// Helper function to get full API URL - matches api.ts pattern
 const getApiUrl = (endpoint: string): string => {
-  // Remove leading slash if present
-  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
-  // Always add /api/ prefix
-  return `${API_URL}/api/${cleanEndpoint}`;
+  // Ensure endpoint starts with /
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  return `${API_URL}${cleanEndpoint}`;
 };
 
 export interface User {
@@ -79,8 +75,8 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          // ✅ FIXED: Use "token/" not "/api/token/"
-          const url = getApiUrl('token/');
+          // ✅ FIXED: Use /api/token/ endpoint
+          const url = getApiUrl('/api/token/');
           console.log('🔐 Login URL:', url);
           
           const response = await fetch(url, {
@@ -107,7 +103,7 @@ export const useAuthStore = create<AuthStore>()(
             // Fetch user data after successful login
             let userData = null;
             try {
-              const userUrl = getApiUrl('users/me/');
+              const userUrl = getApiUrl('/api/users/me/');
               console.log('👤 Fetching user profile from:', userUrl);
               
               const userResponse = await fetch(userUrl, {
@@ -175,8 +171,8 @@ export const useAuthStore = create<AuthStore>()(
         if (!tokens?.refresh) return false;
 
         try {
-          // ✅ FIXED: Use "token/refresh/" not "/api/token/refresh/"
-          const url = getApiUrl('token/refresh/');
+          // ✅ FIXED: Use /api/token/refresh/ endpoint
+          const url = getApiUrl('/api/token/refresh/');
           console.log('🔄 Refreshing token at:', url);
           
           const response = await fetch(url, {
@@ -237,8 +233,8 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         try {
-          // ✅ FIXED: Use "users/me/" not "/api/users/me/"
-          const url = getApiUrl('users/me/');
+          // ✅ FIXED: Use /api/users/me/ endpoint
+          const url = getApiUrl('/api/users/me/');
           console.log('🔍 Verifying token at:', url);
           
           const response = await fetch(url, {    
