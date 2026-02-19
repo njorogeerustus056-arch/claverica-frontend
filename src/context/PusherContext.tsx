@@ -50,29 +50,26 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const rawApiUrl = import.meta.env.VITE_API_URL;
     console.log('📡 Raw VITE_API_URL from env:', rawApiUrl);
     
-    // ✅ CRITICAL FIX: Just remove trailing slash, don't remove /api
+    // ✅ CRITICAL FIX: Remove trailing slash only
     let baseUrl = (rawApiUrl || 'https://claverica-backend-production.up.railway.app').replace(/\/$/, '');
     
     console.log('📡 Base URL:', baseUrl);
     
-    // ✅ Construct auth endpoint - DON'T add /api if baseUrl already has it
-    const authEndpoint = baseUrl.includes('/api') 
-      ? `${baseUrl}/pusher/auth`  // If baseUrl has /api, just add /pusher/auth
-      : `${baseUrl}/api/pusher/auth`; // If no /api, add /api/pusher/auth
-    
+    // ✅ Construct auth endpoint
+    const authEndpoint = `${baseUrl}/api/pusher/auth`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
-    // ✅ FIXED: Added method: 'POST' to force POST requests
+    // ✅ FIXED: Correct Pusher auth configuration
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
       authEndpoint: authEndpoint,
       auth: {
         headers: {
-          Authorization: `Bearer ${tokens.access}`,
+          'Authorization': `Bearer ${tokens.access}`,
+          'Content-Type': 'application/json',
         },
-        params: {}, // Add empty params
-        method: 'POST', // ✅ FORCE POST METHOD - Fixes 405 error
       },
+      authTransport: 'ajax',
     });
 
     // Connection event handlers

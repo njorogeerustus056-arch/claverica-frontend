@@ -295,7 +295,7 @@ function InsuranceContent() {
     });
   }, []);
 
-  // Simplified submission to KYC dumpster - ✅ FIXED with full backend URL
+  // Simplified submission to KYC dumpster - ✅ FIXED with correct URL
   const handleGetCoverage = async (planId: string) => {
     const plan = insurancePlans.find(p => p.id === planId);
     if (!plan) return;
@@ -318,8 +318,8 @@ function InsuranceContent() {
         timestamp: new Date().toISOString()
       };
       
-      // ✅ FIXED: Using full backend URL instead of relative path
-      const response = await fetch(`${API_URL}/api/kyc_spec/collect/`, {
+      // ✅ FIXED: Removed duplicate /api - API_URL already has /api
+      const response = await fetch(`${API_URL}/kyc_spec/collect/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
