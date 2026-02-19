@@ -1,8 +1,13 @@
-// src/api.ts - COMPLETE FIXED VERSION WITH CORRECT ENDPOINTS
+// src/api.ts - COMPLETELY FIXED VERSION
 import { useAuthStore } from './lib/store/auth';
 
-// ✅ FIXED: Base API URL without any trailing slash
-const API_URL = (import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app").replace(/\/$/, '');
+// ✅ CRITICAL FIX: Remove any trailing /api from the URL
+const RAW_API_URL = import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app";
+// Remove any trailing /api or /api/ from the URL
+const API_URL = RAW_API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
+
+console.log('🔧 API - Raw URL:', RAW_API_URL);
+console.log('🔧 API - Cleaned URL:', API_URL);
 
 // Get tokens from Zustand store
 export const getToken = (): string | null => {
@@ -109,8 +114,8 @@ export async function apiFetch<T = any>(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          // ✅ FIXED: Removed /api from here - just use /token/refresh/
-          const refreshResponse = await fetch(`${API_URL}/token/refresh/`, {
+          // ✅ FIXED: Use /api/token/refresh/
+          const refreshResponse = await fetch(`${API_URL}/api/token/refresh/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refresh: refreshToken }),
@@ -194,9 +199,8 @@ export async function uploadFormData<T = any>(
   return response.json();
 }
 
-// ✅ FIXED: Authentication API functions - ALL with /api prefix where needed
+// ✅ FIXED: Authentication API functions - ALL with /api prefix
 export const authAPI = {
-  // Register - needs /api/accounts/register/
   register: async (data: any) => {
     return apiFetch("/api/accounts/register/", {
       method: "POST",
@@ -204,7 +208,6 @@ export const authAPI = {
     });
   },
 
-  // Verify activation
   verifyActivation: async (data: { email: string; activation_code: string }) => {
     return apiFetch("/api/accounts/activate/", {
       method: "POST",
@@ -212,7 +215,6 @@ export const authAPI = {
     });
   },
 
-  // Resend activation
   resendActivation: async (data: { email: string }) => {
     return apiFetch("/api/accounts/resend-activation/", {
       method: "POST",
@@ -220,7 +222,6 @@ export const authAPI = {
     });
   },
 
-  // Login - needs /api/token/ (from SimpleJWT)
   login: async (email: string, password: string) => {
     return apiFetch("/api/token/", {
       method: "POST",
@@ -228,7 +229,6 @@ export const authAPI = {
     });
   },
 
-  // Logout
   logout: async () => {
     const result = await apiFetch("/api/accounts/logout/", {
       method: "POST",
@@ -237,12 +237,10 @@ export const authAPI = {
     return result;
   },
 
-  // Get user profile
   getProfile: async () => {
     return apiFetch("/api/users/me/");
   },
 
-  // Refresh token
   refresh: async (refreshToken: string) => {
     return apiFetch("/api/token/refresh/", {
       method: "POST",
@@ -250,7 +248,6 @@ export const authAPI = {
     });
   },
 
-  // Password reset
   passwordReset: async (data: { email: string }) => {
     return apiFetch("/api/accounts/password/reset/", {
       method: "POST",
@@ -258,7 +255,6 @@ export const authAPI = {
     });
   },
 
-  // Password reset confirm
   passwordResetConfirm: async (data: { email: string; otp: string; new_password: string; confirm_password: string }) => {
     return apiFetch("/api/accounts/password/reset/confirm/", {
       method: "POST",
@@ -266,7 +262,6 @@ export const authAPI = {
     });
   },
 
-  // Password change (authenticated)
   passwordChange: async (data: { current_password: string; new_password: string; confirm_password: string }) => {
     return apiFetch("/api/accounts/password/change/", {
       method: "POST",
@@ -275,7 +270,7 @@ export const authAPI = {
   }
 };
 
-// ✅ FIXED: Notification API functions - keep as is (they already have /api prefix)
+// ✅ FIXED: Notification API functions
 export const notificationAPI = {
   getAll: async () => {
     try {
@@ -420,7 +415,7 @@ export const notificationAPI = {
   }
 };
 
-// ✅ FIXED: Wallet/Account API functions - with /api prefix
+// ✅ FIXED: Wallet/Account API functions
 export const walletAPI = {
   getBalance: async () => {
     return apiFetch("/api/transactions/wallet/balance/");
@@ -431,7 +426,7 @@ export const walletAPI = {
   }
 };
 
-// ✅ FIXED: Transfer API functions - with /api prefix
+// ✅ FIXED: Transfer API functions
 export const transferAPI = {
   initiateTransfer: async (data: any) => {
     return apiFetch("/api/compliance/transfers/", {
@@ -460,7 +455,7 @@ export const transferAPI = {
   }
 };
 
-// ✅ FIXED: KYC API functions - with /api prefix
+// ✅ FIXED: KYC API functions
 export const kycAPI = {
   submitDocuments: async (data: FormData) => {
     return uploadFormData("/api/kyc/documents/", data);
@@ -479,7 +474,7 @@ export const kycAPI = {
   }
 };
 
-// ✅ FIXED: Export all APIs as a single object
+// ✅ Export all APIs as a single object
 export const api = {
   auth: authAPI,
   notifications: notificationAPI,
@@ -497,7 +492,7 @@ export const api = {
     apiFetch<T>(endpoint, { ...options, method: 'DELETE' }),
 };
 
-// Type definitions for better TypeScript support
+// Type definitions
 export interface Notification {
   id: number;
   recipient: number;
