@@ -287,12 +287,8 @@ export default function SignUpForm() {
                   income_range: showEmployment ? values.income_range : "",
                 };
 
-                // ✅ FIXED: Removed /api prefix (api.post already adds base URL)
-                const response = await api.post("/accounts/register/", payload, {
-                  headers: {
-                    "Content-Type": "application/json"
-                  }
-                });
+                // ✅ FIXED: Use api.auth.register which has the correct /api/accounts/register/ endpoint
+                const response = await api.auth.register(payload);
 
                 localStorage.setItem("pendingVerificationEmail", values.email);
 
