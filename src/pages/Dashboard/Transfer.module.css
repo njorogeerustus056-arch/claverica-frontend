@@ -976,3 +976,14 @@
     flex: 1;
   }
 }
+/* ============================================= */
+/* 18. BALANCE TEXT VISIBILITY FIX              */
+/* ============================================= */
+
+/* Force $4500 text to be white */
+.balanceAmount,
+.balanceCard .MuiTypography-h3 {
+  color: white !important;
+  opacity: 1 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
