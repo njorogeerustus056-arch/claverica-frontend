@@ -1,8 +1,8 @@
-// src/lib/store/auth.ts - FIXED VERSION WITHOUT CONFIG IMPORT
+// src/lib/store/auth.ts - FIXED VERSION WITH CORRECT ENDPOINTS
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// ✅ FIXED: Define API_URL directly instead of importing from deleted config
+// ✅ FIXED: Define API_URL directly
 const API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
 
 // Helper function to get full API URL
@@ -73,7 +73,8 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          const response = await fetch(getApiUrl('/token/'), {
+          // ✅ FIXED: Use /api/token/ endpoint
+          const response = await fetch(getApiUrl('/api/token/'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -96,7 +97,7 @@ export const useAuthStore = create<AuthStore>()(
             // Fetch user data after successful login
             let userData = null;
             try {
-              const userResponse = await fetch(getApiUrl('/users/me/'), {
+              const userResponse = await fetch(getApiUrl('/api/users/me/'), {
                 headers: { 
                   'Authorization': `Bearer ${data.access}`,
                   'Content-Type': 'application/json'
@@ -160,7 +161,8 @@ export const useAuthStore = create<AuthStore>()(
         if (!tokens?.refresh) return false;
 
         try {
-          const response = await fetch(getApiUrl('/token/refresh/'), {
+          // ✅ FIXED: Use /api/token/refresh/ endpoint
+          const response = await fetch(getApiUrl('/api/token/refresh/'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh: tokens.refresh }),
@@ -217,7 +219,8 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         try {
-          const response = await fetch(getApiUrl('/users/me/'), {    
+          // ✅ FIXED: Use /api/users/me/ endpoint
+          const response = await fetch(getApiUrl('/api/users/me/'), {    
             headers: {
               Authorization: `Bearer ${tokens.access}`,
               'Content-Type': 'application/json',

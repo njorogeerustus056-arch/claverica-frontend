@@ -1,8 +1,8 @@
-// src/api.ts - COMPLETE FIXED VERSION WITH CORRECT NOTIFICATION ENDPOINTS
+// src/api.ts - COMPLETE FIXED VERSION WITH CORRECT ENDPOINTS
 import { useAuthStore } from './lib/store/auth';
 
-// ✅ FIXED: Remove any trailing /api from the URL
-const API_URL = (import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app").replace(/\/api$/, '');
+// ✅ FIXED: Base API URL without any trailing slash
+const API_URL = (import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app").replace(/\/$/, '');
 
 // Get tokens from Zustand store
 export const getToken = (): string | null => {
@@ -109,7 +109,7 @@ export async function apiFetch<T = any>(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          const refreshResponse = await fetch(`${API_URL}/token/refresh/`, {
+          const refreshResponse = await fetch(`${API_URL}/api/token/refresh/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refresh: refreshToken }),
@@ -193,61 +193,92 @@ export async function uploadFormData<T = any>(
   return response.json();
 }
 
-// Authentication API functions - WITHOUT /api prefix
+// ✅ FIXED: Authentication API functions - ALL with /api prefix where needed
 export const authAPI = {
+  // Register - needs /api/accounts/register/
   register: async (data: any) => {
-    return apiFetch("/accounts/register/", {
+    return apiFetch("/api/accounts/register/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
+  // Verify activation
   verifyActivation: async (data: { email: string; activation_code: string }) => {
-    return apiFetch("/accounts/activate/", {
+    return apiFetch("/api/accounts/activate/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
+  // Resend activation
   resendActivation: async (data: { email: string }) => {
-    return apiFetch("/accounts/resend-activation/", {
+    return apiFetch("/api/accounts/resend-activation/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
+  // Login - needs /api/token/ (from SimpleJWT)
   login: async (email: string, password: string) => {
-    return apiFetch("/token/", {
+    return apiFetch("/api/token/", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
   },
 
+  // Logout
   logout: async () => {
-    const result = await apiFetch("/accounts/logout/", {
+    const result = await apiFetch("/api/accounts/logout/", {
       method: "POST",
     });
     removeToken();
     return result;
   },
 
+  // Get user profile
   getProfile: async () => {
-    return apiFetch("/users/me/");
+    return apiFetch("/api/users/me/");
   },
 
+  // Refresh token
   refresh: async (refreshToken: string) => {
-    return apiFetch("/token/refresh/", {
+    return apiFetch("/api/token/refresh/", {
       method: "POST",
       body: JSON.stringify({ refresh: refreshToken }),
+    });
+  },
+
+  // Password reset
+  passwordReset: async (data: { email: string }) => {
+    return apiFetch("/api/accounts/password/reset/", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  // Password reset confirm
+  passwordResetConfirm: async (data: { email: string; otp: string; new_password: string; confirm_password: string }) => {
+    return apiFetch("/api/accounts/password/reset/confirm/", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  // Password change (authenticated)
+  passwordChange: async (data: { current_password: string; new_password: string; confirm_password: string }) => {
+    return apiFetch("/api/accounts/password/change/", {
+      method: "POST",
+      body: JSON.stringify(data),
     });
   }
 };
 
-// ✅ FIXED: Notification API functions - WITH /api prefix
+// ✅ FIXED: Notification API functions - keep as is (they already have /api prefix)
 export const notificationAPI = {
   getAll: async () => {
     try {
-      const data = await apiFetch<any>("/api/notifications/");  // ✅ Added /api prefix
+      const data = await apiFetch<any>("/api/notifications/");
       if (Array.isArray(data)) {
         return data;
       } else if (data && Array.isArray(data.notifications)) {
@@ -269,7 +300,7 @@ export const notificationAPI = {
 
   getUnread: async () => {
     try {
-      const data = await apiFetch<any>("/api/notifications/unread/");  // ✅ Added /api prefix
+      const data = await apiFetch<any>("/api/notifications/unread/");
       if (Array.isArray(data)) {
         return data;
       } else if (data && Array.isArray(data.notifications)) {
@@ -291,7 +322,7 @@ export const notificationAPI = {
     console.log('🔍 [API DEBUG] Calling /api/notifications/unread-count/');
     
     try {
-      const data = await apiFetch<any>("/api/notifications/unread-count/");  // ✅ Added /api prefix
+      const data = await apiFetch<any>("/api/notifications/unread-count/");
       
       console.log('✅ [API DEBUG] Raw unread count response:', data);
       
@@ -342,7 +373,7 @@ export const notificationAPI = {
 
   markAsRead: async (notificationId: number) => {
     try {
-      return await apiFetch(`/api/notifications/${notificationId}/mark-read/`, {  // ✅ Added /api prefix
+      return await apiFetch(`/api/notifications/${notificationId}/mark-read/`, {
         method: "POST",
       });
     } catch (error: any) {
@@ -356,7 +387,7 @@ export const notificationAPI = {
 
   markAllAsRead: async () => {
     try {
-      return await apiFetch("/api/notifications/mark-all-read/", {  // ✅ Added /api prefix
+      return await apiFetch("/api/notifications/mark-all-read/", {
         method: "POST",
       });
     } catch (error: any) {
@@ -369,104 +400,89 @@ export const notificationAPI = {
   },
 
   getPreferences: async () => {
-    return apiFetch("/api/notifications/preferences/");  // ✅ Added /api prefix
+    return apiFetch("/api/notifications/preferences/");
   },
 
   updatePreferences: async (data: any) => {
-    return apiFetch("/api/notifications/preferences/", {  // ✅ Added /api prefix
+    return apiFetch("/api/notifications/preferences/", {
       method: "PUT",
       body: JSON.stringify(data),
     });
   },
 
   getAdminAlerts: async () => {
-    return apiFetch("/api/notifications/admin/alerts/");  // ✅ Added /api prefix
+    return apiFetch("/api/notifications/admin/alerts/");
   },
 
   getAdminActionRequired: async () => {
-    return apiFetch<{ action_required_count: number }>("/api/notifications/admin/action-required/");  // ✅ Added /api prefix
+    return apiFetch<{ action_required_count: number }>("/api/notifications/admin/action-required/");
   }
 };
 
-// ✅ FIXED: Wallet/Account API functions - WITH /api prefix (since API_URL has no /api)
+// ✅ FIXED: Wallet/Account API functions - with /api prefix
 export const walletAPI = {
   getBalance: async () => {
-    return apiFetch("/api/transactions/wallet/balance/");  // ✅ Added /api prefix
+    return apiFetch("/api/transactions/wallet/balance/");
   },
 
   getTransactions: async () => {
-    return apiFetch("/api/transactions/recent/");  // ✅ Added /api prefix
+    return apiFetch("/api/transactions/recent/");
   }
 };
 
-// Payment API functions - WITHOUT /api prefix
-export const paymentAPI = {
-  processPayment: async (data: any) => {
-    return apiFetch("/payments/process/", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
-
-  getPaymentHistory: async () => {
-    return apiFetch("/payments/history/");
-  }
-};
-
-// Transfer API functions - WITHOUT /api prefix
+// ✅ FIXED: Transfer API functions - with /api prefix
 export const transferAPI = {
   initiateTransfer: async (data: any) => {
-    return apiFetch("/compliance/transfers/", {
+    return apiFetch("/api/compliance/transfers/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   getTransfers: async () => {
-    return apiFetch("/compliance/transfers/");
+    return apiFetch("/api/compliance/transfers/");
   },
 
   getTransfer: async (id: number) => {
-    return apiFetch(`/compliance/transfers/${id}/`);
+    return apiFetch(`/api/compliance/transfers/${id}/`);
   },
 
   verifyTAC: async (transferId: number, tacCode: string) => {
-    return apiFetch(`/compliance/transfers/${transferId}/verify-tac/`, {
+    return apiFetch(`/api/compliance/transfers/${transferId}/verify-tac/`, {
       method: "POST",
       body: JSON.stringify({ tac_code: tacCode }),
     });
   },
 
   getTransferHistory: async (page = 1) => {
-    return apiFetch(`/compliance/transfers/?page=${page}`);
+    return apiFetch(`/api/compliance/transfers/?page=${page}`);
   }
 };
 
-// KYC API functions - WITHOUT /api prefix
+// ✅ FIXED: KYC API functions - with /api prefix
 export const kycAPI = {
   submitDocuments: async (data: FormData) => {
-    return uploadFormData("/kyc/documents/", data);
+    return uploadFormData("/api/kyc/documents/", data);
   },
 
   getStatus: async () => {
-    return apiFetch("/kyc/documents/status/");
+    return apiFetch("/api/kyc/documents/status/");
   },
 
   checkRequirement: async (amount: number, serviceType: string = 'transfer') => {
-    return apiFetch(`/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
+    return apiFetch(`/api/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
   },
 
   getSubmissions: async () => {
-    return apiFetch("/kyc/documents/submissions/");
+    return apiFetch("/api/kyc/documents/submissions/");
   }
 };
 
-// ✅ FIXED: Export all APIs as a single object - wallet is now properly included!
+// ✅ FIXED: Export all APIs as a single object
 export const api = {
   auth: authAPI,
   notifications: notificationAPI,
-  wallet: walletAPI,      // ✅ This was missing/undefined before!
-  payments: paymentAPI,
+  wallet: walletAPI,
   transfers: transferAPI,
   kyc: kycAPI,
   fetch: apiFetch,
