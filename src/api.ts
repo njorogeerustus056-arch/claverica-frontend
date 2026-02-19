@@ -109,7 +109,8 @@ export async function apiFetch<T = any>(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          const refreshResponse = await fetch(`${API_URL}/api/token/refresh/`, {
+          // ✅ FIXED: Removed /api from here - just use /token/refresh/
+          const refreshResponse = await fetch(`${API_URL}/token/refresh/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ refresh: refreshToken }),
