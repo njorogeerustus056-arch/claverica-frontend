@@ -26,7 +26,7 @@ export default defineConfig({
         target: 'https://claverica-backend-production.up.railway.app',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        // ✅ REMOVED the rewrite line that was causing issues
         configure: (proxy, _options) => {
           proxy.on('error', (err, _req, _res) => {
             console.log('proxy error', err);
