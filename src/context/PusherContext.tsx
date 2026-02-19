@@ -50,12 +50,14 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const rawApiUrl = import.meta.env.VITE_API_URL;
     console.log('📡 Raw VITE_API_URL from env:', rawApiUrl);
     
-    // ✅ CRITICAL FIX: Remove trailing slash only
-    let baseUrl = (rawApiUrl || 'https://claverica-backend-production.up.railway.app').replace(/\/$/, '');
+    // ✅ CRITICAL FIX: Get base URL without any /api
+    let baseUrl = (rawApiUrl || 'https://claverica-backend-production.up.railway.app')
+      .replace(/\/api\/?$/, '') // Remove /api or /api/ from the end
+      .replace(/\/$/, '');       // Remove trailing slash
     
-    console.log('📡 Base URL:', baseUrl);
+    console.log('📡 Cleaned base URL:', baseUrl);
     
-    // ✅ Construct auth endpoint
+    // ✅ Construct auth endpoint with SINGLE /api
     const authEndpoint = `${baseUrl}/api/pusher/auth`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
