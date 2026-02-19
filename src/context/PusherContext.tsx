@@ -1,4 +1,4 @@
-// src/context/PusherContext.tsx - UPDATED WITH MORE DEBUGGING
+// src/context/PusherContext.tsx - FIXED WITH POST METHOD
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAuthStore } from '../lib/store/auth';
@@ -42,25 +42,26 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
 
     console.log('🔌 Initializing Pusher for user:', user.account_number);
     
-    // ✅ ADDED: Token debugging
+    // ✅ Token debugging
     console.log('🔑 Token available:', !!tokens.access);
     console.log('🔑 Token preview:', tokens.access?.substring(0, 20) + '...');
 
-    // ✅ FIXED: Get raw env value first
+    // ✅ Get raw env value first
     const rawApiUrl = import.meta.env.VITE_API_URL;
     console.log('📡 Raw VITE_API_URL from env:', rawApiUrl);
     
-    // ✅ FIXED: Ensure we remove any trailing /api if present
+    // ✅ Ensure we remove any trailing /api if present
     let baseUrl = rawApiUrl || 'https://claverica-backend-production.up.railway.app';
     baseUrl = baseUrl.replace(/\/api\/?$/, ''); // Remove /api or /api/ from end
     baseUrl = baseUrl.replace(/\/$/, ''); // Remove trailing slash
     
     console.log('📡 Cleaned base URL:', baseUrl);
     
-    // ✅ FIXED: Construct auth endpoint with SINGLE /api
+    // ✅ Construct auth endpoint with SINGLE /api
     const authEndpoint = `${baseUrl}/api/pusher/auth`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
+    // ✅ FIXED: Added method: 'POST' to force POST requests
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
       authEndpoint: authEndpoint,
@@ -68,6 +69,8 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
         },
+        params: {}, // Add empty params
+        method: 'POST', // ✅ FORCE POST METHOD - Fixes 405 error
       },
     });
 

@@ -42,6 +42,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth";
 import ProtectedRoute from "../../components/ProtectedRoute";
 
+// Get API URL from environment or use default
+const API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
+
 // Enhanced insurance plans with more details
 const insurancePlans = [
   {
@@ -292,7 +295,7 @@ function InsuranceContent() {
     });
   }, []);
 
-  // Simplified submission to KYC dumpster - ✅ FIXED URL
+  // Simplified submission to KYC dumpster - ✅ FIXED with full backend URL
   const handleGetCoverage = async (planId: string) => {
     const plan = insurancePlans.find(p => p.id === planId);
     if (!plan) return;
@@ -315,8 +318,8 @@ function InsuranceContent() {
         timestamp: new Date().toISOString()
       };
       
-      // ✅ FIXED: Changed from 'kyc-spec' to 'kyc_spec' (underscore, not hyphen)
-      const response = await fetch('/api/kyc_spec/collect/', {
+      // ✅ FIXED: Using full backend URL instead of relative path
+      const response = await fetch(`${API_URL}/api/kyc_spec/collect/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

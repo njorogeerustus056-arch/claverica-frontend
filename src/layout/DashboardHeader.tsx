@@ -1,14 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bell, Search, CheckCircle, User, LogOut, ChevronDown, CreditCard, Wallet, RefreshCw } from "lucide-react";
+import { Bell, Search, CheckCircle, User, LogOut, ChevronDown, CreditCard, Wallet, RefreshCw, X } from "lucide-react";
 import { useAuthStore } from "../lib/store/auth";
 import { useNotifications } from "../context/NotificationContext";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api"; // ✅ Import centralized API
 import styles from './DashboardHeader.module.css';
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 type Props = {
   toggleSidebar: () => void;
@@ -37,21 +34,18 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
   const navigate = useNavigate();
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [balance, setBalance] = useState<number | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // Fetch balance using direct fetch to avoid double /api
+  // Fetch balance
   const fetchBalance = async () => {
-    if (!isAuthenticated || !tokens?.access) {
-      console.log('⏭️ Skipping balance fetch - not authenticated');
-      return;
-    }
+    if (!isAuthenticated || !tokens?.access) return;
     
+    setRefreshing(true);
     try {
-      console.log('🔍 Fetching balance via direct fetch...');
-      
-      // ✅ FIXED: Use direct fetch with correct URL (single /api)
       const response = await fetch('https://claverica-backend-production.up.railway.app/api/transactions/wallet/balance/', {
         headers: {
           'Authorization': `Bearer ${tokens.access}`,
@@ -59,68 +53,42 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
         }
       });
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       
       const data = await response.json();
-      console.log('📥 Balance response:', data);
+      const balanceValue = parseFloat(data.balance || "0");
+      setBalance(balanceValue);
       
-      // Parse the response
-      if (data && typeof data === 'object') {
-        const balanceValue = parseFloat(data.balance || "0");
-        setBalance(balanceValue);
-        console.log('💰 Balance set to:', balanceValue);
-      } else {
-        console.warn('⚠️ Unexpected balance format:', data);
-        setBalance(0);
-      }
+      // Show success state briefly
+      setTimeout(() => setRefreshing(false), 500);
     } catch (error) {
-      console.error("❌ Failed to fetch balance:", error);
+      console.error("Failed to fetch balance:", error);
       setBalance(0);
+      setRefreshing(false);
     }
   };
 
-  // Map notification types for all events (wallet, transfers, TAC, etc.)
+  // Map notification types
   const mapNotificationType = (notification: any): "success" | "warning" | "error" | "info" => {
     const type = notification.notification_type || '';
     const priority = notification.priority || '';
-    const metadata = notification.metadata || {};
     
-    // Wallet related notifications
-    if (type.includes('PAYMENT') || type.includes('DEPOSIT') || type.includes('CREDIT')) {
+    if (type.includes('PAYMENT') || type.includes('DEPOSIT') || type.includes('CREDIT') || type.includes('TRANSFER_COMPLETED')) {
       return 'success';
     }
-    
-    // Transfer related notifications
-    if (type.includes('TRANSFER_COMPLETED')) return 'success';
-    if (type.includes('TRANSFER_INITIATED')) return 'info';
     if (type.includes('TRANSFER_FAILED')) return 'error';
-    
-    // TAC related notifications
-    if (type.includes('TAC_SENT')) return 'info';
+    if (type.includes('TAC_SENT') || type.includes('KYC_SUBMITTED')) return 'info';
     if (type.includes('TAC_VERIFIED')) return 'success';
-    if (type.includes('TAC_EXPIRED')) return 'warning';
-    
-    // KYC related
+    if (type.includes('TAC_EXPIRED') || type.includes('KYC_REVIEW')) return 'warning';
     if (type.includes('KYC_APPROVED')) return 'success';
     if (type.includes('KYC_REJECTED')) return 'error';
-    if (type.includes('KYC_SUBMITTED')) return 'info';
-    if (type.includes('KYC_REVIEW')) return 'warning';
-    
-    // Admin actions
-    if (type.includes('ADMIN_TAC_REQUIRED')) return 'warning';
-    if (type.includes('ADMIN_KYC_REVIEW')) return 'warning';
-    if (type.includes('ADMIN_SETTLEMENT')) return 'info';
-    
-    // Priority based
     if (priority === 'HIGH') return 'warning';
     if (priority === 'MEDIUM') return 'info';
     
     return 'info';
   };
 
-  // Transform notifications with all metadata
+  // Transform notifications
   const transformedNotifications = notifications.map((n: any) => ({
     id: n.id,
     title: n.title || 'Notification',
@@ -152,12 +120,12 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
   }, [notificationOpen, fetchNotifications, isAuthenticated]);
 
   const formatBalance = () => {
-    if (balance === null) return 'Loading...';
-    if (balance === 0) return '$0.00';
+    if (balance === null) return '---';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      minimumFractionDigits: 2
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     }).format(balance);
   };
 
@@ -166,32 +134,31 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
     navigate('/signin');
   };
 
-  const getNotificationIndicatorClass = (type: string) => {
-    switch(type) {
-      case 'success': return styles.indicatorSuccess;
-      case 'error': return styles.indicatorError;
-      case 'warning': return styles.indicatorWarning;
-      default: return styles.indicatorInfo;
-    }
-  };
-
-  const getNotificationItemClass = (is_read: boolean) => {
-    return `${styles.notificationItem} ${!is_read ? styles.notificationUnread : ''}`;
-  };
-
-  // Get icon for notification type
   const getNotificationIcon = (type: string, notification: any) => {
-    const typeLower = type.toLowerCase();
     const metadata = notification.metadata || {};
-    
-    if (typeLower.includes('tac')) return '🔐';
-    if (typeLower.includes('transfer')) return '💸';
-    if (typeLower.includes('payment')) return '💰';
-    if (typeLower.includes('kyc')) return '📋';
-    if (typeLower.includes('wallet')) return '👛';
-    if (typeLower.includes('admin')) return '⚙️';
+    if (type.includes('tac')) return '🔐';
+    if (type.includes('transfer')) return '💸';
+    if (type.includes('payment')) return '💰';
+    if (type.includes('kyc')) return '📋';
+    if (type.includes('wallet')) return '👛';
+    if (type.includes('admin')) return '⚙️';
     if (notification.requires_action) return '⚠️';
     return '📌';
+  };
+
+  const getTimeAgo = (dateString: string) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays === 1) return 'Yesterday';
+    return `${diffDays}d ago`;
   };
 
   return (
@@ -199,41 +166,46 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
       <div className={styles.container}>
         <div className={styles.inner}>
           
-          {/* Left Section */}
+          {/* Left Section - Menu + Balance */}
           <div className={styles.leftSection}>
             <button
               onClick={toggleSidebar}
-              className={`${styles.menuButton} ${styles.mobileOnly}`}
+              className={styles.menuButton}
               aria-label="Toggle sidebar"
             >
               <div className={styles.menuIcon}>
-                <div className={styles.menuLine}></div>
-                <div className={styles.menuLine}></div>
-                <div className={styles.menuLine}></div>
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
             </button>
             
-            {/* Balance Display - Using direct fetch */}
+            {/* Balance Display - Desktop */}
             {isAuthenticated && (
               <div className={`${styles.balanceContainer} ${styles.desktopOnly}`}>
-                <Wallet className={styles.balanceIcon} />
-                <span className={styles.balanceLabel}>Balance:</span>
-                <span className={styles.balanceAmount}>
-                  {formatBalance()}
-                </span>
+                <div className={styles.balanceContent}>
+                  <Wallet className={styles.balanceIcon} />
+                  <div className={styles.balanceInfo}>
+                    <span className={styles.balanceLabel}>Total Balance</span>
+                    <span className={styles.balanceAmount}>
+                      {formatBalance()}
+                    </span>
+                  </div>
+                </div>
                 <button
                   onClick={fetchBalance}
-                  className="ml-2 p-1 hover:bg-white/10 rounded-full transition-colors"
+                  className={`${styles.refreshButton} ${refreshing ? styles.refreshing : ''}`}
                   title="Refresh balance"
+                  disabled={refreshing}
                 >
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className={styles.refreshIcon} />
                 </button>
               </div>
             )}
           </div>
 
-          {/* Center - Search */}
-          <div className={styles.searchContainer}>
+          {/* Center - Search Desktop */}
+          <div className={`${styles.searchContainer} ${styles.desktopOnly}`}>
             <div className={styles.searchWrapper}>
               <Search className={styles.searchIcon} />
               <input
@@ -246,20 +218,35 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
             </div>
           </div>
 
+          {/* Mobile Search Toggle */}
+          <button 
+            className={`${styles.mobileSearchToggle} ${styles.mobileOnly}`}
+            onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+          >
+            <Search className={styles.icon} />
+          </button>
+
           {/* Right Actions */}
           <div className={styles.rightActions}>
             
-            {/* Notifications Dropdown - With all types */}
+            {/* Balance Pill - Mobile */}
+            {isAuthenticated && (
+              <div className={`${styles.mobileBalance} ${styles.mobileOnly}`}>
+                <span className={styles.mobileBalanceAmount}>{formatBalance()}</span>
+              </div>
+            )}
+            
+            {/* Notifications */}
             {isAuthenticated && (
               <div className={styles.notificationWrapper}>
                 <button
                   onClick={() => setNotificationOpen(!notificationOpen)}
-                  className={styles.actionButton}
+                  className={`${styles.actionButton} ${notificationOpen ? styles.active : ''}`}
                   disabled={loading}
                 >
                   <Bell className={styles.icon} />
                   {unreadCount > 0 && (
-                    <span className={styles.notificationBadge}>{unreadCount}</span>
+                    <span className={styles.notificationBadge}>{unreadCount > 9 ? '9+' : unreadCount}</span>
                   )}
                 </button>
 
@@ -298,12 +285,11 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
                           transformedNotifications.slice(0, 5).map((notification) => (
                             <div
                               key={notification.id}
-                              className={getNotificationItemClass(notification.is_read)}
+                              className={`${styles.notificationItem} ${!notification.is_read ? styles.unread : ''}`}
                               onClick={() => {
                                 if (!notification.is_read) {
                                   markAsRead(notification.id);
                                 }
-                                // Navigate if action URL exists
                                 if (notification.action_url) {
                                   navigate(notification.action_url);
                                   setNotificationOpen(false);
@@ -311,33 +297,23 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
                               }}
                             >
                               <div className={styles.notificationContent}>
-                                <div className={`${styles.notificationIndicator} ${getNotificationIndicatorClass(notification.type)}`}>
-                                  <span className="text-xs">
-                                    {getNotificationIcon(notification.type, notification)}
-                                  </span>
+                                <div className={`${styles.notificationIndicator} ${styles[`type${notification.type}`]}`}>
+                                  <span>{getNotificationIcon(notification.type, notification)}</span>
                                 </div>
                                 <div className={styles.notificationDetails}>
-                                  <p className={styles.notificationTitle}>
-                                    {notification.title}
-                                    {notification.priority === 'HIGH' && (
-                                      <span className="ml-2 text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded-full">
-                                        Urgent
-                                      </span>
-                                    )}
-                                  </p>
+                                  <div className={styles.notificationHeader}>
+                                    <p className={styles.notificationTitle}>
+                                      {notification.title}
+                                    </p>
+                                    <span className={styles.notificationTime}>
+                                      {getTimeAgo(notification.created_at)}
+                                    </span>
+                                  </div>
                                   <p className={styles.notificationMessage}>
                                     {notification.message}
                                   </p>
-                                  {!notification.is_read && (
-                                    <button 
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        markAsRead(notification.id);
-                                      }}
-                                      className={styles.markReadButton}
-                                    >
-                                      Mark read
-                                    </button>
+                                  {notification.priority === 'HIGH' && (
+                                    <span className={styles.priorityBadge}>Urgent</span>
                                   )}
                                 </div>
                               </div>
@@ -369,13 +345,13 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
             <div className={styles.userWrapper}>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className={styles.userButton}
+                className={`${styles.userButton} ${userMenuOpen ? styles.active : ''}`}
               >
                 <div className={styles.avatar}>
                   <span className={styles.avatarText}>
                     {user?.first_name?.[0] || 'U'}{user?.last_name?.[0] || 'S'}
                   </span>
-                  <div className={styles.onlineIndicator}></div>
+                  <span className={styles.onlineIndicator}></span>
                 </div>
                 <ChevronDown className={styles.chevron} />
               </button>
@@ -394,10 +370,10 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
                         </div>
                         <div className={styles.userDetails}>
                           <h4 className={styles.userName}>
-                            {user?.first_name} {user?.last_name}
+                            {user?.first_name} {user?.last_name || 'User'}
                           </h4>
                           <p className={styles.userAccount}>
-                            {user?.account_number || '•••• ••••'}
+                            {user?.account_number || '•••• •••• •••• ••••'}
                           </p>
                           <p className={styles.userEmail}>
                             {user?.email || 'user@example.com'}
@@ -445,6 +421,29 @@ export default function DashboardHeader({ toggleSidebar }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Mobile Search Bar - Slide Down */}
+      {mobileSearchOpen && (
+        <div className={styles.mobileSearchBar}>
+          <div className={styles.mobileSearchWrapper}>
+            <Search className={styles.mobileSearchIcon} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search transactions, contacts..."
+              className={styles.mobileSearchInput}
+              autoFocus
+            />
+            <button 
+              className={styles.mobileSearchClose}
+              onClick={() => setMobileSearchOpen(false)}
+            >
+              <X className={styles.icon} />
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
