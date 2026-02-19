@@ -61,7 +61,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const authEndpoint = `${baseUrl}/api/pusher/auth`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
-    // ✅ FIXED: Correct Pusher auth configuration
+    // ✅ FIXED: Force POST method for Pusher auth
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
       authEndpoint: authEndpoint,
@@ -70,6 +70,8 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
           'Authorization': `Bearer ${tokens.access}`,
           'Content-Type': 'application/json',
         },
+        params: {}, // Add empty params
+        method: 'POST', // ✅ CRITICAL: Force POST instead of GET
       },
       authTransport: 'ajax',
     });

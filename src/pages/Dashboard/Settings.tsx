@@ -1,451 +1,740 @@
-// src/pages/Dashboard/Settings.tsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth";
-import { 
-  Settings as SettingsIcon, User, Lock, Bell, Globe, 
-  Shield, Moon, Download, Trash2, CheckCircle2,
-  Smartphone, Mail, Key, Eye, EyeOff
+import api from "../../api";
+import toast from "react-hot-toast";
+import styles from "./Settings.module.css";
+import {
+  Settings as SettingsIcon,
+  User,
+  Lock,
+  Bell,
+  Globe,
+  Shield,
+  Moon,
+  Download,
+  Trash2,
+  CheckCircle2,
+  XCircle,
+  Smartphone,
+  Mail,
+  Key,
+  Eye,
+  EyeOff,
+  CreditCard,
+  ArrowUpRight,
+  AlertCircle,
+  ChevronRight,
+  LogOut,
+  ShieldCheck,
+  Zap,
+  BarChart3,
+  Award,
+  Clock,
+  Phone,
+  Mail as MailIcon,
+  FileText,
+  Home,
+  PieChart,
+  TrendingUp,
+  Users,
+  MapPin,
+  Briefcase,
+  Calendar,
+  Copy,
+  Edit,
+  ExternalLink,
 } from "lucide-react";
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const [activeTab, setActiveTab] = useState("profile");
+  const [loading, setLoading] = useState(true);
+  const [kycStatus, setKycStatus] = useState<any>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    current_password: "",
+    new_password: "",
+    confirm_password: "",
+  });
+
+  // Settings state
   const [settings, setSettings] = useState({
     theme: "light",
     language: "en",
-    timezone: "UTC",
+    timezone: "Africa/Nairobi",
     email_notifications: true,
-    sms_notifications: true,
-    two_factor_auth: false
+    two_factor_auth: false,
+    marketing_emails: false,
+    login_alerts: true,
   });
-  const [loading, setLoading] = useState(true);
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
 
-  // Fetch user settings from /api/users/settings/
+  // Fetch KYC status from backend
   useEffect(() => {
-    const fetchSettings = async () => {
+    const fetchKYCStatus = async () => {
       try {
-        // Simulate API call
-        setTimeout(() => {
-          setSettings({
-            theme: "light",
-            language: "en",
-            timezone: "Africa/Nairobi",
-            email_notifications: true,
-            sms_notifications: true,
-            two_factor_auth: false
-          });
-          setLoading(false);
-        }, 500);
+        const data = await api.fetch("/api/kyc/simple-status/");
+        setKycStatus(data);
       } catch (error) {
-        console.error("Failed to fetch settings:", error);
+        console.error("Failed to fetch KYC status:", error);
+        setKycStatus({ status: "no_kyc" });
+      } finally {
         setLoading(false);
       }
     };
-    
-    fetchSettings();
+
+    fetchKYCStatus();
   }, []);
+
+  const handleCopy = (text: string, field: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
 
   const handleSaveSettings = async () => {
     try {
-      // Simulate POST /api/users/settings/update/
-      console.log("Updating settings:", settings);
-      alert("Settings updated successfully!");
+      await api.post("/api/users/settings/update/", settings);
+      toast.success("Settings updated successfully!");
     } catch (error) {
-      console.error("Failed to update settings:", error);
-      alert("Failed to update settings");
+      toast.error("Failed to update settings");
     }
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate POST /api/users/password/change/
-    console.log("Changing password...");
-    alert("Password changed successfully!");
-  };
-
-  const handleExportData = () => {
-    console.log("Exporting user data...");
-    alert("Data export started. You'll receive an email shortly.");
-  };
-
-  const handleDeactivateAccount = () => {
-    if (window.confirm("Are you sure you want to deactivate your account? This action can be reversed within 30 days.")) {
-      console.log("Deactivating account...");
-      // Call deactivation endpoint
-      alert("Account deactivation requested. Check your email for confirmation.");
+    if (passwordData.new_password !== passwordData.confirm_password) {
+      toast.error("New passwords don't match");
+      return;
+    }
+    try {
+      await api.post("/api/users/password/change/", passwordData);
+      toast.success("Password changed successfully!");
+      setPasswordData({
+        current_password: "",
+        new_password: "",
+        confirm_password: "",
+      });
+    } catch (error) {
+      toast.error("Failed to change password");
     }
   };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/signin");
+  };
+
+  const getKycBadge = () => {
+    if (!kycStatus) return { label: "Pending", color: "warning" };
+    
+    switch (kycStatus.status) {
+      case "approved":
+        return { label: "Verified", color: "success" };
+      case "pending":
+      case "under_review":
+        return { label: "Under Review", color: "warning" };
+      case "rejected":
+        return { label: "Rejected", color: "danger" };
+      case "needs_correction":
+        return { label: "Action Needed", color: "warning" };
+      default:
+        return { label: "Not Started", color: "info" };
+    }
+  };
+
+  const kycBadge = getKycBadge();
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
     { id: "security", label: "Security", icon: Lock },
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "preferences", label: "Preferences", icon: Globe },
-    { id: "privacy", label: "Privacy", icon: Shield },
-    { id: "account", label: "Account", icon: SettingsIcon }
+    { id: "account", label: "Account", icon: SettingsIcon },
   ];
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-white">Loading settings...</div>
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
+        <p>Loading your settings...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            Account Settings
-          </h1>
-          <p className="text-gray-400">
+    <div className={styles.container}>
+      {/* Header */}
+      <div className={styles.header}>
+        <div>
+          <h1 className={styles.title}>Account Settings</h1>
+          <p className={styles.subtitle}>
             Manage your preferences, security, and privacy settings
           </p>
         </div>
+        <button onClick={handleLogout} className={styles.logoutBtn}>
+          <LogOut className="w-4 h-4" />
+          <span>Logout</span>
+        </button>
+      </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left Sidebar - Tabs */}
-          <div className="lg:w-64">
-            <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full px-6 py-4 flex items-center gap-3 transition-all ${
-                      activeTab === tab.id
-                        ? "bg-blue-600/20 text-white border-l-4 border-blue-500"
-                        : "text-gray-400 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{tab.label}</span>
-                  </button>
-                );
-              })}
+      {/* Profile Summary Card - Monzo Style */}
+      <div className={styles.profileCard}>
+        <div className={styles.profileHeader}>
+          <div className={styles.profileAvatar}>
+            {user?.first_name?.charAt(0) || "U"}
+            {user?.last_name?.charAt(0) || ""}
+          </div>
+          <div className={styles.profileInfo}>
+            <h2 className={styles.profileName}>
+              {user?.first_name} {user?.last_name}
+            </h2>
+            <div className={styles.profileMeta}>
+              <span className={styles.accountNumber}>
+                {user?.account_number || "CLV-***"}
+                <button
+                  onClick={() => handleCopy(user?.account_number || "", "account")}
+                  className={styles.copyBtn}
+                >
+                  {copiedField === "account" ? (
+                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+              </span>
+              <span className={styles.profileEmail}>{user?.email}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.profileStats}>
+          <div className={styles.statItem}>
+            <div className={styles.statIcon} style={{ background: "rgba(59, 130, 246, 0.1)" }}>
+              <Shield className={styles.statIconSvg} style={{ color: "#3B82F6" }} />
+            </div>
+            <div>
+              <div className={styles.statLabel}>Account Status</div>
+              <div className={styles.statValue}>
+                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <span>Active</span>
+              </div>
             </div>
           </div>
 
-          {/* Right Content */}
-          <div className="flex-1">
-            {activeTab === "profile" && (
-              <div className="space-y-6">
-                <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                    <User className="w-6 h-6 text-blue-400" />
-                    Personal Information
-                  </h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-300">Account Number</label>
-                      <div className="p-3 bg-white/5 rounded-xl border border-white/10">
-                        <p className="text-white font-mono">{user?.account_number || "CLV-678-010190-26-88"}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-300">Full Name</label>
-                      <div className="p-3 bg-white/5 rounded-xl border border-white/10">
-                        <p className="text-white">
-                          {user?.first_name} {user?.last_name}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-300">Email Address</label>
-                      <div className="p-3 bg-white/5 rounded-xl border border-white/10">
-                        <p className="text-white">{user?.email}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-300">Phone Number</label>
-                      <div className="p-3 bg-white/5 rounded-xl border border-white/10">
-                        <p className="text-white">+254712345678</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6 flex justify-end">
-                    <button
-                      onClick={() => navigate('/dashboard/profile')}
-                      className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl font-bold transition-all"
-                    >
-                      Edit Profile
+          <div className={styles.statItem}>
+            <div className={styles.statIcon} style={{ background: "rgba(16, 185, 129, 0.1)" }}>
+              <Award className={styles.statIconSvg} style={{ color: "#10B981" }} />
+            </div>
+            <div>
+              <div className={styles.statLabel}>KYC Status</div>
+              <div className={styles.statValue}>
+                <span className={`${styles.statusBadge} ${styles[kycBadge.color]}`}>
+                  {kycBadge.label}
+                </span>
+                <button
+                  onClick={() => navigate("/dashboard/kyc")}
+                  className={styles.viewLink}
+                >
+                  View
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.statItem}>
+            <div className={styles.statIcon} style={{ background: "rgba(139, 92, 246, 0.1)" }}>
+              <BarChart3 className={styles.statIconSvg} style={{ color: "#8B5CF6" }} />
+            </div>
+            <div>
+              <div className={styles.statLabel}>Security Score</div>
+              <div className={styles.statValue}>
+                <span className={styles.scoreValue}>85</span>
+                <span className={styles.scoreMax}>/100</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content - Revolut Style */}
+      <div className={styles.mainContent}>
+        {/* Sidebar */}
+        <div className={styles.sidebar}>
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`${styles.tabBtn} ${activeTab === tab.id ? styles.active : ""}`}
+              >
+                <Icon className={styles.tabIcon} />
+                <span>{tab.label}</span>
+                {tab.id === "security" && settings.two_factor_auth && (
+                  <span className={styles.tabBadge}>2FA</span>
+                )}
+              </button>
+            );
+          })}
+
+          {/* Security Health - Skrill Style */}
+          <div className={styles.securityHealth}>
+            <div className={styles.securityHeader}>
+              <ShieldCheck className={styles.securityIcon} />
+              <h3>Security Health</h3>
+            </div>
+            <div className={styles.securityScore}>
+              <div className={styles.scoreCircle}>
+                <svg viewBox="0 0 36 36" className={styles.scoreSvg}>
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#E5E7EB"
+                    strokeWidth="3"
+                  />
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#3B82F6"
+                    strokeWidth="3"
+                    strokeDasharray="85, 100"
+                  />
+                </svg>
+                <span className={styles.scoreNumber}>85</span>
+              </div>
+              <div className={styles.scoreDetails}>
+                <div className={styles.scoreItem}>
+                  <Zap className={styles.scoreItemIcon} />
+                  <span>2FA Enabled</span>
+                </div>
+                <div className={styles.scoreItem}>
+                  <Clock className={styles.scoreItemIcon} />
+                  <span>Last login: 2h ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions - Wise Style */}
+          <div className={styles.quickActions}>
+            <h3 className={styles.quickActionsTitle}>Quick Actions</h3>
+            <button
+              onClick={() => navigate("/dashboard/transfer")}
+              className={styles.quickActionBtn}
+            >
+              <CreditCard className={styles.quickActionIcon} />
+              <span>Send Money</span>
+              <ChevronRight className={styles.quickActionArrow} />
+            </button>
+            <button
+              onClick={() => navigate("/dashboard/kyc")}
+              className={styles.quickActionBtn}
+            >
+              <FileText className={styles.quickActionIcon} />
+              <span>Complete KYC</span>
+              <ChevronRight className={styles.quickActionArrow} />
+            </button>
+            <button
+              onClick={() => navigate("/dashboard/cards")}
+              className={styles.quickActionBtn}
+            >
+              <CreditCard className={styles.quickActionIcon} />
+              <span>Manage Cards</span>
+              <ChevronRight className={styles.quickActionArrow} />
+            </button>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className={styles.content}>
+          {activeTab === "profile" && (
+            <div className={styles.contentCard}>
+              <h2 className={styles.contentTitle}>
+                <User className={styles.contentIcon} />
+                Personal Information
+              </h2>
+
+              <div className={styles.infoGrid}>
+                <div className={styles.infoItem}>
+                  <label>Full Name</label>
+                  <div className={styles.infoValue}>
+                    {user?.first_name} {user?.last_name}
+                    <button className={styles.editBtn}>
+                      <Edit className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
-              </div>
-            )}
 
-            {activeTab === "security" && (
-              <div className="space-y-6">
-                <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                    <Lock className="w-6 h-6 text-green-400" />
-                    Password & Security
-                  </h2>
-                  
-                  <form onSubmit={handleChangePassword} className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-300">Current Password</label>
-                      <div className="relative">
-                        <input
-                          type={showCurrentPassword ? "text" : "password"}
-                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                          placeholder="Enter current password"
-                          required
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                        >
-                          {showCurrentPassword ? (
-                            <EyeOff className="w-5 h-5 text-gray-400" />
-                          ) : (
-                            <Eye className="w-5 h-5 text-gray-400" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-300">New Password</label>
-                      <div className="relative">
-                        <input
-                          type={showNewPassword ? "text" : "password"}
-                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                          placeholder="Enter new password"
-                          required
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowNewPassword(!showNewPassword)}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                        >
-                          {showNewPassword ? (
-                            <EyeOff className="w-5 h-5 text-gray-400" />
-                          ) : (
-                            <Eye className="w-5 h-5 text-gray-400" />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-4 pt-4">
-                      <button
-                        type="submit"
-                        className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl font-bold transition-all"
-                      >
-                        <Key className="w-4 h-4 inline mr-2" />
-                        Change Password
-                      </button>
-                      
-                      <button
-                        type="button"
-                        onClick={() => navigate('/dashboard/kyc/submit')}
-                        className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl font-bold transition-all"
-                      >
-                        <Shield className="w-4 h-4 inline mr-2" />
-                        Enhance Security with KYC
-                      </button>
-                    </div>
-                  </form>
+                <div className={styles.infoItem}>
+                  <label>Email Address</label>
+                  <div className={styles.infoValue}>
+                    {user?.email}
+                    <span className={styles.verifiedBadge}>
+                      <CheckCircle2 className="w-4 h-4" />
+                      Verified
+                    </span>
+                  </div>
                 </div>
 
-                <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-                  <div className="flex items-center justify-between mb-4">
+                <div className={styles.infoItem}>
+                  <label>Phone Number</label>
+                  <div className={styles.infoValue}>
+                    {user?.phone || "+254712345678"}
+                    <button className={styles.addBtn}>Add</button>
+                  </div>
+                </div>
+
+                <div className={styles.infoItem}>
+                  <label>Date of Birth</label>
+                  <div className={styles.infoValue}>
+                    {user?.date_of_birth || "Not provided"}
+                  </div>
+                </div>
+
+                <div className={styles.infoItem}>
+                  <label>Nationality</label>
+                  <div className={styles.infoValue}>
+                    {user?.nationality || "Kenya"}
+                  </div>
+                </div>
+
+                <div className={styles.infoItem}>
+                  <label>Residence</label>
+                  <div className={styles.infoValue}>
+                    {user?.country_of_residence || "Kenya"}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.addressSection}>
+                <h3>Address</h3>
+                <div className={styles.addressGrid}>
+                  <div className={styles.addressItem}>
+                    <MapPin className={styles.addressIcon} />
                     <div>
-                      <h3 className="text-xl font-bold text-white">Two-Factor Authentication</h3>
-                      <p className="text-gray-400 text-sm">Add an extra layer of security</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className={`px-3 py-1 text-sm font-bold rounded-full ${settings.two_factor_auth ? 'bg-green-500/20 text-green-300' : 'bg-gray-500/20 text-gray-300'}`}>
-                        {settings.two_factor_auth ? 'Enabled' : 'Disabled'}
-                      </span>
-                      <button
-                        onClick={() => setSettings({...settings, two_factor_auth: !settings.two_factor_auth})}
-                        className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white rounded-xl font-medium transition-all border border-white/10 hover:border-white/20"
-                      >
-                        {settings.two_factor_auth ? 'Disable' : 'Enable'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "notifications" && (
-              <div className="space-y-6">
-                <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                    <Bell className="w-6 h-6 text-yellow-400" />
-                    Notification Preferences
-                  </h2>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                      <div>{user?.address_line1 || "123 Main Street"}</div>
                       <div>
-                        <p className="text-white font-medium">Email Notifications</p>
-                        <p className="text-gray-400 text-sm">Receive updates via email</p>
+                        {user?.city || "Nairobi"}, {user?.state_province || "Nairobi"} {user?.postal_code || "00100"}
                       </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={settings.email_notifications}
-                          onChange={(e) => setSettings({...settings, email_notifications: e.target.checked})}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                      </label>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-white font-medium">SMS Notifications</p>
-                        <p className="text-gray-400 text-sm">Receive important alerts via SMS</p>
-                      </div>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={settings.sms_notifications}
-                          onChange={(e) => setSettings({...settings, sms_notifications: e.target.checked})}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                      </label>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
 
-            {activeTab === "preferences" && (
-              <div className="space-y-6">
-                <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                    <Globe className="w-6 h-6 text-purple-400" />
-                    App Preferences
-                  </h2>
-                  
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-300">Theme</label>
-                      <div className="flex gap-3">
-                        {["light", "dark", "auto"].map((theme) => (
-                          <button
-                            key={theme}
-                            onClick={() => setSettings({...settings, theme})}
-                            className={`px-4 py-2 rounded-xl border transition-all ${
-                              settings.theme === theme
-                                ? "bg-blue-600/20 text-white border-blue-500"
-                                : "bg-white/5 text-gray-400 border-white/10 hover:border-white/20"
-                            }`}
-                          >
-                            {theme.charAt(0).toUpperCase() + theme.slice(1)}
-                          </button>
-                        ))}
-                      </div>
+              <div className={styles.employmentSection}>
+                <h3>Employment</h3>
+                <div className={styles.employmentGrid}>
+                  <div className={styles.employmentItem}>
+                    <Briefcase className={styles.employmentIcon} />
+                    <div>
+                      <label>Occupation</label>
+                      <div>{user?.occupation || "Not specified"}</div>
                     </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-300">Language</label>
-                      <select
-                        value={settings.language}
-                        onChange={(e) => setSettings({...settings, language: e.target.value})}
-                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                      >
-                        <option value="en">English</option>
-                        <option value="sw">Swahili</option>
-                        <option value="fr">French</option>
-                        <option value="es">Spanish</option>
-                      </select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-300">Timezone</label>
-                      <select
-                        value={settings.timezone}
-                        onChange={(e) => setSettings({...settings, timezone: e.target.value})}
-                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                      >
-                        <option value="Africa/Nairobi">Africa/Nairobi (EAT)</option>
-                        <option value="UTC">UTC</option>
-                        <option value="America/New_York">America/New York (EST)</option>
-                        <option value="Europe/London">Europe/London (GMT)</option>
-                      </select>
+                  </div>
+                  <div className={styles.employmentItem}>
+                    <TrendingUp className={styles.employmentIcon} />
+                    <div>
+                      <label>Income Range</label>
+                      <div>{user?.income_range || "Not specified"}</div>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
-
-            {activeTab === "account" && (
-              <div className="space-y-6">
-                <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-                  <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                    <SettingsIcon className="w-6 h-6 text-red-400" />
-                    Account Management
-                  </h2>
-                  
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
-                      <div className="flex items-center gap-3">
-                        <Download className="w-5 h-5 text-blue-400" />
-                        <div>
-                          <p className="text-white font-medium">Export Account Data</p>
-                          <p className="text-gray-400 text-sm">Download all your data in JSON format</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={handleExportData}
-                        className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-xl text-white rounded-xl font-medium transition-all border border-white/10 hover:border-white/20"
-                      >
-                        Export
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
-                      <div className="flex items-center gap-3">
-                        <Trash2 className="w-5 h-5 text-red-400" />
-                        <div>
-                          <p className="text-white font-medium">Deactivate Account</p>
-                          <p className="text-gray-400 text-sm">Temporarily disable your account</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={handleDeactivateAccount}
-                        className="px-4 py-2 bg-red-600/20 hover:bg-red-700/30 backdrop-blur-xl text-red-300 rounded-xl font-medium transition-all border border-red-500/30 hover:border-red-500/50"
-                      >
-                        Deactivate
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Save Button */}
-            <div className="mt-8">
-              <button
-                onClick={handleSaveSettings}
-                className="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl"
-              >
-                Save All Changes
-              </button>
             </div>
-          </div>
+          )}
+
+          {activeTab === "security" && (
+            <div className={styles.contentCard}>
+              <h2 className={styles.contentTitle}>
+                <Lock className={styles.contentIcon} />
+                Security Settings
+              </h2>
+
+              <form onSubmit={handleChangePassword} className={styles.passwordForm}>
+                <h3>Change Password</h3>
+                
+                <div className={styles.formGroup}>
+                  <label>Current Password</label>
+                  <div className={styles.passwordInput}>
+                    <input
+                      type={showCurrentPassword ? "text" : "password"}
+                      value={passwordData.current_password}
+                      onChange={(e) => setPasswordData({...passwordData, current_password: e.target.value})}
+                      placeholder="Enter current password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      className={styles.passwordToggle}
+                    >
+                      {showCurrentPassword ? <EyeOff /> : <Eye />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>New Password</label>
+                  <div className={styles.passwordInput}>
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      value={passwordData.new_password}
+                      onChange={(e) => setPasswordData({...passwordData, new_password: e.target.value})}
+                      placeholder="Enter new password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className={styles.passwordToggle}
+                    >
+                      {showNewPassword ? <EyeOff /> : <Eye />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Confirm Password</label>
+                  <div className={styles.passwordInput}>
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={passwordData.confirm_password}
+                      onChange={(e) => setPasswordData({...passwordData, confirm_password: e.target.value})}
+                      placeholder="Confirm new password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className={styles.passwordToggle}
+                    >
+                      {showConfirmPassword ? <EyeOff /> : <Eye />}
+                    </button>
+                  </div>
+                </div>
+
+                <button type="submit" className={styles.submitBtn}>
+                  <Key className="w-4 h-4" />
+                  Update Password
+                </button>
+              </form>
+
+              <div className={styles.twoFactorSection}>
+                <div className={styles.twoFactorHeader}>
+                  <div>
+                    <h3>Two-Factor Authentication</h3>
+                    <p>Add an extra layer of security to your account</p>
+                  </div>
+                  <label className={styles.toggleSwitch}>
+                    <input
+                      type="checkbox"
+                      checked={settings.two_factor_auth}
+                      onChange={(e) => setSettings({...settings, two_factor_auth: e.target.checked})}
+                    />
+                    <span className={styles.toggleSlider}></span>
+                  </label>
+                </div>
+                {settings.two_factor_auth && (
+                  <div className={styles.twoFactorStatus}>
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    <span>2FA is enabled on your account</span>
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.devicesSection}>
+                <h3>Connected Devices</h3>
+                <div className={styles.device}>
+                  <Smartphone className={styles.deviceIcon} />
+                  <div className={styles.deviceInfo}>
+                    <div>iPhone 14 Pro</div>
+                    <div className={styles.deviceMeta}>Last active: 2 hours ago • Nairobi, Kenya</div>
+                  </div>
+                  <span className={styles.currentDevice}>Current</span>
+                </div>
+                <div className={styles.device}>
+                  <Smartphone className={styles.deviceIcon} />
+                  <div className={styles.deviceInfo}>
+                    <div>MacBook Pro</div>
+                    <div className={styles.deviceMeta}>Last active: Yesterday • Nairobi, Kenya</div>
+                  </div>
+                  <button className={styles.removeDevice}>Remove</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "notifications" && (
+            <div className={styles.contentCard}>
+              <h2 className={styles.contentTitle}>
+                <Bell className={styles.contentIcon} />
+                Notification Preferences
+              </h2>
+
+              <div className={styles.notificationList}>
+                <div className={styles.notificationItem}>
+                  <div className={styles.notificationInfo}>
+                    <MailIcon className={styles.notificationIcon} />
+                    <div>
+                      <h4>Email Notifications</h4>
+                      <p>Receive account updates and alerts via email</p>
+                    </div>
+                  </div>
+                  <label className={styles.toggleSwitch}>
+                    <input
+                      type="checkbox"
+                      checked={settings.email_notifications}
+                      onChange={(e) => setSettings({...settings, email_notifications: e.target.checked})}
+                    />
+                    <span className={styles.toggleSlider}></span>
+                  </label>
+                </div>
+
+                <div className={styles.notificationItem}>
+                  <div className={styles.notificationInfo}>
+                    <Lock className={styles.notificationIcon} />
+                    <div>
+                      <h4>Login Alerts</h4>
+                      <p>Get notified of new sign-ins to your account</p>
+                    </div>
+                  </div>
+                  <label className={styles.toggleSwitch}>
+                    <input
+                      type="checkbox"
+                      checked={settings.login_alerts}
+                      onChange={(e) => setSettings({...settings, login_alerts: e.target.checked})}
+                    />
+                    <span className={styles.toggleSlider}></span>
+                  </label>
+                </div>
+
+                <div className={styles.notificationItem}>
+                  <div className={styles.notificationInfo}>
+                    <Award className={styles.notificationIcon} />
+                    <div>
+                      <h4>Marketing Emails</h4>
+                      <p>Receive offers, promotions, and product updates</p>
+                    </div>
+                  </div>
+                  <label className={styles.toggleSwitch}>
+                    <input
+                      type="checkbox"
+                      checked={settings.marketing_emails}
+                      onChange={(e) => setSettings({...settings, marketing_emails: e.target.checked})}
+                    />
+                    <span className={styles.toggleSlider}></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "preferences" && (
+            <div className={styles.contentCard}>
+              <h2 className={styles.contentTitle}>
+                <Globe className={styles.contentIcon} />
+                App Preferences
+              </h2>
+
+              <div className={styles.preferencesGrid}>
+                <div className={styles.preferenceItem}>
+                  <label>Theme</label>
+                  <select
+                    value={settings.theme}
+                    onChange={(e) => setSettings({...settings, theme: e.target.value})}
+                    className={styles.select}
+                  >
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="auto">Auto (Follow System)</option>
+                  </select>
+                </div>
+
+                <div className={styles.preferenceItem}>
+                  <label>Language</label>
+                  <select
+                    value={settings.language}
+                    onChange={(e) => setSettings({...settings, language: e.target.value})}
+                    className={styles.select}
+                  >
+                    <option value="en">English</option>
+                    <option value="sw">Swahili</option>
+                    <option value="fr">French</option>
+                  </select>
+                </div>
+
+                <div className={styles.preferenceItem}>
+                  <label>Timezone</label>
+                  <select
+                    value={settings.timezone}
+                    onChange={(e) => setSettings({...settings, timezone: e.target.value})}
+                    className={styles.select}
+                  >
+                    <option value="Africa/Nairobi">Africa/Nairobi (EAT)</option>
+                    <option value="UTC">UTC</option>
+                    <option value="America/New_York">America/New York (EST)</option>
+                    <option value="Europe/London">Europe/London (GMT)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "account" && (
+            <div className={styles.contentCard}>
+              <h2 className={styles.contentTitle}>
+                <SettingsIcon className={styles.contentIcon} />
+                Account Management
+              </h2>
+
+              <div className={styles.accountActions}>
+                <div className={styles.actionItem}>
+                  <div className={styles.actionInfo}>
+                    <Download className={styles.actionIcon} />
+                    <div>
+                      <h4>Export Account Data</h4>
+                      <p>Download all your personal data in JSON format</p>
+                    </div>
+                  </div>
+                  <button className={styles.actionBtn}>Export</button>
+                </div>
+
+                <div className={styles.actionItem}>
+                  <div className={styles.actionInfo}>
+                    <Trash2 className={styles.actionIcon} style={{ color: '#EF4444' }} />
+                    <div>
+                      <h4>Deactivate Account</h4>
+                      <p>Temporarily disable your account (reversible within 30 days)</p>
+                    </div>
+                  </div>
+                  <button className={`${styles.actionBtn} ${styles.dangerBtn}`}>
+                    Deactivate
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.dangerZone}>
+                <h3>Danger Zone</h3>
+                <div className={styles.dangerItem}>
+                  <div>
+                    <h4>Delete Account Permanently</h4>
+                    <p>This action cannot be undone. All your data will be permanently removed.</p>
+                  </div>
+                  <button className={styles.deleteBtn}>Delete Account</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Save Button */}
+          <button onClick={handleSaveSettings} className={styles.saveBtn}>
+            Save Changes
+          </button>
         </div>
       </div>
     </div>
