@@ -24,6 +24,8 @@ import {
   ListItemText,
   LinearProgress,
   Chip,
+  Autocomplete,
+  InputAdornment,
 } from '@mui/material';
 import {
   AccountBalanceWallet,
@@ -38,9 +40,11 @@ import {
   VerifiedUser,
   Warning,
   CheckCircle,
+  Search as SearchIcon,
 } from '@mui/icons-material';
 import { useAuthStore } from '../../lib/store/auth';
 import transferAPI from '../../services/transfer-api';
+import { globalBanks, BankRecipient } from '../../data/globalBanks';
 import styles from './Transfer.module.css';
 
 // Add style tag for number rendering fix
@@ -328,6 +332,9 @@ const Transfer = () => {
   const [kycStatus, setKycStatus] = useState<'pending' | 'verified' | 'unverified'>('unverified');
   const [showKycBanner, setShowKycBanner] = useState(true);
 
+  // Bank search state
+  const [bankSearchTerm, setBankSearchTerm] = useState('');
+
   const [formData, setFormData] = useState<TransferFormData>({
     amount: '',
     recipient_name: '',
@@ -340,6 +347,17 @@ const Transfer = () => {
     },
     narration: '',
   });
+
+  // Filter banks based on search
+  const filteredBanks = globalBanks.filter(bank => 
+    bank.type === 'bank' && (
+      bankSearchTerm === '' ||
+      bank.name.toLowerCase().includes(bankSearchTerm.toLowerCase()) ||
+      bank.shortName.toLowerCase().includes(bankSearchTerm.toLowerCase()) ||
+      bank.country.toLowerCase().includes(bankSearchTerm.toLowerCase()) ||
+      bank.region.toLowerCase().includes(bankSearchTerm.toLowerCase())
+    )
+  );
 
   // Inject number fix style
   useEffect(() => {
@@ -599,30 +617,72 @@ const Transfer = () => {
         return (
           <>
             <Grid size={{ xs: 12 }}>
-              <TextField
-                select
-                fullWidth
-                label="Bank Name"
-                name="destination_details.bank_name"
-                value={formData.destination_details.bank_name || ''}
-                onChange={handleChange}
-                required
-                className={styles.inputField}
-              >
-                <MenuItem value="KCB">Kenya Commercial Bank (KCB)</MenuItem>
-                <MenuItem value="Equity">Equity Bank</MenuItem>
-                <MenuItem value="Cooperative">Cooperative Bank</MenuItem>
-                <MenuItem value="Stanbic">Stanbic Bank</MenuItem>
-                <MenuItem value="Standard Chartered">Standard Chartered Bank</MenuItem>
-                <MenuItem value="Absa">Absa Bank</MenuItem>
-                <MenuItem value="NCBA">NCBA Bank</MenuItem>
-                <MenuItem value="DTB">Diamond Trust Bank (DTB)</MenuItem>
-                <MenuItem value="CBA">Commercial Bank of Africa</MenuItem>
-                <MenuItem value="I&M">I&M Bank</MenuItem>
-                <MenuItem value="Bank of Africa">Bank of Africa</MenuItem>
-                <MenuItem value="Prime">Prime Bank</MenuItem>
-                <MenuItem value="Other">Other Bank</MenuItem>
-              </TextField>
+              <Autocomplete
+                options={filteredBanks}
+                getOptionLabel={(option) => `${option.name} (${option.country})`}
+                value={globalBanks.find(b => b.name === formData.destination_details.bank_name) || null}
+                onChange={(_, newValue) => {
+                  handleChange({
+                    target: {
+                      name: 'destination_details.bank_name',
+                      value: newValue?.name || ''
+                    }
+                  } as any);
+                }}
+                onInputChange={(_, newInputValue) => {
+                  setBankSearchTerm(newInputValue);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Search Bank Name"
+                    required
+                    placeholder="Type to search by bank name, country, or region..."
+                    className={styles.inputField}
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <Box display="flex" alignItems="center" gap={1} width="100%">
+                      <span style={{ fontSize: '1.5rem' }}>{option.logo}</span>
+                      <Box flex={1}>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Typography variant="body2" fontWeight={500}>
+                            {option.name}
+                          </Typography>
+                          {option.popular && (
+                            <Chip 
+                              label="Popular" 
+                              size="small" 
+                              sx={{ 
+                                backgroundColor: '#ffd70020', 
+                                color: '#b8860b',
+                                height: '20px',
+                                fontSize: '0.7rem'
+                              }} 
+                            />
+                          )}
+                        </Box>
+                        <Typography variant="caption" color="textSecondary">
+                          {option.country} • {option.region}
+                          {option.swiftCode && ` • SWIFT: ${option.swiftCode}`}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </li>
+                )}
+                loadingText="Searching banks..."
+                noOptionsText="No banks found"
+                filterOptions={(x) => x} // Disable built-in filtering (we're doing it manually)
+              />
             </Grid>
             
             <Grid size={{ xs: 12, sm: 6 }}>

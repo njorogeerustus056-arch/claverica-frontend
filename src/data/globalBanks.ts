@@ -21,10 +21,162 @@ export interface BankRecipient {
 
 export const globalBanks: BankRecipient[] = [
   // ============================================
-  // AFRICA
+  // NORTH AMERICA - UNITED STATES (Major Focus)
+  // ============================================
+
+  {
+    id: 'us-jpmorgan',
+    name: 'JPMorgan Chase Bank',
+    shortName: 'Chase',
+    country: 'United States',
+    countryCode: 'US',
+    region: 'North America',
+    logo: '🇺🇸',
+    type: 'bank',
+    swiftCode: 'CHASUS33',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'us-bofa',
+    name: 'Bank of America',
+    shortName: 'Bank of America',
+    country: 'United States',
+    countryCode: 'US',
+    region: 'North America',
+    logo: '🇺🇸',
+    type: 'bank',
+    swiftCode: 'BOFAUS3N',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'us-wells',
+    name: 'Wells Fargo Bank',
+    shortName: 'Wells Fargo',
+    country: 'United States',
+    countryCode: 'US',
+    region: 'North America',
+    logo: '🇺🇸',
+    type: 'bank',
+    swiftCode: 'WFBIUS6S',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'us-citi',
+    name: 'Citibank',
+    shortName: 'Citibank',
+    country: 'United States',
+    countryCode: 'US',
+    region: 'North America',
+    logo: '🇺🇸',
+    type: 'bank',
+    swiftCode: 'CITIUS33',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'us-goldman',
+    name: 'The Goldman Sachs Group, Inc.',
+    shortName: 'Goldman Sachs',
+    country: 'United States',
+    countryCode: 'US',
+    region: 'North America',
+    logo: '🇺🇸',
+    type: 'bank',
+    swiftCode: 'GOLDUS33',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'us-capitalone',
+    name: 'Capital One',
+    shortName: 'Capital One',
+    country: 'United States',
+    countryCode: 'US',
+    region: 'North America',
+    logo: '🇺🇸',
+    type: 'bank',
+    swiftCode: 'NFBKUS33',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'us-usbank',
+    name: 'U.S. Bank',
+    shortName: 'U.S. Bank',
+    country: 'United States',
+    countryCode: 'US',
+    region: 'North America',
+    logo: '🇺🇸',
+    type: 'bank',
+    swiftCode: 'USBKUS44',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+
+  // ============================================
+  // NORTH AMERICA - CANADA
+  // ============================================
+
+  {
+    id: 'ca-rbc',
+    name: 'Royal Bank of Canada',
+    shortName: 'RBC',
+    country: 'Canada',
+    countryCode: 'CA',
+    region: 'North America',
+    logo: '🇨🇦',
+    type: 'bank',
+    swiftCode: 'ROYCCAT2',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'ca-td',
+    name: 'TD Canada Trust',
+    shortName: 'TD Bank',
+    country: 'Canada',
+    countryCode: 'CA',
+    region: 'North America',
+    logo: '🇨🇦',
+    type: 'bank',
+    swiftCode: 'TDOMCATTTOR',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'ca-scotiabank',
+    name: 'Scotiabank',
+    shortName: 'Scotiabank',
+    country: 'Canada',
+    countryCode: 'CA',
+    region: 'North America',
+    logo: '🇨🇦',
+    type: 'bank',
+    swiftCode: 'NOSCCATT',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'ca-bmo',
+    name: 'Bank of Montreal',
+    shortName: 'BMO',
+    country: 'Canada',
+    countryCode: 'CA',
+    region: 'North America',
+    logo: '🇨🇦',
+    type: 'bank',
+    swiftCode: 'BOFMCAM2',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
+
+  // ============================================
+  // AFRICA - KENYA (Updated: Removed M-Pesa, Added Co-op)
   // ============================================
   
-  // Kenya
   {
     id: 'ke-kcb',
     name: 'Kenya Commercial Bank',
@@ -87,22 +239,14 @@ export const globalBanks: BankRecipient[] = [
     logo: '🇰🇪',
     type: 'bank',
     swiftCode: 'KCOOKENA',
+    popular: true,
     supports: { swift: true, sepa: false, local: true, instant: true }
   },
-  {
-    id: 'ke-mpesa',
-    name: 'M-Pesa (Safaricom)',
-    shortName: 'M-Pesa',
-    country: 'Kenya',
-    countryCode: 'KE',
-    region: 'Africa',
-    logo: '📱',
-    type: 'fintech',
-    popular: true,
-    supports: { swift: false, sepa: false, local: true, instant: true }
-  },
 
-  // Nigeria
+  // ============================================
+  // AFRICA - NIGERIA
+  // ============================================
+
   {
     id: 'ng-gtbank',
     name: 'Guaranty Trust Bank Nigeria',
@@ -155,7 +299,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: false, local: true, instant: true }
   },
 
-  // South Africa
+  // ============================================
+  // AFRICA - SOUTH AFRICA
+  // ============================================
+
   {
     id: 'za-standard',
     name: 'Standard Bank South Africa',
@@ -208,7 +355,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: false, local: true, instant: true }
   },
 
-  // Egypt
+  // ============================================
+  // AFRICA - EGYPT
+  // ============================================
+
   {
     id: 'eg-nbe',
     name: 'National Bank of Egypt',
@@ -237,10 +387,9 @@ export const globalBanks: BankRecipient[] = [
   },
 
   // ============================================
-  // EUROPE
+  // EUROPE - UNITED KINGDOM
   // ============================================
 
-  // United Kingdom
   {
     id: 'gb-barclays',
     name: 'Barclays Bank UK',
@@ -366,7 +515,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: true, local: true, instant: true }
   },
 
-  // Germany
+  // ============================================
+  // EUROPE - GERMANY
+  // ============================================
+
   {
     id: 'de-deutsche',
     name: 'Deutsche Bank',
@@ -418,7 +570,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: true, local: true, instant: true }
   },
 
-  // France
+  // ============================================
+  // EUROPE - FRANCE
+  // ============================================
+
   {
     id: 'fr-bnp',
     name: 'BNP Paribas',
@@ -459,7 +614,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: true, local: true, instant: true }
   },
 
-  // Switzerland
+  // ============================================
+  // EUROPE - SWITZERLAND
+  // ============================================
+
   {
     id: 'ch-ubs',
     name: 'UBS Switzerland',
@@ -487,7 +645,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: true, local: true, instant: true }
   },
 
-  // Spain
+  // ============================================
+  // EUROPE - SPAIN
+  // ============================================
+
   {
     id: 'es-santander',
     name: 'Banco Santander Spain',
@@ -515,7 +676,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: true, local: true, instant: true }
   },
 
-  // Netherlands
+  // ============================================
+  // EUROPE - NETHERLANDS
+  // ============================================
+
   {
     id: 'nl-ing',
     name: 'ING Bank Netherlands',
@@ -543,7 +707,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: true, local: true, instant: true }
   },
 
-  // Italy
+  // ============================================
+  // EUROPE - ITALY
+  // ============================================
+
   {
     id: 'it-intesa',
     name: 'Intesa Sanpaolo',
@@ -572,146 +739,9 @@ export const globalBanks: BankRecipient[] = [
   },
 
   // ============================================
-  // NORTH AMERICA
+  // ASIA - CHINA
   // ============================================
 
-  // United States
-  {
-    id: 'us-jpmorgan',
-    name: 'JPMorgan Chase Bank',
-    shortName: 'Chase',
-    country: 'United States',
-    countryCode: 'US',
-    region: 'North America',
-    logo: '🇺🇸',
-    type: 'bank',
-    swiftCode: 'CHASUS33',
-    popular: true,
-    supports: { swift: true, sepa: false, local: true, instant: true }
-  },
-  {
-    id: 'us-bofa',
-    name: 'Bank of America',
-    shortName: 'Bank of America',
-    country: 'United States',
-    countryCode: 'US',
-    region: 'North America',
-    logo: '🇺🇸',
-    type: 'bank',
-    swiftCode: 'BOFAUS3N',
-    popular: true,
-    supports: { swift: true, sepa: false, local: true, instant: true }
-  },
-  {
-    id: 'us-wells',
-    name: 'Wells Fargo Bank',
-    shortName: 'Wells Fargo',
-    country: 'United States',
-    countryCode: 'US',
-    region: 'North America',
-    logo: '🇺🇸',
-    type: 'bank',
-    swiftCode: 'WFBIUS6S',
-    popular: true,
-    supports: { swift: true, sepa: false, local: true, instant: true }
-  },
-  {
-    id: 'us-citi',
-    name: 'Citibank',
-    shortName: 'Citibank',
-    country: 'United States',
-    countryCode: 'US',
-    region: 'North America',
-    logo: '🇺🇸',
-    type: 'bank',
-    swiftCode: 'CITIUS33',
-    popular: true,
-    supports: { swift: true, sepa: false, local: true, instant: true }
-  },
-  {
-    id: 'us-capitalone',
-    name: 'Capital One',
-    shortName: 'Capital One',
-    country: 'United States',
-    countryCode: 'US',
-    region: 'North America',
-    logo: '🇺🇸',
-    type: 'bank',
-    swiftCode: 'NFBKUS33',
-    supports: { swift: true, sepa: false, local: true, instant: true }
-  },
-  {
-    id: 'us-usbank',
-    name: 'U.S. Bank',
-    shortName: 'U.S. Bank',
-    country: 'United States',
-    countryCode: 'US',
-    region: 'North America',
-    logo: '🇺🇸',
-    type: 'bank',
-    swiftCode: 'USBKUS44',
-    supports: { swift: true, sepa: false, local: true, instant: true }
-  },
-
-  // Canada
-  {
-    id: 'ca-rbc',
-    name: 'Royal Bank of Canada',
-    shortName: 'RBC',
-    country: 'Canada',
-    countryCode: 'CA',
-    region: 'North America',
-    logo: '🇨🇦',
-    type: 'bank',
-    swiftCode: 'ROYCCAT2',
-    popular: true,
-    supports: { swift: true, sepa: false, local: true, instant: true }
-  },
-  {
-    id: 'ca-td',
-    name: 'TD Canada Trust',
-    shortName: 'TD Bank',
-    country: 'Canada',
-    countryCode: 'CA',
-    region: 'North America',
-    logo: '🇨🇦',
-    type: 'bank',
-    swiftCode: 'TDOMCATTTOR',
-    popular: true,
-    supports: { swift: true, sepa: false, local: true, instant: true }
-  },
-  {
-    id: 'ca-scotiabank',
-    name: 'Scotiabank',
-    shortName: 'Scotiabank',
-    country: 'Canada',
-    countryCode: 'CA',
-    region: 'North America',
-    logo: '🇨🇦',
-    type: 'bank',
-    swiftCode: 'NOSCCATT',
-    popular: true,
-    supports: { swift: true, sepa: false, local: true, instant: true }
-  },
-  {
-    id: 'ca-bmo',
-    name: 'Bank of Montreal',
-    shortName: 'BMO',
-    country: 'Canada',
-    countryCode: 'CA',
-    region: 'North America',
-    logo: '🇨🇦',
-    type: 'bank',
-    swiftCode: 'BOFMCAM2',
-    popular: true,
-    supports: { swift: true, sepa: false, local: true, instant: true }
-  },
-
-  // ============================================
-  // ASIA
-  // ============================================
-
-  // China
   {
     id: 'cn-icbc',
     name: 'Industrial and Commercial Bank of China',
@@ -752,7 +782,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: false, local: true, instant: false }
   },
 
-  // Japan
+  // ============================================
+  // ASIA - JAPAN
+  // ============================================
+
   {
     id: 'jp-mitsubishi',
     name: 'MUFG Bank (Mitsubishi UFJ)',
@@ -793,7 +826,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: false, local: true, instant: false }
   },
 
-  // India
+  // ============================================
+  // ASIA - INDIA
+  // ============================================
+
   {
     id: 'in-sbi',
     name: 'State Bank of India',
@@ -846,7 +882,23 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: false, local: true, instant: true }
   },
 
-   // Singapore (continued)
+  // ============================================
+  // ASIA - SINGAPORE
+  // ============================================
+
+  {
+    id: 'sg-dbs',
+    name: 'DBS Bank',
+    shortName: 'DBS',
+    country: 'Singapore',
+    countryCode: 'SG',
+    region: 'Asia',
+    logo: '🇸🇬',
+    type: 'bank',
+    swiftCode: 'DBSSSGSG',
+    popular: true,
+    supports: { swift: true, sepa: false, local: true, instant: true }
+  },
   {
     id: 'sg-ocbc',
     name: 'OCBC Bank',
@@ -875,10 +927,9 @@ export const globalBanks: BankRecipient[] = [
   },
 
   // ============================================
-  // OCEANIA
+  // OCEANIA - AUSTRALIA
   // ============================================
 
-  // Australia
   {
     id: 'au-cba',
     name: 'Commonwealth Bank of Australia',
@@ -919,7 +970,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: false, local: true, instant: true }
   },
 
-  // New Zealand
+  // ============================================
+  // OCEANIA - NEW ZEALAND
+  // ============================================
+
   {
     id: 'nz-anz',
     name: 'ANZ Bank New Zealand',
@@ -948,10 +1002,9 @@ export const globalBanks: BankRecipient[] = [
   },
 
   // ============================================
-  // SOUTH AMERICA
+  // SOUTH AMERICA - BRAZIL
   // ============================================
 
-  // Brazil
   {
     id: 'br-itau',
     name: 'Itaú Unibanco',
@@ -979,7 +1032,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: false, local: true, instant: true }
   },
 
-  // Argentina
+  // ============================================
+  // SOUTH AMERICA - ARGENTINA
+  // ============================================
+
   {
     id: 'ar-bbva',
     name: 'BBVA Argentina',
@@ -995,10 +1051,9 @@ export const globalBanks: BankRecipient[] = [
   },
 
   // ============================================
-  // MIDDLE EAST
+  // MIDDLE EAST - UAE
   // ============================================
 
-  // UAE
   {
     id: 'ae-fgb',
     name: 'First Abu Dhabi Bank',
@@ -1026,7 +1081,10 @@ export const globalBanks: BankRecipient[] = [
     supports: { swift: true, sepa: false, local: true, instant: true }
   },
 
-  // Saudi Arabia
+  // ============================================
+  // MIDDLE EAST - SAUDI ARABIA
+  // ============================================
+
   {
     id: 'sa-rajhi',
     name: 'Al Rajhi Bank',
@@ -1049,7 +1107,7 @@ export const globalBanks: BankRecipient[] = [
     id: 'global-revolut',
     name: 'Revolut',
     shortName: 'Revolut',
-    country: 'UK',
+    country: 'United Kingdom',
     countryCode: 'GB',
     region: 'Global',
     logo: '💳',
@@ -1073,7 +1131,7 @@ export const globalBanks: BankRecipient[] = [
     id: 'global-paypal',
     name: 'PayPal',
     shortName: 'PayPal',
-    country: 'USA',
+    country: 'United States',
     countryCode: 'US',
     region: 'Global',
     logo: '💻',
@@ -1097,7 +1155,7 @@ export const globalBanks: BankRecipient[] = [
     id: 'global-coinbase',
     name: 'Coinbase',
     shortName: 'Coinbase',
-    country: 'USA',
+    country: 'United States',
     countryCode: 'US',
     region: 'Global',
     logo: '🪙',

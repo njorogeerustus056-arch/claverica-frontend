@@ -276,16 +276,12 @@ export default function Projects() {
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
           </div>
 
-          <h1 className="text-5xl md:text-7xl xl:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6">
+          <h1 className="text-5xl md:text-7xl xl:text-8xl font-black text-white leading-tight tracking-tight mb-6">
             Financial Tech
             <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
               Reimagined
             </span>
           </h1>
-
-          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
-            Production-ready fintech templates inspired by Wise, Monzo, Revolut, and Binance — ready to deploy.
-          </p>
 
           {/* Category pills */}
           <div className="flex flex-wrap items-center justify-center gap-2.5">
