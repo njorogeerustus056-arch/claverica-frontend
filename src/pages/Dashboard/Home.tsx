@@ -30,15 +30,10 @@ import {
   TrendingUp as TrendingUpIcon,
   Users,
   Calendar,
-  Sun,
-  Moon,
   Zap,
-  Award,
   Target,
   PieChart,
   ArrowRight,
-  Gift,
-  Lock,
 } from "lucide-react";
 import { useAuthStore } from "../../lib/store/auth";
 import { useDashboardData } from "../../hooks/useDashboardData";
@@ -64,16 +59,6 @@ interface WalletBalance {
   available: number;
   pending: number;
   currency: string;
-}
-
-interface Card {
-  id: number;
-  last_four: string;
-  card_type: "virtual" | "physical";
-  status: "active" | "frozen";
-  is_primary: boolean;
-  expiry_date: string;
-  color_scheme: string;
 }
 
 interface UserData {
@@ -132,7 +117,6 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
   return (
     <div className={styles.modalOverlay}>
       <div ref={modalRef} className={styles.modalContainer}>
-        {/* Header */}
         <div className={styles.modalHeader}>
           <div className={styles.modalHeaderLeft}>
             <div className={styles.modalIcon}>
@@ -152,7 +136,6 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
           <button onClick={onClose} className={styles.modalCloseBtn}>✕</button>
         </div>
 
-        {/* Balance */}
         <div className={styles.modalBalance}>
           <p className={styles.modalBalanceLabel}>Total Balance</p>
           <p className={styles.modalBalanceAmount}>
@@ -176,7 +159,6 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
           </div>
         </div>
 
-        {/* Quick Actions */}
         <div className={styles.modalActions}>
           <button onClick={() => { onClose(); navigate("/dashboard/transfer"); }} className={styles.modalActionBtn} style={{ background: 'linear-gradient(135deg, #2563EB, #4F46E5)' }}>
             <Send className={styles.modalActionIcon} />
@@ -188,7 +170,6 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
           </button>
         </div>
 
-        {/* Recent Transactions */}
         <div className={styles.modalRecent}>
           <h4 className={styles.modalRecentTitle}>Recent Activity</h4>
           {recentTx.length > 0 ? (
@@ -239,13 +220,11 @@ export default function Home() {
   const { wallet, transactions, user, loading, error, refetch } = useDashboardData();
   const { pusherConnected } = useSafePusher();
 
-  // Update time every minute
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch cards count
   useEffect(() => {
     const fetchCardsCount = async () => {
       try {
@@ -268,10 +247,8 @@ export default function Home() {
     }
   }, [user]);
 
-  // Manual refresh
   const handleRefresh = () => refetch();
 
-  // Copy account number
   const handleCopyAccount = async () => {
     if (user?.account_number) {
       try {
@@ -291,7 +268,6 @@ export default function Home() {
     }
   };
 
-  // Calculate stats
   const totalIncome = transactions
     .filter(tx => tx.transaction_type === "credit" && tx.status === "completed")
     .reduce((sum, tx) => sum + tx.amount, 0);
@@ -302,7 +278,6 @@ export default function Home() {
 
   const pendingTransactions = transactions.filter(tx => tx.status === "pending");
 
-  // Get greeting based on time
   const getGreeting = () => {
     const hour = currentTime.getHours();
     if (hour < 12) return "Good morning";
@@ -310,17 +285,14 @@ export default function Home() {
     return "Good evening";
   };
 
-  // Format date
   const formatDate = () => {
     return currentTime.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
+      weekday: 'short', 
+      month: 'short', 
       day: 'numeric' 
     });
   };
 
-  // Format time
   const formatTime = () => {
     return currentTime.toLocaleTimeString('en-US', { 
       hour: '2-digit', 
@@ -328,7 +300,6 @@ export default function Home() {
     });
   };
 
-  // Quick Actions
   const quickActions = [
     { icon: Send, label: "Send", color: "#2563EB", action: () => navigate("/dashboard/transfer"), desc: "Transfer money" },
     { icon: Download, label: "Withdraw", color: "#7C3AED", action: () => navigate("/dashboard/transfer"), desc: "To bank account" },
@@ -340,7 +311,6 @@ export default function Home() {
     { icon: BarChart3, label: "Savings", color: "#059669", action: () => navigate("/dashboard/savings"), desc: "Grow money" },
   ];
 
-  // Format transaction date
   const formatTransactionDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -360,31 +330,18 @@ export default function Home() {
     }
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loadingContent}>
-          <div className={styles.loadingHeader}>
-            <div className={styles.loadingGreeting}></div>
-            <div className={styles.loadingTime}></div>
-          </div>
+          <div className={styles.loadingHeader}></div>
           <div className={styles.loadingBalance}></div>
-          <div className={styles.loadingActions}>
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className={styles.loadingAction}></div>
-            ))}
-          </div>
-          <div className={styles.loadingGrid}>
-            <div className={styles.loadingMain}></div>
-            <div className={styles.loadingSidebar}></div>
-          </div>
+          <div className={styles.loadingActions}></div>
         </div>
       </div>
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className={styles.errorContainer}>
@@ -418,74 +375,51 @@ export default function Home() {
       )}
 
       <div className={styles.container}>
-        {/* Hero Section - Monzo Style */}
+        {/* Hero Section - Condensed */}
         <div className={styles.hero}>
           <div className={styles.heroContent}>
-            {/* Top Bar */}
+            {/* Top Bar - Compact */}
             <div className={styles.topBar}>
               <div className={styles.greetingSection}>
                 <h1 className={styles.greeting}>
-                  {getGreeting()}, <span className={styles.userName}>{user?.first_name || "User"}</span>
+                  Hello, <span className={styles.userName}>{user?.first_name || "User"}</span>
                   <span className={styles.wave}>👋</span>
                 </h1>
-                <div className={styles.dateTime}>
-                  <Calendar className={styles.dateTimeIcon} />
-                  <span>{formatDate()}</span>
-                  <Clock className={styles.dateTimeIcon} />
-                  <span>{formatTime()}</span>
+                <div className={styles.accountCompact}>
+                  <div className={styles.accountBadge}>
+                    <Building className={styles.accountIcon} />
+                    <span className={styles.accountNumber}>{user?.account_number || "CLV-***"}</span>
+                    <button onClick={handleCopyAccount} className={styles.copyBtn}>
+                      <Copy />
+                      {copied && <span className={styles.copiedTooltip}>Copied!</span>}
+                    </button>
+                  </div>
+                  {user?.is_verified ? (
+                    <div className={`${styles.verificationBadge} ${styles.verified}`}>
+                      <CheckCircle />
+                      <span>Verified</span>
+                    </div>
+                  ) : (
+                    <div className={`${styles.verificationBadge} ${styles.pending}`}>
+                      <Clock />
+                      <span>Pending</span>
+                    </div>
+                  )}
                 </div>
               </div>
               
-              <div className={styles.actionIcons}>
-                <button onClick={handleRefresh} className={styles.iconBtn} title="Refresh">
-                  <RefreshCw className={loading ? styles.spinning : ''} />
-                </button>
-                {pusherConnected && (
-                  <div className={styles.liveIndicator}>
-                    <span className={styles.liveDot}></span>
-                    <span className={styles.liveText}>Live</span>
-                  </div>
-                )}
-                <button className={styles.iconBtn} title="Notifications" onClick={() => navigate("/dashboard/notifications")}>
-                  <Bell />
-                  {pendingTransactions.length > 0 && <span className={styles.notificationDot}></span>}
-                </button>
-                <button className={styles.iconBtn} title="Settings" onClick={() => navigate("/dashboard/settings")}>
-                  <MoreVertical />
-                </button>
+              <div className={styles.dateTimeCompact}>
+                <div className={styles.date}>{formatDate()}</div>
+                <div className={styles.time}>{formatTime()}</div>
               </div>
             </div>
 
-            {/* Account Info */}
-            <div className={styles.accountInfo}>
-              <div className={styles.accountBadge}>
-                <Building className={styles.accountIcon} />
-                <span className={styles.accountNumber}>{user?.account_number || "CLV-***"}</span>
-                <button onClick={handleCopyAccount} className={styles.copyBtn}>
-                  <Copy />
-                  {copied && <span className={styles.copiedTooltip}>Copied!</span>}
-                </button>
-              </div>
-              {user?.is_verified ? (
-                <div className={`${styles.verificationBadge} ${styles.verified}`}>
-                  <CheckCircle />
-                  <span>Verified Account</span>
-                </div>
-              ) : (
-                <div className={`${styles.verificationBadge} ${styles.pending}`}>
-                  <Clock />
-                  <span>Pending Verification</span>
-                </div>
-              )}
-            </div>
-
-            {/* Balance Card - Wise Style */}
+            {/* Balance Card - Smaller */}
             <div className={styles.balanceCard}>
               <div className={styles.balanceHeader}>
                 <span className={styles.balanceLabel}>Total Balance</span>
                 <button onClick={() => setShowBalance(!showBalance)} className={styles.visibilityToggle}>
                   {showBalance ? <EyeOff /> : <Eye />}
-                  <span>{showBalance ? "Hide" : "Show"}</span>
                 </button>
               </div>
               
@@ -520,32 +454,39 @@ export default function Home() {
                   </div>
                 )}
               </div>
+            </div>
 
-              {/* Progress Bar - Revolut Style */}
-              {wallet?.available > 0 && (
-                <div className={styles.progressBar}>
-                  <div 
-                    className={styles.progressFill} 
-                    style={{ width: `${(wallet.available / wallet.balance) * 100}%` }}
-                  ></div>
+            {/* Action Icons - Moved inside hero */}
+            <div className={styles.heroActions}>
+              <button onClick={handleRefresh} className={styles.iconBtn} title="Refresh">
+                <RefreshCw className={loading ? styles.spinning : ''} />
+              </button>
+              {pusherConnected && (
+                <div className={styles.liveIndicator}>
+                  <span className={styles.liveDot}></span>
+                  <span className={styles.liveText}>Live</span>
                 </div>
               )}
+              <button className={styles.iconBtn} title="Notifications" onClick={() => navigate("/dashboard/notifications")}>
+                <Bell />
+                {pendingTransactions.length > 0 && <span className={styles.notificationDot}></span>}
+              </button>
+              <button className={styles.iconBtn} title="Settings" onClick={() => navigate("/dashboard/settings")}>
+                <MoreVertical />
+              </button>
             </div>
           </div>
         </div>
 
         {/* Main Content */}
         <div className={styles.mainContent}>
-          {/* Quick Actions Grid - Monzo Style */}
+          {/* Quick Actions Grid */}
           <section className={styles.quickActions}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>
                 <Zap className={styles.sectionIcon} />
                 Quick Actions
               </h2>
-              <button className={styles.viewAllBtn} onClick={() => navigate("/dashboard/transfer")}>
-                View All <ChevronRight />
-              </button>
             </div>
             
             <div className={styles.actionGrid}>
@@ -567,7 +508,7 @@ export default function Home() {
 
           {/* Two Column Layout */}
           <div className={styles.twoColumn}>
-            {/* Left Column - Recent Activity */}
+            {/* Left Column */}
             <div className={styles.leftColumn}>
               {/* Global Map Section */}
               <section className={styles.mapSection}>
@@ -663,7 +604,7 @@ export default function Home() {
               </section>
             </div>
 
-            {/* Right Column - Insights & Tools */}
+            {/* Right Column */}
             <div className={styles.rightColumn}>
               {/* Currency Converter */}
               <section className={styles.currencySection}>
@@ -752,26 +693,10 @@ export default function Home() {
                   </div>
                 </div>
               </section>
-
-              {/* Referral Card */}
-              <section className={styles.referralCard}>
-                <div className={styles.referralContent}>
-                  <div className={styles.referralIcon}>
-                    <Gift />
-                  </div>
-                  <div>
-                    <h3 className={styles.referralTitle}>Refer a friend</h3>
-                    <p className={styles.referralDesc}>Get $20 when they make their first transfer</p>
-                  </div>
-                </div>
-                <button className={styles.referralBtn}>
-                  Invite <ArrowRight />
-                </button>
-              </section>
             </div>
           </div>
 
-          {/* Financial Insights - Bottom Section */}
+          {/* Financial Insights */}
           <section className={styles.insightsSection}>
             <h2 className={styles.sectionTitle}>
               <Target className={styles.sectionIcon} />
@@ -792,7 +717,7 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Support CTA - Monzo Style */}
+          {/* Support CTA */}
           <section className={styles.supportSection}>
             <div className={styles.supportContent}>
               <div className={styles.supportLeft}>
