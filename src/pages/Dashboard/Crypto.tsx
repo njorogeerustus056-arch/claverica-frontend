@@ -1,10 +1,10 @@
 // src/pages/dashboard/Crypto.tsx - MODERN BANKING EDITION with KYC Integration
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from '../../lib/store/auth';;
-import { useKYC } from "../../hooks/useKYC";;
-import { KYC_CREATIVES } from "../../lib/utils/kycCreatives";;
-import { KYCProgressBar } from "../../components/crypto/KYCProgressBar";;
+import { useAuthStore } from '../../lib/store/auth';
+import { useKYC } from "../../hooks/useKYC";
+import { KYC_CREATIVES } from "../../lib/utils/kycCreatives";
+import { KYCProgressBar } from "../../components/crypto/KYCProgressBar";
 import { 
   TrendingUp, TrendingDown, Plus, Send, ArrowUpRight, ArrowDownRight, 
   Wallet, Eye, EyeOff, Sparkles, Zap, Shield, AlertCircle, CreditCard,
@@ -15,17 +15,17 @@ import {
   Bitcoin, Ethereum, DollarSign, Euro, PoundSterling, Banknote
 } from "lucide-react";
 
-// Import components
-import { PriceTicker } from "../../components/crypto/PriceTicker";;
-import { TransactionHistory } from "../../components/crypto/TransactionHistory";;
-import { QuickActions } from "@/components/crypto/QuickActions";
-import { AssetAllocationChart } from "@/components/crypto/AssetAllocationChart";
-import { CryptoWalletCard } from "@/components/crypto/CryptoWalletCard";
-import { FiatAccountCard } from "@/components/crypto/FiatAccountCard";
+// Import components - FIXED: Changed from @/ to relative paths
+import { PriceTicker } from "../../components/crypto/PriceTicker";
+import { TransactionHistory } from "../../components/crypto/TransactionHistory";
+import { QuickActions } from "../../components/crypto/QuickActions";
+import { AssetAllocationChart } from "../../components/crypto/AssetAllocationChart";
+import { CryptoWalletCard } from "../../components/crypto/CryptoWalletCard";
+import { FiatAccountCard } from "../../components/crypto/FiatAccountCard";
 
 // Import data
-import { cryptoCoins } from "@/data/cryptoCoins";
-import { fiatPlatforms } from "@/data/fiatPlatforms";
+import { cryptoCoins } from "../../data/cryptoCoins";
+import { fiatPlatforms } from "../../data/fiatPlatforms";
 
 interface CryptoCoin {
   symbol: string;
@@ -216,72 +216,116 @@ export default function Crypto() {
     return true;
   }, [isAuthenticated, isVerified, checkRequirement, navigate, kycThreshold]);
 
-  // ========== ACTION HANDLERS ==========
+  // ========== ACTION HANDLERS - FIXED WITH TRY/CATCH AND NULL CHECKS ==========
   const handleCreateWallet = async () => {
-    const amount = 0;
-    const action = 'create_wallet';
-    const allowed = await handleKYCRequiredAction(action, amount);
-    if (allowed) {
-      navigate('/dashboard/crypto/create-wallet');
+    try {
+      const amount = 0;
+      const action = 'create_wallet';
+      const allowed = await handleKYCRequiredAction(action, amount);
+      if (allowed) {
+        navigate('/dashboard/crypto/create-wallet');
+      }
+    } catch (error) {
+      console.error('Error in handleCreateWallet:', error);
     }
   };
 
   const handleDeposit = async () => {
-    const amount = 1000;
-    const action = 'deposit';
-    const allowed = await handleKYCRequiredAction(action, amount);
-    if (allowed) {
-      navigate('/dashboard/crypto/deposit');
+    try {
+      const amount = 1000;
+      const action = 'deposit';
+      const allowed = await handleKYCRequiredAction(action, amount);
+      if (allowed) {
+        navigate('/dashboard/crypto/deposit');
+      }
+    } catch (error) {
+      console.error('Error in handleDeposit:', error);
     }
   };
 
   const handleWithdraw = async () => {
-    const amount = 500;
-    const action = 'withdraw';
-    const allowed = await handleKYCRequiredAction(action, amount);
-    if (allowed) {
-      navigate('/dashboard/crypto/withdraw');
+    try {
+      const amount = 500;
+      const action = 'withdraw';
+      const allowed = await handleKYCRequiredAction(action, amount);
+      if (allowed) {
+        navigate('/dashboard/crypto/withdraw');
+      }
+    } catch (error) {
+      console.error('Error in handleWithdraw:', error);
     }
   };
 
   const handleTransfer = async () => {
-    const amount = 2000;
-    const action = 'transfer';
-    const allowed = await handleKYCRequiredAction(action, amount);
-    if (allowed) {
-      navigate('/dashboard/crypto/transfer');
+    try {
+      const amount = 2000;
+      const action = 'transfer';
+      const allowed = await handleKYCRequiredAction(action, amount);
+      if (allowed) {
+        navigate('/dashboard/crypto/transfer');
+      }
+    } catch (error) {
+      console.error('Error in handleTransfer:', error);
     }
   };
 
   const handleBuyCrypto = async (coin: CryptoCoin, amount: number) => {
-    const action = 'buy';
-    const allowed = await handleKYCRequiredAction(action, amount, coin.symbol, `Buy ${coin.symbol} instantly`);
-    if (allowed) {
-      navigate('/dashboard/crypto/buy', { state: { coin, amount } });
+    try {
+      if (!coin || !amount) {
+        console.error('Missing coin or amount for buy action');
+        return;
+      }
+      const action = 'buy';
+      const allowed = await handleKYCRequiredAction(action, amount, coin.symbol, `Buy ${coin.symbol} instantly`);
+      if (allowed) {
+        navigate('/dashboard/crypto/buy', { state: { coin, amount } });
+      }
+    } catch (error) {
+      console.error('Error in handleBuyCrypto:', error);
     }
   };
 
   const handleSendCrypto = async (coin: CryptoCoin, amount: number) => {
-    const action = 'send';
-    const allowed = await handleKYCRequiredAction(action, amount, coin.symbol, `Send ${coin.symbol} worldwide`);
-    if (allowed) {
-      navigate('/dashboard/crypto/send', { state: { coin, amount } });
-    }
-  };
-
-  const handleAddFunds = async (platform: FiatPlatform, amount: number) => {
-    const action = 'deposit';
-    const allowed = await handleKYCRequiredAction(action, amount, platform.name, `Add funds to ${platform.name}`);
-    if (allowed) {
-      navigate('/dashboard/fiat/deposit', { state: { platform, amount } });
+    try {
+      if (!coin || !amount) {
+        console.error('Missing coin or amount for send action');
+        return;
+      }
+      const action = 'send';
+      const allowed = await handleKYCRequiredAction(action, amount, coin.symbol, `Send ${coin.symbol} worldwide`);
+      if (allowed) {
+        navigate('/dashboard/crypto/send', { state: { coin, amount } });
+      }
+    } catch (error) {
+      console.error('Error in handleSendCrypto:', error);
     }
   };
 
   const handleViewWallet = async (coin: CryptoCoin) => {
-    const action = 'view_wallet';
-    const allowed = await handleKYCRequiredAction(action, coin.valueUSD, coin.symbol, `View ${coin.symbol} wallet details`);
-    if (allowed) {
-      navigate('/dashboard/crypto/wallet', { state: { coin } });
+    try {
+      if (!coin) {
+        console.error('Missing coin for view wallet action');
+        return;
+      }
+      const action = 'view_wallet';
+      const allowed = await handleKYCRequiredAction(action, coin.valueUSD, coin.symbol, `View ${coin.symbol} wallet details`);
+      if (allowed) {
+        navigate('/dashboard/crypto/wallet', { state: { coin } });
+      }
+    } catch (error) {
+      console.error('Error in handleViewWallet:', error);
+    }
+  };
+
+  const handleAddFunds = async (platform: FiatPlatform, amount: number) => {
+    try {
+      const action = 'deposit';
+      const allowed = await handleKYCRequiredAction(action, amount, platform.name, `Add funds to ${platform.name}`);
+      if (allowed) {
+        navigate('/dashboard/fiat/deposit', { state: { platform, amount } });
+      }
+    } catch (error) {
+      console.error('Error in handleAddFunds:', error);
     }
   };
 
@@ -896,7 +940,3 @@ export default function Crypto() {
     </div>
   );
 }
-
-
-
-

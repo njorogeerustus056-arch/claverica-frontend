@@ -292,7 +292,7 @@ function InsuranceContent() {
     });
   }, []);
 
-  // Simplified submission to KYC dumpster
+  // Simplified submission to KYC dumpster - ✅ FIXED URL
   const handleGetCoverage = async (planId: string) => {
     const plan = insurancePlans.find(p => p.id === planId);
     if (!plan) return;
@@ -315,7 +315,8 @@ function InsuranceContent() {
         timestamp: new Date().toISOString()
       };
       
-      const response = await fetch('/api/kyc-spec/collect/', {
+      // ✅ FIXED: Changed from 'kyc-spec' to 'kyc_spec' (underscore, not hyphen)
+      const response = await fetch('/api/kyc_spec/collect/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
