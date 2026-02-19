@@ -1,15 +1,21 @@
-// src/lib/store/auth.ts - FIXED VERSION WITH CORRECT ENDPOINTS
+// src/lib/store/auth.ts - COMPLETELY FIXED VERSION
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// ✅ FIXED: Define API_URL directly
-const API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
+// ✅ CRITICAL FIX: Remove any trailing /api from the URL
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
+// Remove any trailing /api or /api/ from the URL
+const API_URL = RAW_API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
 
-// Helper function to get full API URL
+console.log('🔧 Auth Store - Raw API URL:', RAW_API_URL);
+console.log('🔧 Auth Store - Cleaned API URL:', API_URL);
+
+// Helper function to get full API URL - now adds /api prefix automatically
 const getApiUrl = (endpoint: string): string => {
-  const base = API_URL.replace(/\/$/, "");
-  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-  return `${base}${cleanEndpoint}`;
+  // Remove leading slash if present
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+  // Always add /api/ prefix
+  return `${API_URL}/api/${cleanEndpoint}`;
 };
 
 export interface User {
@@ -73,15 +79,19 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          // ✅ FIXED: Use /api/token/ endpoint
-          const response = await fetch(getApiUrl('/api/token/'), {
+          // ✅ FIXED: Use "token/" not "/api/token/"
+          const url = getApiUrl('token/');
+          console.log('🔐 Login URL:', url);
+          
+          const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
           });
 
           if (!response.ok) {
-            const error = await response.json();
+            const error = await response.json().catch(() => ({}));
+            console.error('Login failed:', error);
             throw new Error(error.message || error.detail || 'Login failed');
           }
 
@@ -97,7 +107,10 @@ export const useAuthStore = create<AuthStore>()(
             // Fetch user data after successful login
             let userData = null;
             try {
-              const userResponse = await fetch(getApiUrl('/api/users/me/'), {
+              const userUrl = getApiUrl('users/me/');
+              console.log('👤 Fetching user profile from:', userUrl);
+              
+              const userResponse = await fetch(userUrl, {
                 headers: { 
                   'Authorization': `Bearer ${data.access}`,
                   'Content-Type': 'application/json'
@@ -105,9 +118,10 @@ export const useAuthStore = create<AuthStore>()(
               });
               if (userResponse.ok) {
                 userData = await userResponse.json();
+                console.log('✅ User data fetched:', userData);
               }
             } catch (e) {
-              console.warn('Could not fetch user data');
+              console.warn('Could not fetch user data:', e);
             }
 
             set({
@@ -161,8 +175,11 @@ export const useAuthStore = create<AuthStore>()(
         if (!tokens?.refresh) return false;
 
         try {
-          // ✅ FIXED: Use /api/token/refresh/ endpoint
-          const response = await fetch(getApiUrl('/api/token/refresh/'), {
+          // ✅ FIXED: Use "token/refresh/" not "/api/token/refresh/"
+          const url = getApiUrl('token/refresh/');
+          console.log('🔄 Refreshing token at:', url);
+          
+          const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refresh: tokens.refresh }),
@@ -183,7 +200,8 @@ export const useAuthStore = create<AuthStore>()(
           }
 
           return true;
-        } catch {
+        } catch (error) {
+          console.error('Refresh token error:', error);
           get().clearAuth();
           return false;
         }
@@ -219,8 +237,11 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         try {
-          // ✅ FIXED: Use /api/users/me/ endpoint
-          const response = await fetch(getApiUrl('/api/users/me/'), {    
+          // ✅ FIXED: Use "users/me/" not "/api/users/me/"
+          const url = getApiUrl('users/me/');
+          console.log('🔍 Verifying token at:', url);
+          
+          const response = await fetch(url, {    
             headers: {
               Authorization: `Bearer ${tokens.access}`,
               'Content-Type': 'application/json',
