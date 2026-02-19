@@ -1,16 +1,19 @@
-// src/lib/store/auth.ts - FIXED VERSION
+// src/lib/store/auth.ts - COMPLETELY FIXED VERSION
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// ✅ FIXED: Match api.ts - ONLY remove trailing slash, keep /api if present
-const API_URL = (import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app').replace(/\/$/, '');
+// ✅ FIXED: Match api.ts - Remove any trailing /api from the URL
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
+// Remove any trailing /api or /api/ from the URL
+const API_URL = RAW_API_URL.replace(/\/api\/?$/, '').replace(/\/$/, '');
 
-console.log('🔧 Auth Store - API URL:', API_URL);
+console.log('🔧 Auth Store - Raw API URL:', RAW_API_URL);
+console.log('🔧 Auth Store - Cleaned API URL:', API_URL);
 
-// Helper function to get full API URL - matches api.ts pattern
+// Helper function to get full API URL - ensures /api prefix
 const getApiUrl = (endpoint: string): string => {
-  // Ensure endpoint starts with /
-  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  // Ensure endpoint starts with /api/
+  const cleanEndpoint = endpoint.startsWith('/api/') ? endpoint : `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
   return `${API_URL}${cleanEndpoint}`;
 };
 
@@ -75,8 +78,8 @@ export const useAuthStore = create<AuthStore>()(
       login: async (email: string, password: string): Promise<boolean> => {
         set({ loading: true });
         try {
-          // ✅ FIXED: Use /api/token/ endpoint
-          const url = getApiUrl('/api/token/');
+          // ✅ FIXED: Use "token/" which will become "/api/token/"
+          const url = getApiUrl('/token/');
           console.log('🔐 Login URL:', url);
           
           const response = await fetch(url, {
@@ -103,7 +106,7 @@ export const useAuthStore = create<AuthStore>()(
             // Fetch user data after successful login
             let userData = null;
             try {
-              const userUrl = getApiUrl('/api/users/me/');
+              const userUrl = getApiUrl('/users/me/');
               console.log('👤 Fetching user profile from:', userUrl);
               
               const userResponse = await fetch(userUrl, {
@@ -171,8 +174,8 @@ export const useAuthStore = create<AuthStore>()(
         if (!tokens?.refresh) return false;
 
         try {
-          // ✅ FIXED: Use /api/token/refresh/ endpoint
-          const url = getApiUrl('/api/token/refresh/');
+          // ✅ FIXED: Use "token/refresh/" which will become "/api/token/refresh/"
+          const url = getApiUrl('/token/refresh/');
           console.log('🔄 Refreshing token at:', url);
           
           const response = await fetch(url, {
@@ -233,8 +236,8 @@ export const useAuthStore = create<AuthStore>()(
         }
 
         try {
-          // ✅ FIXED: Use /api/users/me/ endpoint
-          const url = getApiUrl('/api/users/me/');
+          // ✅ FIXED: Use "users/me/" which will become "/api/users/me/"
+          const url = getApiUrl('/users/me/');
           console.log('🔍 Verifying token at:', url);
           
           const response = await fetch(url, {    

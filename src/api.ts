@@ -84,7 +84,9 @@ export async function apiFetch<T = any>(
   options: RequestInit = {},
   retryCount = 0
 ): Promise<T> {
-  const url = `${API_URL}${endpoint}`;
+  // ✅ Ensure endpoint starts with /api/
+  const cleanEndpoint = endpoint.startsWith('/api/') ? endpoint : `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+  const url = `${API_URL}${cleanEndpoint}`;
   const token = getToken();
 
   // ✅ Log the URL for debugging
@@ -114,7 +116,6 @@ export async function apiFetch<T = any>(
       const refreshToken = getRefreshToken();
       if (refreshToken) {
         try {
-          // ✅ FIXED: Use /api/token/refresh/
           const refreshResponse = await fetch(`${API_URL}/api/token/refresh/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -171,7 +172,8 @@ export async function uploadFormData<T = any>(
   endpoint: string,
   formData: FormData
 ): Promise<T> {
-  const url = `${API_URL}${endpoint}`;
+  const cleanEndpoint = endpoint.startsWith('/api/') ? endpoint : `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
+  const url = `${API_URL}${cleanEndpoint}`;
   const token = getToken();
 
   const headers: HeadersInit = {};
@@ -179,7 +181,6 @@ export async function uploadFormData<T = any>(
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
-  // Don't set Content-Type for FormData - browser sets it automatically with boundary
 
   const response = await fetch(url, {
     method: "POST",
@@ -199,38 +200,38 @@ export async function uploadFormData<T = any>(
   return response.json();
 }
 
-// ✅ FIXED: Authentication API functions - ALL with /api prefix
+// ✅ FIXED: Authentication API functions - now all use /api prefix
 export const authAPI = {
   register: async (data: any) => {
-    return apiFetch("/api/accounts/register/", {
+    return apiFetch("/accounts/register/", {  // Will be transformed to /api/accounts/register/
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   verifyActivation: async (data: { email: string; activation_code: string }) => {
-    return apiFetch("/api/accounts/activate/", {
+    return apiFetch("/accounts/activate/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   resendActivation: async (data: { email: string }) => {
-    return apiFetch("/api/accounts/resend-activation/", {
+    return apiFetch("/accounts/resend-activation/", {  // ✅ Will become /api/accounts/resend-activation/
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   login: async (email: string, password: string) => {
-    return apiFetch("/api/token/", {
+    return apiFetch("/token/", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
   },
 
   logout: async () => {
-    const result = await apiFetch("/api/accounts/logout/", {
+    const result = await apiFetch("/accounts/logout/", {
       method: "POST",
     });
     removeToken();
@@ -238,32 +239,32 @@ export const authAPI = {
   },
 
   getProfile: async () => {
-    return apiFetch("/api/users/me/");
+    return apiFetch("/users/me/");
   },
 
   refresh: async (refreshToken: string) => {
-    return apiFetch("/api/token/refresh/", {
+    return apiFetch("/token/refresh/", {
       method: "POST",
       body: JSON.stringify({ refresh: refreshToken }),
     });
   },
 
   passwordReset: async (data: { email: string }) => {
-    return apiFetch("/api/accounts/password/reset/", {
+    return apiFetch("/accounts/password/reset/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   passwordResetConfirm: async (data: { email: string; otp: string; new_password: string; confirm_password: string }) => {
-    return apiFetch("/api/accounts/password/reset/confirm/", {
+    return apiFetch("/accounts/password/reset/confirm/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   passwordChange: async (data: { current_password: string; new_password: string; confirm_password: string }) => {
-    return apiFetch("/api/accounts/password/change/", {
+    return apiFetch("/accounts/password/change/", {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -274,7 +275,7 @@ export const authAPI = {
 export const notificationAPI = {
   getAll: async () => {
     try {
-      const data = await apiFetch<any>("/api/notifications/");
+      const data = await apiFetch("/notifications/");
       if (Array.isArray(data)) {
         return data;
       } else if (data && Array.isArray(data.notifications)) {
@@ -296,7 +297,7 @@ export const notificationAPI = {
 
   getUnread: async () => {
     try {
-      const data = await apiFetch<any>("/api/notifications/unread/");
+      const data = await apiFetch("/notifications/unread/");
       if (Array.isArray(data)) {
         return data;
       } else if (data && Array.isArray(data.notifications)) {
@@ -315,10 +316,10 @@ export const notificationAPI = {
   },
 
   getUnreadCount: async () => {
-    console.log('🔍 [API DEBUG] Calling /api/notifications/unread-count/');
+    console.log('🔍 [API DEBUG] Calling /notifications/unread-count/');
     
     try {
-      const data = await apiFetch<any>("/api/notifications/unread-count/");
+      const data = await apiFetch("/notifications/unread-count/");
       
       console.log('✅ [API DEBUG] Raw unread count response:', data);
       
@@ -369,7 +370,7 @@ export const notificationAPI = {
 
   markAsRead: async (notificationId: number) => {
     try {
-      return await apiFetch(`/api/notifications/${notificationId}/mark-read/`, {
+      return await apiFetch(`/notifications/${notificationId}/mark-read/`, {
         method: "POST",
       });
     } catch (error: any) {
@@ -383,7 +384,7 @@ export const notificationAPI = {
 
   markAllAsRead: async () => {
     try {
-      return await apiFetch("/api/notifications/mark-all-read/", {
+      return await apiFetch("/notifications/mark-all-read/", {
         method: "POST",
       });
     } catch (error: any) {
@@ -396,81 +397,81 @@ export const notificationAPI = {
   },
 
   getPreferences: async () => {
-    return apiFetch("/api/notifications/preferences/");
+    return apiFetch("/notifications/preferences/");
   },
 
   updatePreferences: async (data: any) => {
-    return apiFetch("/api/notifications/preferences/", {
+    return apiFetch("/notifications/preferences/", {
       method: "PUT",
       body: JSON.stringify(data),
     });
   },
 
   getAdminAlerts: async () => {
-    return apiFetch("/api/notifications/admin/alerts/");
+    return apiFetch("/notifications/admin/alerts/");
   },
 
   getAdminActionRequired: async () => {
-    return apiFetch<{ action_required_count: number }>("/api/notifications/admin/action-required/");
+    return apiFetch<{ action_required_count: number }>("/notifications/admin/action-required/");
   }
 };
 
 // ✅ FIXED: Wallet/Account API functions
 export const walletAPI = {
   getBalance: async () => {
-    return apiFetch("/api/transactions/wallet/balance/");
+    return apiFetch("/transactions/wallet/balance/");
   },
 
   getTransactions: async () => {
-    return apiFetch("/api/transactions/recent/");
+    return apiFetch("/transactions/recent/");
   }
 };
 
 // ✅ FIXED: Transfer API functions
 export const transferAPI = {
   initiateTransfer: async (data: any) => {
-    return apiFetch("/api/compliance/transfers/", {
+    return apiFetch("/compliance/transfers/", {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   getTransfers: async () => {
-    return apiFetch("/api/compliance/transfers/");
+    return apiFetch("/compliance/transfers/");
   },
 
   getTransfer: async (id: number) => {
-    return apiFetch(`/api/compliance/transfers/${id}/`);
+    return apiFetch(`/compliance/transfers/${id}/`);
   },
 
   verifyTAC: async (transferId: number, tacCode: string) => {
-    return apiFetch(`/api/compliance/transfers/${transferId}/verify-tac/`, {
+    return apiFetch(`/compliance/transfers/${transferId}/verify-tac/`, {
       method: "POST",
       body: JSON.stringify({ tac_code: tacCode }),
     });
   },
 
   getTransferHistory: async (page = 1) => {
-    return apiFetch(`/api/compliance/transfers/?page=${page}`);
+    return apiFetch(`/compliance/transfers/?page=${page}`);
   }
 };
 
 // ✅ FIXED: KYC API functions
 export const kycAPI = {
   submitDocuments: async (data: FormData) => {
-    return uploadFormData("/api/kyc/documents/", data);
+    return uploadFormData("/kyc/documents/", data);
   },
 
   getStatus: async () => {
-    return apiFetch("/api/kyc/documents/status/");
+    return apiFetch("/kyc/documents/status/");
   },
 
   checkRequirement: async (amount: number, serviceType: string = 'transfer') => {
-    return apiFetch(`/api/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
+    return apiFetch(`/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
   },
 
   getSubmissions: async () => {
-    return apiFetch("/api/kyc/documents/submissions/");
+    return apiFetch("/kyc/documents/submissions/");
   }
 };
 
