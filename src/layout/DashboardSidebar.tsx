@@ -82,7 +82,9 @@ export default function DashboardSidebar({ isOpen, close }: Props) {
               <Building size={20} className={styles.logoIconSvg} />
             </div>
             <div>
-              <h1 className={styles.logoText}>ClaveRica</h1>
+              <h1 className={styles.logoText}>
+                <span className={styles.brandGradient}>ClaveRica</span>
+              </h1>
               <p className={styles.tagline}>Smart Money, Worldwide</p>
             </div>
           </div>

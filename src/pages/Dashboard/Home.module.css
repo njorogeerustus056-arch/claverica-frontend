@@ -109,12 +109,15 @@
   color: var(--white);
 }
 
+/* FIXED: User name now pure white for maximum readability */
 .userName {
-  background: linear-gradient(135deg, var(--gold), var(--purple));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #FFFFFF;
   font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
 }
 
 .wave {
@@ -207,16 +210,21 @@
   border: 1px solid;
 }
 
+/* FIXED: Verified badge - white text on teal */
 .verified {
-  background: rgba(30, 111, 111, 0.2);
-  border-color: rgba(30, 111, 111, 0.3);
-  color: var(--teal);
+  background: rgba(30, 111, 111, 0.15);
+  border-color: var(--teal);
+  color: #FFFFFF;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+/* FIXED: Pending badge - navy text on gold */
 .pending {
-  background: rgba(197, 160, 40, 0.2);
-  border-color: rgba(197, 160, 40, 0.3);
-  color: var(--gold);
+  background: rgba(197, 160, 40, 0.15);
+  border-color: var(--gold);
+  color: #0A2540;
+  font-weight: 600;
 }
 
 /* Date Time Compact */
@@ -885,14 +893,24 @@
   font-weight: 600;
 }
 
+/* FIXED: Verified badge in status section */
 .verifiedBadge {
-  background: rgba(30, 111, 111, 0.1);
-  color: var(--teal);
+  background: var(--teal);
+  color: #FFFFFF;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
+/* FIXED: Pending badge in status section */
 .pendingBadge {
-  background: rgba(197, 160, 40, 0.1);
-  color: var(--gold);
+  background: var(--gold);
+  color: #0A2540;
+  padding: 0.25rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 /* ===== INSIGHTS SECTION ===== */
@@ -1622,11 +1640,13 @@
 }
 
 /* ===== UTILITY CLASSES ===== */
+/* FIXED: Greeting gradient - gold to white for better visibility */
 .text-gradient-gold-purple {
-  background: linear-gradient(135deg, var(--gold), var(--purple));
+  background: linear-gradient(135deg, #FFD700, #FFFFFF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  font-weight: 700;
 }
 
 .badge-premium {
