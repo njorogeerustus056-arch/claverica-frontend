@@ -107,13 +107,6 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
 
   const recentTx = transactions.slice(0, 3);
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  };
-
   return (
     <div className={styles.modalOverlay}>
       <div ref={modalRef} className={styles.modalContainer}>
@@ -124,7 +117,7 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
             </div>
             <div>
               <h3 className={styles.modalTitle}>
-                <span className="text-gradient-gold-purple">{getGreeting()}</span>, {user?.first_name || "User"}
+                <span className="text-gradient-gold-purple">Hello</span>, {user?.first_name || "User"}
               </h3>
               <div className={styles.modalAccount}>
                 <span className={styles.modalAccountNumber}>{user?.account_number?.slice(-6) || "******"}</span>
@@ -226,15 +219,12 @@ export default function Home() {
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [cardsCount, setCardsCount] = useState(0);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  // Removed currentTime state as it's no longer needed
 
   const { wallet, transactions, user, loading, error, refetch } = useDashboardData();
   const { pusherConnected } = useSafePusher();
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
-    return () => clearInterval(timer);
-  }, []);
+  // Removed the time update useEffect
 
   useEffect(() => {
     const fetchCardsCount = async () => {
@@ -289,15 +279,12 @@ export default function Home() {
 
   const pendingTransactions = transactions.filter(tx => tx.status === "pending");
 
-  const getGreeting = () => {
-    const hour = currentTime.getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  };
+  // Removed getGreeting function
 
+  // Simplified date/time - using current date from new Date()
   const formatDate = () => {
-    return currentTime.toLocaleDateString('en-US', { 
+    const now = new Date();
+    return now.toLocaleDateString('en-US', { 
       weekday: 'short', 
       month: 'short', 
       day: 'numeric' 
@@ -305,7 +292,8 @@ export default function Home() {
   };
 
   const formatTime = () => {
-    return currentTime.toLocaleTimeString('en-US', { 
+    const now = new Date();
+    return now.toLocaleTimeString('en-US', { 
       hour: '2-digit', 
       minute: '2-digit' 
     });
@@ -393,7 +381,8 @@ export default function Home() {
             <div className={styles.topBar}>
               <div className={styles.greetingSection}>
                 <h1 className={styles.greeting}>
-                  <span className="text-gradient-gold-purple">{getGreeting()}</span>, <span className={styles.userName}>{user?.first_name || "User"}</span>
+                  <span className="text-gradient-gold-purple">Hello</span>
+                  <span className={styles.userName}>, {user?.first_name || "User"}</span>
                   <span className={styles.wave}>👋</span>
                 </h1>
                 <div className={styles.accountCompact}>
