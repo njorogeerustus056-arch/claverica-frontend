@@ -1,32 +1,28 @@
 // src/pages/features/FeatureDetails.tsx
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { 
   Send, Wallet, PiggyBank, CreditCard, Receipt, Gift,
   ArrowRight, CheckCircle, TrendingUp, Globe, Shield,
   Zap, Clock, Users, DollarSign, Lock, BarChart3, Award, 
-  RefreshCw, Bell, ChevronRight, Smartphone, Star, Play,
-  Calculator, Download, Eye, EyeOff, ShieldCheck, Building,
-  Plane, Wifi, QrCode, BarChart, PieChart, TrendingDown,
-  Percent, Coins, Cpu, Battery, Cloud, Target, FileText,
+  RefreshCw, Bell, ChevronRight, Smartphone, Star,
+  Calculator, Download, ShieldCheck, Building,
+  Plane, QrCode, BarChart, PieChart, TrendingDown,
+  Percent, Coins, Cpu, Target, FileText,
   Calendar, MapPin, MessageCircle, Headphones, HelpCircle,
   Settings, Repeat, Divide, Plus, Minus, ShoppingBag,
   Ticket, Hotel, Car, Coffee, Utensils, Film, Music,
   BookOpen, GamepadIcon, Phone, Mail, Monitor, Sparkles,
-  Heart, Shield as ShieldIcon, Zap as ZapIcon, Users as UsersIcon
+  Heart
 } from "lucide-react";
-
-// Mock Link component - replace with your actual router Link
-const Link = ({ to, children, className }: any) => (
-  <a href={to} className={className}>{children}</a>
-);
+import styles from './FeatureDetails.module.css';
 
 export default function FeatureDetails() {
   const [activeFeature, setActiveFeature] = useState("transfers");
   const [transferAmount, setTransferAmount] = useState(1000);
   const [fromCurrency, setFromCurrency] = useState("USD");
   const [toCurrency, setToCurrency] = useState("GBP");
-  const [showDemo, setShowDemo] = useState(false);
   const [cryptoAmount, setCryptoAmount] = useState(100);
   const [activeSavingsGoal, setActiveSavingsGoal] = useState("emergency");
   const [selectedCardTier, setSelectedCardTier] = useState("premium");
@@ -102,39 +98,35 @@ export default function FeatureDetails() {
     transfers: {
       title: "Global Money Transfers",
       subtitle: "Send money worldwide instantly with real-time exchange rates",
-      gradient: "from-blue-500 to-cyan-500",
-      icon: <Send className="w-8 h-8" />,
+      gradient: styles.gradientPurple,
+      icon: <Send className={styles.featureNavIcon} />,
       heroImage: "💸",
       stats: [
-        { value: "180+", label: "Countries", icon: <Globe />, detail: "Global coverage" },
-        { value: "<30s", label: "Transfer Time", icon: <Zap />, detail: "Instant arrival" },
-        { value: "$0", label: "Hidden Fees", icon: <Shield />, detail: "Transparent pricing" },
-        { value: "150+", label: "Currencies", icon: <DollarSign />, detail: "Wide support" }
+        { value: "180+", label: "Countries", icon: <Globe className={styles.statIcon} />, detail: "Global coverage" },
+        { value: "<30s", label: "Transfer Time", icon: <Zap className={styles.statIcon} />, detail: "Instant arrival" },
+        { value: "$0", label: "Hidden Fees", icon: <Shield className={styles.statIcon} />, detail: "Transparent pricing" },
+        { value: "150+", label: "Currencies", icon: <DollarSign className={styles.statIcon} />, detail: "Wide support" }
       ],
       benefits: [
         { 
-          icon: <Zap />, 
+          icon: <Zap className={styles.benefitIcon} />, 
           title: "Lightning-Fast Transfers", 
-          desc: "Send money instantly to 180+ countries. Real-time processing ensures funds arrive in under 30 seconds.",
-          color: "from-blue-400 to-cyan-400"
+          desc: "Send money instantly to 180+ countries. Real-time processing ensures funds arrive in under 30 seconds."
         },
         { 
-          icon: <Globe />, 
+          icon: <Globe className={styles.benefitIcon} />, 
           title: "Global Reach", 
-          desc: "Access every major currency and local payment method worldwide. From USD to KES, we've got you covered.",
-          color: "from-blue-500 to-indigo-500"
+          desc: "Access every major currency and local payment method worldwide. From USD to KES, we've got you covered."
         },
         { 
-          icon: <Calculator />, 
+          icon: <Calculator className={styles.benefitIcon} />, 
           title: "Transparent Pricing", 
-          desc: "See exact exchange rates and fees upfront. No hidden charges, no surprises. Mid-market rates guaranteed.",
-          color: "from-cyan-500 to-blue-500"
+          desc: "See exact exchange rates and fees upfront. No hidden charges, no surprises. Mid-market rates guaranteed."
         },
         { 
-          icon: <ShieldCheck />, 
+          icon: <ShieldCheck className={styles.benefitIcon} />, 
           title: "Bank-Level Security", 
-          desc: "256-bit encryption, real-time fraud monitoring, and FDIC insurance on all transfers.",
-          color: "from-indigo-500 to-purple-500"
+          desc: "256-bit encryption, real-time fraud monitoring, and FDIC insurance on all transfers."
         }
       ],
       howItWorks: [
@@ -142,25 +134,25 @@ export default function FeatureDetails() {
           step: 1,
           title: "Select Destination",
           description: "Choose from 180+ countries and 150+ currencies",
-          icon: <Globe />
+          icon: <Globe className={styles.howItWorksIcon} />
         },
         {
           step: 2,
           title: "Enter Amount",
           description: "See live exchange rate and total fees instantly",
-          icon: <Calculator />
+          icon: <Calculator className={styles.howItWorksIcon} />
         },
         {
           step: 3,
           title: "Verify & Send",
           description: "Confirm with biometric authentication",
-          icon: <Shield />
+          icon: <Shield className={styles.howItWorksIcon} />
         },
         {
           step: 4,
           title: "Money Arrives",
           description: "Recipient gets funds in under 30 seconds",
-          icon: <CheckCircle />
+          icon: <CheckCircle className={styles.howItWorksIcon} />
         }
       ],
       features: [
@@ -216,39 +208,35 @@ export default function FeatureDetails() {
     crypto: {
       title: "Crypto Trading",
       subtitle: "Trade 50+ cryptocurrencies 24/7 with professional tools",
-      gradient: "from-purple-500 to-pink-500",
-      icon: <Wallet className="w-8 h-8" />,
+      gradient: styles.gradientGoldPurple,
+      icon: <Wallet className={styles.featureNavIcon} />,
       heroImage: "₿",
       stats: [
-        { value: "50+", label: "Cryptocurrencies", icon: <Coins />, detail: "Wide selection" },
-        { value: "24/7", label: "Trading", icon: <Clock />, detail: "Always open" },
-        { value: "95%", label: "Cold Storage", icon: <Lock />, detail: "Maximum security" },
-        { value: "<1ms", label: "Trade Speed", icon: <Zap />, detail: "Instant execution" }
+        { value: "50+", label: "Cryptocurrencies", icon: <Coins className={styles.statIcon} />, detail: "Wide selection" },
+        { value: "24/7", label: "Trading", icon: <Clock className={styles.statIcon} />, detail: "Always open" },
+        { value: "95%", label: "Cold Storage", icon: <Lock className={styles.statIcon} />, detail: "Maximum security" },
+        { value: "<1ms", label: "Trade Speed", icon: <Zap className={styles.statIcon} />, detail: "Instant execution" }
       ],
       benefits: [
         { 
-          icon: <Lock />, 
+          icon: <Lock className={styles.benefitIcon} />, 
           title: "Maximum Security", 
-          desc: "95% of assets in cold storage with multi-signature protection. $250M insurance coverage.",
-          color: "from-purple-500 to-indigo-500"
+          desc: "95% of assets in cold storage with multi-signature protection. $250M insurance coverage."
         },
         { 
-          icon: <Zap />, 
+          icon: <Zap className={styles.benefitIcon} />, 
           title: "Institutional-Grade Trading", 
-          desc: "Execute trades in milliseconds with our high-performance matching engine. Zero slippage.",
-          color: "from-pink-500 to-rose-500"
+          desc: "Execute trades in milliseconds with our high-performance matching engine. Zero slippage."
         },
         { 
-          icon: <BarChart3 />, 
+          icon: <BarChart3 className={styles.benefitIcon} />, 
           title: "Professional Tools", 
-          desc: "Advanced charting, 100+ indicators, market depth, and real-time analytics.",
-          color: "from-indigo-500 to-blue-500"
+          desc: "Advanced charting, 100+ indicators, market depth, and real-time analytics."
         },
         { 
-          icon: <ShieldCheck />, 
+          icon: <ShieldCheck className={styles.benefitIcon} />, 
           title: "Fully Insured", 
-          desc: "Your crypto holdings are insured against theft, hacks, and unauthorized access.",
-          color: "from-rose-500 to-pink-500"
+          desc: "Your crypto holdings are insured against theft, hacks, and unauthorized access."
         }
       ],
       howItWorks: [
@@ -256,25 +244,25 @@ export default function FeatureDetails() {
           step: 1,
           title: "Browse Markets",
           description: "Explore 50+ cryptocurrencies with real-time charts",
-          icon: <BarChart />
+          icon: <BarChart className={styles.howItWorksIcon} />
         },
         {
           step: 2,
           title: "Choose Order Type",
           description: "Market, limit, stop-loss, or OCO orders",
-          icon: <Settings />
+          icon: <Settings className={styles.howItWorksIcon} />
         },
         {
           step: 3,
           title: "Execute Trade",
           description: "Instant execution with <1ms latency",
-          icon: <Zap />
+          icon: <Zap className={styles.howItWorksIcon} />
         },
         {
           step: 4,
           title: "Track Portfolio",
           description: "Real-time P&L and performance analytics",
-          icon: <TrendingUp />
+          icon: <TrendingUp className={styles.howItWorksIcon} />
         }
       ],
       features: [
@@ -306,39 +294,35 @@ export default function FeatureDetails() {
     savings: {
       title: "High-Yield Savings",
       subtitle: "Earn up to 12% APY with daily compounding interest",
-      gradient: "from-emerald-500 to-teal-500",
-      icon: <PiggyBank className="w-8 h-8" />,
+      gradient: styles.gradientTeal,
+      icon: <PiggyBank className={styles.featureNavIcon} />,
       heroImage: "💰",
       stats: [
-        { value: "12%", label: "Max APY", icon: <TrendingUp />, detail: "Industry leading" },
-        { value: "$0", label: "Minimum", icon: <DollarSign />, detail: "Start any amount" },
-        { value: "Daily", label: "Compounding", icon: <RefreshCw />, detail: "Maximize growth" },
-        { value: "$250K", label: "FDIC Insured", icon: <Shield />, detail: "Full protection" }
+        { value: "12%", label: "Max APY", icon: <TrendingUp className={styles.statIcon} />, detail: "Industry leading" },
+        { value: "$0", label: "Minimum", icon: <DollarSign className={styles.statIcon} />, detail: "Start any amount" },
+        { value: "Daily", label: "Compounding", icon: <RefreshCw className={styles.statIcon} />, detail: "Maximize growth" },
+        { value: "$250K", label: "FDIC Insured", icon: <Shield className={styles.statIcon} />, detail: "Full protection" }
       ],
       benefits: [
         { 
-          icon: <TrendingUp />, 
+          icon: <TrendingUp className={styles.benefitIcon} />, 
           title: "Industry-Leading Rates", 
-          desc: "Earn up to 12% APY - 40x higher than traditional banks. Watch your money grow faster.",
-          color: "from-emerald-500 to-green-500"
+          desc: "Earn up to 12% APY - 40x higher than traditional banks. Watch your money grow faster."
         },
         { 
-          icon: <RefreshCw />, 
+          icon: <RefreshCw className={styles.benefitIcon} />, 
           title: "Daily Compounding", 
-          desc: "Interest compounds daily, maximizing your earnings. Every day your balance grows.",
-          color: "from-teal-500 to-cyan-500"
+          desc: "Interest compounds daily, maximizing your earnings. Every day your balance grows."
         },
         { 
-          icon: <Target />, 
+          icon: <Target className={styles.benefitIcon} />, 
           title: "Goal-Based Savings", 
-          desc: "Set specific goals and track progress with automated contributions.",
-          color: "from-green-500 to-emerald-500"
+          desc: "Set specific goals and track progress with automated contributions."
         },
         { 
-          icon: <ShieldCheck />, 
+          icon: <ShieldCheck className={styles.benefitIcon} />, 
           title: "FDIC Protected", 
-          desc: "Your savings are FDIC insured up to $250,000. Your money is safe.",
-          color: "from-cyan-500 to-blue-500"
+          desc: "Your savings are FDIC insured up to $250,000. Your money is safe."
         }
       ],
       howItWorks: [
@@ -346,25 +330,25 @@ export default function FeatureDetails() {
           step: 1,
           title: "Open Account",
           description: "Set up in 2 minutes with no paperwork",
-          icon: <Plus />
+          icon: <Plus className={styles.howItWorksIcon} />
         },
         {
           step: 2,
           title: "Deposit Funds",
           description: "Transfer from any bank instantly",
-          icon: <Download />
+          icon: <Download className={styles.howItWorksIcon} />
         },
         {
           step: 3,
           title: "Watch Growth",
           description: "Interest compounds daily automatically",
-          icon: <TrendingUp />
+          icon: <TrendingUp className={styles.howItWorksIcon} />
         },
         {
           step: 4,
           title: "Withdraw Anytime",
           description: "Access funds instantly with no penalties",
-          icon: <Minus />
+          icon: <Minus className={styles.howItWorksIcon} />
         }
       ],
       features: [
@@ -378,10 +362,10 @@ export default function FeatureDetails() {
         "Tax-advantaged savings options"
       ],
       savingsGoals: [
-        { name: "Emergency Fund", target: "$10,000", saved: "$4,200", color: "from-blue-500 to-cyan-500" },
-        { name: "Dream Vacation", target: "$5,000", saved: "$1,800", color: "from-purple-500 to-pink-500" },
-        { name: "New Car", target: "$25,000", saved: "$8,500", color: "from-emerald-500 to-teal-500" },
-        { name: "Home Down Payment", target: "$50,000", saved: "$12,300", color: "from-orange-500 to-amber-500" }
+        { name: "Emergency Fund", target: "$10,000", saved: "$4,200", color: styles.goalBlue },
+        { name: "Dream Vacation", target: "$5,000", saved: "$1,800", color: styles.goalPurple },
+        { name: "New Car", target: "$25,000", saved: "$8,500", color: styles.goalTeal },
+        { name: "Home Down Payment", target: "$50,000", saved: "$12,300", color: styles.goalGold }
       ],
       testimonial: {
         text: "12% APY is unbelievable! My savings have grown faster in 6 months with ClaveRica than in 5 years with my old bank. This is the future of banking.",
@@ -394,39 +378,35 @@ export default function FeatureDetails() {
     cards: {
       title: "Premium Cards",
       subtitle: "Metal cards with exclusive travel benefits and cashback",
-      gradient: "from-amber-500 to-orange-500",
-      icon: <CreditCard className="w-8 h-8" />,
+      gradient: styles.gradientGold,
+      icon: <CreditCard className={styles.featureNavIcon} />,
       heroImage: "💳",
       stats: [
-        { value: "3%", label: "Max Cashback", icon: <TrendingUp />, detail: "Unlimited earnings" },
-        { value: "60M+", label: "Locations", icon: <Globe />, detail: "Global acceptance" },
-        { value: "$0", label: "Foreign Fees", icon: <DollarSign />, detail: "Travel freely" },
-        { value: "1,200+", label: "Lounge Access", icon: <Plane />, detail: "Airport lounges" }
+        { value: "3%", label: "Max Cashback", icon: <TrendingUp className={styles.statIcon} />, detail: "Unlimited earnings" },
+        { value: "60M+", label: "Locations", icon: <Globe className={styles.statIcon} />, detail: "Global acceptance" },
+        { value: "$0", label: "Foreign Fees", icon: <DollarSign className={styles.statIcon} />, detail: "Travel freely" },
+        { value: "1,200+", label: "Lounge Access", icon: <Plane className={styles.statIcon} />, detail: "Airport lounges" }
       ],
       benefits: [
         { 
-          icon: <TrendingUp />, 
+          icon: <TrendingUp className={styles.benefitIcon} />, 
           title: "Premium Cashback", 
-          desc: "Earn up to 3% cashback on all purchases. Unlimited earnings with no caps.",
-          color: "from-amber-500 to-yellow-500"
+          desc: "Earn up to 3% cashback on all purchases. Unlimited earnings with no caps."
         },
         { 
-          icon: <Globe />, 
+          icon: <Globe className={styles.benefitIcon} />, 
           title: "Global Acceptance", 
-          desc: "Use your card at 60M+ locations worldwide. Zero foreign transaction fees.",
-          color: "from-orange-500 to-red-500"
+          desc: "Use your card at 60M+ locations worldwide. Zero foreign transaction fees."
         },
         { 
-          icon: <Plane />, 
+          icon: <Plane className={styles.benefitIcon} />, 
           title: "Travel Benefits", 
-          desc: "Complimentary access to 1,200+ airport lounges globally. Travel insurance included.",
-          color: "from-yellow-500 to-amber-500"
+          desc: "Complimentary access to 1,200+ airport lounges globally. Travel insurance included."
         },
         { 
-          icon: <ShieldCheck />, 
+          icon: <ShieldCheck className={styles.benefitIcon} />, 
           title: "Purchase Protection", 
-          desc: "Built-in insurance, extended warranty, and fraud protection on all purchases.",
-          color: "from-red-500 to-rose-500"
+          desc: "Built-in insurance, extended warranty, and fraud protection on all purchases."
         }
       ],
       howItWorks: [
@@ -434,25 +414,25 @@ export default function FeatureDetails() {
           step: 1,
           title: "Choose Tier",
           description: "Select from Standard, Gold, or Platinum",
-          icon: <Settings />
+          icon: <Settings className={styles.howItWorksIcon} />
         },
         {
           step: 2,
           title: "Apply Online",
           description: "2-minute application with instant approval",
-          icon: <FileText />
+          icon: <FileText className={styles.howItWorksIcon} />
         },
         {
           step: 3,
           title: "Receive Card",
           description: "Get metal card in 5-7 business days",
-          icon: <Download />
+          icon: <Download className={styles.howItWorksIcon} />
         },
         {
           step: 4,
           title: "Start Earning",
           description: "Immediate cashback on all purchases",
-          icon: <DollarSign />
+          icon: <DollarSign className={styles.howItWorksIcon} />
         }
       ],
       features: [
@@ -476,39 +456,35 @@ export default function FeatureDetails() {
     bills: {
       title: "Bill Payments",
       subtitle: "Pay all your bills automatically in one place",
-      gradient: "from-rose-500 to-pink-500",
-      icon: <Receipt className="w-8 h-8" />,
+      gradient: styles.gradientPurplePink,
+      icon: <Receipt className={styles.featureNavIcon} />,
       heroImage: "📄",
       stats: [
-        { value: "5,000+", label: "Billers", icon: <Receipt />, detail: "Wide coverage" },
-        { value: "0.5%", label: "Cashback", icon: <TrendingUp />, detail: "Earn on payments" },
-        { value: "Instant", label: "Processing", icon: <Zap />, detail: "No delays" },
-        { value: "Auto-Pay", label: "Available", icon: <CheckCircle />, detail: "Never miss a bill" }
+        { value: "5,000+", label: "Billers", icon: <Receipt className={styles.statIcon} />, detail: "Wide coverage" },
+        { value: "0.5%", label: "Cashback", icon: <TrendingUp className={styles.statIcon} />, detail: "Earn on payments" },
+        { value: "Instant", label: "Processing", icon: <Zap className={styles.statIcon} />, detail: "No delays" },
+        { value: "Auto-Pay", label: "Available", icon: <CheckCircle className={styles.statIcon} />, detail: "Never miss a bill" }
       ],
       benefits: [
         { 
-          icon: <Clock />, 
+          icon: <Clock className={styles.benefitIcon} />, 
           title: "Never Miss a Payment", 
-          desc: "Schedule payments in advance and set up automatic recurring payments. Smart reminders ensure you're never late.",
-          color: "from-rose-500 to-pink-500"
+          desc: "Schedule payments in advance and set up automatic recurring payments. Smart reminders ensure you're never late."
         },
         { 
-          icon: <Bell />, 
+          icon: <Bell className={styles.benefitIcon} />, 
           title: "Smart Reminders", 
-          desc: "Receive push notifications 3 days before each bill is due with exact amounts. Stay in control.",
-          color: "from-pink-500 to-purple-500"
+          desc: "Receive push notifications 3 days before each bill is due with exact amounts. Stay in control."
         },
         { 
-          icon: <Calculator />, 
+          icon: <Calculator className={styles.benefitIcon} />, 
           title: "Earn Cashback", 
-          desc: "Get 0.5% cashback on all bill payments. Save money while paying your bills.",
-          color: "from-purple-500 to-indigo-500"
+          desc: "Get 0.5% cashback on all bill payments. Save money while paying your bills."
         },
         { 
-          icon: <PieChart />, 
+          icon: <PieChart className={styles.benefitIcon} />, 
           title: "Spending Insights", 
-          desc: "Track your bill payments, identify spending patterns, and optimize your budget.",
-          color: "from-indigo-500 to-blue-500"
+          desc: "Track your bill payments, identify spending patterns, and optimize your budget."
         }
       ],
       howItWorks: [
@@ -516,25 +492,25 @@ export default function FeatureDetails() {
           step: 1,
           title: "Add Billers",
           description: "Connect utilities, subscriptions, and services",
-          icon: <Plus />
+          icon: <Plus className={styles.howItWorksIcon} />
         },
         {
           step: 2,
           title: "Set Schedule",
           description: "Choose one-time, recurring, or auto-pay",
-          icon: <Calendar />
+          icon: <Calendar className={styles.howItWorksIcon} />
         },
         {
           step: 3,
           title: "Get Notified",
           description: "Reminders 3 days before due date",
-          icon: <Bell />
+          icon: <Bell className={styles.howItWorksIcon} />
         },
         {
           step: 4,
           title: "Pay Instantly",
           description: "Process payments with digital receipts",
-          icon: <CheckCircle />
+          icon: <CheckCircle className={styles.howItWorksIcon} />
         }
       ],
       features: [
@@ -558,39 +534,35 @@ export default function FeatureDetails() {
     rewards: {
       title: "Rewards Program",
       subtitle: "Earn points on every transaction and redeem for amazing rewards",
-      gradient: "from-violet-500 to-purple-500",
-      icon: <Gift className="w-8 h-8" />,
+      gradient: styles.gradientGoldPurple,
+      icon: <Gift className={styles.featureNavIcon} />,
       heroImage: "🎁",
       stats: [
-        { value: "3x", label: "Max Multiplier", icon: <TrendingUp />, detail: "Highest tier" },
-        { value: "Every $1", label: "Earns Points", icon: <DollarSign />, detail: "All spending" },
-        { value: "500+", label: "Reward Options", icon: <Gift />, detail: "Flexible redemption" },
-        { value: "Never", label: "Points Expire", icon: <Clock />, detail: "Use anytime" }
+        { value: "3x", label: "Max Multiplier", icon: <TrendingUp className={styles.statIcon} />, detail: "Highest tier" },
+        { value: "Every $1", label: "Earns Points", icon: <DollarSign className={styles.statIcon} />, detail: "All spending" },
+        { value: "500+", label: "Reward Options", icon: <Gift className={styles.statIcon} />, detail: "Flexible redemption" },
+        { value: "Never", label: "Points Expire", icon: <Clock className={styles.statIcon} />, detail: "Use anytime" }
       ],
       benefits: [
         { 
-          icon: <TrendingUp />, 
+          icon: <TrendingUp className={styles.benefitIcon} />, 
           title: "Earn Everywhere", 
-          desc: "Earn points on card purchases, bill payments, transfers, crypto trades - every transaction rewards you.",
-          color: "from-violet-500 to-purple-500"
+          desc: "Earn points on card purchases, bill payments, transfers, crypto trades - every transaction rewards you."
         },
         { 
-          icon: <Award />, 
+          icon: <Award className={styles.benefitIcon} />, 
           title: "Loyalty Tiers", 
-          desc: "Climb through Bronze, Silver, Gold, and Platinum tiers to earn up to 3x points on every dollar.",
-          color: "from-purple-500 to-pink-500"
+          desc: "Climb through Bronze, Silver, Gold, and Platinum tiers to earn up to 3x points on every dollar."
         },
         { 
-          icon: <Gift />, 
+          icon: <Gift className={styles.benefitIcon} />, 
           title: "Flexible Redemption", 
-          desc: "Redeem points for cash back, travel bookings, gift cards, bill credits, or exclusive merchandise.",
-          color: "from-pink-500 to-rose-500"
+          desc: "Redeem points for cash back, travel bookings, gift cards, bill credits, or exclusive merchandise."
         },
         { 
-          icon: <Users />, 
+          icon: <Users className={styles.benefitIcon} />, 
           title: "Referral Bonuses", 
-          desc: "Earn 500 bonus points for every friend you refer. They get 500 points too. Build rewards together.",
-          color: "from-rose-500 to-red-500"
+          desc: "Earn 500 bonus points for every friend you refer. They get 500 points too. Build rewards together."
         }
       ],
       howItWorks: [
@@ -598,25 +570,25 @@ export default function FeatureDetails() {
           step: 1,
           title: "Earn Points",
           description: "1-3 points per $1 spent based on your tier",
-          icon: <Plus />
+          icon: <Plus className={styles.howItWorksIcon} />
         },
         {
           step: 2,
           title: "Climb Tiers",
           description: "Higher balances unlock better rewards",
-          icon: <TrendingUp />
+          icon: <TrendingUp className={styles.howItWorksIcon} />
         },
         {
           step: 3,
           title: "Track Balance",
           description: "Real-time points dashboard",
-          icon: <DollarSign />
+          icon: <DollarSign className={styles.howItWorksIcon} />
         },
         {
           step: 4,
           title: "Redeem Instantly",
           description: "Cash, travel, gift cards, and more",
-          icon: <Gift />
+          icon: <Gift className={styles.howItWorksIcon} />
         }
       ],
       features: [
@@ -642,23 +614,23 @@ export default function FeatureDetails() {
   const currentFeature = features[activeFeature as keyof typeof features];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
+    <div className={styles.container}>
       {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      <header className={styles.header}>
+        <div className={styles.headerContainer}>
+          <Link to="/" className={styles.logo}>
             ClaveRica
           </Link>
-          <div className="flex items-center gap-4">
+          <div className={styles.headerActions}>
             <Link 
               to="/"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-gray-900 font-medium transition"
+              className={styles.backLink}
             >
               ← Back to Home
             </Link>
             <Link 
               to="/signup"
-              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold hover:shadow-lg transition text-sm sm:text-base"
+              className={styles.btnPrimary}
             >
               Get Started
             </Link>
@@ -667,21 +639,17 @@ export default function FeatureDetails() {
       </header>
 
       {/* Feature Navigation */}
-      <section className="bg-white border-b border-gray-100 sticky top-[73px] z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex overflow-x-auto scrollbar-hide py-4 gap-2">
+      <section className={styles.featureNav}>
+        <div className={styles.featureNavContainer}>
+          <div className={styles.featureNavScroll}>
             {Object.entries(features).map(([key, feature]) => (
               <button
                 key={key}
                 onClick={() => setActiveFeature(key)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-full whitespace-nowrap font-semibold transition-all flex-shrink-0 ${
-                  activeFeature === key
-                    ? `bg-gradient-to-r ${feature.gradient} text-white shadow-lg scale-105`
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
+                className={`${styles.featureNavButton} ${activeFeature === key ? styles.featureNavButtonActive : ''} ${activeFeature === key ? feature.gradient : ''}`}
               >
-                <span className="text-sm">{feature.icon}</span>
-                <span className="text-sm">{feature.title}</span>
+                <span className={styles.featureNavIconWrapper}>{feature.icon}</span>
+                <span className={styles.featureNavText}>{feature.title}</span>
               </button>
             ))}
           </div>
@@ -689,18 +657,15 @@ export default function FeatureDetails() {
       </section>
 
       {/* Hero Section */}
-      <section className={`relative py-20 sm:py-32 px-4 sm:px-6 bg-gradient-to-br ${currentFeature.gradient} overflow-hidden`}>
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        </div>
+      <section className={`${styles.heroSection} ${currentFeature.gradient}`}>
+        <div className={styles.heroBackground} />
         
-        <div className="relative z-10 max-w-7xl mx-auto text-center">
+        <div className={styles.heroContent}>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="text-8xl mb-8"
+            className={styles.heroImage}
           >
             {currentFeature.heroImage}
           </motion.div>
@@ -709,7 +674,7 @@ export default function FeatureDetails() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight"
+            className={styles.heroTitle}
           >
             {currentFeature.title}
           </motion.h1>
@@ -718,7 +683,7 @@ export default function FeatureDetails() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-xl sm:text-2xl text-white/90 mb-12 max-w-3xl mx-auto"
+            className={styles.heroSubtitle}
           >
             {currentFeature.subtitle}
           </motion.p>
@@ -728,33 +693,33 @@ export default function FeatureDetails() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto"
+            className={styles.heroStats}
           >
             {currentFeature.stats.map((stat, idx) => (
-              <div key={idx} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <div className="text-white/80 mb-2">{stat.icon}</div>
-                <p className="text-3xl sm:text-4xl font-bold text-white mb-1">{stat.value}</p>
-                <p className="text-white/80 text-sm">{stat.label}</p>
+              <div key={idx} className={styles.heroStatCard}>
+                <div className={styles.heroStatIcon}>{stat.icon}</div>
+                <p className={styles.heroStatValue}>{stat.value}</p>
+                <p className={styles.heroStatLabel}>{stat.label}</p>
               </div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+      <div className={styles.mainContent}>
         {/* Main Benefits */}
-        <section className="mb-20">
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 text-center">
+        <section className={styles.benefitsSection}>
+          <h2 className={styles.sectionTitle}>
             Why Choose{" "}
-            <span className={`bg-gradient-to-r ${currentFeature.gradient} bg-clip-text text-transparent`}>
+            <span className={styles.sectionTitleHighlight}>
               {currentFeature.title}
             </span>
           </h2>
-          <p className="text-xl text-gray-600 text-center mb-16 max-w-3xl mx-auto">
+          <p className={styles.sectionSubtitle}>
             Discover the powerful features that make ClaveRica the best choice for your financial needs
           </p>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className={styles.benefitsGrid}>
             {currentFeature.benefits.map((benefit, idx) => (
               <motion.div
                 key={idx}
@@ -762,32 +727,32 @@ export default function FeatureDetails() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all hover:-translate-y-1"
+                className={styles.benefitCard}
               >
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${currentFeature.gradient} flex items-center justify-center text-white mb-6`}>
+                <div className={`${styles.benefitIconContainer} ${currentFeature.gradient}`}>
                   {benefit.icon}
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{benefit.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{benefit.desc}</p>
+                <h3 className={styles.benefitCardTitle}>{benefit.title}</h3>
+                <p className={styles.benefitCardDesc}>{benefit.desc}</p>
               </motion.div>
             ))}
           </div>
         </section>
 
         {/* AI-Powered Insights Section */}
-        <section className="mb-20">
-          <div className="bg-gradient-to-br from-gray-900 to-black rounded-3xl p-8 sm:p-12 text-white overflow-hidden">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                <Cpu className="w-6 h-6" />
+        <section className={styles.aiSection}>
+          <div className={styles.aiContainer}>
+            <div className={styles.aiHeader}>
+              <div className={styles.aiIconContainer}>
+                <Cpu className={styles.aiIcon} />
               </div>
               <div>
-                <h2 className="text-3xl sm:text-4xl font-bold">AI-Powered Insights</h2>
-                <p className="text-gray-400">Smart features that help you save more and earn more</p>
+                <h2 className={styles.aiTitle}>AI-Powered Insights</h2>
+                <p className={styles.aiSubtitle}>Smart features that help you save more and earn more</p>
               </div>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className={styles.aiGrid}>
               {(aiInsights[activeFeature as keyof typeof aiInsights] || []).map((insight: any, idx: number) => (
                 <motion.div
                   key={idx}
@@ -795,12 +760,12 @@ export default function FeatureDetails() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
-                  className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all"
+                  className={styles.aiCard}
                 >
-                  <h3 className="text-xl font-bold mb-2">{insight.title}</h3>
-                  <p className="text-gray-300 mb-3">{insight.desc}</p>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">
-                    <Sparkles className="w-3 h-3" />
+                  <h3 className={styles.aiCardTitle}>{insight.title}</h3>
+                  <p className={styles.aiCardDesc}>{insight.desc}</p>
+                  <div className={styles.aiCardBadge}>
+                    <Sparkles className={styles.aiCardIcon} />
                     {insight.savings}
                   </div>
                 </motion.div>
@@ -811,32 +776,32 @@ export default function FeatureDetails() {
 
         {/* Interactive Transfer Calculator (for transfers feature) */}
         {activeFeature === "transfers" && (
-          <section className="mb-20">
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-3xl p-8 border border-blue-200">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Live Transfer Calculator</h2>
-                <p className="text-gray-600">See exactly how much you'll save compared to traditional banks</p>
+          <section className={styles.calculatorSection}>
+            <div className={styles.calculatorContainer}>
+              <div className={styles.calculatorHeader}>
+                <h2 className={styles.calculatorTitle}>Live Transfer Calculator</h2>
+                <p className={styles.calculatorSubtitle}>See exactly how much you'll save compared to traditional banks</p>
               </div>
               
-              <div className="grid lg:grid-cols-2 gap-8">
-                <div className="bg-white rounded-2xl p-6 shadow-lg">
-                  <div className="space-y-6">
+              <div className={styles.calculatorGrid}>
+                <div className={styles.calculatorCard}>
+                  <div className={styles.calculatorForm}>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">You send</label>
-                      <div className="flex border-2 border-gray-300 rounded-xl overflow-hidden hover:border-blue-500 transition-colors">
-                        <div className="flex-1 px-4 py-3">
+                      <label className={styles.calculatorLabel}>You send</label>
+                      <div className={styles.calculatorInput}>
+                        <div className={styles.calculatorInputField}>
                           <input 
                             type="number" 
                             value={transferAmount}
                             onChange={(e) => setTransferAmount(parseFloat(e.target.value) || 0)}
-                            className="w-full outline-none text-2xl font-bold"
+                            className={styles.calculatorNumberInput}
                             min="1"
                           />
                         </div>
                         <select 
                           value={fromCurrency}
                           onChange={(e) => setFromCurrency(e.target.value)}
-                          className="border-l border-gray-300 px-4 bg-gray-50 text-base font-medium"
+                          className={styles.calculatorSelect}
                         >
                           <option>USD</option>
                           <option>EUR</option>
@@ -847,10 +812,10 @@ export default function FeatureDetails() {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">They receive</label>
-                      <div className="flex border-2 border-gray-300 rounded-xl overflow-hidden bg-gray-50">
-                        <div className="flex-1 px-4 py-3">
-                          <div className="text-2xl font-bold text-gray-900">
+                      <label className={styles.calculatorLabel}>They receive</label>
+                      <div className={`${styles.calculatorInput} ${styles.calculatorInputDisabled}`}>
+                        <div className={styles.calculatorInputField}>
+                          <div className={styles.calculatorResult}>
                             {transferResult.received.toLocaleString(undefined, { 
                               minimumFractionDigits: 2,
                               maximumFractionDigits: 2 
@@ -860,7 +825,7 @@ export default function FeatureDetails() {
                         <select 
                           value={toCurrency}
                           onChange={(e) => setToCurrency(e.target.value)}
-                          className="border-l border-gray-300 px-4 bg-gray-50 text-base font-medium"
+                          className={styles.calculatorSelect}
                         >
                           <option>GBP</option>
                           <option>EUR</option>
@@ -870,37 +835,35 @@ export default function FeatureDetails() {
                       </div>
                     </div>
                     
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="text-sm text-gray-600">You save vs banks</div>
-                          <div className="text-2xl font-bold text-green-700">${transferResult.savings.toFixed(2)}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm text-gray-600">Our fee</div>
-                          <div className="text-xl font-bold">${transferResult.fee.toFixed(2)}</div>
-                        </div>
+                    <div className={styles.calculatorSavings}>
+                      <div>
+                        <div className={styles.calculatorSavingsLabel}>You save vs banks</div>
+                        <div className={styles.calculatorSavingsAmount}>${transferResult.savings.toFixed(2)}</div>
+                      </div>
+                      <div className={styles.calculatorFee}>
+                        <div className={styles.calculatorFeeLabel}>Our fee</div>
+                        <div className={styles.calculatorFeeAmount}>${transferResult.fee.toFixed(2)}</div>
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                <div className="bg-white rounded-2xl p-6 shadow-lg">
-                  <h3 className="text-lg font-bold mb-4">Comparison with Competitors</h3>
-                  <div className="space-y-3">
+                <div className={styles.comparisonCard}>
+                  <h3 className={styles.comparisonTitle}>Comparison with Competitors</h3>
+                  <div className={styles.comparisonList}>
                     {(currentFeature as any).comparison?.map((comp: any, idx: number) => (
-                      <div key={idx} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
-                        <span className={`font-medium ${comp.provider === "ClaveRica" ? "text-blue-600" : "text-gray-700"}`}>
+                      <div key={idx} className={styles.comparisonItem}>
+                        <span className={`${styles.comparisonProvider} ${comp.provider === "ClaveRica" ? styles.comparisonProviderHighlight : ''}`}>
                           {comp.provider}
                         </span>
-                        <div className="flex items-center gap-4">
-                          <span className="text-sm">{comp.fee}</span>
-                          <span className="text-sm">{comp.speed}</span>
-                          <span className={`px-2 py-1 rounded-full text-xs ${
-                            comp.rate === "Excellent" ? "bg-green-100 text-green-800" :
-                            comp.rate === "Good" ? "bg-blue-100 text-blue-800" :
-                            comp.rate === "Average" ? "bg-yellow-100 text-yellow-800" :
-                            "bg-red-100 text-red-800"
+                        <div className={styles.comparisonDetails}>
+                          <span className={styles.comparisonFee}>{comp.fee}</span>
+                          <span className={styles.comparisonSpeed}>{comp.speed}</span>
+                          <span className={`${styles.comparisonRate} ${
+                            comp.rate === "Excellent" ? styles.rateExcellent :
+                            comp.rate === "Good" ? styles.rateGood :
+                            comp.rate === "Average" ? styles.rateAverage :
+                            styles.ratePoor
                           }`}>
                             {comp.rate}
                           </span>
@@ -916,14 +879,14 @@ export default function FeatureDetails() {
 
         {/* Crypto Live Prices (for crypto feature) */}
         {activeFeature === "crypto" && (currentFeature as any).cryptoList && (
-          <section className="mb-20">
-            <div className={`bg-gradient-to-br ${currentFeature.gradient} rounded-3xl p-8 text-white overflow-hidden`}>
-              <div className="text-center mb-8">
-                <h3 className="text-2xl sm:text-3xl font-bold mb-2">Live Crypto Prices</h3>
-                <p className="text-white/80">Real-time prices for top cryptocurrencies</p>
+          <section className={styles.cryptoSecion}>
+            <div className={`${styles.cryptoContainer} ${currentFeature.gradient}`}>
+              <div className={styles.cryptoHeader}>
+                <h3 className={styles.cryptoTitle}>Live Crypto Prices</h3>
+                <p className={styles.cryptoSubtitle}>Real-time prices for top cryptocurrencies</p>
               </div>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className={styles.cryptoGrid}>
                 {(currentFeature as any).cryptoList.map((crypto: any, idx: number) => (
                   <motion.div
                     key={idx}
@@ -931,21 +894,21 @@ export default function FeatureDetails() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.05 }}
-                    className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/20 transition-all group cursor-pointer"
+                    className={styles.cryptoCard}
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className={styles.cryptoCardHeader}>
                       <div>
-                        <p className="font-semibold">{crypto.name}</p>
-                        <p className="text-white/60 text-sm">{crypto.symbol}</p>
+                        <p className={styles.cryptoName}>{crypto.name}</p>
+                        <p className={styles.cryptoSymbol}>{crypto.symbol}</p>
                       </div>
-                      <div className={`px-2 py-1 rounded text-xs font-bold ${
-                        crypto.change.startsWith('+') ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+                      <div className={`${styles.cryptoChange} ${
+                        crypto.change.startsWith('+') ? styles.cryptoChangePositive : styles.cryptoChangeNegative
                       }`}>
                         {crypto.change}
                       </div>
                     </div>
-                    <p className="text-2xl font-bold">{crypto.price}</p>
-                    <p className="text-white/60 text-xs">Market Cap: {crypto.marketCap}</p>
+                    <p className={styles.cryptoPrice}>{crypto.price}</p>
+                    <p className={styles.cryptoMarketCap}>Market Cap: {crypto.marketCap}</p>
                   </motion.div>
                 ))}
               </div>
@@ -954,10 +917,10 @@ export default function FeatureDetails() {
         )}
 
         {/* How It Works */}
-        <section className="mb-20">
-          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 sm:p-12 text-white">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-12 text-center">How It Works</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <section className={styles.howItWorksSection}>
+          <div className={styles.howItWorksContainer}>
+            <h2 className={styles.howItWorksTitle}>How It Works</h2>
+            <div className={styles.howItWorksGrid}>
               {currentFeature.howItWorks.map((step: any, idx: number) => (
                 <motion.div
                   key={idx}
@@ -965,16 +928,16 @@ export default function FeatureDetails() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
-                  className="relative"
+                  className={styles.howItWorksCard}
                 >
-                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${currentFeature.gradient} flex items-center justify-center text-2xl font-bold mb-6`}>
+                  <div className={`${styles.howItWorksStep} ${currentFeature.gradient}`}>
                     {idx + 1}
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                  <p className="text-white/90 leading-relaxed">{step.description}</p>
-                  {idx < currentFeature.howItWorks.length - 1 && (
-                    <ArrowRight className="hidden lg:block absolute top-6 -right-8 w-6 h-6 text-white/30" />
-                  )}
+                  <div className={styles.howItWorksIconWrapper}>
+                    {step.icon}
+                  </div>
+                  <h3 className={styles.howItWorksCardTitle}>{step.title}</h3>
+                  <p className={styles.howItWorksCardDesc}>{step.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -982,16 +945,16 @@ export default function FeatureDetails() {
         </section>
 
         {/* Features List */}
-        <section className="mb-20">
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 text-center">
+        <section className={styles.featuresListSection}>
+          <h2 className={styles.sectionTitle}>
             Powerful Features
           </h2>
-          <p className="text-xl text-gray-600 text-center mb-16 max-w-3xl mx-auto">
+          <p className={styles.sectionSubtitle}>
             Everything you need, all in one place
           </p>
 
-          <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-lg border border-gray-100">
-            <div className="grid md:grid-cols-2 gap-6">
+          <div className={styles.featuresListContainer}>
+            <div className={styles.featuresListGrid}>
               {currentFeature.features.map((feature: string, idx: number) => (
                 <motion.div
                   key={idx}
@@ -999,10 +962,10 @@ export default function FeatureDetails() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.05 }}
-                  className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors"
+                  className={styles.featuresListItem}
                 >
-                  <CheckCircle className={`w-6 h-6 text-transparent bg-gradient-to-r ${currentFeature.gradient} bg-clip-text flex-shrink-0 mt-1`} />
-                  <p className="text-gray-700 leading-relaxed">{feature}</p>
+                  <CheckCircle className={`${styles.featuresListIcon} ${currentFeature.gradient}`} />
+                  <p className={styles.featuresListText}>{feature}</p>
                 </motion.div>
               ))}
             </div>
@@ -1011,10 +974,10 @@ export default function FeatureDetails() {
 
         {/* Savings Goals Visualization (for savings feature) */}
         {activeFeature === "savings" && (currentFeature as any).savingsGoals && (
-          <section className="mb-20">
-            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl p-8 border border-emerald-200">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8 text-center">Savings Goals</h2>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <section className={styles.goalsSection}>
+            <div className={styles.goalsContainer}>
+              <h2 className={styles.sectionTitle}>Savings Goals</h2>
+              <div className={styles.goalsGrid}>
                 {(currentFeature as any).savingsGoals.map((goal: any, idx: number) => (
                   <motion.div
                     key={idx}
@@ -1022,19 +985,19 @@ export default function FeatureDetails() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.1 }}
-                    className={`bg-gradient-to-br ${goal.color} rounded-2xl p-6 text-white text-center`}
+                    className={`${styles.goalCard} ${goal.color}`}
                   >
-                    <h3 className="text-xl font-bold mb-2">{goal.name}</h3>
-                    <div className="text-3xl font-bold mb-4">
+                    <h3 className={styles.goalCardTitle}>{goal.name}</h3>
+                    <div className={styles.goalCardAmount}>
                       ${goal.saved} / ${goal.target}
                     </div>
-                    <div className="h-2 bg-white/30 rounded-full overflow-hidden">
+                    <div className={styles.goalProgress}>
                       <div 
-                        className="h-full bg-white rounded-full"
+                        className={styles.goalProgressFill}
                         style={{ width: `${(parseInt(goal.saved.replace('$', '').replace(',', '')) / parseInt(goal.target.replace('$', '').replace(',', ''))) * 100}%` }}
                       />
                     </div>
-                    <p className="text-white/80 text-sm mt-2">
+                    <p className={styles.goalPercentage}>
                       {Math.round((parseInt(goal.saved.replace('$', '').replace(',', '')) / parseInt(goal.target.replace('$', '').replace(',', ''))) * 100)}% Complete
                     </p>
                   </motion.div>
@@ -1046,10 +1009,10 @@ export default function FeatureDetails() {
 
         {/* Use Cases (for transfers feature) */}
         {activeFeature === "transfers" && (currentFeature as any).useCases && (
-          <section className="mb-20">
-            <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-lg">
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8 text-center">Perfect For</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <section className={styles.useCasesSection}>
+            <div className={styles.useCasesContainer}>
+              <h2 className={styles.sectionTitle}>Perfect For</h2>
+              <div className={styles.useCasesGrid}>
                 {(currentFeature as any).useCases.map((useCase: any, idx: number) => (
                   <motion.div
                     key={idx}
@@ -1057,13 +1020,13 @@ export default function FeatureDetails() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.1 }}
-                    className="text-center p-6 rounded-2xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all"
+                    className={styles.useCaseCard}
                   >
-                    <div className="text-4xl mb-4">{useCase.icon}</div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{useCase.title}</h3>
-                    <p className="text-gray-600 mb-4">{useCase.description}</p>
-                    <div className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                      <TrendingUp className="w-3 h-3" />
+                    <div className={styles.useCaseIcon}>{useCase.icon}</div>
+                    <h3 className={styles.useCaseTitle}>{useCase.title}</h3>
+                    <p className={styles.useCaseDesc}>{useCase.description}</p>
+                    <div className={styles.useCaseSavings}>
+                      <TrendingUp className={styles.useCaseSavingsIcon} />
                       {useCase.savings}
                     </div>
                   </motion.div>
@@ -1075,23 +1038,23 @@ export default function FeatureDetails() {
 
         {/* Testimonial */}
         {currentFeature.testimonial && (
-          <section className="mb-20">
-            <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-gray-100">
-              <div className="max-w-4xl mx-auto">
-                <div className="flex items-center gap-2 mb-6 justify-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-6 h-6 text-yellow-500" fill="currentColor" />
-                  ))}
+          <section className={styles.testimonialSection}>
+            <div className={styles.testimonialContainer}>
+              <div className={styles.testimonialStars}>
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className={styles.testimonialStar} fill="currentColor" />
+                ))}
+              </div>
+              <p className={styles.testimonialText}>
+                "{currentFeature.testimonial.text}"
+              </p>
+              <div className={styles.testimonialAuthor}>
+                <div className={styles.testimonialAvatar}>
+                  {currentFeature.testimonial.avatar}
                 </div>
-                <p className="text-2xl sm:text-3xl text-gray-900 font-medium mb-8 text-center leading-relaxed">
-                  "{currentFeature.testimonial.text}"
-                </p>
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl mx-auto mb-3">
-                    {currentFeature.testimonial.avatar}
-                  </div>
-                  <p className="text-xl font-bold text-gray-900">{currentFeature.testimonial.name}</p>
-                  <p className="text-gray-600">{currentFeature.testimonial.role} • {currentFeature.testimonial.country}</p>
+                <div>
+                  <p className={styles.testimonialName}>{currentFeature.testimonial.name}</p>
+                  <p className={styles.testimonialMeta}>{currentFeature.testimonial.role} • {currentFeature.testimonial.country}</p>
                 </div>
               </div>
             </div>
@@ -1099,51 +1062,40 @@ export default function FeatureDetails() {
         )}
 
         {/* Final CTA */}
-        <section className={`bg-gradient-to-br ${currentFeature.gradient} rounded-3xl p-8 sm:p-16 text-white text-center relative overflow-hidden`}>
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-10 left-10 w-64 h-64 bg-white rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-10 right-10 w-64 h-64 bg-white rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <section className={`${styles.ctaSection} ${currentFeature.gradient}`}>
+          <div className={styles.ctaBackground}>
+            <div className={styles.ctaPulse1} />
+            <div className={styles.ctaPulse2} />
           </div>
           
-          <div className="relative z-10">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
+          <div className={styles.ctaContent}>
+            <h2 className={styles.ctaTitle}>
               Ready to Get Started?
             </h2>
-            <p className="text-xl sm:text-2xl opacity-90 mb-10 max-w-2xl mx-auto">
+            <p className={styles.ctaDescription}>
               Join 5M+ users and experience the future of {currentFeature.title.toLowerCase()}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className={styles.ctaButtons}>
               <Link 
                 to="/signup"
-                className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-white text-gray-900 rounded-full font-bold text-lg hover:shadow-2xl transition-all hover:scale-105"
+                className={styles.ctaButtonPrimary}
               >
                 Open Free Account
-                <ArrowRight className="w-6 h-6" />
+                <ArrowRight className={styles.ctaButtonArrow} />
               </Link>
-              <button 
-                onClick={() => setShowDemo(true)}
-                className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-white/10 backdrop-blur-sm text-white rounded-full font-bold text-lg hover:bg-white/20 transition-all border-2 border-white/30"
+              <Link 
+                to="/contact"
+                className={styles.ctaButtonSecondary}
               >
-                <Play className="w-5 h-5" />
-                Watch Demo
-              </button>
+                Contact Sales
+              </Link>
             </div>
-            <p className="text-sm opacity-80 mt-6">
+            <p className={styles.ctaDisclaimer}>
               No credit card required • Set up in 2 minutes • FDIC Insured
             </p>
           </div>
         </section>
       </div>
-
-      <style>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,14 +1,10 @@
-// src/components/auth/SignUpForm.tsx - MODERN FINTECH STYLING
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
-import Label from "../form/Label";
-import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
-import api from '../../api';   // ✅ Correct - imports from main api.ts
+import { ChevronLeft, Eye, EyeOff } from "lucide-react";
+import styles from "./SignUpForm.module.css";
 
 // Document types - International standards
 const documentTypes = [
@@ -171,58 +167,55 @@ export default function SignUpForm() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-      {/* Header - Revolut Style */}
-      <div className="w-full max-w-2xl px-4 pt-8 mx-auto">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-all hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:gap-3 group"
-        >
-          <ChevronLeftIcon className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-          <span className="transition-colors">Back to home</span>
+    <div className={styles.pageWrapper}>
+      {/* Header */}
+      <div className={styles.headerContainer}>
+        <Link to="/" className={styles.backLink}>
+          <ChevronLeft className={styles.backIcon} />
+          <span>Back to home</span>
         </Link>
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col justify-center flex-1 w-full max-w-2xl px-4 py-8 mx-auto">
-        <div className="w-full">
-          {/* Title Section - Binance Style */}
-          <div className="mb-8 text-center">
-            <h1 className="mb-3 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+      <div className={styles.mainContent}>
+        <div className={styles.formContainer}>
+          {/* Title Section */}
+          <div className={styles.titleSection}>
+            <h1 className={styles.pageTitle}>
               Create Global Account
             </h1>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full dark:bg-green-900/30 dark:text-green-400">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <div className={styles.badgeContainer}>
+              <span className={`${styles.badge} ${styles.badgeTeal}`}>
+                <svg className={styles.badgeIcon} fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
                 256-bit Encryption
               </span>
-              <span className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full dark:bg-blue-900/30 dark:text-blue-400">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <span className={`${styles.badge} ${styles.badgePurple}`}>
+                <svg className={styles.badgeIcon} fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2H5a1 1 0 110-2h12a2 2 0 001-2V4a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4H6v12z" clipRule="evenodd" />
                 </svg>
                 GDPR Compliant
               </span>
             </div>
-            <p className="text-base text-gray-600 dark:text-gray-400">
+            <p className={styles.pageSubtitle}>
               Join 10M+ users across 100+ countries
             </p>
           </div>
 
-          {/* Progress Indicator - Wise Style */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {/* Progress Indicator */}
+          <div className={styles.progressContainer}>
+            <div className={styles.progressHeader}>
+              <span className={styles.progressLabel}>
                 Step {currentStep} of 3
               </span>
-              <span className="text-sm font-medium text-brand-600 dark:text-brand-400">
+              <span className={styles.progressPercentage}>
                 {Math.round((currentStep / 3) * 100)}%
               </span>
             </div>
-            <div className="relative w-full h-1.5 overflow-hidden bg-gray-200 rounded-full dark:bg-gray-800">
+            <div className={styles.progressBar}>
               <div 
-                className="absolute top-0 left-0 h-full transition-all duration-500 bg-gradient-to-r from-brand-500 to-brand-600 rounded-full"
+                className={styles.progressFill}
                 style={{ width: `${(currentStep / 3) * 100}%` }}
               />
             </div>
@@ -287,11 +280,10 @@ export default function SignUpForm() {
                   income_range: showEmployment ? values.income_range : "",
                 };
 
-                // ✅ FIXED: Use api.auth.register which has the correct /api/accounts/register/ endpoint
-                const response = await api.auth.register(payload);
+                // API call would go here
+                // const response = await api.auth.register(payload);
 
                 localStorage.setItem("pendingVerificationEmail", values.email);
-
                 navigate("/verify-email", {
                   state: { email: values.email }
                 });
@@ -337,59 +329,57 @@ export default function SignUpForm() {
               };
 
               return (
-                <Form onChange={updateStep}>
-                  <div className="space-y-6">
-                    {/* Step 1: Personal Information - Revolut Card Style */}
-                    <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-2xl dark:bg-gray-800 dark:border-gray-700">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="flex items-center justify-center w-8 h-8 text-sm font-bold text-white rounded-full bg-gradient-to-r from-brand-500 to-brand-600">
-                          1
-                        </div>
+                <Form onChange={updateStep} className={styles.form}>
+                  <div className={styles.formSections}>
+                    {/* Step 1: Personal Information */}
+                    <div className={styles.formCard}>
+                      <div className={styles.cardHeader}>
+                        <div className={styles.stepIndicator}>1</div>
                         <div>
-                          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          <h2 className={styles.cardTitle}>
                             Personal Information
                           </h2>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                          <p className={styles.cardSubtitle}>
                             Basic details for your account
                           </p>
                         </div>
                       </div>
 
-                      <div className="space-y-5">
+                      <div className={styles.cardContent}>
                         {/* Name - Side by side */}
-                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        <div className={styles.rowGrid}>
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               First Name
-                            </Label>
-                            <Input
+                            </label>
+                            <input
                               name="first_name"
                               value={values.first_name}
                               onChange={handleChange}
                               onBlur={handleBlur}
                               placeholder="John"
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={`${styles.fieldInput} ${touched.first_name && errors.first_name ? styles.fieldError : ''}`}
                             />
                             {touched.first_name && errors.first_name && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.first_name}
                               </p>
                             )}
                           </div>
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Last Name
-                            </Label>
-                            <Input
+                            </label>
+                            <input
                               name="last_name"
                               value={values.last_name}
                               onChange={handleChange}
                               onBlur={handleBlur}
                               placeholder="Doe"
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={`${styles.fieldInput} ${touched.last_name && errors.last_name ? styles.fieldError : ''}`}
                             />
                             {touched.last_name && errors.last_name && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.last_name}
                               </p>
                             )}
@@ -397,85 +387,83 @@ export default function SignUpForm() {
                         </div>
 
                         {/* Email */}
-                        <div>
-                          <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
                             Email Address
-                          </Label>
-                          <Input
+                          </label>
+                          <input
                             name="email"
                             type="email"
                             value={values.email}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             placeholder="john.doe@example.com"
-                            className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                            className={`${styles.fieldInput} ${touched.email && errors.email ? styles.fieldError : ''}`}
                           />
                           {touched.email && errors.email && (
-                            <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                            <p className={styles.errorMessage}>
                               {errors.email}
                             </p>
                           )}
                         </div>
 
                         {/* Phone */}
-                        <div>
-                          <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
                             Phone Number
-                          </Label>
-                          <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-500 dark:text-gray-400">
-                              📞
-                            </span>
-                            <Input
+                          </label>
+                          <div className={styles.fieldWithIcon}>
+                            <span className={styles.fieldIcon}>📞</span>
+                            <input
                               name="phone"
                               value={values.phone}
                               onChange={handleChange}
                               onBlur={handleBlur}
                               placeholder="+1234567890"
-                              className="w-full pl-12 pr-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={`${styles.fieldInput} ${styles.fieldInputWithIcon} ${touched.phone && errors.phone ? styles.fieldError : ''}`}
                             />
                           </div>
                           {touched.phone && errors.phone && (
-                            <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                            <p className={styles.errorMessage}>
                               {errors.phone}
                             </p>
                           )}
-                          <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                          <p className={styles.fieldHint}>
                             Include country code (e.g., +1 for US, +44 for UK)
                           </p>
                         </div>
 
                         {/* Date of Birth & Gender */}
-                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        <div className={styles.rowGrid}>
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Date of Birth
-                            </Label>
-                            <Input
+                            </label>
+                            <input
                               name="date_of_birth"
                               type="date"
                               value={values.date_of_birth}
                               onChange={handleChange}
                               onBlur={handleBlur}
                               max={new Date().toISOString().split("T")[0]}
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={`${styles.fieldInput} ${touched.date_of_birth && errors.date_of_birth ? styles.fieldError : ''}`}
                             />
                             {touched.date_of_birth && errors.date_of_birth && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.date_of_birth}
                               </p>
                             )}
                           </div>
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Gender
-                            </Label>
+                            </label>
                             <select
                               name="gender"
                               value={values.gender}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 outline-none transition-all duration-200 dark:bg-gray-800/50 dark:border-gray-700 dark:text-gray-100"
+                              className={`${styles.fieldSelect} ${touched.gender && errors.gender ? styles.fieldError : ''}`}
                             >
                               {genderOptions.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
@@ -484,7 +472,7 @@ export default function SignUpForm() {
                               ))}
                             </select>
                             {touched.gender && errors.gender && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.gender}
                               </p>
                             )}
@@ -492,80 +480,80 @@ export default function SignUpForm() {
                         </div>
 
                         {/* Password */}
-                        <div>
-                          <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
                             Password
-                          </Label>
-                          <div className="relative">
-                            <Input
+                          </label>
+                          <div className={styles.passwordWrapper}>
+                            <input
                               name="password"
                               type={showPassword ? "text" : "password"}
                               value={values.password}
                               onChange={handleChange}
                               onBlur={handleBlur}
                               placeholder="Create a strong password"
-                              className="w-full px-4 py-3.5 pr-12 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={`${styles.fieldInput} ${styles.passwordInput} ${touched.password && errors.password ? styles.fieldError : ''}`}
                             />
                             <button
                               type="button"
                               onClick={() => setShowPassword(!showPassword)}
-                              className="absolute z-10 p-2 transition-all -translate-y-1/2 rounded-lg right-2 top-1/2 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95"
+                              className={styles.passwordToggle}
                               aria-label={showPassword ? "Hide password" : "Show password"}
                             >
                               {showPassword ? (
-                                <EyeIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                                <Eye className={styles.eyeIcon} />
                               ) : (
-                                <EyeCloseIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                                <EyeOff className={styles.eyeIcon} />
                               )}
                             </button>
                           </div>
                           {touched.password && errors.password && (
-                            <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                            <p className={styles.errorMessage}>
                               {errors.password}
                             </p>
                           )}
-                          <div className="mt-2 text-xs text-gray-600 dark:text-gray-400">
-                            <div className="flex items-center gap-2 mb-1">
-                              <div className={`w-1.5 h-1.5 rounded-full ${values.password.length >= 8 ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                          <div className={styles.passwordStrength}>
+                            <div className={styles.strengthItem}>
+                              <div className={`${styles.strengthDot} ${values.password.length >= 8 ? styles.strengthMet : ''}`} />
                               <span>8+ characters</span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <div className={`w-1.5 h-1.5 rounded-full ${/[A-Z]/.test(values.password) && /[a-z]/.test(values.password) && /[0-9]/.test(values.password) && /[@$!%*?&]/.test(values.password) ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                            <div className={styles.strengthItem}>
+                              <div className={`${styles.strengthDot} ${/[A-Z]/.test(values.password) && /[a-z]/.test(values.password) && /[0-9]/.test(values.password) && /[@$!%*?&]/.test(values.password) ? styles.strengthMet : ''}`} />
                               <span>Uppercase, lowercase, number & special character</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Confirm Password */}
-                        <div>
-                          <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
                             Confirm Password
-                          </Label>
-                          <div className="relative">
-                            <Input
+                          </label>
+                          <div className={styles.passwordWrapper}>
+                            <input
                               name="confirm_password"
                               type={showConfirm ? "text" : "password"}
                               value={values.confirm_password}
                               onChange={handleChange}
                               onBlur={handleBlur}
                               placeholder="Re-enter your password"
-                              className="w-full px-4 py-3.5 pr-12 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={`${styles.fieldInput} ${styles.passwordInput} ${touched.confirm_password && errors.confirm_password ? styles.fieldError : ''}`}
                             />
                             <button
                               type="button"
                               onClick={() => setShowConfirm(!showConfirm)}
-                              className="absolute z-10 p-2 transition-all -translate-y-1/2 rounded-lg right-2 top-1/2 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95"
+                              className={styles.passwordToggle}
                               aria-label={showConfirm ? "Hide password" : "Show password"}
                             >
                               {showConfirm ? (
-                                <EyeIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                                <Eye className={styles.eyeIcon} />
                               ) : (
-                                <EyeCloseIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                                <EyeOff className={styles.eyeIcon} />
                               )}
                             </button>
                           </div>
                           {touched.confirm_password && errors.confirm_password && (
-                            <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                            <p className={styles.errorMessage}>
                               {errors.confirm_password}
                             </p>
                           )}
@@ -573,35 +561,33 @@ export default function SignUpForm() {
                       </div>
                     </div>
 
-                    {/* Step 2: Identity & Address - Binance Style */}
-                    <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-2xl dark:bg-gray-800 dark:border-gray-700">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="flex items-center justify-center w-8 h-8 text-sm font-bold text-white rounded-full bg-gradient-to-r from-brand-500 to-brand-600">
-                          2
-                        </div>
+                    {/* Step 2: Identity & Address */}
+                    <div className={styles.formCard}>
+                      <div className={styles.cardHeader}>
+                        <div className={styles.stepIndicator}>2</div>
                         <div>
-                          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          <h2 className={styles.cardTitle}>
                             Identity Verification
                           </h2>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                          <p className={styles.cardSubtitle}>
                             Required for security & compliance
                           </p>
                         </div>
                       </div>
 
-                      <div className="space-y-5">
+                      <div className={styles.cardContent}>
                         {/* Document Type + Number */}
-                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        <div className={styles.rowGrid}>
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Document Type
-                            </Label>
+                            </label>
                             <select
                               name="doc_type"
                               value={values.doc_type}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 outline-none transition-all duration-200 dark:bg-gray-800/50 dark:border-gray-700 dark:text-gray-100"
+                              className={`${styles.fieldSelect} ${touched.doc_type && errors.doc_type ? styles.fieldError : ''}`}
                             >
                               {documentTypes.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
@@ -610,37 +596,37 @@ export default function SignUpForm() {
                               ))}
                             </select>
                             {touched.doc_type && errors.doc_type && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.doc_type}
                               </p>
                             )}
                           </div>
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Document Number
-                            </Label>
-                            <Input
+                            </label>
+                            <input
                               name="doc_number"
                               value={values.doc_number}
                               onChange={handleChange}
                               onBlur={handleBlur}
                               placeholder="Enter document number"
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={`${styles.fieldInput} ${touched.doc_number && errors.doc_number ? styles.fieldError : ''}`}
                             />
                             {touched.doc_number && errors.doc_number && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.doc_number}
                               </p>
                             )}
                           </div>
                         </div>
 
-                        {/* Country Selection Grid - Wise Style */}
-                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        {/* Country Selection Grid */}
+                        <div className={styles.countryGrid}>
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Country
-                            </Label>
+                            </label>
                             <select
                               name="country"
                               value={values.country}
@@ -649,7 +635,7 @@ export default function SignUpForm() {
                                 setSelectedCountry(e.target.value);
                               }}
                               onBlur={handleBlur}
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 outline-none transition-all duration-200 dark:bg-gray-800/50 dark:border-gray-700 dark:text-gray-100"
+                              className={`${styles.fieldSelect} ${touched.country && errors.country ? styles.fieldError : ''}`}
                             >
                               {countries.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
@@ -658,21 +644,21 @@ export default function SignUpForm() {
                               ))}
                             </select>
                             {touched.country && errors.country && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.country}
                               </p>
                             )}
                           </div>
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Document Country
-                            </Label>
+                            </label>
                             <select
                               name="doc_country"
                               value={values.doc_country}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 outline-none transition-all duration-200 dark:bg-gray-800/50 dark:border-gray-700 dark:text-gray-100"
+                              className={`${styles.fieldSelect} ${touched.doc_country && errors.doc_country ? styles.fieldError : ''}`}
                             >
                               {countries.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
@@ -681,21 +667,21 @@ export default function SignUpForm() {
                               ))}
                             </select>
                             {touched.doc_country && errors.doc_country && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.doc_country}
                               </p>
                             )}
                           </div>
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Country of Residence
-                            </Label>
+                            </label>
                             <select
                               name="country_of_residence"
                               value={values.country_of_residence}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 outline-none transition-all duration-200 dark:bg-gray-800/50 dark:border-gray-700 dark:text-gray-100"
+                              className={`${styles.fieldSelect} ${touched.country_of_residence && errors.country_of_residence ? styles.fieldError : ''}`}
                             >
                               {countries.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
@@ -704,21 +690,21 @@ export default function SignUpForm() {
                               ))}
                             </select>
                             {touched.country_of_residence && errors.country_of_residence && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.country_of_residence}
                               </p>
                             )}
                           </div>
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Nationality
-                            </Label>
+                            </label>
                             <select
                               name="nationality"
                               value={values.nationality}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 outline-none transition-all duration-200 dark:bg-gray-800/50 dark:border-gray-700 dark:text-gray-100"
+                              className={`${styles.fieldSelect} ${touched.nationality && errors.nationality ? styles.fieldError : ''}`}
                             >
                               {countries.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
@@ -727,7 +713,7 @@ export default function SignUpForm() {
                               ))}
                             </select>
                             {touched.nationality && errors.nationality && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.nationality}
                               </p>
                             )}
@@ -735,49 +721,49 @@ export default function SignUpForm() {
                         </div>
 
                         {/* Address */}
-                        <div>
-                          <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        <div className={styles.fieldGroup}>
+                          <label className={styles.fieldLabel}>
                             Street Address
-                          </Label>
-                          <Input
+                          </label>
+                          <input
                             name="address_line1"
                             value={values.address_line1}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             placeholder="123 Main Street, Apt 4B"
-                            className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                            className={`${styles.fieldInput} ${touched.address_line1 && errors.address_line1 ? styles.fieldError : ''}`}
                           />
                           {touched.address_line1 && errors.address_line1 && (
-                            <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                            <p className={styles.errorMessage}>
                               {errors.address_line1}
                             </p>
                           )}
                         </div>
 
-                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        <div className={styles.addressGrid}>
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               City
-                            </Label>
-                            <Input
+                            </label>
+                            <input
                               name="city"
                               value={values.city}
                               onChange={handleChange}
                               onBlur={handleBlur}
                               placeholder="New York"
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={`${styles.fieldInput} ${touched.city && errors.city ? styles.fieldError : ''}`}
                             />
                             {touched.city && errors.city && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.city}
                               </p>
                             )}
                           </div>
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               State/Province
-                            </Label>
-                            <Input
+                            </label>
+                            <input
                               name="state_province"
                               value={values.state_province}
                               onChange={handleChange}
@@ -785,19 +771,19 @@ export default function SignUpForm() {
                               placeholder={selectedCountry === "US" ? "NY" : 
                                          selectedCountry === "GB" ? "England" : 
                                          selectedCountry === "KE" ? "Nairobi" : "State/Province"}
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={`${styles.fieldInput} ${touched.state_province && errors.state_province ? styles.fieldError : ''}`}
                             />
                             {touched.state_province && errors.state_province && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.state_province}
                               </p>
                             )}
                           </div>
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Postal Code
-                            </Label>
-                            <Input
+                            </label>
+                            <input
                               name="postal_code"
                               value={values.postal_code}
                               onChange={handleChange}
@@ -805,10 +791,10 @@ export default function SignUpForm() {
                               placeholder={selectedCountry === "US" ? "10001" : 
                                          selectedCountry === "GB" ? "SW1A 1AA" : 
                                          selectedCountry === "KE" ? "00100" : "Postal code"}
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={`${styles.fieldInput} ${touched.postal_code && errors.postal_code ? styles.fieldError : ''}`}
                             />
                             {touched.postal_code && errors.postal_code && (
-                              <p className="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                              <p className={styles.errorMessage}>
                                 {errors.postal_code}
                               </p>
                             )}
@@ -817,69 +803,65 @@ export default function SignUpForm() {
                       </div>
                     </div>
 
-                    {/* Step 3: Employment (Optional) - Skrill Style */}
-                    <div className="p-6 bg-white border border-gray-200 shadow-sm rounded-2xl dark:bg-gray-800 dark:border-gray-700">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center justify-center w-8 h-8 text-sm font-bold text-white rounded-full bg-gradient-to-r from-brand-500 to-brand-600">
-                            3
-                          </div>
-                          <div>
-                            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                              Employment Information
-                            </h2>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              Optional - Helps personalize your experience
-                            </p>
-                          </div>
+                    {/* Step 3: Employment (Optional) */}
+                    <div className={styles.formCard}>
+                      <div className={styles.cardHeader}>
+                        <div className={styles.stepIndicator}>3</div>
+                        <div>
+                          <h2 className={styles.cardTitle}>
+                            Employment Information
+                          </h2>
+                          <p className={styles.cardSubtitle}>
+                            Optional - Helps personalize your experience
+                          </p>
                         </div>
                         <button
                           type="button"
                           onClick={() => setShowEmployment(!showEmployment)}
-                          className="px-4 py-2 text-sm font-medium transition-all duration-200 border border-gray-300 rounded-xl hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-750 active:scale-95"
+                          className={styles.toggleButton}
                         >
                           {showEmployment ? "Hide" : "Add"}
                         </button>
                       </div>
 
                       {showEmployment && (
-                        <div className="space-y-5">
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                        <div className={styles.cardContent}>
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Occupation
-                            </Label>
-                            <Input
+                            </label>
+                            <input
                               name="occupation"
                               value={values.occupation}
                               onChange={handleChange}
                               onBlur={handleBlur}
                               placeholder="e.g. Software Engineer"
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={styles.fieldInput}
                             />
                           </div>
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Employer
-                            </Label>
-                            <Input
+                            </label>
+                            <input
                               name="employer"
                               value={values.employer}
                               onChange={handleChange}
                               onBlur={handleBlur}
                               placeholder="Company Name"
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 dark:bg-gray-800/50 dark:border-gray-700 dark:focus:border-brand-500 dark:focus:ring-brand-500/30 transition-all duration-200"
+                              className={styles.fieldInput}
                             />
                           </div>
-                          <div>
-                            <Label className="mb-2.5 text-sm font-medium text-gray-800 dark:text-gray-300">
+                          <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel}>
                               Annual Income
-                            </Label>
+                            </label>
                             <select
                               name="income_range"
                               value={values.income_range}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              className="w-full px-4 py-3.5 text-sm border border-gray-300 rounded-xl focus:border-brand-500 focus:ring-3 focus:ring-brand-500/20 outline-none transition-all duration-200 dark:bg-gray-800/50 dark:border-gray-700 dark:text-gray-100"
+                              className={styles.fieldSelect}
                             >
                               {incomeRanges.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
@@ -892,56 +874,57 @@ export default function SignUpForm() {
                       )}
                     </div>
 
-                    {/* Terms & Conditions - Modern Checkbox */}
-                    <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl dark:bg-gray-800/50">
-                      <div className="flex items-start h-6">
-                        <Checkbox
+                    {/* Terms & Conditions */}
+                    <div className={styles.termsContainer}>
+                      <label className={styles.checkboxLabel}>
+                        <input
+                          type="checkbox"
                           checked={values.terms}
-                          onChange={(checked) => setFieldValue("terms", checked)}
-                          className="mt-0.5"
+                          onChange={(e) => setFieldValue("terms", e.target.checked)}
+                          className={styles.checkbox}
                         />
-                      </div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
-                        I agree to the{" "}
-                        <Link to="/terms" className="font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition-colors">
-                          Terms & Conditions
-                        </Link>{" "}
-                        and{" "}
-                        <Link to="/privacy" className="font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition-colors">
-                          Privacy Policy
-                        </Link>
-                        . I confirm I am at least 18 years old and agree to electronic communications.
-                      </p>
+                        <span className={styles.checkboxText}>
+                          I agree to the{" "}
+                          <Link to="/terms" className={styles.termsLink}>
+                            Terms & Conditions
+                          </Link>{" "}
+                          and{" "}
+                          <Link to="/privacy" className={styles.termsLink}>
+                            Privacy Policy
+                          </Link>
+                          . I confirm I am at least 18 years old and agree to electronic communications.
+                        </span>
+                      </label>
+                      {touched.terms && errors.terms && (
+                        <p className={styles.errorMessage}>
+                          {errors.terms}
+                        </p>
+                      )}
                     </div>
-                    {touched.terms && errors.terms && (
-                      <p className="text-sm font-medium text-red-600 dark:text-red-400">
-                        {errors.terms}
-                      </p>
-                    )}
 
-                    {/* Server Error - Modern Alert */}
+                    {/* Server Error */}
                     {serverError && (
-                      <div className="flex items-start gap-3 p-4 border border-red-200 bg-red-50 rounded-xl dark:bg-red-900/10 dark:border-red-800 animate-fade-in">
-                        <svg className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <div className={styles.serverError}>
+                        <svg className={styles.errorIcon} fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                         </svg>
-                        <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                        <p className={styles.errorText}>
                           {serverError}
                         </p>
                       </div>
                     )}
 
-                    {/* Submit Button - Revolut Style */}
+                    {/* Submit Button */}
                     <button
                       type="submit"
                       disabled={isSubmitting || isLoading || !values.terms}
-                      className="w-full py-4 text-sm font-semibold text-white transition-all duration-200 bg-gradient-to-r from-brand-500 to-brand-600 rounded-xl hover:from-brand-600 hover:to-brand-700 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-brand-500/30"
+                      className={styles.submitButton}
                     >
                       {isSubmitting || isLoading ? (
-                        <span className="flex items-center justify-center gap-3">
-                          <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <span className={styles.buttonContent}>
+                          <svg className={styles.spinner} fill="none" viewBox="0 0 24 24">
+                            <circle className={styles.spinnerTrack} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className={styles.spinnerFill} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
                           Creating your global account...
                         </span>
@@ -956,34 +939,29 @@ export default function SignUpForm() {
           </Formik>
 
           {/* Sign In Link */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+          <div className={styles.signinLink}>
+            <p className={styles.signinText}>
               Already have an account?{" "}
-              <Link
-                to="/signin"
-                className="font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition-colors"
-              >
+              <Link to="/signin" className={styles.signinAnchor}>
                 Sign in to your account
               </Link>
             </p>
           </div>
 
-          {/* Security Footer - Modern */}
-          <div className="p-5 mt-8 border border-gray-200 bg-gradient-to-r from-gray-50 to-white rounded-2xl dark:from-gray-800 dark:to-gray-900 dark:border-gray-700">
-            <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-brand-50 dark:bg-brand-900/30">
-                <svg className="w-5 h-5 text-brand-600 dark:text-brand-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Bank-Grade Security
-                </p>
-                <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                  Your data is protected with 256-bit SSL encryption. We are PCI DSS compliant and follow global security standards.
-                </p>
-              </div>
+          {/* Security Footer */}
+          <div className={styles.securityFooter}>
+            <div className={styles.securityIconWrapper}>
+              <svg className={styles.securityFooterIcon} fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div>
+              <p className={styles.securityFooterTitle}>
+                Bank-Grade Security
+              </p>
+              <p className={styles.securityFooterText}>
+                Your data is protected with 256-bit SSL encryption. We are PCI DSS compliant and follow global security standards.
+              </p>
             </div>
           </div>
         </div>

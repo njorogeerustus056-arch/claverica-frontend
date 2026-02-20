@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Mail, Phone, MapPin, MessageSquare, Clock, Globe, Send, CheckCircle2, 
-  ArrowRight, Shield, Lock, Users, Zap, ChevronDown, ChevronUp, 
+  Mail, Phone, MessageSquare, Clock, Send, CheckCircle2, 
+  ArrowRight, Shield, Lock, Users, Zap, ChevronDown,
   Copy, Globe2, Smartphone, CreditCard, HelpCircle, AlertTriangle,
-  Volume2, Download, ExternalLink, Star, Clock4, Calendar, Eye,
-  CreditCard as CardIcon, Send as TransferIcon, Wallet, Bitcoin,
-  PiggyBank, Receipt, DollarSign, Handshake, RefreshCw,
-  Building2, TrendingUp, Scale
+  Volume2, Star, Clock4, Calendar, Eye,
+  Wallet, Bitcoin, PiggyBank, Handshake,
+  Building2, TrendingUp, Scale, Award,
+  ChevronRight, Sparkles, Lightbulb, Search
 } from 'lucide-react';
+import styles from './Contact.module.css';
 
-export default function AdvancedContact() {
+export default function Contact() {
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -27,7 +28,7 @@ export default function AdvancedContact() {
   const [suggestions, setSuggestions] = useState([]);
   const [activeTab, setActiveTab] = useState('contact');
   const [copied, setCopied] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [expandedFaq, setExpandedFaq] = useState(null);
 
   // Mock support availability
   const [supportStatus, setSupportStatus] = useState({
@@ -35,6 +36,62 @@ export default function AdvancedContact() {
     phone: { available: true, waitTime: '5 min' },
     email: { available: true, responseTime: '2-4 hours' }
   });
+
+  // FAQ Data - Creative and helpful
+  const faqItems = [
+    {
+      id: 1,
+      question: "🪪 How do I verify my identity?",
+      answer: "Upload your government ID and a selfie in the app. Takes 2 minutes. Most verifications are approved within the hour.",
+      category: "account",
+      helpful: "92% found this helpful"
+    },
+    {
+      id: 2,
+      question: "💸 Where's my international transfer?",
+      answer: "International transfers typically arrive in 1-2 business days. You can track it live in the app under 'Transactions'.",
+      category: "payments",
+      helpful: "88% found this helpful"
+    },
+    {
+      id: 3,
+      question: "🔒 Lost my card - what now?",
+      answer: "Freeze it instantly in the app, then request a replacement. Emergency cash can be picked up at any partner bank.",
+      category: "security",
+      helpful: "96% found this helpful",
+      urgent: true
+    },
+    {
+      id: 4,
+      question: "📱 Apple Pay not working?",
+      answer: "Remove the card from Wallet, restart your phone, and add it again. Make sure iOS is updated to the latest version.",
+      category: "technical",
+      helpful: "84% found this helpful"
+    },
+    {
+      id: 5,
+      question: "💰 How do I increase my transfer limit?",
+      answer: "Complete your profile, verify your identity, and maintain a good transaction history. Limits increase automatically over time.",
+      category: "account",
+      helpful: "91% found this helpful"
+    },
+    {
+      id: 6,
+      question: "🌍 Which currencies do you support?",
+      answer: "40+ currencies including USD, EUR, GBP, JPY, AUD, CAD. We add new currencies monthly based on user requests.",
+      category: "general",
+      helpful: "87% found this helpful"
+    }
+  ];
+
+  // Category icons mapping
+  const categoryIcons = {
+    account: <Shield className={styles.faqCategoryIcon} />,
+    payments: <Globe2 className={styles.faqCategoryIcon} />,
+    security: <Lock className={styles.faqCategoryIcon} />,
+    technical: <Smartphone className={styles.faqCategoryIcon} />,
+    general: <HelpCircle className={styles.faqCategoryIcon} />
+  };
 
   // Simulate live status updates
   useEffect(() => {
@@ -80,6 +137,16 @@ export default function AdvancedContact() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const toggleFaq = (id) => {
+    setExpandedFaq(expandedFaq === id ? null : id);
+  };
+
   const contactMethods = [
     {
       icon: MessageSquare,
@@ -87,7 +154,7 @@ export default function AdvancedContact() {
       description: 'Fastest way to get help',
       contact: `Wait time: ${supportStatus.chat.waitTime}`,
       action: '#',
-      color: 'from-green-500 to-emerald-500',
+      gradient: 'gradientPurple',
       status: supportStatus.chat.available ? '🟢 Live now' : '🔴 Offline',
       bestFor: ['Quick questions', 'Account issues', 'Technical help']
     },
@@ -97,7 +164,7 @@ export default function AdvancedContact() {
       description: 'Speak with our specialists',
       contact: '+1 (332) 334-3426',
       action: 'tel:+13323343426',
-      color: 'from-purple-500 to-pink-500',
+      gradient: 'gradientGold',
       status: supportStatus.phone.available ? '🟢 Available' : '🔴 Closed',
       bestFor: ['Urgent matters', 'Fraud reports', 'Complex issues']
     },
@@ -106,86 +173,67 @@ export default function AdvancedContact() {
       title: 'Email Support',
       description: 'Detailed written assistance',
       contact: 'support@claverica.com',
-      action: 'mailto:clavericaforgnxchange.info@gmail.com',
-      color: 'from-blue-500 to-cyan-500',
+      action: 'mailto:support@claverica.com',
+      gradient: 'gradientNavy',
       status: `⏱️ ${supportStatus.email.responseTime}`,
       bestFor: ['Documentation', 'Formal requests', 'Non-urgent queries']
     }
   ];
 
-  // Service categories that will navigate to Services page
   const serviceCategories = [
     { 
       id: 'payments',
-      icon: TransferIcon,
+      icon: Globe2,
       label: 'Payments & Transfers', 
-      color: 'blue', 
+      color: 'purple',
       count: 5,
       description: 'Instant global transfers and payments',
-      services: ['International transfers', 'Local payments', 'Bulk payments', 'Payment gateway']
+      services: ['International transfers', 'Local payments', 'Bulk payments']
     },
     { 
       id: 'accounts',
       icon: Wallet,
       label: 'Multi-Currency Accounts', 
-      color: 'purple', 
+      color: 'navy',
       count: 3,
       description: 'Hold and manage 40+ currencies',
-      services: ['USD accounts', 'EUR accounts', 'GBP accounts', 'Crypto wallets']
+      services: ['USD accounts', 'EUR accounts', 'GBP accounts']
     },
     { 
       id: 'cards',
-      icon: CardIcon,
+      icon: CreditCard,
       label: 'Cards & Digital Wallets', 
-      color: 'pink', 
+      color: 'gold',
       count: 4,
       description: 'Virtual and physical payment cards',
-      services: ['Virtual cards', 'Metal cards', 'Apple/Google Pay', 'Card controls']
+      services: ['Virtual cards', 'Metal cards', 'Apple/Google Pay']
     },
     { 
       id: 'crypto',
       icon: Bitcoin,
       label: 'Crypto Trading', 
-      color: 'orange', 
+      color: 'purple',
       count: 7,
       description: 'Trade 50+ cryptocurrencies',
-      services: ['BTC/ETH trading', 'P2P trading', 'Crypto wallets', 'Staking']
+      services: ['BTC/ETH trading', 'P2P trading', 'Crypto wallets']
     },
     { 
       id: 'savings',
       icon: PiggyBank,
       label: 'Savings & Investments', 
-      color: 'emerald', 
+      color: 'teal',
       count: 6,
       description: 'High-yield savings and investments',
-      services: ['12% APY savings', 'Daily compounding', 'Auto-invest', 'Portfolio tracking']
-    },
-    { 
-      id: 'loans',
-      icon: DollarSign,
-      label: 'Loans & Financing', 
-      color: 'green', 
-      count: 8,
-      description: 'Personal and business loans',
-      services: ['Personal loans', 'Business loans', 'Fast approval', 'Flexible terms']
-    },
-    { 
-      id: 'escrow',
-      icon: Handshake,
-      label: 'Escrow Services', 
-      color: 'indigo', 
-      count: 4,
-      description: 'Secure transaction protection',
-      services: ['P2P escrow', 'Business escrow', 'Crypto escrow', 'Dispute resolution']
+      services: ['12% APY savings', 'Daily compounding', 'Auto-invest']
     },
     { 
       id: 'business',
       icon: Building2,
       label: 'Business Solutions', 
-      color: 'cyan', 
+      color: 'navy',
       count: 9,
       description: 'Complete business banking suite',
-      services: ['Payroll processing', 'Merchant services', 'API integration', 'Multi-user access']
+      services: ['Payroll processing', 'Merchant services', 'API integration']
     }
   ];
 
@@ -193,132 +241,49 @@ export default function AdvancedContact() {
     { title: 'Verify your identity', views: '1.2k', solved: true },
     { title: 'International transfer failed', views: '892', solved: true },
     { title: 'Update card PIN', views: '756', solved: false },
-    { title: 'Enable biometric login', views: '654', solved: true },
-    { title: 'Transaction dispute guide', views: '543', solved: false }
+    { title: 'Enable biometric login', views: '654', solved: true }
   ];
-
-  const languages = [
-    { code: 'EN', name: 'English', flag: '🇺🇸' },
-    { code: 'ES', name: 'Español', flag: '🇪🇸' },
-    { code: 'FR', name: 'Français', flag: '🇫🇷' },
-    { code: 'DE', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'AR', name: 'العربية', flag: '🇸🇦' }
-  ];
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleServiceClick = (categoryId) => {
-    // Navigate to services page
-    navigate('/services');
-    // You could also pass state to scroll to specific section
-    // navigate('/services', { state: { scrollTo: categoryId } });
-  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white">
-      
-      {/* Animated Header */}
-      <div className="relative overflow-hidden pt-32 pb-20 px-4">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-cyan-500/5 rounded-full blur-2xl animate-pulse delay-1000"></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          {/* Language Selector */}
-          <div className="flex justify-end mb-6">
-            <div className="relative inline-block">
-              <select 
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-2 text-sm appearance-none pr-10"
-              >
-                {languages.map(lang => (
-                  <option key={lang.code} value={lang.name}>
-                    {lang.flag} {lang.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+    <div className={styles.pageWrapper}>
+      {/* Simple Header - No Hero */}
+      <div className={styles.simpleHeader}>
+        <div className={styles.container}>
+          <div className={styles.headerContent}>
+            <div>
+              <h1 className={styles.pageTitle}>Contact Support</h1>
+              <p className={styles.pageSubtitle}>We're here 24/7 to help with anything you need</p>
             </div>
-          </div>
-
-          <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-full">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-blue-400 text-sm font-medium">Support Online Now</span>
-          </div>
-          
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            How can we help you today?
-          </h1>
-          
-          {/* Smart Search */}
-          <div className="max-w-2xl mx-auto mb-8 relative">
-            <div className="relative">
-              <input
-                type="text"
-                value={typingQuery}
-                onChange={(e) => setTypingQuery(e.target.value)}
-                placeholder="Ask a question or describe your issue..."
-                className="w-full px-6 py-4 bg-gray-800/50 border border-gray-700 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 pr-12"
-              />
-              <HelpCircle className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-            </div>
-            
-            {suggestions.length > 0 && (
-              <div className="absolute top-full mt-2 w-full bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl z-50">
-                {suggestions.map((suggestion, idx) => (
-                  <div 
-                    key={idx}
-                    className="px-4 py-3 hover:bg-gray-700 cursor-pointer border-b border-gray-700 last:border-0 flex items-center gap-3"
-                    onClick={() => {
-                      setTypingQuery(suggestion);
-                      setSuggestions([]);
-                    }}
-                  >
-                    <HelpCircle className="w-4 h-4 text-blue-400" />
-                    <span>{suggestion}</span>
-                  </div>
-                ))}
+            <div className={styles.headerStatus}>
+              <div className={styles.headerStatusItem}>
+                <div className={styles.statusDotGreen}></div>
+                <span>Live chat online</span>
               </div>
-            )}
-          </div>
-
-          {/* Status Indicators */}
-          <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <div className="flex items-center gap-2 bg-gray-800/30 px-4 py-2 rounded-xl">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-gray-300">Live chat: {supportStatus.chat.waitTime} wait</span>
-            </div>
-            <div className="flex items-center gap-2 bg-gray-800/30 px-4 py-2 rounded-xl">
-              <Clock4 className="w-4 h-4 text-blue-400" />
-              <span className="text-gray-300">Phone: {supportStatus.phone.waitTime} wait</span>
-            </div>
-            <div className="flex items-center gap-2 bg-gray-800/30 px-4 py-2 rounded-xl">
-              <Star className="w-4 h-4 text-yellow-400" />
-              <span className="text-gray-300">4.8/5 satisfaction</span>
+              <div className={styles.headerStatusItem}>
+                <Clock4 className={styles.headerStatusIcon} />
+                <span>Phone: {supportStatus.phone.waitTime} wait</span>
+              </div>
+              <div className={styles.headerStatusItem}>
+                <Mail className={styles.headerStatusIcon} />
+                <span>Email: {supportStatus.email.responseTime}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="max-w-7xl mx-auto px-4 mb-8">
-        <div className="flex border-b border-gray-800">
+      <div className={styles.container}>
+        <div className={styles.tabNav}>
           <button
             onClick={() => setActiveTab('contact')}
-            className={`px-6 py-3 font-medium ${activeTab === 'contact' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-400'}`}
+            className={`${styles.tabButton} ${activeTab === 'contact' ? styles.tabActive : ''}`}
           >
             Contact Support
           </button>
           <button
             onClick={() => setActiveTab('services')}
-            className={`px-6 py-3 font-medium ${activeTab === 'services' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-400'}`}
+            className={`${styles.tabButton} ${activeTab === 'services' ? styles.tabActive : ''}`}
           >
             Browse Services
           </button>
@@ -326,98 +291,160 @@ export default function AdvancedContact() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 pb-16">
+      <div className={styles.container}>
         {activeTab === 'contact' ? (
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Left Column: Contact Methods */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="grid md:grid-cols-3 gap-6">
+          <div className={styles.contactGrid}>
+            {/* Left Column: Contact Methods and Form */}
+            <div className={styles.contactMain}>
+              {/* Contact Methods Cards */}
+              <div className={styles.contactMethodsGrid}>
                 {contactMethods.map((method, index) => {
                   const Icon = method.icon;
                   return (
-                    <div
-                      key={index}
-                      className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:border-gray-600 transition-all duration-300 hover:scale-[1.02]"
-                    >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${method.color}`}>
-                          <Icon className="w-6 h-6 text-white" />
+                    <div key={index} className={`${styles.contactCard} ${styles[method.gradient]}`}>
+                      <div className={styles.contactCardHeader}>
+                        <div className={styles.contactIconWrapper}>
+                          <Icon className={styles.contactIcon} />
                         </div>
-                        <span className="text-xs font-medium px-2 py-1 bg-gray-700/50 rounded-full">
-                          {method.status}
-                        </span>
+                        <span className={styles.contactStatus}>{method.status}</span>
                       </div>
                       
-                      <h3 className="text-xl font-semibold text-white mb-2">{method.title}</h3>
-                      <p className="text-gray-400 text-sm mb-4">{method.description}</p>
+                      <h3 className={styles.contactTitle}>{method.title}</h3>
+                      <p className={styles.contactDescription}>{method.description}</p>
                       
-                      <div className="space-y-3 mb-4">
-                        <p className="text-white font-medium flex items-center gap-2">
+                      <div className={styles.contactDetails}>
+                        <p className={styles.contactInfo}>
                           {method.contact}
                           {method.title === 'Email Support' && (
                             <button
                               onClick={() => copyToClipboard(method.contact)}
-                              className="text-gray-400 hover:text-white"
+                              className={styles.copyButton}
                             >
-                              <Copy className="w-4 h-4" />
+                              <Copy className={styles.copyIcon} />
+                              {copied && <span className={styles.copyTooltip}>Copied!</span>}
                             </button>
                           )}
                         </p>
-                        <div className="flex items-center gap-2">
-                          <Zap className="w-4 h-4 text-yellow-400" />
-                          <span className="text-xs text-gray-400">Best for:</span>
+                        
+                        <div className={styles.bestForContainer}>
+                          <Zap className={styles.bestForIcon} />
+                          <span>Best for:</span>
                         </div>
-                        <div className="flex flex-wrap gap-1">
+                        
+                        <div className={styles.bestForTags}>
                           {method.bestFor.map((item, idx) => (
-                            <span key={idx} className="text-xs px-2 py-1 bg-gray-700/30 rounded-full">
+                            <span key={idx} className={styles.bestForTag}>
                               {item}
                             </span>
                           ))}
                         </div>
                       </div>
                       
-                      <a
-                        href={method.action}
-                        className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 font-medium text-sm"
-                      >
+                      <a href={method.action} className={styles.contactLink}>
                         Contact now
-                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className={styles.linkIcon} />
                       </a>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Interactive Form */}
-              <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-2xl p-8">
-                <h2 className="text-2xl font-bold text-white mb-2">Send a detailed message</h2>
-                <p className="text-gray-300 mb-6">We'll get back to you within the promised timeframe</p>
+              {/* ✨ CREATIVE FAQ SECTION - NO BUTTONS, JUST DESIGN ✨ */}
+              <div className={styles.faqSection}>
+                <div className={styles.faqHeader}>
+                  <div className={styles.faqTitleWrapper}>
+                    <Sparkles className={styles.faqSparkleIcon} />
+                    <h2 className={styles.faqTitle}>Quick answers, no waiting</h2>
+                  </div>
+                  <p className={styles.faqSubtitle}>Most questions answered in under a minute</p>
+                </div>
 
-                {submitted ? (
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <div className="relative mb-6">
-                      <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center">
-                        <CheckCircle2 className="w-12 h-12 text-green-400" />
+                <div className={styles.faqGrid}>
+                  {faqItems.map((faq) => (
+                    <div 
+                      key={faq.id} 
+                      className={`${styles.faqItem} ${expandedFaq === faq.id ? styles.faqItemExpanded : ''} ${faq.urgent ? styles.faqUrgent : ''}`}
+                      onClick={() => toggleFaq(faq.id)}
+                    >
+                      <div className={styles.faqQuestion}>
+                        <div className={styles.faqQuestionLeft}>
+                          <span className={styles.faqQuestionText}>{faq.question}</span>
+                          {faq.urgent && (
+                            <span className={styles.faqUrgentBadge}>urgent</span>
+                          )}
+                        </div>
+                        <div className={styles.faqChevron}>
+                          <ChevronRight className={`${styles.faqChevronIcon} ${expandedFaq === faq.id ? styles.faqChevronRotated : ''}`} />
+                        </div>
                       </div>
-                      <div className="absolute -top-2 -right-2 w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-                        <Clock className="w-5 h-5 text-blue-400" />
+                      
+                      <div className={`${styles.faqAnswer} ${expandedFaq === faq.id ? styles.faqAnswerExpanded : ''}`}>
+                        <div className={styles.faqAnswerContent}>
+                          <p className={styles.faqAnswerText}>{faq.answer}</p>
+                          <div className={styles.faqAnswerMeta}>
+                            <div className={styles.faqCategory}>
+                              {categoryIcons[faq.category]}
+                              <span className={styles.faqCategoryText}>{faq.category}</span>
+                            </div>
+                            <div className={styles.faqHelpful}>
+                              <Lightbulb className={styles.faqHelpfulIcon} />
+                              <span className={styles.faqHelpfulText}>{faq.helpful}</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <h3 className="text-2xl font-semibold text-white mb-2">Message Received!</h3>
-                    <p className="text-gray-300 text-center mb-4">
+                  ))}
+                </div>
+
+                <div className={styles.faqFooter}>
+                  <div className={styles.faqSearchPrompt}>
+                    <Search className={styles.faqSearchIcon} />
+                    <span>Type above to search specific topics</span>
+                  </div>
+                  <div className={styles.faqStats}>
+                    <div className={styles.faqStat}>
+                      <CheckCircle2 className={styles.faqStatIcon} />
+                      <span>92% satisfaction</span>
+                    </div>
+                    <div className={styles.faqStat}>
+                      <Clock className={styles.faqStatIcon} />
+                      <span>Updated daily</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Form */}
+              <div className={styles.formCard}>
+                <h2 className={styles.formTitle}>Send a detailed message</h2>
+                <p className={styles.formSubtitle}>We'll get back to you within the promised timeframe</p>
+
+                {submitted ? (
+                  <div className={styles.successState}>
+                    <div className={styles.successAnimation}>
+                      <div className={styles.successIconWrapper}>
+                        <CheckCircle2 className={styles.successIcon} />
+                      </div>
+                      <div className={styles.successBadge}>
+                        <Clock className={styles.successBadgeIcon} />
+                      </div>
+                    </div>
+                    <h3 className={styles.successTitle}>Message Received!</h3>
+                    <p className={styles.successMessage}>
                       We'll respond {formData.urgency === 'urgent' ? 'within 1 hour' : 
                       formData.urgency === 'high' ? 'within 4 hours' : 'within 24 hours'}
                     </p>
-                    <div className="flex items-center gap-2 text-sm text-gray-400">
-                      <Calendar className="w-4 h-4" />
+                    <div className={styles.caseId}>
+                      <Calendar className={styles.caseIdIcon} />
                       <span>Case ID: #{(Math.random() * 1000000).toFixed(0)}</span>
                     </div>
                   </div>
                 ) : (
-                  <form className="space-y-6">
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
+                  <form className={styles.form}>
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Full Name *</label>
                         <input
                           type="text"
                           name="name"
@@ -425,12 +452,12 @@ export default function AdvancedContact() {
                           onChange={handleChange}
                           required
                           placeholder="John Doe"
-                          className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className={styles.formInput}
                         />
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Email Address *</label>
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Email Address *</label>
                         <input
                           type="email"
                           name="email"
@@ -438,19 +465,19 @@ export default function AdvancedContact() {
                           onChange={handleChange}
                           required
                           placeholder="you@example.com"
-                          className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className={styles.formInput}
                         />
                       </div>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Urgency Level</label>
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Urgency Level</label>
                         <select
                           name="urgency"
                           value={formData.urgency}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className={styles.formSelect}
                         >
                           <option value="normal">Normal (24h response)</option>
                           <option value="high">High (4h response)</option>
@@ -458,25 +485,24 @@ export default function AdvancedContact() {
                         </select>
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Category</label>
                         <select
                           name="category"
                           value={formData.category}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className={styles.formSelect}
                         >
                           <option value="general">General Inquiry</option>
                           <option value="account">Account Issue</option>
                           <option value="security">Security Concern</option>
                           <option value="payment">Payment Problem</option>
-                          <option value="technical">Technical Issue</option>
                         </select>
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Subject *</label>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Subject *</label>
                       <input
                         type="text"
                         name="subject"
@@ -484,14 +510,14 @@ export default function AdvancedContact() {
                         onChange={handleChange}
                         required
                         placeholder="Brief description of your issue"
-                        className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className={styles.formInput}
                       />
                     </div>
 
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-300">Message *</label>
-                        <span className="text-xs text-gray-400">Max 2000 characters</span>
+                    <div className={styles.formGroup}>
+                      <div className={styles.textareaHeader}>
+                        <label className={styles.formLabel}>Message *</label>
+                        <span className={styles.charCount}>Max 2000 characters</span>
                       </div>
                       <textarea
                         name="message"
@@ -501,20 +527,17 @@ export default function AdvancedContact() {
                         rows={6}
                         maxLength={2000}
                         placeholder="Please provide as much detail as possible..."
-                        className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                        className={styles.formTextarea}
                       ></textarea>
                     </div>
 
-                    <div className="flex items-center gap-3 text-sm text-gray-400">
-                      <Lock className="w-4 h-4" />
+                    <div className={styles.securityNote}>
+                      <Lock className={styles.securityIcon} />
                       <span>Your data is encrypted and secure</span>
                     </div>
 
-                    <button
-                      onClick={handleSubmit}
-                      className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] group"
-                    >
-                      <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <button onClick={handleSubmit} className={styles.submitButton}>
+                      <Send className={styles.submitIcon} />
                       <span>Send Secure Message</span>
                     </button>
                   </form>
@@ -523,44 +546,41 @@ export default function AdvancedContact() {
             </div>
 
             {/* Right Column: Help Resources */}
-            <div className="space-y-6">
+            <div className={styles.helpSidebar}>
               {/* Emergency Card */}
-              <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20 rounded-2xl p-6">
-                <div className="flex items-start gap-3 mb-4">
-                  <AlertTriangle className="w-6 h-6 text-red-400 flex-shrink-0" />
+              <div className={styles.emergencyCard}>
+                <div className={styles.emergencyHeader}>
+                  <AlertTriangle className={styles.emergencyIcon} />
                   <div>
-                    <h4 className="font-bold text-white mb-1">Emergency Support</h4>
-                    <p className="text-gray-300 text-sm">
+                    <h4 className={styles.emergencyTitle}>Emergency Support</h4>
+                    <p className={styles.emergencyDescription}>
                       Lost card? Suspect fraud? Contact immediately.
                     </p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <a
-                    href="tel:+13323343426"
-                    className="block w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-4 rounded-xl text-center transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Phone className="w-4 h-4" />
+                <div className={styles.emergencyActions}>
+                  <a href="tel:+13323343426" className={styles.emergencyCall}>
+                    <Phone className={styles.emergencyCallIcon} />
                     Call Emergency Line
                   </a>
-                  <button className="w-full border border-red-500/30 text-red-400 hover:bg-red-500/10 font-medium py-3 px-4 rounded-xl text-center transition-colors">
+                  <button className={styles.emergencyFreeze}>
                     Freeze My Card
                   </button>
                 </div>
               </div>
 
               {/* Trending Issues */}
-              <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-white mb-4">🔥 Trending This Week</h3>
-                <div className="space-y-4">
+              <div className={styles.trendingCard}>
+                <h3 className={styles.trendingTitle}>🔥 Trending This Week</h3>
+                <div className={styles.trendingList}>
                   {trendingIssues.map((issue, idx) => (
-                    <div key={idx} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-2 h-2 rounded-full ${issue.solved ? 'bg-green-400' : 'bg-yellow-400'}`}></div>
-                        <span className="text-sm text-white">{issue.title}</span>
+                    <div key={idx} className={styles.trendingItem}>
+                      <div className={styles.trendingItemLeft}>
+                        <div className={`${styles.trendingDot} ${issue.solved ? styles.trendingDotSolved : styles.trendingDotUnsolved}`}></div>
+                        <span className={styles.trendingIssueTitle}>{issue.title}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-400">
-                        <Eye className="w-3 h-3" />
+                      <div className={styles.trendingViews}>
+                        <Eye className={styles.trendingViewsIcon} />
                         <span>{issue.views}</span>
                       </div>
                     </div>
@@ -568,39 +588,30 @@ export default function AdvancedContact() {
                 </div>
               </div>
 
-              {/* Quick Service Links */}
-              <div className="bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-yellow-400" />
+              {/* Quick Actions */}
+              <div className={styles.quickActionsCard}>
+                <h3 className={styles.quickActionsTitle}>
+                  <Zap className={styles.quickActionsIcon} />
                   Quick Actions
                 </h3>
-                <div className="space-y-3">
-                  <button 
-                    onClick={() => navigate('/signup')}
-                    className="w-full text-left p-3 bg-blue-500/10 hover:bg-blue-500/20 rounded-xl transition-colors flex items-center gap-3"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                      <CreditCard className="w-4 h-4 text-blue-400" />
+                <div className={styles.quickActionsList}>
+                  <button onClick={() => navigate('/signup')} className={styles.quickActionButton}>
+                    <div className={`${styles.quickActionIcon} ${styles.quickActionIconBlue}`}>
+                      <CreditCard className={styles.quickActionIconSvg} />
                     </div>
-                    <span className="text-white">Open New Account</span>
+                    <span>Open New Account</span>
                   </button>
-                  <button 
-                    onClick={() => navigate('/services')}
-                    className="w-full text-left p-3 bg-purple-500/10 hover:bg-purple-500/20 rounded-xl transition-colors flex items-center gap-3"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-purple-400" />
+                  <button onClick={() => navigate('/services')} className={styles.quickActionButton}>
+                    <div className={`${styles.quickActionIcon} ${styles.quickActionIconPurple}`}>
+                      <TrendingUp className={styles.quickActionIconSvg} />
                     </div>
-                    <span className="text-white">View All Services</span>
+                    <span>View All Services</span>
                   </button>
-                  <button 
-                    onClick={() => navigate('/security')}
-                    className="w-full text-left p-3 bg-green-500/10 hover:bg-green-500/20 rounded-xl transition-colors flex items-center gap-3"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
-                      <Shield className="w-4 h-4 text-green-400" />
+                  <button onClick={() => navigate('/security')} className={styles.quickActionButton}>
+                    <div className={`${styles.quickActionIcon} ${styles.quickActionIconTeal}`}>
+                      <Shield className={styles.quickActionIconSvg} />
                     </div>
-                    <span className="text-white">Security Center</span>
+                    <span>Security Center</span>
                   </button>
                 </div>
               </div>
@@ -608,130 +619,100 @@ export default function AdvancedContact() {
           </div>
         ) : (
           /* Services Tab Content */
-          <div className="space-y-8">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-white mb-4">Explore Our Services</h2>
-              <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+          <div className={styles.servicesSection}>
+            <div className={styles.servicesHeader}>
+              <h2 className={styles.servicesTitle}>Explore Our Services</h2>
+              <p className={styles.servicesSubtitle}>
                 Discover our comprehensive range of financial services designed for individuals and businesses
               </p>
             </div>
 
-            {/* Service Categories Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className={styles.servicesGrid}>
               {serviceCategories.map((category, index) => {
                 const Icon = category.icon;
-                const colorClasses = {
-                  blue: 'from-blue-500 to-cyan-500',
-                  purple: 'from-purple-500 to-pink-500',
-                  pink: 'from-pink-500 to-rose-500',
-                  orange: 'from-orange-500 to-amber-500',
-                  emerald: 'from-emerald-500 to-teal-500',
-                  green: 'from-green-500 to-emerald-500',
-                  indigo: 'from-indigo-500 to-purple-500',
-                  cyan: 'from-cyan-500 to-blue-500'
-                };
-
                 return (
                   <div
                     key={category.id}
-                    onClick={() => handleServiceClick(category.id)}
-                    className="group relative bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:border-gray-600 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                    onClick={() => navigate('/services')}
+                    className={`${styles.serviceCard} ${styles[`serviceCard${category.color.charAt(0).toUpperCase() + category.color.slice(1)}`]}`}
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${colorClasses[category.color]}`}>
-                        <Icon className="w-6 h-6 text-white" />
+                    <div className={styles.serviceCardHeader}>
+                      <div className={`${styles.serviceIconWrapper} ${styles[`serviceIcon${category.color.charAt(0).toUpperCase() + category.color.slice(1)}`]}`}>
+                        <Icon className={styles.serviceIcon} />
                       </div>
-                      <span className="text-xs font-medium px-2 py-1 bg-gray-700/50 rounded-full">
-                        {category.count} services
-                      </span>
+                      <span className={styles.serviceCount}>{category.count} services</span>
                     </div>
                     
-                    <h3 className="text-xl font-semibold text-white mb-2">{category.label}</h3>
-                    <p className="text-gray-400 text-sm mb-4">{category.description}</p>
+                    <h3 className={styles.serviceTitle}>{category.label}</h3>
+                    <p className={styles.serviceDescription}>{category.description}</p>
                     
-                    <div className="space-y-2 mb-4">
-                      {category.services.slice(0, 3).map((service, idx) => (
-                        <div key={idx} className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 rounded-full bg-current opacity-50"></div>
-                          <span className="text-xs text-gray-300">{service}</span>
+                    <div className={styles.serviceFeatures}>
+                      {category.services.map((service, idx) => (
+                        <div key={idx} className={styles.serviceFeature}>
+                          <div className={styles.serviceFeatureDot}></div>
+                          <span>{service}</span>
                         </div>
                       ))}
-                      {category.services.length > 3 && (
-                        <div className="text-xs text-gray-500">
-                          +{category.services.length - 3} more
-                        </div>
-                      )}
                     </div>
                     
-                    <div className="flex items-center gap-2 text-blue-400 hover:text-blue-300 font-medium text-sm">
+                    <div className={styles.serviceLink}>
                       <span>Explore Services</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className={styles.serviceLinkIcon} />
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* Service Comparison */}
-            <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-2xl p-8 mt-12">
-              <h3 className="text-2xl font-bold text-white mb-6 text-center">Perfect for Everyone</h3>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  <h4 className="text-xl font-semibold text-white flex items-center gap-2">
-                    <Users className="w-5 h-5 text-blue-400" />
+            {/* Comparison Section */}
+            <div className={styles.comparisonSection}>
+              <h3 className={styles.comparisonTitle}>Perfect for Everyone</h3>
+              <div className={styles.comparisonGrid}>
+                <div className={styles.comparisonCard}>
+                  <h4 className={styles.comparisonCardTitle}>
+                    <Users className={styles.comparisonCardIcon} />
                     Personal Banking
                   </h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <CheckCircle2 className="w-5 h-5 text-green-400" />
+                  <ul className={styles.comparisonList}>
+                    <li className={styles.comparisonListItem}>
+                      <CheckCircle2 className={styles.comparisonCheck} />
                       <span>Multi-currency accounts</span>
                     </li>
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <CheckCircle2 className="w-5 h-5 text-green-400" />
+                    <li className={styles.comparisonListItem}>
+                      <CheckCircle2 className={styles.comparisonCheck} />
                       <span>Instant global transfers</span>
                     </li>
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <CheckCircle2 className="w-5 h-5 text-green-400" />
+                    <li className={styles.comparisonListItem}>
+                      <CheckCircle2 className={styles.comparisonCheck} />
                       <span>Crypto trading & wallet</span>
-                    </li>
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <CheckCircle2 className="w-5 h-5 text-green-400" />
-                      <span>High-yield savings vaults</span>
                     </li>
                   </ul>
                 </div>
-                <div className="space-y-4">
-                  <h4 className="text-xl font-semibold text-white flex items-center gap-2">
-                    <Building2 className="w-5 h-5 text-purple-400" />
+                <div className={styles.comparisonCard}>
+                  <h4 className={styles.comparisonCardTitle}>
+                    <Building2 className={styles.comparisonCardIcon} />
                     Business Solutions
                   </h4>
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <CheckCircle2 className="w-5 h-5 text-green-400" />
+                  <ul className={styles.comparisonList}>
+                    <li className={styles.comparisonListItem}>
+                      <CheckCircle2 className={styles.comparisonCheck} />
                       <span>Global payroll processing</span>
                     </li>
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <CheckCircle2 className="w-5 h-5 text-green-400" />
+                    <li className={styles.comparisonListItem}>
+                      <CheckCircle2 className={styles.comparisonCheck} />
                       <span>Merchant payment gateway</span>
                     </li>
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <CheckCircle2 className="w-5 h-5 text-green-400" />
+                    <li className={styles.comparisonListItem}>
+                      <CheckCircle2 className={styles.comparisonCheck} />
                       <span>Corporate expense management</span>
-                    </li>
-                    <li className="flex items-center gap-2 text-gray-300">
-                      <CheckCircle2 className="w-5 h-5 text-green-400" />
-                      <span>Business escrow services</span>
                     </li>
                   </ul>
                 </div>
               </div>
-              <div className="text-center mt-8">
-                <button
-                  onClick={() => navigate('/services')}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold py-3 px-8 rounded-xl transition-all hover:scale-105"
-                >
+              <div className={styles.comparisonCta}>
+                <button onClick={() => navigate('/services')} className={styles.viewAllButton}>
                   View All Services
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className={styles.viewAllIcon} />
                 </button>
               </div>
             </div>
@@ -739,57 +720,29 @@ export default function AdvancedContact() {
         )}
       </div>
 
-      {/* Bottom CTA */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl p-12 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/20"></div>
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
-              <Shield className="w-5 h-5" />
-              <span className="text-sm">Trusted by 2M+ customers globally</span>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to get started?</h2>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join millions who trust ClaveRica for their financial needs
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <button
-                onClick={() => navigate('/signup')}
-                className="inline-flex items-center gap-3 bg-white text-purple-600 hover:bg-gray-100 font-semibold py-3 px-8 rounded-xl transition-all hover:scale-105"
-              >
-                <CreditCard className="w-5 h-5" />
-                Open Free Account
-              </button>
-              <button
-                onClick={() => navigate('/services')}
-                className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm border border-white/20 text-white hover:bg-white/30 font-semibold py-3 px-8 rounded-xl transition-all"
-              >
-                <TrendingUp className="w-5 h-5" />
-                Explore Services
-              </button>
+      {/* Trust Indicators */}
+      <div className={styles.container}>
+        <div className={styles.trustBar}>
+          <div className={styles.trustItem}>
+            <Shield className={styles.trustIcon} />
+            <div>
+              <span className={styles.trustLabel}>256-bit Encryption</span>
+              <span className={styles.trustValue}>Bank-grade security</span>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Security Footer */}
-      <div className="max-w-7xl mx-auto px-4 pb-8">
-        <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4" />
-            <span>256-bit Encryption</span>
+          <div className={styles.trustItem}>
+            <Clock className={styles.trustIcon} />
+            <div>
+              <span className={styles.trustLabel}>Average response</span>
+              <span className={styles.trustValue}>Under 15 minutes</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Lock className="w-4 h-4" />
-            <span>GDPR Compliant</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4" />
-            <span>ISO 27001 Certified</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Volume2 className="w-4 h-4" />
-            <span>No Cold Calls Guarantee</span>
+          <div className={styles.trustItem}>
+            <Users className={styles.trustIcon} />
+            <div>
+              <span className={styles.trustLabel}>Happy customers</span>
+              <span className={styles.trustValue}>2M+ worldwide</span>
+            </div>
           </div>
         </div>
       </div>
