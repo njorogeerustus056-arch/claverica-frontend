@@ -125,38 +125,38 @@ const KycModal = ({
       PaperProps={{
         sx: {
           borderRadius: 3,
-          background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-          border: '1px solid #334155',
+          background: 'linear-gradient(135deg, #0A2540 0%, #8626E9 100%)',
+          border: '1px solid rgba(197, 160, 40, 0.3)',
         }
       }}
     >
-      <Box sx={{ height: 4, background: 'linear-gradient(90deg, #06b6d4, #8b5cf6, #ec4899)' }} />
+      <Box sx={{ height: 4, background: 'linear-gradient(90deg, #C5A028, #8626E9)' }} />
 
-      <DialogTitle sx={{ borderBottom: '1px solid #334155', pb: 2 }}>
+      <DialogTitle sx={{ borderBottom: '1px solid rgba(197, 160, 40, 0.2)', pb: 2 }}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box display="flex" alignItems="center" gap={2}>
             <Box sx={{
               width: 40,
               height: 40,
               borderRadius: 2,
-              background: 'rgba(6, 182, 212, 0.1)',
-              border: '1px solid rgba(6, 182, 212, 0.3)',
+              background: 'rgba(197, 160, 40, 0.1)',
+              border: '1px solid rgba(197, 160, 40, 0.3)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <VerifiedUser sx={{ color: '#06b6d4', fontSize: 20 }} />
+              <VerifiedUser sx={{ color: '#C5A028', fontSize: 20 }} />
             </Box>
             <Box>
               <Typography variant="h6" sx={{ color: 'white', fontWeight: 600 }}>
                 KYC Verification Required
               </Typography>
-              <Typography variant="caption" sx={{ color: '#94a3b8' }}>
+              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>
                 One-time identity check to unlock transfers
               </Typography>
             </Box>
           </Box>
-          <IconButton onClick={onClose} size="small" sx={{ color: '#94a3b8' }}>
+          <IconButton onClick={onClose} size="small" sx={{ color: 'rgba(255,255,255,0.5)' }}>
             <Close />
           </IconButton>
         </Box>
@@ -164,8 +164,8 @@ const KycModal = ({
 
       <DialogContent sx={{ pt: 3 }}>
         <Box sx={{
-          background: 'rgba(251, 191, 36, 0.1)',
-          border: '1px solid rgba(251, 191, 36, 0.3)',
+          background: 'rgba(197, 160, 40, 0.1)',
+          border: '1px solid rgba(197, 160, 40, 0.3)',
           borderRadius: 2,
           p: 2,
           mb: 3,
@@ -173,8 +173,8 @@ const KycModal = ({
           alignItems: 'flex-start',
           gap: 1.5,
         }}>
-          <Warning sx={{ color: '#fbbf24', fontSize: 18, mt: 0.2 }} />
-          <Typography variant="body2" sx={{ color: '#e2e8f0' }}>
+          <Warning sx={{ color: '#C5A028', fontSize: 18, mt: 0.2 }} />
+          <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)' }}>
             To proceed with{' '}
             <Box component="span" sx={{ color: 'white', fontWeight: 600 }}>
               {payload?.action_label || 'this transfer'}
@@ -191,7 +191,7 @@ const KycModal = ({
                 key={step.id}
                 sx={{
                   background: 'rgba(30, 41, 59, 0.5)',
-                  border: '1px solid #334155',
+                  border: '1px solid rgba(197, 160, 40, 0.15)',
                   borderRadius: 2,
                   mb: 1,
                   py: 2,
@@ -202,13 +202,13 @@ const KycModal = ({
                     width: 32,
                     height: 32,
                     borderRadius: 1.5,
-                    background: 'rgba(71, 85, 105, 0.3)',
-                    border: '1px solid #475569',
+                    background: 'rgba(197, 160, 40, 0.1)',
+                    border: '1px solid rgba(197, 160, 40, 0.2)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                    <Icon sx={{ fontSize: 16, color: '#94a3b8' }} />
+                    <Icon sx={{ fontSize: 16, color: '#C5A028' }} />
                   </Box>
                 </ListItemIcon>
                 <ListItemText
@@ -218,7 +218,7 @@ const KycModal = ({
                     </Typography>
                   }
                   secondary={
-                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)' }}>
                       {step.desc}
                     </Typography>
                   }
@@ -227,10 +227,11 @@ const KycModal = ({
                   label={`Step ${index + 1}`}
                   size="small"
                   sx={{
-                    background: 'rgba(71, 85, 105, 0.3)',
-                    color: '#94a3b8',
+                    background: 'rgba(197, 160, 40, 0.1)',
+                    color: '#C5A028',
                     fontWeight: 500,
                     fontSize: '0.75rem',
+                    border: '1px solid rgba(197, 160, 40, 0.2)',
                   }}
                 />
               </ListItem>
@@ -239,16 +240,16 @@ const KycModal = ({
         </List>
 
         <Box display="flex" alignItems="center" gap={1.5} mb={3}>
-          <Shield sx={{ fontSize: 16, color: '#10b981' }} />
-          <Typography variant="caption" sx={{ color: '#64748b' }}>
+          <Shield sx={{ fontSize: 16, color: '#1E6F6F' }} />
+          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)' }}>
             256-bit encrypted · Processed in under 5 minutes · PSD2 & GDPR compliant
           </Typography>
         </Box>
 
         <Box sx={{ mb: 3 }}>
           <Box display="flex" justifyContent="space-between" mb={0.5}>
-            <Typography variant="caption" sx={{ color: '#94a3b8' }}>Verification progress</Typography>
-            <Typography variant="caption" sx={{ color: '#06b6d4', fontWeight: 600 }}>0%</Typography>
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>Verification progress</Typography>
+            <Typography variant="caption" sx={{ color: '#C5A028', fontWeight: 600 }}>0%</Typography>
           </Box>
           <LinearProgress
             variant="determinate"
@@ -256,9 +257,9 @@ const KycModal = ({
             sx={{
               height: 6,
               borderRadius: 3,
-              backgroundColor: '#1e293b',
+              backgroundColor: 'rgba(197, 160, 40, 0.1)',
               '& .MuiLinearProgress-bar': {
-                background: 'linear-gradient(90deg, #06b6d4, #8b5cf6)',
+                background: 'linear-gradient(90deg, #C5A028, #8626E9)',
                 borderRadius: 3,
               }
             }}
@@ -266,18 +267,20 @@ const KycModal = ({
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 3, borderTop: '1px solid #334155', pt: 2 }}>
+      <DialogActions sx={{ px: 3, pb: 3, borderTop: '1px solid rgba(197, 160, 40, 0.2)', pt: 2 }}>
         <Button
           onClick={onClose}
           variant="outlined"
           fullWidth
           sx={{
             py: 1.5,
-            borderColor: '#475569',
-            color: '#94a3b8',
+            borderColor: 'rgba(197, 160, 40, 0.3)',
+            color: 'rgba(255,255,255,0.6)',
+            borderRadius: '40px',
             '&:hover': {
-              borderColor: '#64748b',
-              backgroundColor: 'rgba(100, 116, 139, 0.1)',
+              borderColor: '#C5A028',
+              backgroundColor: 'rgba(197, 160, 40, 0.1)',
+              color: 'white',
             },
           }}
         >
@@ -290,14 +293,16 @@ const KycModal = ({
           fullWidth
           sx={{
             py: 1.5,
-            background: 'linear-gradient(90deg, #06b6d4, #8b5cf6)',
+            background: '#8626E9',
             color: 'white',
             fontWeight: 600,
+            borderRadius: '40px',
             '&:hover': {
-              background: 'linear-gradient(90deg, #0891b2, #7c3aed)',
+              background: '#C5A028',
+              transform: 'scale(1.02)',
             },
             '&:disabled': {
-              background: '#475569',
+              background: 'rgba(197, 160, 40, 0.3)',
             },
           }}
         >
@@ -650,7 +655,7 @@ const Transfer = () => {
                   />
                 )}
                 renderOption={(props, option) => (
-                  <li {...props}>
+                  <li {...props} className={styles.bankOption}>
                     <Box display="flex" alignItems="center" gap={1} width="100%">
                       <span style={{ fontSize: '1.5rem' }}>{option.logo}</span>
                       <Box flex={1}>
@@ -663,10 +668,11 @@ const Transfer = () => {
                               label="Popular" 
                               size="small" 
                               sx={{ 
-                                backgroundColor: '#ffd70020', 
-                                color: '#b8860b',
+                                backgroundColor: 'rgba(197, 160, 40, 0.12)', 
+                                color: '#C5A028',
                                 height: '20px',
-                                fontSize: '0.7rem'
+                                fontSize: '0.7rem',
+                                border: '1px solid rgba(197, 160, 40, 0.3)',
                               }} 
                             />
                           )}
@@ -681,7 +687,7 @@ const Transfer = () => {
                 )}
                 loadingText="Searching banks..."
                 noOptionsText="No banks found"
-                filterOptions={(x) => x} // Disable built-in filtering (we're doing it manually)
+                filterOptions={(x) => x}
               />
             </Grid>
             
@@ -854,34 +860,14 @@ const Transfer = () => {
                 variant="contained"
                 onClick={handleStartKYC}
                 startIcon={<VerifiedUser />}
-                sx={{
-                  background: 'linear-gradient(145deg, #2563eb, #1e40af)',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  padding: '8px 20px',
-                  borderRadius: '30px',
-                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
-                  '&:hover': {
-                    background: 'linear-gradient(145deg, #1e40af, #1e3a8a)',
-                  }
-                }}
+                className={styles.primaryButton}
               >
                 Start Verification
               </Button>
               <Button
                 variant="outlined"
                 onClick={() => setShowKycBanner(false)}
-                sx={{
-                  textTransform: 'none',
-                  borderColor: 'rgba(255,255,255,0.2)',
-                  color: 'white',
-                  borderRadius: '30px',
-                  padding: '8px 20px',
-                  '&:hover': {
-                    borderColor: 'rgba(255,255,255,0.3)',
-                    background: 'rgba(255,255,255,0.05)',
-                  }
-                }}
+                className={styles.secondaryButton}
               >
                 Remind Later
               </Button>
@@ -897,8 +883,8 @@ const Transfer = () => {
           sx={{
             mb: 3,
             p: 2.5,
-            background: 'linear-gradient(145deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.02) 100%)',
-            border: '1px solid rgba(16, 185, 129, 0.2)',
+            background: 'rgba(30, 111, 111, 0.05)',
+            border: '1px solid rgba(30, 111, 111, 0.2)',
             borderRadius: 3,
           }}
         >
@@ -907,19 +893,19 @@ const Transfer = () => {
               width: 40,
               height: 40,
               borderRadius: 2,
-              background: 'rgba(16, 185, 129, 0.1)',
-              border: '1px solid rgba(16, 185, 129, 0.3)',
+              background: 'rgba(30, 111, 111, 0.1)',
+              border: '1px solid rgba(30, 111, 111, 0.3)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <CheckCircle sx={{ color: '#10b981', fontSize: 20 }} />
+              <CheckCircle sx={{ color: '#1E6F6F', fontSize: 20 }} />
             </Box>
             <Box>
-              <Typography variant="subtitle2" sx={{ color: '#1e293b', fontWeight: 600 }}>
+              <Typography variant="subtitle2" sx={{ color: '#0A2540', fontWeight: 600 }}>
                 Identity Verified ✓
               </Typography>
-              <Typography variant="caption" sx={{ color: '#64748b' }}>
+              <Typography variant="caption" sx={{ color: '#475569' }}>
                 Your KYC is complete. You can transfer up to $25,000 per transaction.
               </Typography>
             </Box>
@@ -928,12 +914,12 @@ const Transfer = () => {
       )}
 
       <Grid container spacing={4}>
-        {/* Balance Card - Updated with new styles */}
+        {/* Balance Card - Updated with premium gradient */}
         <Grid size={{ xs: 12, md: 4 }}>
           <Card className={styles.balanceCard}>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2} mb={2}>
-                <AccountBalanceWallet sx={{ color: '#06b6d4', fontSize: 28 }} />
+                <AccountBalanceWallet sx={{ color: '#C5A028', fontSize: 28 }} />
                 <Typography variant="subtitle1" sx={{ color: 'rgba(255,255,255,0.8)', fontWeight: 500 }}>
                   Available Balance
                 </Typography>
@@ -970,7 +956,7 @@ const Transfer = () => {
         <Grid size={{ xs: 12, md: 8 }}>
           <Paper className={styles.paper}>
             <Box className={styles.paperHeader}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, color: '#0A2540' }}>
                 Transfer Details
               </Typography>
               <Chip
@@ -983,13 +969,13 @@ const Transfer = () => {
             <Box className={styles.paperContent}>
               <form onSubmit={handleSubmit}>
                 {error && (
-                  <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+                  <Alert severity="error" className={styles.errorAlert}>
                     {error}
                   </Alert>
                 )}
                 
                 {success && (
-                  <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
+                  <Alert severity="success" className={styles.successAlert}>
                     {success}
                   </Alert>
                 )}
@@ -1038,7 +1024,7 @@ const Transfer = () => {
 
                     {/* Destination Type */}
                     <Grid size={{ xs: 12 }}>
-                      <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                      <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#0A2540' }}>
                         Destination Type
                       </Typography>
                       <Box className={styles.destTypeButtons}>
@@ -1088,13 +1074,7 @@ const Transfer = () => {
                           variant="outlined"
                           onClick={() => navigate('/dashboard')}
                           disabled={loading}
-                          sx={{
-                            textTransform: 'none',
-                            borderRadius: '30px',
-                            padding: '10px 24px',
-                            borderColor: '#e2e8f0',
-                            color: '#475569',
-                          }}
+                          className={styles.secondaryButton}
                         >
                           Cancel
                         </Button>
@@ -1104,20 +1084,7 @@ const Transfer = () => {
                           size="large"
                           startIcon={loading ? <CircularProgress size={20} /> : <Send />}
                           disabled={loading}
-                          sx={{
-                            textTransform: 'none',
-                            background: 'linear-gradient(145deg, #2563eb, #1e40af)',
-                            borderRadius: '30px',
-                            padding: '10px 32px',
-                            fontWeight: 600,
-                            boxShadow: '0 8px 16px -4px rgba(37, 99, 235, 0.3)',
-                            '&:hover': {
-                              background: 'linear-gradient(145deg, #1e40af, #1e3a8a)',
-                            },
-                            '&:disabled': {
-                              background: '#94a3b8',
-                            }
-                          }}
+                          className={styles.primaryButton}
                         >
                           {loading ? 'Processing...' : 'Submit Transfer'}
                         </Button>

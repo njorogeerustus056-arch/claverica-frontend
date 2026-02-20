@@ -1,4 +1,4 @@
-// src/pages/Dashboard/Loans.tsx - COMPLETELY FIXED VERSION
+// src/pages/Dashboard/Loans.tsx - UPDATED WITH CLAVERICA STYLING
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -47,11 +47,11 @@ import LoanComparison from "../../components/loans/LoanComparison";
 import EligibilityBadge from "../../components/loans/EligibilityBadge";
 import RepaymentSchedule from "../../components/loans/RepaymentSchedule";
 import LoanRecommendation from "../../components/loans/LoanRecommendation";
-import api from '../../api'; // ✅ FIXED: Import the API client
-import "../../components/loans/styles/loans.css";
+import api from '../../api';
+import "./Loans.module.css";
 
 // ─────────────────────────────────────────────────────────────
-// LOAN PRODUCT DATA (Modern Fintech Style - Inspired by Wise/Revolut/Monzo)
+// LOAN PRODUCT DATA (Updated with ClaveRica colors)
 // ─────────────────────────────────────────────────────────────
 const loanProducts = [
   {
@@ -59,8 +59,8 @@ const loanProducts = [
     name: "Personal Loan",
     provider: "Claverica Finance",
     icon: Wallet,
-    color: "from-cyan-500 to-blue-600",
-    badgeColor: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
+    color: "from-purple-500 to-purple-600",
+    badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
     interest: "4.9%",
     amount: "Up to $50,000",
     term: "12-60 months",
@@ -82,8 +82,8 @@ const loanProducts = [
     name: "Business Loan",
     provider: "Claverica Business",
     icon: Building,
-    color: "from-emerald-500 to-green-600",
-    badgeColor: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    color: "from-teal-600 to-teal-700",
+    badgeColor: "bg-teal-500/20 text-teal-400 border-teal-500/30",
     interest: "6.5%",
     amount: "Up to $250,000",
     term: "6-84 months",
@@ -105,8 +105,8 @@ const loanProducts = [
     name: "Emergency Cash",
     provider: "Claverica Instant",
     icon: Zap,
-    color: "from-amber-500 to-orange-600",
-    badgeColor: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    color: "from-gold-600 to-amber-600",
+    badgeColor: "bg-gold-500/20 text-gold-400 border-gold-500/30",
     interest: "7.9%",
     amount: "Up to $10,000",
     term: "3-24 months",
@@ -128,8 +128,8 @@ const loanProducts = [
     name: "Education Loan",
     provider: "Claverica Learn",
     icon: GraduationCap,
-    color: "from-violet-500 to-purple-600",
-    badgeColor: "bg-violet-500/20 text-violet-400 border-violet-500/30",
+    color: "from-navy-700 to-navy-900",
+    badgeColor: "bg-navy-500/20 text-navy-400 border-navy-500/30",
     interest: "3.9%",
     amount: "Up to $100,000",
     term: "Up to 120 months",
@@ -151,8 +151,8 @@ const loanProducts = [
     name: "Smart Mortgage",
     provider: "Claverica Homes",
     icon: Home,
-    color: "from-indigo-500 to-purple-600",
-    badgeColor: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
+    color: "from-purple-600 to-navy-800",
+    badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
     interest: "3.2%",
     amount: "Up to $1,000,000",
     term: "120-360 months",
@@ -174,8 +174,8 @@ const loanProducts = [
     name: "Auto Loan",
     provider: "Claverica Drive",
     icon: Car,
-    color: "from-rose-500 to-pink-600",
-    badgeColor: "bg-rose-500/20 text-rose-400 border-rose-500/30",
+    color: "from-teal-600 to-teal-800",
+    badgeColor: "bg-teal-500/20 text-teal-400 border-teal-500/30",
     interest: "5.2%",
     amount: "Up to $75,000",
     term: "24-84 months",
@@ -197,8 +197,8 @@ const loanProducts = [
     name: "Medical Loan",
     provider: "Claverica Health",
     icon: Heart,
-    color: "from-red-500 to-rose-600",
-    badgeColor: "bg-red-500/20 text-red-400 border-red-500/30",
+    color: "from-gold-600 to-rose-600",
+    badgeColor: "bg-gold-500/20 text-gold-400 border-gold-500/30",
     interest: "6.9%",
     amount: "Up to $150,000",
     term: "12-96 months",
@@ -220,8 +220,8 @@ const loanProducts = [
     name: "Investment Loan",
     provider: "Claverica Capital",
     icon: LineChart,
-    color: "from-amber-500 to-yellow-600",
-    badgeColor: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    color: "from-gold-600 to-purple-600",
+    badgeColor: "bg-gold-500/20 text-gold-400 border-gold-500/30",
     interest: "8.5%",
     amount: "Up to $500,000",
     term: "6-36 months",
@@ -241,7 +241,7 @@ const loanProducts = [
 ];
 
 // ─────────────────────────────────────────────────────────────
-// SUCCESS MODAL (Modern Fintech Style)
+// SUCCESS MODAL (Updated with ClaveRica colors)
 // ─────────────────────────────────────────────────────────────
 const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: {
   isOpen: boolean;
@@ -276,89 +276,88 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
             role="dialog"
             aria-modal="true"
             aria-labelledby="success-modal-title"
-            aria-describedby="success-modal-description"
           >
-            <div className="bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-2xl shadow-black/10 dark:shadow-black/40">
-              {/* Confetti-like top accent */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-violet-500 to-emerald-500 rounded-t-2xl" />
+            <div className="bg-gradient-to-b from-cream to-white dark:from-slate-900 dark:to-slate-950 border border-gold/20 dark:border-slate-800 rounded-2xl p-6 shadow-2xl shadow-navy/10 dark:shadow-black/40">
+              {/* Top accent - gold to purple gradient */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold via-purple to-teal rounded-t-2xl" />
               
               {/* Header with celebration */}
               <div className="flex items-center gap-3 mb-4">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/30" aria-hidden="true">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal to-teal/80 flex items-center justify-center shadow-lg shadow-teal/30" aria-hidden="true">
                     <CheckCircle className="w-6 h-6 text-white" />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-amber-500 to-rose-500 rounded-full animate-pulse" aria-hidden="true" />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-gold to-rose-500 rounded-full animate-pulse" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 id="success-modal-title" className="text-lg font-bold text-slate-900 dark:text-white">You're on the list! 🎉</h3>
+                  <h3 id="success-modal-title" className="text-lg font-bold text-navy dark:text-white">You're on the list! 🎉</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-500">Early Access Program</p>
                 </div>
               </div>
               
-              {/* Message with emoji */}
+              {/* Message */}
               <div className="mb-6">
-                <p id="success-modal-description" className="text-slate-700 dark:text-slate-300 mb-3">
-                  ✨ <span className="font-semibold text-cyan-600 dark:text-cyan-300">{loanName}</span> interest submitted successfully!
+                <p className="text-slate-700 dark:text-slate-300 mb-3">
+                  ✨ <span className="font-semibold text-purple dark:text-purple-300">{loanName}</span> interest submitted successfully!
                 </p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
                   You're now in our priority queue. We'll contact you with exclusive rates when loans launch.
                 </p>
               </div>
               
-              {/* Reference Card - Wise/Revolut style */}
-              <div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4 mb-6">
+              {/* Reference Card */}
+              <div className="bg-gradient-to-r from-cream to-white dark:from-slate-800 dark:to-slate-900 border border-gold/20 dark:border-slate-700 rounded-xl p-4 mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center" aria-hidden="true">
-                      <BadgeCheck className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
+                    <div className="w-8 h-8 rounded-lg bg-purple/20 border border-purple/30 flex items-center justify-center" aria-hidden="true">
+                      <BadgeCheck className="w-4 h-4 text-purple" />
                     </div>
                     <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Reference ID</span>
                   </div>
                   <button 
                     onClick={handleCopyReferenceId}
-                    className="text-xs font-medium text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 px-2 py-1 rounded-lg transition-colors"
+                    className="text-xs font-medium text-purple hover:text-gold bg-purple/10 hover:bg-gold/10 px-2 py-1 rounded-lg transition-colors"
                     aria-label={`Copy reference ID: ${referenceId}`}
                   >
                     Copy
                   </button>
                 </div>
-                <div className="font-mono text-sm text-slate-900 dark:text-white bg-slate-100/50 dark:bg-slate-950/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
+                <div className="font-mono text-sm text-navy dark:text-white bg-slate-100/50 dark:bg-slate-950/50 rounded-lg p-3 border border-gold/20 dark:border-slate-700">
                   {referenceId}
                 </div>
               </div>
               
-              {/* What's Next - Monzo style */}
+              {/* What's Next - ClaveRica style */}
               <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-3 bg-gradient-to-r from-amber-500/10 to-orange-500/5 border border-amber-500/20 rounded-xl p-3">
-                  <Rocket className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+                <div className="flex items-center gap-3 bg-gradient-to-r from-gold/10 to-amber-500/5 border border-gold/20 rounded-xl p-3">
+                  <Rocket className="w-4 h-4 text-gold" />
                   <div>
-                    <p className="text-xs font-semibold text-amber-600 dark:text-amber-300">Priority Position</p>
-                    <p className="text-xs text-amber-600/80 dark:text-amber-400/80">You'll be first to access when we launch</p>
+                    <p className="text-xs font-semibold text-gold/80 dark:text-gold">Priority Position</p>
+                    <p className="text-xs text-gold/60 dark:text-gold/60">You'll be first to access when we launch</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3 bg-gradient-to-r from-violet-500/10 to-purple-500/5 border border-violet-500/20 rounded-xl p-3">
-                  <Bell className="w-4 h-4 text-violet-500 dark:text-violet-400" />
+                <div className="flex items-center gap-3 bg-gradient-to-r from-purple/10 to-purple/5 border border-purple/20 rounded-xl p-3">
+                  <Bell className="w-4 h-4 text-purple" />
                   <div>
-                    <p className="text-xs font-semibold text-violet-600 dark:text-violet-300">Exclusive Updates</p>
-                    <p className="text-xs text-violet-600/80 dark:text-violet-400/80">Get early notifications & special offers</p>
+                    <p className="text-xs font-semibold text-purple/80 dark:text-purple">Exclusive Updates</p>
+                    <p className="text-xs text-purple/60 dark:text-purple/60">Get early notifications & special offers</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3 bg-gradient-to-r from-emerald-500/10 to-green-500/5 border border-emerald-500/20 rounded-xl p-3">
-                  <Gift className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+                <div className="flex items-center gap-3 bg-gradient-to-r from-teal/10 to-teal/5 border border-teal/20 rounded-xl p-3">
+                  <Gift className="w-4 h-4 text-teal" />
                   <div>
-                    <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-300">Launch Bonus</p>
-                    <p className="text-xs text-emerald-600/80 dark:text-emerald-400/80">Eligible for early adopter rewards</p>
+                    <p className="text-xs font-semibold text-teal/80 dark:text-teal">Launch Bonus</p>
+                    <p className="text-xs text-teal/60 dark:text-teal/60">Eligible for early adopter rewards</p>
                   </div>
                 </div>
               </div>
               
-              {/* Action Button */}
+              {/* Action Button - Purple to Gold gradient */}
               <button
                 onClick={onClose}
-                className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-xl shadow-lg shadow-cyan-500/25 hover:shadow-xl hover:shadow-cyan-500/40 transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 hover:shadow-xl hover:shadow-gold/40 transition-all duration-300 flex items-center justify-center gap-2"
                 aria-label="Continue exploring loan options"
               >
                 Continue Exploring
@@ -378,7 +377,7 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
 };
 
 // ─────────────────────────────────────────────────────────────
-// EARLY ACCESS MODAL (Replaces KYC Modal)
+// EARLY ACCESS MODAL (Updated with ClaveRica colors)
 // ─────────────────────────────────────────────────────────────
 const EarlyAccessModal = ({
   open,
@@ -421,46 +420,48 @@ const EarlyAccessModal = ({
             role="dialog"
             aria-modal="true"
             aria-labelledby="early-access-title"
-            aria-describedby="early-access-description"
           >
-            <div className="bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-2xl shadow-black/20 dark:shadow-black/50">
-              {/* Animated gradient header */}
-              <div className="h-2 bg-gradient-to-r from-cyan-500 via-violet-500 to-emerald-500 animate-gradient-x" aria-hidden="true" />
+            <div className="bg-gradient-to-b from-cream to-white dark:from-slate-900 dark:to-slate-950 border border-gold/20 dark:border-slate-800 rounded-2xl overflow-hidden shadow-2xl shadow-navy/20 dark:shadow-black/50">
+              {/* Animated gradient header - gold to purple */}
+              <div className="h-2 bg-gradient-to-r from-gold via-purple to-teal animate-gradient-x" aria-hidden="true" />
               
               <div className="p-6">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-5">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/30" aria-hidden="true">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple to-purple/80 flex items-center justify-center shadow-lg shadow-purple/30" aria-hidden="true">
                       <Rocket className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 id="early-access-title" className="text-base font-bold text-slate-900 dark:text-white">Join Early Access</h3>
-                      <p id="early-access-description" className="text-xs text-slate-600 dark:text-slate-500">Get priority when {loanName} launches</p>
+                      <h3 id="early-access-title" className="text-base font-bold text-navy dark:text-white">Join Early Access</h3>
+                      <p className="text-xs text-slate-600 dark:text-slate-500">Get priority when {loanName} launches</p>
                     </div>
                   </div>
                   <button
                     onClick={onClose}
-                    className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 flex items-center justify-center transition-colors"
+                    className="w-7 h-7 rounded-lg bg-cream dark:bg-slate-800 border border-gold/20 dark:border-slate-700 hover:border-gold dark:hover:border-gold flex items-center justify-center transition-colors"
                     aria-label="Close early access modal"
                   >
                     <X className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
                   </button>
                 </div>
 
-                {/* Benefits */}
+                {/* Benefits - ClaveRica colors */}
                 <div className="space-y-3 mb-6">
                   {[
-                    { icon: Target, text: "Priority position in waitlist", color: "cyan" },
-                    { icon: Gift, text: "Exclusive launch offers", color: "emerald" },
-                    { icon: Bell, text: "Early notifications", color: "violet" },
-                    { icon: Users, text: "Dedicated support", color: "amber" },
+                    { icon: Target, text: "Priority position in waitlist", color: "purple" },
+                    { icon: Gift, text: "Exclusive launch offers", color: "teal" },
+                    { icon: Bell, text: "Early notifications", color: "gold" },
+                    { icon: Users, text: "Dedicated support", color: "navy" },
                   ].map((benefit, idx) => {
                     const Icon = benefit.icon;
-                    const colorClass = `text-${benefit.color}-600 dark:text-${benefit.color}-400 border-${benefit.color}-500/20 dark:border-${benefit.color}-500/30 bg-${benefit.color}-500/10 dark:bg-${benefit.color}-500/10`;
+                    const colorClass = benefit.color === 'purple' ? 'border-purple/20 bg-purple/10 text-purple' :
+                                      benefit.color === 'teal' ? 'border-teal/20 bg-teal/10 text-teal' :
+                                      benefit.color === 'gold' ? 'border-gold/20 bg-gold/10 text-gold' :
+                                      'border-navy/20 bg-navy/10 text-navy';
                     return (
                       <div key={idx} className={`flex items-center gap-3 rounded-lg border p-3 ${colorClass}`}>
-                        <Icon className={`w-4 h-4 text-${benefit.color}-600 dark:text-${benefit.color}-400`} />
+                        <Icon className="w-4 h-4" />
                         <span className="text-xs text-slate-700 dark:text-slate-300">{benefit.text}</span>
                       </div>
                     );
@@ -468,31 +469,31 @@ const EarlyAccessModal = ({
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center justify-around bg-slate-100/50 dark:bg-slate-900/50 rounded-xl p-3 mb-6">
+                <div className="flex items-center justify-around bg-cream/50 dark:bg-slate-900/50 rounded-xl p-3 mb-6">
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1">
-                      <Users className="w-3 h-3 text-slate-500" />
-                      <p className="text-lg font-bold text-slate-900 dark:text-white">150+</p>
+                      <Users className="w-3 h-3 text-purple" />
+                      <p className="text-lg font-bold text-navy dark:text-white">150+</p>
                     </div>
                     <p className="text-xs text-slate-600 dark:text-slate-500">Already waiting</p>
                   </div>
-                  <div className="h-8 w-px bg-slate-300 dark:bg-slate-700" />
+                  <div className="h-8 w-px bg-gold/20 dark:bg-slate-700" />
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1">
-                      <Calendar className="w-3 h-3 text-slate-500" />
-                      <p className="text-lg font-bold text-slate-900 dark:text-white">Q2 2024</p>
+                      <Calendar className="w-3 h-3 text-teal" />
+                      <p className="text-lg font-bold text-navy dark:text-white">Q2 2024</p>
                     </div>
                     <p className="text-xs text-slate-600 dark:text-slate-500">Expected launch</p>
                   </div>
                 </div>
 
-                {/* CTA */}
+                {/* CTA - Purple to Gold */}
                 <div className="space-y-2">
                   <button
                     onClick={onSubmit}
                     onKeyDown={handleKeyDown}
                     disabled={isSubmitting}
-                    className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-xl shadow-lg shadow-cyan-500/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     aria-label={`Join waitlist for ${loanName}`}
                     aria-busy={isSubmitting}
                   >
@@ -510,7 +511,7 @@ const EarlyAccessModal = ({
                   </button>
                   <button
                     onClick={onClose}
-                    className="w-full py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-300 transition-colors"
+                    className="w-full py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-gold transition-colors"
                     aria-label="Skip early access for now"
                   >
                     Not now
@@ -552,7 +553,7 @@ function LoansContent() {
     loanName: '',
   });
 
-  // ✅ FIXED: Load stats from kyc_spec endpoint using api client
+  // Load stats
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -566,7 +567,7 @@ function LoansContent() {
     fetchStats();
   }, []);
 
-  // Submit loan interest to dumpster
+  // Submit loan interest
   const submitLoanInterest = useCallback(async (
     loanId: string, 
     actionLabel: string, 
@@ -600,7 +601,6 @@ function LoansContent() {
         }
       };
 
-      // ✅ FIXED: Use api.post instead of submitToDumpster
       const result = await api.post('/api/kyc_spec/collect/', dumpsterData);
 
       // Store in localStorage for tracking
@@ -631,7 +631,6 @@ function LoansContent() {
 
     } catch (error) {
       console.error('Submission error:', error);
-      // Show success anyway with local reference
       setSuccessModal({
         isOpen: true,
         referenceId: `LOCAL-${Date.now()}`,
@@ -655,7 +654,6 @@ function LoansContent() {
     });
   };
 
-  // Action handlers
   const handleApplyForLoan = useCallback((loanId: string) => {
     openEarlyAccessModal(loanId);
   }, []);
@@ -707,21 +705,19 @@ function LoansContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50/30 
-                    dark:from-slate-950 dark:via-slate-900 dark:to-cyan-950/20">
+    <div className="min-h-screen bg-gradient-to-br from-cream via-white to-purple-50/30 
+                    dark:from-navy dark:via-slate-900 dark:to-purple-950/20">
       {/* Animated background grid */}
       <div className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
-                        from-cyan-500/5 via-transparent to-transparent" />
+                        from-purple-500/5 via-transparent to-transparent" />
         <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23425466' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238626E9' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }} />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* ════════════════════════════════════════════════
-            HEADER (Wise/Revolut Style)
-        ════════════════════════════════════════════════ */}
+        {/* HEADER */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -731,15 +727,15 @@ function LoansContent() {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-xl shadow-cyan-500/30" aria-hidden="true">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple to-purple/80 flex items-center justify-center shadow-xl shadow-purple/30" aria-hidden="true">
                   <DollarSign className="w-7 h-7 text-white" />
                 </div>
-                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-lg shadow-lg">
+                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-gold to-purple text-white text-xs font-bold px-2 py-1 rounded-lg shadow-lg">
                   EARLY ACCESS
                 </div>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Smart Loans</h1>
+                <h1 className="text-3xl font-bold text-navy dark:text-white tracking-tight">Smart Loans</h1>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                   Join {stats.by_product.loan}+ others on the waitlist
                 </p>
@@ -751,24 +747,24 @@ function LoansContent() {
               <div className="hidden sm:flex items-center gap-4">
                 <div className="text-right">
                   <p className="text-xs text-slate-600 dark:text-slate-500">Pre-approved for</p>
-                  <p className="text-lg font-bold text-slate-900 dark:text-white">$50,000</p>
+                  <p className="text-lg font-bold text-navy dark:text-white">$50,000</p>
                 </div>
-                <div className="h-8 w-px bg-slate-300 dark:bg-slate-700" />
+                <div className="h-8 w-px bg-gold/20 dark:bg-slate-700" />
                 <div className="text-right">
                   <p className="text-xs text-slate-600 dark:text-slate-500">Best Rate</p>
-                  <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">3.2%</p>
+                  <p className="text-lg font-bold text-teal dark:text-teal">3.2%</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Welcome Banner - Monzo Style */}
-          <div className="bg-gradient-to-r from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-xl">
-            <div className="h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-500" aria-hidden="true" />
+          {/* Welcome Banner - ClaveRica style */}
+          <div className="bg-gradient-to-r from-cream to-white dark:from-navy dark:to-slate-800 border border-gold/20 dark:border-slate-700 rounded-2xl overflow-hidden shadow-xl">
+            <div className="h-1 bg-gradient-to-r from-gold via-purple to-teal" aria-hidden="true" />
             <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-5">
               <div>
-                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                  Welcome back, <span className="text-cyan-600 dark:text-cyan-300">{user?.first_name || "valued customer"}</span>
+                <h2 className="text-lg font-bold text-navy dark:text-white">
+                  Welcome back, <span className="text-purple dark:text-purple-300">{user?.first_name || "valued customer"}</span>
                 </h2>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                   Submit interest for exclusive early access rates
@@ -776,16 +772,17 @@ function LoansContent() {
               </div>
               <div className="flex items-center gap-6">
                 {[
-                  { icon: Zap, value: "Instant", label: "Waitlist", color: "amber" },
-                  { icon: Lock, value: "Secure", label: "Submission", color: "emerald" },
-                  { icon: Gift, value: "Bonus", label: "On Launch", color: "violet" },
+                  { icon: Zap, value: "Instant", label: "Waitlist", color: "gold" },
+                  { icon: Lock, value: "Secure", label: "Submission", color: "teal" },
+                  { icon: Gift, value: "Bonus", label: "On Launch", color: "purple" },
                 ].map((stat) => {
                   const Icon = stat.icon;
+                  const colorClass = stat.color === 'gold' ? 'text-gold' : stat.color === 'teal' ? 'text-teal' : 'text-purple';
                   return (
                     <div key={stat.label} className="text-center">
                       <div className="flex items-center justify-center gap-1">
-                        <Icon className={`w-4 h-4 text-${stat.color}-600 dark:text-${stat.color}-400`} />
-                        <p className={`text-lg font-bold text-${stat.color}-600 dark:text-${stat.color}-400`}>{stat.value}</p>
+                        <Icon className={`w-4 h-4 ${colorClass}`} />
+                        <p className={`text-lg font-bold ${colorClass}`}>{stat.value}</p>
                       </div>
                       <p className="text-xs text-slate-600 dark:text-slate-500">{stat.label}</p>
                     </div>
@@ -796,9 +793,7 @@ function LoansContent() {
           </div>
         </motion.div>
 
-        {/* ════════════════════════════════════════════════
-            ELIGIBILITY BADGE
-        ════════════════════════════════════════════════ */}
+        {/* ELIGIBILITY BADGE */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -810,7 +805,7 @@ function LoansContent() {
             onKeyDown={handleEligibilityKeyDown}
             role="button"
             tabIndex={0}
-            className="cursor-pointer transform hover:scale-[1.02] transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 rounded-xl"
+            className="cursor-pointer transform hover:scale-[1.02] transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2 dark:focus:ring-offset-navy rounded-xl"
             aria-label="View exclusive loan rates based on your eligibility score"
           >
             <EligibilityBadge
@@ -821,9 +816,7 @@ function LoansContent() {
           </div>
         </motion.div>
 
-        {/* ════════════════════════════════════════════════
-            AI RECOMMENDATIONS
-        ════════════════════════════════════════════════ */}
+        {/* AI RECOMMENDATIONS */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -837,9 +830,7 @@ function LoansContent() {
           />
         </motion.div>
 
-        {/* ════════════════════════════════════════════════
-            CALCULATOR
-        ════════════════════════════════════════════════ */}
+        {/* CALCULATOR */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -856,9 +847,7 @@ function LoansContent() {
           />
         </motion.div>
 
-        {/* ════════════════════════════════════════════════
-            LOAN PRODUCTS GRID
-        ════════════════════════════════════════════════ */}
+        {/* LOAN PRODUCTS GRID */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -867,24 +856,24 @@ function LoansContent() {
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
             <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Available Loan Products</h2>
+              <h2 className="text-xl font-bold text-navy dark:text-white">Available Loan Products</h2>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">Submit interest for early access</p>
             </div>
             <div className="flex items-center gap-3">
               {compareLoans.length > 0 && (
                 <button
                   onClick={() => setIsComparing(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl shadow-lg shadow-violet-500/25 hover:shadow-xl hover:shadow-violet-500/40 transition-all focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple to-gold rounded-xl shadow-lg shadow-purple/25 hover:shadow-xl hover:shadow-gold/40 transition-all focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2 dark:focus:ring-offset-navy"
                   aria-label={`Compare ${compareLoans.length} selected loans`}
                 >
                   Compare ({compareLoans.length})
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}
-              <div className="flex items-center gap-2 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-300/50 dark:border-slate-700/50 rounded-lg px-3 py-1.5">
-                <Shield className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <div className="flex items-center gap-2 bg-cream/50 dark:bg-slate-800/50 border border-gold/20 dark:border-slate-700/50 rounded-lg px-3 py-1.5">
+                <Shield className="w-3.5 h-3.5 text-teal" />
                 <span className="text-xs text-slate-700 dark:text-slate-400">
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Secure</span> & encrypted
+                  <span className="text-teal font-semibold">Secure</span> & encrypted
                 </span>
               </div>
             </div>
@@ -905,9 +894,7 @@ function LoansContent() {
           </div>
         </motion.div>
 
-        {/* ════════════════════════════════════════════════
-            COMPARISON OVERLAY
-        ════════════════════════════════════════════════ */}
+        {/* COMPARISON OVERLAY */}
         {isComparing && compareLoans.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -929,9 +916,7 @@ function LoansContent() {
           </motion.div>
         )}
 
-        {/* ════════════════════════════════════════════════
-            REPAYMENT SCHEDULE
-        ════════════════════════════════════════════════ */}
+        {/* REPAYMENT SCHEDULE */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -941,40 +926,42 @@ function LoansContent() {
           <RepaymentSchedule amount={loanAmount} term={selectedTerm} interestRate={4.9} />
         </motion.div>
 
-        {/* ════════════════════════════════════════════════
-            CTA BANNER
-        ════════════════════════════════════════════════ */}
+        {/* CTA BANNER */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
         >
-          <div className="bg-gradient-to-r from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-xl">
-            <div className="h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-500 animate-gradient-x" aria-hidden="true" />
+          <div className="bg-gradient-to-r from-cream to-white dark:from-navy dark:to-slate-800 border border-gold/20 dark:border-slate-700 rounded-2xl overflow-hidden shadow-xl">
+            <div className="h-1 bg-gradient-to-r from-gold via-purple to-teal animate-gradient-x" aria-hidden="true" />
             <div className="p-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/30" aria-hidden="true">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple to-purple/80 flex items-center justify-center shadow-lg shadow-purple/30" aria-hidden="true">
                   <Rocket className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Ready for Early Access?</h3>
+                  <h3 className="text-base font-bold text-navy dark:text-white">Ready for Early Access?</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400">Join {stats.by_product.loan}+ others on the waitlist</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                 {[
-                  { icon: Zap, label: "Priority Access", sub: "Be first in line", color: "cyan" },
-                  { icon: Gift, label: "Launch Bonus", sub: "Exclusive offers", color: "emerald" },
-                  { icon: Bell, label: "Early Notify", sub: "Get notified first", color: "violet" },
-                  { icon: Lock, label: "No Commitment", sub: "Free to submit", color: "amber" },
+                  { icon: Zap, label: "Priority Access", sub: "Be first in line", color: "purple" },
+                  { icon: Gift, label: "Launch Bonus", sub: "Exclusive offers", color: "teal" },
+                  { icon: Bell, label: "Early Notify", sub: "Get notified first", color: "gold" },
+                  { icon: Lock, label: "No Commitment", sub: "Free to submit", color: "navy" },
                 ].map((feature) => {
                   const Icon = feature.icon;
+                  const colorClass = feature.color === 'purple' ? 'border-purple/20 bg-purple/5 text-purple' :
+                                    feature.color === 'teal' ? 'border-teal/20 bg-teal/5 text-teal' :
+                                    feature.color === 'gold' ? 'border-gold/20 bg-gold/5 text-gold' :
+                                    'border-navy/20 bg-navy/5 text-navy';
                   return (
-                    <div key={feature.label} className={`rounded-xl border border-${feature.color}-500/20 bg-gradient-to-b from-${feature.color}-500/5 to-transparent p-4`}>
+                    <div key={feature.label} className={`rounded-xl border ${colorClass} p-4`}>
                       <div className="flex items-center gap-2 mb-2">
-                        <Icon className={`w-4 h-4 text-${feature.color}-600 dark:text-${feature.color}-400`} />
-                        <span className="text-xs font-semibold text-slate-900 dark:text-white">{feature.label}</span>
+                        <Icon className="w-4 h-4" />
+                        <span className="text-xs font-semibold text-navy dark:text-white">{feature.label}</span>
                       </div>
                       <p className="text-xs text-slate-600 dark:text-slate-400">{feature.sub}</p>
                     </div>
@@ -985,7 +972,7 @@ function LoansContent() {
               <button
                 onClick={handleStartVerification}
                 disabled={isSubmitting}
-                className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-xl shadow-lg shadow-cyan-500/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
+                className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2 dark:focus:ring-offset-navy"
                 aria-label="Join early access waitlist for loans"
                 aria-busy={isSubmitting}
               >
@@ -1010,9 +997,7 @@ function LoansContent() {
         </motion.div>
       </div>
 
-      {/* ══════════════════════════════════════════════════
-          MODALS
-      ══════════════════════════════════════════════════ */}
+      {/* MODALS */}
       <EarlyAccessModal
         open={earlyAccessModal.isOpen}
         loanName={earlyAccessModal.loanName}

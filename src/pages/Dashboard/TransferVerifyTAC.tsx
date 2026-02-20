@@ -46,7 +46,6 @@ const TransferVerifyTAC = () => {
         const data = await transferAPI.getTransfer(transferId);
         setTransfer(data);
         
-        // ✅ FIXED: Check correct status names from backend (with underscore)
         if (['tac_sent', 'tac_verified', 'completed'].includes(data.status)) {
           navigate(`/dashboard/transfer/status/${transferId}`);
           return;
@@ -67,14 +66,12 @@ const TransferVerifyTAC = () => {
 
   // Handle TAC code input
   const handleTACChange = (index: number, value: string) => {
-    // Only allow numbers
     if (!/^\d*$/.test(value)) return;
     
     const newTacCode = [...tacCode];
-    newTacCode[index] = value.slice(0, 1); // Only take first character
+    newTacCode[index] = value.slice(0, 1);
     setTacCode(newTacCode);
     
-    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -83,7 +80,6 @@ const TransferVerifyTAC = () => {
   // Handle backspace
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === 'Backspace' && !tacCode[index] && index > 0) {
-      // Move to previous input on backspace if current is empty
       inputRefs.current[index - 1]?.focus();
     }
   };
@@ -103,7 +99,6 @@ const TransferVerifyTAC = () => {
       });
       setTacCode(newTacCode);
       
-      // Focus the last input
       setTimeout(() => {
         inputRefs.current[5]?.focus();
       }, 0);
@@ -129,15 +124,12 @@ const TransferVerifyTAC = () => {
       if (result.success) {
         setSuccess('TAC verified successfully! Funds will be deducted shortly.');
         
-        // Redirect to status page after 2 seconds
         setTimeout(() => {
           navigate(`/dashboard/transfer/status/${transferId}`);
         }, 2000);
       } else {
         setError(result.message || 'Invalid TAC code. Please try again.');
-        // Clear the TAC inputs on error
         setTacCode(['', '', '', '', '', '']);
-        // Focus first input
         inputRefs.current[0]?.focus();
       }
     } catch (err: any) {
@@ -160,12 +152,13 @@ const TransferVerifyTAC = () => {
   if (!transfer) {
     return (
       <Container maxWidth="md" className={styles.container}>
-        <Alert severity="error" sx={{ mt: 4 }}>
+        <Alert severity="error" className={styles.errorAlert} sx={{ mt: 4 }}>
           Transfer not found
         </Alert>
         <Button
           startIcon={<ArrowBack />}
           onClick={() => navigate('/dashboard/transfer')}
+          className={styles.backButton}
           sx={{ mt: 2 }}
         >
           Back to Transfer
@@ -196,30 +189,30 @@ const TransferVerifyTAC = () => {
         <Grid item xs={12}>
           <Paper className={styles.paper}>
             {/* Transfer Summary */}
-            <Card variant="outlined" sx={{ mb: 3 }}>
+            <Card variant="outlined" sx={{ mb: 3, borderColor: 'rgba(197, 160, 40, 0.2)', backgroundColor: 'rgba(245, 240, 230, 0.5)' }}>
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={4}>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" sx={{ color: '#475569' }}>
                       Amount
                     </Typography>
-                    <Typography variant="h5">
+                    <Typography variant="h5" sx={{ color: '#0A2540', fontWeight: 800 }}>
                       ${parseFloat(transfer.amount).toFixed(2)}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={4}>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" sx={{ color: '#475569' }}>
                       Recipient
                     </Typography>
-                    <Typography variant="body1">
+                    <Typography variant="body1" sx={{ color: '#0A2540', fontWeight: 600 }}>
                       {transfer.recipient_name}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={4}>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography variant="body2" sx={{ color: '#475569' }}>
                       Reference
                     </Typography>
-                    <Typography variant="body1" fontFamily="monospace">
+                    <Typography variant="body1" fontFamily="monospace" sx={{ color: '#8626E9' }}>
                       {transfer.reference}
                     </Typography>
                   </Grid>
@@ -229,13 +222,13 @@ const TransferVerifyTAC = () => {
 
             {/* Error/Success Messages */}
             {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
+              <Alert severity="error" className={styles.errorAlert} sx={{ mb: 3 }}>
                 {error}
               </Alert>
             )}
             
             {success && (
-              <Alert severity="success" sx={{ mb: 3 }}>
+              <Alert severity="success" className={styles.successAlert} sx={{ mb: 3 }}>
                 {success}
               </Alert>
             )}
@@ -243,7 +236,7 @@ const TransferVerifyTAC = () => {
             {/* TAC Input Form */}
             <form onSubmit={handleSubmit}>
               <Box mb={4}>
-                <Typography variant="h6" gutterBottom align="center">
+                <Typography variant="h6" gutterBottom align="center" sx={{ color: '#0A2540' }}>
                   Enter 6-Digit TAC Code
                 </Typography>
                 <Typography variant="body2" color="textSecondary" align="center" gutterBottom>
@@ -269,10 +262,27 @@ const TransferVerifyTAC = () => {
                           padding: '12px',
                         },
                       }}
+                      className={`${digit ? 'filled' : ''}`}
                       sx={{
                         width: '60px',
                         '& .MuiOutlinedInput-root': {
                           height: '60px',
+                          backgroundColor: 'var(--cream)',
+                          borderRadius: '16px',
+                          '& fieldset': {
+                            borderColor: digit ? '#1E6F6F' : 'rgba(197, 160, 40, 0.2)',
+                            borderWidth: digit ? '2px' : '1px',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: '#C5A028',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#C5A028',
+                            borderWidth: '2px',
+                          },
+                        },
+                        '& input': {
+                          color: digit ? '#1E6F6F' : '#0A2540',
                         },
                       }}
                       autoFocus={index === 0}
@@ -286,10 +296,10 @@ const TransferVerifyTAC = () => {
                   <Button
                     type="submit"
                     variant="contained"
-                    color="primary"
                     size="large"
                     startIcon={verifying ? <CircularProgress size={20} /> : <CheckCircle />}
                     disabled={verifying || tacCode.join('').length !== 6}
+                    className={styles.primaryButton}
                     sx={{ minWidth: '200px' }}
                   >
                     {verifying ? 'Verifying...' : 'Verify & Proceed'}
@@ -302,6 +312,7 @@ const TransferVerifyTAC = () => {
             <Alert 
               severity="info" 
               icon={<Email />}
+              className={styles.infoAlert}
               sx={{ mb: 3 }}
             >
               <Typography variant="body2">
@@ -314,11 +325,12 @@ const TransferVerifyTAC = () => {
             </Alert>
 
             {/* Action Buttons */}
-            <Box display="flex" justifyContent="space-between" mt={4}>
+            <Box display="flex" justifyContent="space-between" mt={4} flexWrap="wrap" gap={2}>
               <Button
                 variant="outlined"
                 startIcon={<ArrowBack />}
                 onClick={() => navigate('/dashboard/transfer')}
+                className={styles.secondaryButton}
               >
                 Back to Transfer
               </Button>
@@ -326,6 +338,7 @@ const TransferVerifyTAC = () => {
               <Button
                 variant="text"
                 onClick={() => navigate('/dashboard/transfer')}
+                sx={{ color: '#475569' }}
               >
                 Cancel
               </Button>

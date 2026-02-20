@@ -41,6 +41,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import styles from './Insurance.module.css';
 
 // Get API URL from environment or use default
 const API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-production.up.railway.app';
@@ -50,15 +51,15 @@ const insurancePlans = [
   {
     id: "health",
     name: "Health Shield Pro",
-    provider: "Monzo Protect",
+    provider: "ClaveRica Protect",
     tagline: "Complete health coverage worldwide",
     icon: Heart,
-    color: "from-pink-500 to-rose-600",
-    gradient: "bg-gradient-to-br from-pink-500 to-rose-600",
-    bgColor: "bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20",
+    color: "from-purple-500 to-purple-600",
+    gradient: "bg-gradient-premium-purple",
+    bgColor: "bg-cream",
     features: [
       "Medical cover up to $2.5M",
-      "24/7 Virtual Doctor (Monzo MD)",
+      "24/7 Virtual Doctor",
       "Dental & Vision included",
       "Emergency evacuation & repatriation",
       "Mental health support",
@@ -77,17 +78,16 @@ const insurancePlans = [
     deductible: "$250",
     waitingPeriod: "14 days",
     countries: 150,
-    providerLogo: "https://i.imgur.com/MONZO_LOGO.png"
   },
   {
     id: "travel",
     name: "Travel Guard Elite",
-    provider: "Revolut Travel",
+    provider: "ClaveRica Travel",
     tagline: "Wander worry-free worldwide",
     icon: Plane,
-    color: "from-blue-500 to-cyan-600",
-    gradient: "bg-gradient-to-br from-blue-500 to-cyan-600",
-    bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20",
+    color: "from-gold to-gold",
+    gradient: "bg-gradient-gold",
+    bgColor: "bg-cream",
     features: [
       "Trip cancellation up to $10,000",
       "Lost luggage & electronics",
@@ -109,17 +109,16 @@ const insurancePlans = [
     deductible: "$100",
     waitingPeriod: "Immediate",
     countries: 180,
-    providerLogo: "https://i.imgur.com/REVOLUT_LOGO.png"
   },
   {
     id: "home",
     name: "Home Secure Plus",
-    provider: "Revolut Home",
+    provider: "ClaveRica Home",
     tagline: "Your castle, perfectly protected",
     icon: Home,
-    color: "from-emerald-500 to-green-600",
-    gradient: "bg-gradient-to-br from-emerald-500 to-green-600",
-    bgColor: "bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20",
+    color: "from-teal to-teal",
+    gradient: "bg-gradient-teal",
+    bgColor: "bg-cream",
     features: [
       "Property damage up to $1M",
       "Theft & burglary protection",
@@ -141,17 +140,16 @@ const insurancePlans = [
     deductible: "$500",
     waitingPeriod: "30 days",
     countries: 50,
-    providerLogo: "https://i.imgur.com/REVOLUT_LOGO.png"
   },
   {
     id: "device",
     name: "Device Care Max",
-    provider: "Skrill Shield",
+    provider: "ClaveRica Tech",
     tagline: "Your tech, always working",
     icon: Smartphone,
-    color: "from-purple-500 to-violet-600",
-    gradient: "bg-gradient-to-br from-purple-500 to-violet-600",
-    bgColor: "bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20",
+    color: "from-purple to-gold",
+    gradient: "bg-gradient-purple-gold",
+    bgColor: "bg-cream",
     features: [
       "Phone repair/replace (any brand)",
       "Screen damage - 2 claims/year",
@@ -173,17 +171,16 @@ const insurancePlans = [
     deductible: "$50",
     waitingPeriod: "7 days",
     countries: 80,
-    providerLogo: "https://i.imgur.com/SKRILL_LOGO.png"
   },
   {
     id: "auto",
     name: "Auto Protect Premium",
-    provider: "Monzo Drive",
+    provider: "ClaveRica Drive",
     tagline: "Drive with complete confidence",
     icon: Car,
-    color: "from-orange-500 to-red-600",
-    gradient: "bg-gradient-to-br from-orange-500 to-red-600",
-    bgColor: "bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20",
+    color: "from-navy to-teal",
+    gradient: "bg-gradient-navy-teal",
+    bgColor: "bg-cream",
     features: [
       "Accident cover - comprehensive",
       "Third-party liability $5M",
@@ -205,17 +202,16 @@ const insurancePlans = [
     deductible: "$250",
     waitingPeriod: "Immediate",
     countries: 40,
-    providerLogo: "https://i.imgur.com/MONZO_LOGO.png"
   },
   {
     id: "life",
     name: "Life Guard Essential",
-    provider: "Revolut Life",
+    provider: "ClaveRica Life",
     tagline: "Peace of mind for loved ones",
     icon: ShieldIcon,
-    color: "from-indigo-500 to-blue-600",
-    gradient: "bg-gradient-to-br from-indigo-500 to-blue-600",
-    bgColor: "bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20",
+    color: "from-gold to-teal",
+    gradient: "bg-gradient-gold-teal",
+    bgColor: "bg-cream",
     features: [
       "Term life insurance up to $2M",
       "Critical illness cover",
@@ -237,16 +233,15 @@ const insurancePlans = [
     deductible: "N/A",
     waitingPeriod: "90 days",
     countries: 30,
-    providerLogo: "https://i.imgur.com/REVOLUT_LOGO.png"
   }
 ];
 
 // Interactive coverage calculator data
 const coverageCalculator = [
-  { label: "Basic", value: 50000, color: "bg-slate-200" },
-  { label: "Standard", value: 250000, color: "bg-blue-200" },
-  { label: "Premium", value: 1000000, color: "bg-purple-200" },
-  { label: "Ultimate", value: 2500000, color: "bg-rose-200" }
+  { label: "Basic", value: 50000, color: "bg-gold-light" },
+  { label: "Standard", value: 250000, color: "bg-purple-light" },
+  { label: "Premium", value: 1000000, color: "bg-teal-light" },
+  { label: "Ultimate", value: 2500000, color: "bg-gold" }
 ];
 
 function InsuranceContent() {
@@ -273,7 +268,7 @@ function InsuranceContent() {
     estimatedSavings: 0
   });
 
-  // NEW: Modal states for all buttons
+  // Modal states
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showApplicationsModal, setShowApplicationsModal] = useState(false);
   const [showCalculatorModal, setShowCalculatorModal] = useState(false);
@@ -295,7 +290,7 @@ function InsuranceContent() {
     });
   }, []);
 
-  // Simplified submission to KYC dumpster - ✅ FIXED with correct URL
+  // Handle insurance application
   const handleGetCoverage = async (planId: string) => {
     const plan = insurancePlans.find(p => p.id === planId);
     if (!plan) return;
@@ -303,7 +298,6 @@ function InsuranceContent() {
     setLoading(planId);
     
     try {
-      // Simplified payload
       const dumpsterData = {
         product: 'insurance',
         product_subtype: planId,
@@ -318,7 +312,6 @@ function InsuranceContent() {
         timestamp: new Date().toISOString()
       };
       
-      // ✅ FIXED: Removed duplicate /api - API_URL already has /api
       const response = await fetch(`${API_URL}/kyc_spec/collect/`, {
         method: 'POST',
         headers: {
@@ -408,36 +401,36 @@ function InsuranceContent() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className={styles.pageContainer}>
+      <div className={styles.contentContainer}>
         {/* Enhanced Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10"
+          className={styles.headerSection}
         >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                <Shield className="w-6 h-6 text-white" />
+          <div className={styles.headerTop}>
+            <div className={styles.headerLeft}>
+              <div className={styles.headerIcon}>
+                <Shield className={styles.headerIconSvg} />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Insurance</h1>
-                <p className="text-slate-600 dark:text-slate-400">Protect what matters most</p>
+                <h1 className={styles.headerTitle}>Insurance</h1>
+                <p className={styles.headerSubtitle}>Protect what matters most</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className={styles.headerActions}>
               <button 
                 onClick={() => setShowFilterModal(true)}
-                className="px-4 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                className={styles.filterButton}
               >
-                <Filter className="w-4 h-4" />
-                <span className="font-medium">Filter</span>
+                <Filter className={styles.buttonIcon} />
+                <span>Filter</span>
               </button>
               {userApplications.length > 0 && (
                 <button 
                   onClick={() => setShowApplicationsModal(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 transition-all"
+                  className={styles.applicationsButton}
                 >
                   View Applications ({userApplications.length})
                 </button>
@@ -446,40 +439,33 @@ function InsuranceContent() {
           </div>
           
           {/* Hero Banner */}
-          <div className="bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-emerald-500/10 dark:from-blue-900/30 dark:via-cyan-900/30 dark:to-emerald-900/30 rounded-2xl p-6 border border-slate-300/30 dark:border-slate-700/30">
-            <div className="flex items-center justify-between">
+          <div className={styles.heroBanner}>
+            <div className={styles.heroContent}>
               <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-bold rounded-full">
-                    NEW
-                  </div>
-                  <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
-                    <Crown className="w-4 h-4" />
-                    <span className="font-medium">Exclusive Partner Rates</span>
-                  </div>
+                <div className={styles.heroBadge}>
+                  <Sparkles className={styles.badgeIcon} />
+                  <span>Exclusive Partner Rates</span>
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
+                <h2 className={styles.heroTitle}>
                   Your Safety Net, Reinvented
                 </h2>
-                <p className="text-slate-700 dark:text-slate-300 max-w-2xl">
+                <p className={styles.heroDescription}>
                   Get comprehensive coverage starting from $15/month with instant approval, 
-                  24/7 support, and partner rewards. <span className="font-semibold text-emerald-600 dark:text-emerald-400">Save up to 30%</span> compared to traditional insurers.
+                  24/7 support, and partner rewards. <span className={styles.highlight}>Save up to 30%</span> compared to traditional insurers.
                 </p>
               </div>
-              <div className="hidden lg:block">
-                <div className="flex items-center gap-4">
-                  <div className="text-center">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
-                      <Zap className="w-8 h-8 text-white" />
-                    </div>
-                    <p className="text-sm font-medium mt-2">Instant Quotes</p>
+              <div className={styles.heroStats}>
+                <div className={styles.heroStat}>
+                  <div className={`${styles.statCircle} ${styles.purpleCircle}`}>
+                    <Zap className={styles.statIcon} />
                   </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 flex items-center justify-center">
-                      <Clock className="w-8 h-8 text-white" />
-                    </div>
-                    <p className="text-sm font-medium mt-2">24/7 Claims</p>
+                  <p className={styles.statLabel}>Instant Quotes</p>
+                </div>
+                <div className={styles.heroStat}>
+                  <div className={`${styles.statCircle} ${styles.tealCircle}`}>
+                    <Clock className={styles.statIcon} />
                   </div>
+                  <p className={styles.statLabel}>24/7 Claims</p>
                 </div>
               </div>
             </div>
@@ -487,164 +473,146 @@ function InsuranceContent() {
         </motion.div>
 
         {/* Interactive Stats Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-          <motion.div 
-            whileHover={{ scale: 1.02 }}
-            className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-center justify-between">
+        <div className={styles.statsGrid}>
+          <motion.div whileHover={{ scale: 1.02 }} className={styles.statCard}>
+            <div className={styles.statContent}>
               <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Applications</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                  {userStats.totalApplications}
-                </p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+                <p className={styles.statLabel}>Applications</p>
+                <p className={styles.statValue}>{userStats.totalApplications}</p>
+                <p className={styles.statSubtext}>
                   {userStats.totalApplications > 0 ? '+1 pending review' : 'Start your first application'}
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 flex items-center justify-center">
-                <BadgeCheck className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div className={`${styles.statIconContainer} ${styles.purpleIcon}`}>
+                <BadgeCheck className={styles.statIconSvg} />
               </div>
             </div>
           </motion.div>
           
-          <motion.div 
-            whileHover={{ scale: 1.02 }}
-            className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-center justify-between">
+          <motion.div whileHover={{ scale: 1.02 }} className={styles.statCard}>
+            <div className={styles.statContent}>
               <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Monthly Premium</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                  ${userStats.monthlyPremium}
-                </p>
-                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                <p className={styles.statLabel}>Monthly Premium</p>
+                <p className={styles.statValue}>${userStats.monthlyPremium}</p>
+                <p className={styles.statSubtext}>
                   Potential savings: ${userStats.estimatedSavings}/mo
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-800/30 flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
+              <div className={`${styles.statIconContainer} ${styles.tealIcon}`}>
+                <TrendingUp className={styles.statIconSvg} />
               </div>
             </div>
           </motion.div>
           
-          <motion.div 
-            whileHover={{ scale: 1.02 }}
-            className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-center justify-between">
+          <motion.div whileHover={{ scale: 1.02 }} className={styles.statCard}>
+            <div className={styles.statContent}>
               <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Claims This Year</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">0</p>
-                <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                <p className={styles.statLabel}>Claims This Year</p>
+                <p className={styles.statValue}>0</p>
+                <p className={styles.statSubtext}>
                   No-claim bonus: 15%
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-100 to-violet-200 dark:from-purple-900/30 dark:to-violet-800/30 flex items-center justify-center">
-                <ShieldCheck className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              <div className={`${styles.statIconContainer} ${styles.goldIcon}`}>
+                <ShieldCheck className={styles.statIconSvg} />
               </div>
             </div>
           </motion.div>
           
-          <motion.div 
-            whileHover={{ scale: 1.02 }}
-            className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-center justify-between">
+          <motion.div whileHover={{ scale: 1.02 }} className={styles.statCard}>
+            <div className={styles.statContent}>
               <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Partner Rewards</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                  ${userStats.totalApplications * 25}
-                </p>
-                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                <p className={styles.statLabel}>Partner Rewards</p>
+                <p className={styles.statValue}>${userStats.totalApplications * 25}</p>
+                <p className={styles.statSubtext}>
                   {userStats.totalApplications > 0 ? 'Redeem in app' : 'Earn with first application'}
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-amber-100 to-orange-200 dark:from-amber-900/30 dark:to-orange-800/30 flex items-center justify-center">
-                <Gift className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+              <div className={`${styles.statIconContainer} ${styles.goldIcon}`}>
+                <Gift className={styles.statIconSvg} />
               </div>
             </div>
           </motion.div>
         </div>
 
         {/* Interactive Coverage Calculator */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg mb-10 border border-slate-200 dark:border-slate-700">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Coverage Calculator</h2>
-            <div className="flex items-center gap-2">
+        <div className={styles.calculatorSection}>
+          <div className={styles.calculatorHeader}>
+            <h2 className={styles.sectionTitle}>Coverage Calculator</h2>
+            <div className={styles.durationToggle}>
               <button 
                 onClick={() => setSelectedDuration("monthly")}
-                className={`px-4 py-2 rounded-lg font-medium ${selectedDuration === "monthly" ? 'bg-blue-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}
+                className={`${styles.durationButton} ${selectedDuration === "monthly" ? styles.activeDuration : ''}`}
               >
                 Monthly
               </button>
               <button 
                 onClick={() => setSelectedDuration("annual")}
-                className={`px-4 py-2 rounded-lg font-medium ${selectedDuration === "annual" ? 'bg-blue-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}
+                className={`${styles.durationButton} ${selectedDuration === "annual" ? styles.activeDuration : ''}`}
               >
                 Annual (Save 15%)
               </button>
             </div>
           </div>
           
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium text-slate-900 dark:text-white">Select Coverage Amount</h3>
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+          <div className={styles.calculatorContent}>
+            <div className={styles.rangeHeader}>
+              <h3 className={styles.rangeTitle}>Select Coverage Amount</h3>
+              <div className={styles.coverageAmount}>
                 ${coverageAmount.toLocaleString()}
               </div>
             </div>
             
-            <div className="relative h-2 bg-slate-200 dark:bg-slate-700 rounded-full mb-4">
-              <div 
-                className="absolute h-full bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"
-                style={{ width: `${(coverageAmount / 2500000) * 100}%` }}
-              ></div>
-              <input
-                type="range"
-                min="50000"
-                max="2500000"
-                step="50000"
-                value={coverageAmount}
-                onChange={(e) => setCoverageAmount(Number(e.target.value))}
-                className="absolute w-full h-full opacity-0 cursor-pointer"
-              />
+            <div className={styles.rangeContainer}>
+              <div className={styles.rangeTrack}>
+                <div 
+                  className={styles.rangeFill}
+                  style={{ width: `${(coverageAmount / 2500000) * 100}%` }}
+                ></div>
+                <input
+                  type="range"
+                  min="50000"
+                  max="2500000"
+                  step="50000"
+                  value={coverageAmount}
+                  onChange={(e) => setCoverageAmount(Number(e.target.value))}
+                  className={styles.rangeInput}
+                />
+              </div>
             </div>
             
-            <div className="grid grid-cols-4 gap-3">
+            <div className={styles.coverageLevels}>
               {coverageCalculator.map((level) => (
                 <button
                   key={level.label}
                   onClick={() => setCoverageAmount(level.value)}
-                  className={`p-3 rounded-xl text-center transition-all ${coverageAmount === level.value ? 'ring-2 ring-blue-500 scale-105' : ''}`}
+                  className={`${styles.coverageLevel} ${coverageAmount === level.value ? styles.activeLevel : ''}`}
                 >
-                  <div className={`h-1 w-full ${level.color} rounded-full mb-2`}></div>
-                  <div className="font-medium text-slate-900 dark:text-white">{level.label}</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">
-                    ${level.value.toLocaleString()}
-                  </div>
+                  <div className={`${styles.levelBar} ${level.color}`}></div>
+                  <div className={styles.levelLabel}>{level.label}</div>
+                  <div className={styles.levelValue}>${level.value.toLocaleString()}</div>
                 </button>
               ))}
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className={styles.previewGrid}>
             {insurancePlans.slice(0, 3).map((plan) => (
-              <div key={plan.id} className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className={`w-10 h-10 rounded-lg ${plan.gradient} flex items-center justify-center`}>
-                    <plan.icon className="w-5 h-5 text-white" />
+              <div key={plan.id} className={styles.previewCard}>
+                <div className={styles.previewHeader}>
+                  <div className={`${styles.previewIcon} ${plan.gradient}`}>
+                    <plan.icon className={styles.previewIconSvg} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900 dark:text-white">{plan.name}</h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-400">{plan.provider}</p>
+                    <h4 className={styles.previewName}>{plan.name}</h4>
+                    <p className={styles.previewProvider}>{plan.provider}</p>
                   </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-slate-900 dark:text-white mb-1">
+                <div className={styles.previewPrice}>
+                  <div className={styles.previewAmount}>
                     ${calculateMonthlyPremium(plan.monthly, coverageAmount)}
                   </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">per month</div>
+                  <div className={styles.previewPeriod}>per month</div>
                 </div>
               </div>
             ))}
@@ -652,33 +620,33 @@ function InsuranceContent() {
         </div>
 
         {/* Enhanced Plans Grid */}
-        <div className="mb-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 md:mb-0">
+        <div className={styles.plansSection}>
+          <div className={styles.plansHeader}>
+            <h2 className={styles.sectionTitle}>
               Available Plans
-              <span className="ml-3 text-sm font-normal text-slate-600 dark:text-slate-400">
+              <span className={styles.plansCount}>
                 {filteredPlans.length} plans available
               </span>
             </h2>
             
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className={styles.plansControls}>
+              <div className={styles.searchContainer}>
+                <Search className={styles.searchIcon} />
                 <input
                   type="text"
                   placeholder="Search plans..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={styles.searchInput}
                 />
               </div>
               
-              <div className="flex gap-2">
+              <div className={styles.filterTabs}>
                 {["all", "popular", "budget", "premium"].map((filter) => (
                   <button
                     key={filter}
                     onClick={() => setActiveFilter(filter)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize ${activeFilter === filter ? 'bg-blue-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}
+                    className={`${styles.filterTab} ${activeFilter === filter ? styles.activeFilter : ''}`}
                   >
                     {filter}
                   </button>
@@ -689,17 +657,15 @@ function InsuranceContent() {
           
           {/* Comparison Bar */}
           {comparePlans.length > 0 && (
-            <div className="mb-6 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl p-4 border border-blue-200 dark:border-blue-800">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  <span className="font-medium text-slate-900 dark:text-white">
-                    Comparing {comparePlans.length} plans
-                  </span>
+            <div className={styles.comparisonBar}>
+              <div className={styles.comparisonContent}>
+                <div className={styles.comparisonText}>
+                  <BarChart3 className={styles.comparisonIcon} />
+                  <span>Comparing {comparePlans.length} plans</span>
                 </div>
                 <button
                   onClick={() => setComparePlans([])}
-                  className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                  className={styles.clearComparison}
                 >
                   Clear all
                 </button>
@@ -707,7 +673,7 @@ function InsuranceContent() {
             </div>
           )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={styles.plansGrid}>
             {filteredPlans.map((plan) => {
               const Icon = plan.icon;
               const isComparing = comparePlans.includes(plan.id);
@@ -719,75 +685,71 @@ function InsuranceContent() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   whileHover={{ y: -5 }}
-                  className={`${plan.bgColor} rounded-2xl p-6 border-2 transition-all relative overflow-hidden group ${isComparing ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-transparent hover:border-slate-300 dark:hover:border-slate-700'}`}
+                  className={`${styles.planCard} ${isComparing ? styles.comparing : ''}`}
                 >
                   {/* Badges */}
-                  <div className="absolute top-4 left-4">
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                      ACTIVE BETA
+                  <div className={styles.badgeContainer}>
+                    <div className={styles.betaBadge}>
+                      <Sparkles className={styles.badgeIcon} />
+                      <span>ACTIVE BETA</span>
                     </div>
+                    
+                    {plan.badge && (
+                      <div className={styles.featuredBadge}>
+                        {plan.badge}
+                      </div>
+                    )}
                   </div>
                   
-                  {plan.badge && (
-                    <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                      {plan.badge}
-                    </div>
-                  )}
-                  
                   {/* Plan Header */}
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className={`w-14 h-14 rounded-xl ${plan.gradient} flex items-center justify-center shadow-lg`}>
-                          <Icon className="w-7 h-7 text-white" />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-bold text-slate-900 dark:text-white">{plan.name}</h3>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">{plan.tagline}</p>
-                        </div>
+                  <div className={styles.planHeader}>
+                    <div className={styles.planHeaderLeft}>
+                      <div className={`${styles.planIcon} ${plan.gradient}`}>
+                        <Icon className={styles.planIconSvg} />
                       </div>
-                      
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-amber-500" />
-                          <span className="text-sm font-medium">{plan.rating}</span>
-                          <span className="text-sm text-slate-600 dark:text-slate-400">
-                            ({plan.reviews} reviews)
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Globe className="w-4 h-4 text-blue-500" />
-                          <span className="text-sm text-slate-600 dark:text-slate-400">
-                            {plan.countries} countries
-                          </span>
-                        </div>
+                      <div>
+                        <h3 className={styles.planName}>{plan.name}</h3>
+                        <p className={styles.planTagline}>{plan.tagline}</p>
                       </div>
                     </div>
                     
                     <button
                       onClick={() => toggleCompare(plan.id)}
-                      className={`p-2 rounded-lg ${isComparing ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}
+                      className={`${styles.compareButton} ${isComparing ? styles.activeCompare : ''}`}
                     >
-                      <BarChart3 className="w-4 h-4" />
+                      <BarChart3 className={styles.compareIcon} />
                     </button>
                   </div>
                   
+                  {/* Rating & Meta */}
+                  <div className={styles.planMeta}>
+                    <div className={styles.rating}>
+                      <Star className={styles.starIcon} />
+                      <span className={styles.ratingValue}>{plan.rating}</span>
+                      <span className={styles.reviewCount}>({plan.reviews} reviews)</span>
+                    </div>
+                    <div className={styles.countryInfo}>
+                      <Globe className={styles.globeIcon} />
+                      <span>{plan.countries} countries</span>
+                    </div>
+                  </div>
+                  
                   {/* Pricing */}
-                  <div className="mb-6">
-                    <div className="flex items-baseline justify-between mb-4">
+                  <div className={styles.pricingSection}>
+                    <div className={styles.priceContainer}>
                       <div>
-                        <div className="text-3xl font-bold text-slate-900 dark:text-white">
+                        <div className={styles.priceAmount}>
                           ${selectedDuration === "monthly" ? plan.monthly : plan.annual}
                         </div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">
+                        <div className={styles.pricePeriod}>
                           {selectedDuration === "monthly" ? 'per month' : 'per year'}
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-emerald-600 dark:text-emerald-400 font-medium">
+                      <div className={styles.priceMeta}>
+                        <div className={styles.savingsBadge}>
                           {plan.savings}
                         </div>
-                        <div className="text-xs text-slate-600 dark:text-slate-400">
+                        <div className={styles.claimTime}>
                           Claim time: {plan.claimTime}
                         </div>
                       </div>
@@ -796,12 +758,10 @@ function InsuranceContent() {
                     {/* Toggle Details */}
                     <button
                       onClick={() => setShowDetails(showDetails === plan.id ? null : plan.id)}
-                      className="w-full flex items-center justify-between p-3 bg-white/50 dark:bg-slate-800/50 rounded-xl mb-4"
+                      className={styles.detailsToggle}
                     >
-                      <span className="font-medium text-slate-900 dark:text-white">
-                        Coverage Details
-                      </span>
-                      <ChevronRight className={`w-4 h-4 transition-transform ${isDetailed ? 'rotate-90' : ''}`} />
+                      <span>Coverage Details</span>
+                      <ChevronRight className={`${styles.chevron} ${isDetailed ? styles.chevronOpen : ''}`} />
                     </button>
                     
                     {/* Expanded Details */}
@@ -811,29 +771,27 @@ function InsuranceContent() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden"
+                          className={styles.expandedDetails}
                         >
-                          <div className="space-y-4">
-                            <div>
-                              <h4 className="font-medium text-slate-900 dark:text-white mb-2">Coverage Includes:</h4>
-                              <div className="flex flex-wrap gap-2">
-                                {plan.coverage.map((item, idx) => (
-                                  <span key={idx} className="px-3 py-1 bg-white dark:bg-slate-800 rounded-full text-sm">
-                                    {item}
-                                  </span>
-                                ))}
-                              </div>
+                          <div className={styles.coverageSection}>
+                            <h4 className={styles.coverageTitle}>Coverage Includes:</h4>
+                            <div className={styles.coverageTags}>
+                              {plan.coverage.map((item, idx) => (
+                                <span key={idx} className={styles.coverageTag}>
+                                  {item}
+                                </span>
+                              ))}
                             </div>
-                            
-                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                <p className="text-sm text-slate-600 dark:text-slate-400">Deductible</p>
-                                <p className="font-medium text-slate-900 dark:text-white">{plan.deductible}</p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-slate-600 dark:text-slate-400">Waiting Period</p>
-                                <p className="font-medium text-slate-900 dark:text-white">{plan.waitingPeriod}</p>
-                              </div>
+                          </div>
+                          
+                          <div className={styles.detailsGrid}>
+                            <div>
+                              <p className={styles.detailLabel}>Deductible</p>
+                              <p className={styles.detailValue}>{plan.deductible}</p>
+                            </div>
+                            <div>
+                              <p className={styles.detailLabel}>Waiting Period</p>
+                              <p className={styles.detailValue}>{plan.waitingPeriod}</p>
                             </div>
                           </div>
                         </motion.div>
@@ -842,12 +800,12 @@ function InsuranceContent() {
                   </div>
                   
                   {/* Features */}
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Key Features:</h4>
-                    <ul className="space-y-2">
+                  <div className={styles.featuresSection}>
+                    <h4 className={styles.featuresTitle}>Key Features:</h4>
+                    <ul className={styles.featuresList}>
                       {plan.features.slice(0, isDetailed ? plan.features.length : 4).map((feature, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
-                          <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        <li key={idx} className={styles.featureItem}>
+                          <CheckCircle className={styles.featureIcon} />
                           <span>{feature}</span>
                         </li>
                       ))}
@@ -855,39 +813,39 @@ function InsuranceContent() {
                   </div>
                   
                   {/* Action Buttons */}
-                  <div className="space-y-3">
+                  <div className={styles.actionButtons}>
                     <button
                       onClick={() => handleGetCoverage(plan.id)}
                       disabled={loading === plan.id}
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group-hover:shadow-lg"
+                      className={styles.primaryButton}
                     >
                       {loading === plan.id ? (
                         <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <Loader2 className={styles.spinnerIcon} />
                           Processing Application...
                         </>
                       ) : (
                         <>
-                          <Sparkle className="w-4 h-4" />
+                          <Sparkle className={styles.buttonIcon} />
                           Apply Now - Priority Access
-                          <ChevronRight className="w-4 h-4" />
+                          <ChevronRight className={styles.buttonChevron} />
                         </>
                       )}
                     </button>
                     
-                    <div className="flex gap-2">
+                    <div className={styles.secondaryButtons}>
                       <button 
                         onClick={() => setShowCalculatorModal(true)}
-                        className="flex-1 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                        className={styles.secondaryButton}
                       >
-                        <Calculator className="w-4 h-4 inline mr-1" />
+                        <Calculator className={styles.buttonIcon} />
                         Calculate
                       </button>
                       <button 
                         onClick={() => setShowChatSupportModal(true)}
-                        className="flex-1 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                        className={styles.secondaryButton}
                       >
-                        <HelpCircle className="w-4 h-4 inline mr-1" />
+                        <HelpCircle className={styles.buttonIcon} />
                         Get Help
                       </button>
                     </div>
@@ -907,55 +865,55 @@ function InsuranceContent() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+              className={styles.modalOverlay}
               onClick={() => setShowSuccessModal({ visible: false, referenceId: '', planName: '', message: '', contactTimeline: '' })}
             >
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-md w-full mx-auto shadow-2xl"
+                className={styles.successModal}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-gradient-to-r from-emerald-100 to-green-100 dark:from-emerald-900/30 dark:to-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
+                <div className={styles.modalContent}>
+                  <div className={styles.successIconContainer}>
+                    <CheckCircle className={styles.successIcon} />
                   </div>
                   
-                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
+                  <h3 className={styles.modalTitle}>
                     Application Submitted! 🎉
                   </h3>
                   
-                  <p className="text-slate-600 dark:text-slate-400 mb-6">
+                  <p className={styles.modalMessage}>
                     {showSuccessModal.message}
                   </p>
                   
                   {/* Reference Card */}
-                  <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-4 mb-6 border border-blue-200 dark:border-blue-800">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="text-sm text-blue-800 dark:text-blue-300">Reference ID</div>
+                  <div className={styles.referenceCard}>
+                    <div className={styles.referenceHeader}>
+                      <div className={styles.referenceLabel}>Reference ID</div>
                       <button 
                         onClick={() => navigator.clipboard.writeText(showSuccessModal.referenceId)}
-                        className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1"
+                        className={styles.copyButton}
                       >
-                        <span>Copy</span>
+                        Copy
                       </button>
                     </div>
-                    <div className="font-mono text-lg font-bold text-blue-900 dark:text-blue-200">
+                    <div className={styles.referenceId}>
                       {showSuccessModal.referenceId}
                     </div>
-                    <div className="text-xs text-slate-600 dark:text-slate-400 mt-2">
+                    <div className={styles.referencePlan}>
                       Plan: {showSuccessModal.planName}
                     </div>
                   </div>
                   
                   {/* Next Steps */}
-                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-4 mb-6 border border-amber-200 dark:border-amber-800">
-                    <div className="flex items-start gap-3">
-                      <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
-                      <div className="text-left">
-                        <h4 className="font-semibold text-amber-800 dark:text-amber-300 mb-1">What Happens Next?</h4>
-                        <ul className="text-sm text-amber-700 dark:text-amber-400 space-y-1">
+                  <div className={styles.nextStepsCard}>
+                    <div className={styles.nextStepsContent}>
+                      <Clock className={styles.nextStepsIcon} />
+                      <div>
+                        <h4 className={styles.nextStepsTitle}>What Happens Next?</h4>
+                        <ul className={styles.nextStepsList}>
                           <li>• Our underwriting team will review your application</li>
                           <li>• You'll receive an email confirmation within {showSuccessModal.contactTimeline}</li>
                           <li>• A specialist will contact you for final details</li>
@@ -966,10 +924,10 @@ function InsuranceContent() {
                   </div>
                   
                   {/* Action Buttons */}
-                  <div className="space-y-3">
+                  <div className={styles.modalActions}>
                     <button
                       onClick={() => setShowSuccessModal({ visible: false, referenceId: '', planName: '', message: '', contactTimeline: '' })}
-                      className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 rounded-xl transition-all"
+                      className={styles.modalPrimaryButton}
                     >
                       Continue Browsing Plans
                     </button>
@@ -978,7 +936,7 @@ function InsuranceContent() {
                         setShowSuccessModal({ visible: false, referenceId: '', planName: '', message: '', contactTimeline: '' });
                         setShowApplicationsModal(true);
                       }}
-                      className="w-full py-3 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      className={styles.modalSecondaryButton}
                     >
                       Track Application Status
                     </button>
@@ -991,55 +949,55 @@ function InsuranceContent() {
 
         {/* Filter Modal */}
         {showFilterModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowFilterModal(false)}>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Filter Plans</h3>
-                <button onClick={() => setShowFilterModal(false)} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
-                  <X className="w-5 h-5" />
+          <div className={styles.modalOverlay} onClick={() => setShowFilterModal(false)}>
+            <div className={styles.filterModal} onClick={e => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Filter Plans</h3>
+                <button onClick={() => setShowFilterModal(false)} className={styles.closeButton}>
+                  <X className={styles.closeIcon} />
                 </button>
               </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Price Range</label>
+              <div className={styles.filterContent}>
+                <div className={styles.filterGroup}>
+                  <label className={styles.filterLabel}>Price Range</label>
                   <input 
                     type="range" 
                     min="15" 
                     max="200" 
                     defaultValue="100"
-                    className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                    className={styles.filterRange}
                   />
-                  <div className="flex justify-between text-xs text-slate-500 mt-1">
+                  <div className={styles.rangeLabels}>
                     <span>$15</span>
                     <span>$100</span>
                     <span>$200</span>
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Coverage Type</label>
-                  <div className="space-y-2">
+                <div className={styles.filterGroup}>
+                  <label className={styles.filterLabel}>Coverage Type</label>
+                  <div className={styles.checkboxGroup}>
                     {['Health', 'Travel', 'Home', 'Device', 'Auto', 'Life'].map(type => (
-                      <label key={type} className="flex items-center">
-                        <input type="checkbox" className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-                        <span className="ml-2 text-sm text-slate-700 dark:text-slate-300">{type}</span>
+                      <label key={type} className={styles.checkboxLabel}>
+                        <input type="checkbox" className={styles.checkbox} />
+                        <span>{type}</span>
                       </label>
                     ))}
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Minimum Rating</label>
-                  <div className="flex items-center gap-2">
+                <div className={styles.filterGroup}>
+                  <label className={styles.filterLabel}>Minimum Rating</label>
+                  <div className={styles.ratingButtons}>
                     {[4, 4.5, 5].map(rating => (
-                      <button key={rating} className="flex-1 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm">
+                      <button key={rating} className={styles.ratingButton}>
                         {rating}+
                       </button>
                     ))}
                   </div>
                 </div>
-                <div className="flex gap-3 pt-4">
+                <div className={styles.modalFooter}>
                   <button 
                     onClick={() => setShowFilterModal(false)}
-                    className="flex-1 py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium"
+                    className={styles.cancelButton}
                   >
                     Cancel
                   </button>
@@ -1048,7 +1006,7 @@ function InsuranceContent() {
                       setShowFilterModal(false);
                       alert('Filters applied!');
                     }}
-                    className="flex-1 py-3 bg-blue-500 text-white rounded-xl font-medium"
+                    className={styles.applyButton}
                   >
                     Apply Filters
                   </button>
@@ -1060,146 +1018,148 @@ function InsuranceContent() {
 
         {/* Applications Modal */}
         {showApplicationsModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowApplicationsModal(false)}>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-lg w-full" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Your Applications</h3>
-                <button onClick={() => setShowApplicationsModal(false)} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
-                  <X className="w-5 h-5" />
+          <div className={styles.modalOverlay} onClick={() => setShowApplicationsModal(false)}>
+            <div className={styles.applicationsModal} onClick={e => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Your Applications</h3>
+                <button onClick={() => setShowApplicationsModal(false)} className={styles.closeButton}>
+                  <X className={styles.closeIcon} />
                 </button>
               </div>
               
-              {userApplications.length > 0 ? (
-                <div className="space-y-4">
-                  {userApplications.map((app, index) => (
-                    <div key={index} className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <h4 className="font-bold text-slate-900 dark:text-white">{app.planName}</h4>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">{app.provider}</p>
+              <div className={styles.applicationsList}>
+                {userApplications.length > 0 ? (
+                  <>
+                    {userApplications.map((app, index) => (
+                      <div key={index} className={styles.applicationItem}>
+                        <div className={styles.applicationHeader}>
+                          <div>
+                            <h4 className={styles.applicationName}>{app.planName}</h4>
+                            <p className={styles.applicationProvider}>{app.provider}</p>
+                          </div>
+                          <span className={`${styles.statusBadge} ${styles.pendingStatus}`}>
+                            {app.status}
+                          </span>
                         </div>
-                        <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm rounded-full">
-                          {app.status}
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">Reference</p>
-                          <p className="text-sm font-mono text-slate-700 dark:text-slate-300 truncate">{app.id}</p>
+                        <div className={styles.applicationDetails}>
+                          <div>
+                            <p className={styles.detailLabel}>Reference</p>
+                            <p className={styles.detailValue}>{app.id}</p>
+                          </div>
+                          <div>
+                            <p className={styles.detailLabel}>Monthly</p>
+                            <p className={styles.detailValue}>${app.monthlyPremium}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">Monthly</p>
-                          <p className="text-sm font-semibold text-slate-900 dark:text-white">${app.monthlyPremium}</p>
+                        <div className={styles.applicationFooter}>
+                          <span className={styles.submittedDate}>
+                            Submitted: {new Date(app.submittedAt).toLocaleDateString()}
+                          </span>
+                          <button className={styles.viewDetailsButton}>
+                            View Details
+                          </button>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-slate-500 dark:text-slate-400">
-                          Submitted: {new Date(app.submittedAt).toLocaleDateString()}
-                        </span>
-                        <button className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                          View Details
-                        </button>
-                      </div>
+                    ))}
+                    
+                    <div className={styles.exportSection}>
+                      <button 
+                        onClick={() => {
+                          alert('Downloading applications...');
+                          setShowApplicationsModal(false);
+                        }}
+                        className={styles.exportButton}
+                      >
+                        <Download className={styles.buttonIcon} />
+                        Export Applications
+                      </button>
                     </div>
-                  ))}
-                  
-                  <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                  </>
+                ) : (
+                  <div className={styles.emptyState}>
+                    <FileText className={styles.emptyIcon} />
+                    <h4 className={styles.emptyTitle}>No Applications Yet</h4>
+                    <p className={styles.emptyMessage}>Start by applying for an insurance plan above.</p>
                     <button 
-                      onClick={() => {
-                        alert('Downloading applications...');
-                        setShowApplicationsModal(false);
-                      }}
-                      className="w-full py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium flex items-center justify-center gap-2"
+                      onClick={() => setShowApplicationsModal(false)}
+                      className={styles.emptyButton}
                     >
-                      <Download className="w-4 h-4" />
-                      Export Applications
+                      Browse Plans
                     </button>
                   </div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <FileText className="w-12 h-12 text-slate-400 dark:text-slate-600 mx-auto mb-4" />
-                  <h4 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No Applications Yet</h4>
-                  <p className="text-slate-600 dark:text-slate-400 mb-4">Start by applying for an insurance plan above.</p>
-                  <button 
-                    onClick={() => setShowApplicationsModal(false)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg font-medium"
-                  >
-                    Browse Plans
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         )}
 
         {/* Calculator Modal */}
         {showCalculatorModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowCalculatorModal(false)}>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Advanced Calculator</h3>
-                <button onClick={() => setShowCalculatorModal(false)} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
-                  <X className="w-5 h-5" />
+          <div className={styles.modalOverlay} onClick={() => setShowCalculatorModal(false)}>
+            <div className={styles.calculatorModal} onClick={e => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Advanced Calculator</h3>
+                <button onClick={() => setShowCalculatorModal(false)} className={styles.closeButton}>
+                  <X className={styles.closeIcon} />
                 </button>
               </div>
               
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Age</label>
+              <div className={styles.calculatorContent}>
+                <div className={styles.calculatorGroup}>
+                  <label className={styles.calculatorLabel}>Age</label>
                   <input 
                     type="number" 
                     min="18" 
                     max="70" 
                     defaultValue="35"
-                    className="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-600"
+                    className={styles.calculatorInput}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Location</label>
-                  <select className="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-600">
+                <div className={styles.calculatorGroup}>
+                  <label className={styles.calculatorLabel}>Location</label>
+                  <select className={styles.calculatorSelect}>
                     <option>United States</option>
                     <option>United Kingdom</option>
                     <option>Canada</option>
                     <option>Australia</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Coverage Needs</label>
-                  <div className="grid grid-cols-2 gap-2">
+                <div className={styles.calculatorGroup}>
+                  <label className={styles.calculatorLabel}>Coverage Needs</label>
+                  <div className={styles.coverageOptions}>
                     {['Basic', 'Standard', 'Premium', 'Maximum'].map(level => (
-                      <button key={level} className="py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm">
+                      <button key={level} className={styles.coverageOption}>
                         {level}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Health Status</label>
-                  <div className="flex gap-2">
+                <div className={styles.calculatorGroup}>
+                  <label className={styles.calculatorLabel}>Health Status</label>
+                  <div className={styles.healthOptions}>
                     {['Excellent', 'Good', 'Average'].map(status => (
-                      <button key={status} className="flex-1 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm">
+                      <button key={status} className={styles.healthOption}>
                         {status}
                       </button>
                     ))}
                   </div>
                 </div>
                 
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-slate-600 dark:text-slate-400">Estimated Monthly Premium</span>
-                    <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">$127</span>
+                <div className={styles.calculatorResult}>
+                  <div className={styles.resultRow}>
+                    <span>Estimated Monthly Premium</span>
+                    <span className={styles.resultValue}>$127</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500 dark:text-slate-400">Annual Savings</span>
-                    <span className="text-emerald-600 dark:text-emerald-400">Save $156/year</span>
+                  <div className={styles.resultRow}>
+                    <span>Annual Savings</span>
+                    <span className={styles.savingsValue}>Save $156/year</span>
                   </div>
                 </div>
                 
-                <div className="flex gap-3 pt-4">
+                <div className={styles.modalFooter}>
                   <button 
                     onClick={() => setShowCalculatorModal(false)}
-                    className="flex-1 py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium"
+                    className={styles.cancelButton}
                   >
                     Close
                   </button>
@@ -1208,7 +1168,7 @@ function InsuranceContent() {
                       alert('Personalized quote generated!');
                       setShowCalculatorModal(false);
                     }}
-                    className="flex-1 py-3 bg-blue-500 text-white rounded-xl font-medium"
+                    className={styles.applyButton}
                   >
                     Get Quote
                   </button>
@@ -1220,46 +1180,46 @@ function InsuranceContent() {
 
         {/* Chat Support Modal */}
         {showChatSupportModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowChatSupportModal(false)}>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Get Help</h3>
-                <button onClick={() => setShowChatSupportModal(false)} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
-                  <X className="w-5 h-5" />
+          <div className={styles.modalOverlay} onClick={() => setShowChatSupportModal(false)}>
+            <div className={styles.chatModal} onClick={e => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Get Help</h3>
+                <button onClick={() => setShowChatSupportModal(false)} className={styles.closeButton}>
+                  <X className={styles.closeIcon} />
                 </button>
               </div>
               
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <PhoneCall className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              <div className={styles.chatContent}>
+                <div className={styles.chatIconContainer}>
+                  <PhoneCall className={styles.chatIcon} />
                 </div>
-                <h4 className="text-lg font-medium text-slate-900 dark:text-white mb-2">Insurance Support</h4>
-                <p className="text-slate-600 dark:text-slate-400">How can we help you today?</p>
+                <h4 className={styles.chatTitle}>Insurance Support</h4>
+                <p className={styles.chatMessage}>How can we help you today?</p>
               </div>
               
-              <div className="space-y-3">
+              <div className={styles.chatOptions}>
                 <button 
                   onClick={() => alert('Connecting to live chat...')}
-                  className="w-full py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-xl font-medium border border-blue-200 dark:border-blue-800"
+                  className={styles.chatOptionButton}
                 >
                   💬 Live Chat Support
                 </button>
                 <button 
                   onClick={() => alert('Calling support: 1-800-INSURANCE')}
-                  className="w-full py-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-xl font-medium border border-green-200 dark:border-green-800"
+                  className={styles.chatOptionButton}
                 >
                   📞 Call Support
                 </button>
                 <button 
                   onClick={() => alert('Scheduling callback...')}
-                  className="w-full py-3 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-xl font-medium border border-purple-200 dark:border-purple-800"
+                  className={styles.chatOptionButton}
                 >
                   ⏰ Schedule Callback
                 </button>
               </div>
               
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
-                <p className="text-sm text-slate-600 dark:text-slate-400 text-center">
+              <div className={styles.chatFooter}>
+                <p className={styles.chatFooterText}>
                   Available 24/7 • Average wait time: 2 minutes
                 </p>
               </div>

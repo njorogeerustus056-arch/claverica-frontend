@@ -41,7 +41,6 @@ const TransferStatusPage = () => {
   const [loading, setLoading] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
-  // ✅ FIXED: Status config with all backend statuses including 'tac_sent'
   const statusConfig: Record<string, { color: any; icon: any; label: string; progress: number }> = {
     pending: { color: 'warning', icon: <AccessTime />, label: 'Awaiting Processing', progress: 25 },
     tac_sent: { color: 'info', icon: <CheckCircle />, label: 'TAC Sent', progress: 50 },
@@ -56,7 +55,6 @@ const TransferStatusPage = () => {
   // Fetch transfer details
   const fetchTransfer = async () => {
     try {
-      // ✅ FIXED: Using transferAPI with correct /api prefix
       const data = await transferAPI.getTransfer(transferId);
       setTransfer(data);
     } catch (error) {
@@ -78,7 +76,6 @@ const TransferStatusPage = () => {
     if (!autoRefresh || !transferId || !transfer) return;
 
     const intervalId = setInterval(() => {
-      // ✅ FIXED: Include 'tac_sent' in auto-refresh list
       if (['pending', 'tac_sent', 'pending_settlement', 'tac_verified', 'funds_deducted'].includes(transfer.status)) {
         fetchTransfer();
       }
@@ -116,12 +113,13 @@ const TransferStatusPage = () => {
   if (!transfer) {
     return (
       <Container maxWidth="md" className={styles.container}>
-        <Alert severity="error" sx={{ mt: 4 }}>
+        <Alert severity="error" className={styles.errorAlert} sx={{ mt: 4 }}>
           Transfer not found
         </Alert>
         <Button
           startIcon={<ArrowBack />}
           onClick={() => navigate('/dashboard/transfer')}
+          className={styles.backButton}
           sx={{ mt: 2 }}
         >
           Back to Transfer
@@ -156,9 +154,11 @@ const TransferStatusPage = () => {
           <Paper className={styles.paper}>
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
               <Box display="flex" alignItems="center">
-                {statusInfo.icon}
+                <Box sx={{ color: statusInfo.icon.props.color || '#8626E9', fontSize: 40 }}>
+                  {statusInfo.icon}
+                </Box>
                 <Box ml={2}>
-                  <Typography variant="h5">
+                  <Typography variant="h5" sx={{ color: '#0A2540', fontWeight: 800 }}>
                     ${parseFloat(transfer.amount).toFixed(2)}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
@@ -173,12 +173,18 @@ const TransferStatusPage = () => {
                   icon={statusInfo.icon}
                   variant="outlined"
                   size="medium"
+                  sx={{ 
+                    borderColor: 'rgba(197, 160, 40, 0.3)',
+                    fontWeight: 600,
+                    '& .MuiChip-icon': { color: statusInfo.color === 'success' ? '#1E6F6F' : '#C5A028' }
+                  }}
                 />
                 {['pending', 'tac_sent', 'pending_settlement', 'tac_verified', 'funds_deducted'].includes(transfer.status) && (
                   <Button
                     size="small"
                     variant="outlined"
                     onClick={() => setAutoRefresh(!autoRefresh)}
+                    className={styles.secondaryButton}
                   >
                     {autoRefresh ? 'Stop Auto-Refresh' : 'Start Auto-Refresh'}
                   </Button>
@@ -188,38 +194,21 @@ const TransferStatusPage = () => {
 
             {/* Progress Bar */}
             <Box mb={4}>
-              <Typography variant="subtitle2" gutterBottom>
+              <Typography variant="subtitle2" gutterBottom sx={{ color: '#0A2540', fontWeight: 600 }}>
                 Transfer Progress
               </Typography>
-              <LinearProgress 
-                variant="determinate" 
-                value={statusInfo.progress} 
-                sx={{ 
-                  height: 10, 
-                  borderRadius: 5, 
-                  mb: 2,
-                  backgroundColor: 'rgba(0,0,0,0.1)',
-                  '& .MuiLinearProgress-bar': {
-                    borderRadius: 5,
-                  }
-                }}
-              />
-              <Box display="flex" justifyContent="space-between">
-                <Typography variant="caption" color="textSecondary">
-                  Submitted
-                </Typography>
-                <Typography variant="caption" color="textSecondary">
-                  TAC Sent
-                </Typography>
-                <Typography variant="caption" color="textSecondary">
-                  Funds Deducted
-                </Typography>
-                <Typography variant="caption" color="textSecondary">
-                  Settled
-                </Typography>
-                <Typography variant="caption" color="textSecondary">
-                  Completed
-                </Typography>
+              <Box className={styles.progressBar}>
+                <Box 
+                  className={styles.progressFill} 
+                  style={{ width: `${statusInfo.progress}%` }}
+                />
+              </Box>
+              <Box display="flex" justifyContent="space-between" mt={1}>
+                <Typography variant="caption" sx={{ color: '#1E6F6F', fontWeight: 600 }}>Submitted</Typography>
+                <Typography variant="caption" sx={{ color: '#C5A028', fontWeight: 600 }}>TAC Sent</Typography>
+                <Typography variant="caption" sx={{ color: '#8626E9', fontWeight: 600 }}>Funds Deducted</Typography>
+                <Typography variant="caption" sx={{ color: '#1E6F6F', fontWeight: 600 }}>Settled</Typography>
+                <Typography variant="caption" sx={{ color: '#1E6F6F', fontWeight: 600 }}>Completed</Typography>
               </Box>
             </Box>
 
@@ -229,6 +218,11 @@ const TransferStatusPage = () => {
                 transfer.status === 'completed' ? 'success' :
                 transfer.status === 'failed' || transfer.status === 'cancelled' ? 'error' :
                 transfer.status === 'pending_settlement' || transfer.status === 'tac_sent' ? 'info' : 'warning'
+              }
+              className={
+                transfer.status === 'completed' ? styles.successAlert :
+                transfer.status === 'failed' || transfer.status === 'cancelled' ? styles.errorAlert :
+                styles.infoAlert
               }
               sx={{ mb: 3 }}
             >
@@ -240,7 +234,7 @@ const TransferStatusPage = () => {
             {/* Refresh Controls */}
             {['pending', 'tac_sent', 'pending_settlement', 'tac_verified', 'funds_deducted'].includes(transfer.status) && (
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" sx={{ color: '#0A2540' }}>
                   {autoRefresh ? '🔄 Auto-refreshing every 30 seconds' : '⏸️ Manual refresh only'}
                 </Typography>
                 <Box display="flex" gap={1}>
@@ -249,6 +243,7 @@ const TransferStatusPage = () => {
                     size="small"
                     onClick={fetchTransfer}
                     disabled={loading}
+                    className={styles.secondaryButton}
                   >
                     Refresh Now
                   </Button>
@@ -261,36 +256,36 @@ const TransferStatusPage = () => {
         {/* Transfer Details */}
         <Grid item xs={12} md={6}>
           <Paper className={styles.paper}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={{ color: '#0A2540', fontWeight: 700 }}>
               Transfer Details
             </Typography>
-            <Divider sx={{ mb: 2 }} />
+            <Divider sx={{ mb: 2, borderColor: 'rgba(197, 160, 40, 0.2)' }} />
             
             <List dense>
               <ListItem>
-                <ListItemIcon>
+                <ListItemIcon sx={{ color: '#8626E9' }}>
                   <AccountBalanceWallet />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Amount" 
-                  secondary={`$${parseFloat(transfer.amount).toFixed(2)}`}
+                  primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Amount</Typography>}
+                  secondary={<Typography variant="body2" sx={{ color: '#1E6F6F', fontWeight: 700 }}>${parseFloat(transfer.amount).toFixed(2)}</Typography>}
                 />
               </ListItem>
               
               <ListItem>
-                <ListItemIcon>
+                <ListItemIcon sx={{ color: '#C5A028' }}>
                   <Schedule />
                 </ListItemIcon>
                 <ListItemText 
-                  primary="Recipient" 
-                  secondary={transfer.recipient_name}
+                  primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Recipient</Typography>}
+                  secondary={<Typography variant="body2" sx={{ color: '#475569' }}>{transfer.recipient_name}</Typography>}
                 />
               </ListItem>
               
               <ListItem>
                 <ListItemText 
-                  primary="Destination Type" 
-                  secondary={transfer.destination_type.toUpperCase()}
+                  primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Destination Type</Typography>}
+                  secondary={<Typography variant="body2" sx={{ color: '#8626E9', fontWeight: 600 }}>{transfer.destination_type.toUpperCase()}</Typography>}
                 />
               </ListItem>
               
@@ -298,14 +293,14 @@ const TransferStatusPage = () => {
                 <>
                   <ListItem>
                     <ListItemText 
-                      primary="Bank Name" 
-                      secondary={transfer.destination_details.bank_name}
+                      primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Bank Name</Typography>}
+                      secondary={<Typography variant="body2" sx={{ color: '#475569' }}>{transfer.destination_details.bank_name}</Typography>}
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemText 
-                      primary="Account Number" 
-                      secondary={transfer.destination_details.account_number}
+                      primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Account Number</Typography>}
+                      secondary={<Typography variant="body2" sx={{ color: '#475569' }}>{transfer.destination_details.account_number}</Typography>}
                     />
                   </ListItem>
                 </>
@@ -315,14 +310,14 @@ const TransferStatusPage = () => {
                 <>
                   <ListItem>
                     <ListItemText 
-                      primary="Provider" 
-                      secondary={transfer.destination_details.mobile_provider}
+                      primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Provider</Typography>}
+                      secondary={<Typography variant="body2" sx={{ color: '#475569' }}>{transfer.destination_details.mobile_provider}</Typography>}
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemText 
-                      primary="Mobile Number" 
-                      secondary={transfer.destination_details.mobile_number}
+                      primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Mobile Number</Typography>}
+                      secondary={<Typography variant="body2" sx={{ color: '#475569' }}>{transfer.destination_details.mobile_number}</Typography>}
                     />
                   </ListItem>
                 </>
@@ -332,15 +327,15 @@ const TransferStatusPage = () => {
                 <>
                   <ListItem>
                     <ListItemText 
-                      primary="Cryptocurrency" 
-                      secondary={transfer.destination_details.crypto_type}
+                      primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Cryptocurrency</Typography>}
+                      secondary={<Typography variant="body2" sx={{ color: '#475569' }}>{transfer.destination_details.crypto_type}</Typography>}
                     />
                   </ListItem>
                   <ListItem>
                     <ListItemText 
-                      primary="Wallet Address" 
+                      primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Wallet Address</Typography>}
                       secondary={
-                        <Typography variant="body2" fontFamily="monospace" fontSize="12px">
+                        <Typography variant="body2" fontFamily="monospace" fontSize="12px" sx={{ color: '#475569' }}>
                           {transfer.destination_details.crypto_address}
                         </Typography>
                       }
@@ -351,22 +346,22 @@ const TransferStatusPage = () => {
               
               <ListItem>
                 <ListItemText 
-                  primary="Narration" 
-                  secondary={transfer.narration || 'No description provided'}
+                  primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Narration</Typography>}
+                  secondary={<Typography variant="body2" sx={{ color: '#475569' }}>{transfer.narration || 'No description provided'}</Typography>}
                 />
               </ListItem>
               
               <ListItem>
                 <ListItemText 
-                  primary="Created" 
-                  secondary={formatDate(transfer.created_at)}
+                  primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Created</Typography>}
+                  secondary={<Typography variant="body2" sx={{ color: '#475569' }}>{formatDate(transfer.created_at)}</Typography>}
                 />
               </ListItem>
               
               <ListItem>
                 <ListItemText 
-                  primary="Last Updated" 
-                  secondary={formatDate(transfer.updated_at)}
+                  primary={<Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>Last Updated</Typography>}
+                  secondary={<Typography variant="body2" sx={{ color: '#475569' }}>{formatDate(transfer.updated_at)}</Typography>}
                 />
               </ListItem>
             </List>
@@ -376,32 +371,30 @@ const TransferStatusPage = () => {
         {/* Status Information */}
         <Grid item xs={12} md={6}>
           <Paper className={styles.paper}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={{ color: '#0A2540', fontWeight: 700 }}>
               Status Information
             </Typography>
-            <Divider sx={{ mb: 2 }} />
+            <Divider sx={{ mb: 2, borderColor: 'rgba(197, 160, 40, 0.2)' }} />
             
-            <Card variant="outlined" sx={{ mb: 3 }}>
+            <Card variant="outlined" sx={{ mb: 3, borderColor: 'rgba(197, 160, 40, 0.2)', backgroundColor: 'rgba(245, 240, 230, 0.5)' }}>
               <CardContent>
-                <Typography variant="subtitle2" gutterBottom color="primary">
+                <Typography variant="subtitle2" gutterBottom sx={{ color: '#8626E9', fontWeight: 700 }}>
                   {statusInfo.label}
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" sx={{ color: '#475569' }}>
                   {getStatusMessage(transfer.status)}
                 </Typography>
               </CardContent>
             </Card>
 
             {/* Next Steps */}
-            <Typography variant="subtitle2" gutterBottom color="primary">
+            <Typography variant="subtitle2" gutterBottom sx={{ color: '#0A2540', fontWeight: 700 }}>
               Next Steps
             </Typography>
-            <Typography variant="body2" color="textSecondary" paragraph>
+            <Typography variant="body2" sx={{ color: '#475569' }} paragraph>
               {getNextSteps(transfer.status)}
             </Typography>
 
-            {/* Action Buttons */}
-            {/* ✅ FIXED: Show button for both 'pending' AND 'tac_sent' statuses */}
             {(transfer.status === 'pending' || transfer.status === 'tac_sent') && (
               <Box mt={3}>
                 <Button
@@ -409,10 +402,11 @@ const TransferStatusPage = () => {
                   fullWidth
                   onClick={() => navigate(`/dashboard/transfer/verify-tac/${transferId}`)}
                   startIcon={<CheckCircle />}
+                  className={styles.primaryButton}
                 >
                   Enter TAC Code
                 </Button>
-                <Typography variant="caption" color="textSecondary" sx={{ mt: 1, display: 'block' }}>
+                <Typography variant="caption" sx={{ color: '#475569', mt: 1, display: 'block' }}>
                   Contact live agent for TAC code
                 </Typography>
               </Box>
@@ -421,10 +415,10 @@ const TransferStatusPage = () => {
             {/* External Reference */}
             {transfer.external_reference && (
               <Box mt={3}>
-                <Typography variant="subtitle2" gutterBottom color="primary">
+                <Typography variant="subtitle2" gutterBottom sx={{ color: '#0A2540', fontWeight: 700 }}>
                   External Reference
                 </Typography>
-                <Typography variant="body2" fontFamily="monospace" color="textSecondary">
+                <Typography variant="body2" fontFamily="monospace" sx={{ color: '#1E6F6F' }}>
                   {transfer.external_reference}
                 </Typography>
               </Box>
@@ -433,23 +427,23 @@ const TransferStatusPage = () => {
             {/* Balance Information */}
             {(transfer.balance_before && transfer.balance_after) && (
               <Box mt={3}>
-                <Typography variant="subtitle2" gutterBottom color="primary">
+                <Typography variant="subtitle2" gutterBottom sx={{ color: '#0A2540', fontWeight: 700 }}>
                   Balance Impact
                 </Typography>
                 <Grid container spacing={1}>
                   <Grid item xs={6}>
-                    <Typography variant="caption" color="textSecondary">
+                    <Typography variant="caption" sx={{ color: '#475569' }}>
                       Before:
                     </Typography>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ color: '#0A2540', fontWeight: 600 }}>
                       ${parseFloat(transfer.balance_before).toFixed(2)}
                     </Typography>
                   </Grid>
                   <Grid item xs={6}>
-                    <Typography variant="caption" color="textSecondary">
+                    <Typography variant="caption" sx={{ color: '#475569' }}>
                       After:
                     </Typography>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ color: '#1E6F6F', fontWeight: 700 }}>
                       ${parseFloat(transfer.balance_after).toFixed(2)}
                     </Typography>
                   </Grid>
@@ -462,15 +456,16 @@ const TransferStatusPage = () => {
         {/* Action Buttons */}
         <Grid item xs={12}>
           <Paper className={styles.paper}>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Typography variant="subtitle2" color="textSecondary">
+            <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
+              <Typography variant="subtitle2" sx={{ color: '#475569' }}>
                 Transfer #{transfer.reference}
               </Typography>
               
-              <Box display="flex" gap={2}>
+              <Box display="flex" gap={2} flexWrap="wrap">
                 <Button
                   variant="outlined"
                   onClick={() => navigate('/dashboard/transfer/history')}
+                  className={styles.secondaryButton}
                 >
                   View All Transfers
                 </Button>
@@ -478,6 +473,7 @@ const TransferStatusPage = () => {
                 <Button
                   variant="contained"
                   onClick={() => navigate('/dashboard/transfer')}
+                  className={styles.primaryButton}
                 >
                   New Transfer
                 </Button>

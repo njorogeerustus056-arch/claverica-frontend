@@ -64,16 +64,13 @@ const TransfersHistory = () => {
     setLoading(true);
     setError(null);
     try {
-      // ✅ FIXED: Using transferAPI with correct /api prefix
       const history: TransfersHistoryType = await transferAPI.getTransfersHistory(page, 20);
       
-      // ✅ SAFE ACCESS: Handle different API response structures
       const results = history?.results || history?.transfers || history?.data || [];
       const count = history?.count || results.length || 0;
       
       setTransfers(Array.isArray(results) ? results : []);
       
-      // Calculate pagination
       const totalPages = Math.ceil(count / 20) || 1;
       setPagination({
         page,
@@ -140,7 +137,6 @@ const TransfersHistory = () => {
     }
   };
 
-  // ✅ SAFE FILTER: Use optional chaining and null check
   const filteredTransfers = (transfers || []).filter(transfer => {
     if (!transfer) return false;
     
@@ -240,7 +236,6 @@ const TransfersHistory = () => {
     ['pending', 'tac_sent', 'tac_verified', 'pending_settlement'].includes(t?.status || '')
   ).length;
 
-  // Handle error snackbar close
   const handleErrorClose = () => {
     setError(null);
   };
@@ -254,7 +249,7 @@ const TransfersHistory = () => {
         onClose={handleErrorClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert severity="error" onClose={handleErrorClose} icon={<ErrorOutline />}>
+        <Alert severity="error" className={styles.errorAlert} icon={<ErrorOutline />}>
           {error}
         </Alert>
       </Snackbar>
@@ -278,7 +273,7 @@ const TransfersHistory = () => {
       {/* Filters Section */}
       <Paper className={styles.paper} sx={{ mb: 3 }}>
         <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-          <Typography variant="h6">
+          <Typography variant="h6" sx={{ color: '#0A2540', fontWeight: 600 }}>
             Filters
           </Typography>
           <Box display="flex" gap={1}>
@@ -287,6 +282,7 @@ const TransfersHistory = () => {
               onClick={() => fetchTransfers(pagination.page)}
               size="small"
               disabled={loading}
+              className={styles.secondaryButton}
             >
               Refresh
             </Button>
@@ -296,6 +292,7 @@ const TransfersHistory = () => {
               size="small"
               variant="outlined"
               disabled={filteredTransfers.length === 0}
+              className={styles.secondaryButton}
             >
               Export CSV
             </Button>
@@ -319,17 +316,19 @@ const TransfersHistory = () => {
               }}
               size="small"
               disabled={loading}
+              className={styles.inputField}
             />
           </Grid>
 
           {/* Status Filter */}
           <Grid item xs={12} md={2}>
             <FormControl fullWidth size="small" disabled={loading}>
-              <InputLabel>Status</InputLabel>
+              <InputLabel sx={{ color: '#0A2540', fontWeight: 600 }}>Status</InputLabel>
               <Select
                 value={statusFilter}
                 label="Status"
                 onChange={(e) => setStatusFilter(e.target.value)}
+                className={styles.inputField}
               >
                 <MenuItem value="all">All Status</MenuItem>
                 <MenuItem value="pending">Pending</MenuItem>
@@ -346,11 +345,12 @@ const TransfersHistory = () => {
           {/* Type Filter */}
           <Grid item xs={12} md={2}>
             <FormControl fullWidth size="small" disabled={loading}>
-              <InputLabel>Type</InputLabel>
+              <InputLabel sx={{ color: '#0A2540', fontWeight: 600 }}>Type</InputLabel>
               <Select
                 value={typeFilter}
                 label="Type"
                 onChange={(e) => setTypeFilter(e.target.value)}
+                className={styles.inputField}
               >
                 <MenuItem value="all">All Types</MenuItem>
                 <MenuItem value="bank">Bank Transfer</MenuItem>
@@ -367,7 +367,14 @@ const TransfersHistory = () => {
                 label="From Date"
                 value={dateFrom}
                 onChange={(newValue) => setDateFrom(newValue)}
-                slotProps={{ textField: { size: 'small', fullWidth: true, disabled: loading } }}
+                slotProps={{ 
+                  textField: { 
+                    size: 'small', 
+                    fullWidth: true, 
+                    disabled: loading,
+                    className: styles.inputField
+                  } 
+                }}
               />
             </LocalizationProvider>
           </Grid>
@@ -379,7 +386,14 @@ const TransfersHistory = () => {
                 label="To Date"
                 value={dateTo}
                 onChange={(newValue) => setDateTo(newValue)}
-                slotProps={{ textField: { size: 'small', fullWidth: true, disabled: loading } }}
+                slotProps={{ 
+                  textField: { 
+                    size: 'small', 
+                    fullWidth: true, 
+                    disabled: loading,
+                    className: styles.inputField
+                  } 
+                }}
               />
             </LocalizationProvider>
           </Grid>
@@ -392,6 +406,7 @@ const TransfersHistory = () => {
               onClick={clearFilters}
               size="small"
               disabled={loading}
+              className={styles.secondaryButton}
             >
               Clear
             </Button>
@@ -423,20 +438,20 @@ const TransfersHistory = () => {
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Paper className={styles.statsCard}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={{ color: '#1E6F6F' }}>
               Completed
             </Typography>
-            <Typography variant="h4" color="success.main">
+            <Typography variant="h4" sx={{ color: '#1E6F6F' }}>
               {completedCount}
             </Typography>
           </Paper>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <Paper className={styles.statsCard}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={{ color: '#C5A028' }}>
               Pending
             </Typography>
-            <Typography variant="h4" color="warning.main">
+            <Typography variant="h4" sx={{ color: '#C5A028' }}>
               {pendingCount}
             </Typography>
           </Paper>
@@ -461,7 +476,7 @@ const TransfersHistory = () => {
             <Button
               variant="contained"
               onClick={() => fetchTransfers()}
-              sx={{ mt: 2 }}
+              className={styles.primaryButton}
             >
               Retry
             </Button>
@@ -479,17 +494,17 @@ const TransfersHistory = () => {
             <Button
               variant="contained"
               onClick={() => navigate('/dashboard/transfer')}
-              sx={{ mt: 2 }}
+              className={styles.primaryButton}
             >
               Make Your First Transfer
             </Button>
           </Box>
         ) : (
           <>
-            <TableContainer>
+            <TableContainer className={styles.tableContainer}>
               <Table>
                 <TableHead>
-                  <TableRow>
+                  <TableRow className={styles.tableHeader}>
                     <TableCell>Reference</TableCell>
                     <TableCell>Date</TableCell>
                     <TableCell>Amount</TableCell>
@@ -502,13 +517,13 @@ const TransfersHistory = () => {
                 </TableHead>
                 <TableBody>
                   {filteredTransfers.map((transfer) => (
-                    <TableRow key={transfer.id || transfer.reference} hover>
-                      <TableCell>
+                    <TableRow key={transfer.id || transfer.reference} hover className={styles.tableRow}>
+                      <TableCell className={styles.tableCell}>
                         <Typography variant="body2" fontFamily="monospace">
                           {transfer.reference || 'N/A'}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={styles.tableCell}>
                         <Typography variant="body2">
                           {formatDate(transfer.created_at)}
                         </Typography>
@@ -516,31 +531,48 @@ const TransfersHistory = () => {
                           {formatDateTime(transfer.created_at).split(',')[1]}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={styles.tableCellPositive}>
                         <Typography variant="body1" fontWeight="bold">
                           ${parseFloat(transfer.amount || 0).toFixed(2)}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={styles.tableCell}>
                         <Typography variant="body2">
                           {transfer.recipient_name || 'N/A'}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={styles.tableCell}>
                         <Chip
                           label={(transfer.destination_type || 'N/A').toUpperCase()}
                           size="small"
                           variant="outlined"
+                          sx={{ 
+                            borderColor: 'rgba(197, 160, 40, 0.3)',
+                            color: '#8626E9',
+                            fontWeight: 600
+                          }}
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={styles.tableCell}>
                         <Chip
                           label={(transfer.status || 'N/A').replace('_', ' ').toUpperCase()}
                           color={getStatusColor(transfer.status) as any}
                           size="small"
+                          sx={{ 
+                            fontWeight: 600,
+                            backgroundColor: 
+                              transfer.status === 'completed' ? 'rgba(30, 111, 111, 0.12)' :
+                              transfer.status === 'pending' ? 'rgba(197, 160, 40, 0.12)' :
+                              transfer.status === 'failed' ? 'rgba(211, 47, 47, 0.12)' : 'rgba(134, 38, 233, 0.12)',
+                            color: 
+                              transfer.status === 'completed' ? '#1E6F6F' :
+                              transfer.status === 'pending' ? '#C5A028' :
+                              transfer.status === 'failed' ? '#D32F2F' : '#8626E9',
+                            border: '1px solid rgba(197, 160, 40, 0.2)'
+                          }}
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={styles.tableCell}>
                         <Typography variant="body2" noWrap sx={{ maxWidth: '200px' }}>
                           {transfer.destination_type === 'bank' && 
                             `${transfer.destination_details?.bank_name || 'N/A'} ••• ${transfer.destination_details?.account_number?.slice(-4) || 'N/A'}`}
@@ -550,12 +582,13 @@ const TransfersHistory = () => {
                             `${transfer.destination_details?.crypto_type || 'N/A'} ••• ${transfer.destination_details?.crypto_address?.slice(-10) || 'N/A'}`}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className={styles.tableCell}>
                         <Tooltip title="View Details">
                           <IconButton
                             size="small"
                             onClick={() => navigate(`/dashboard/transfer/status/${transfer.id}`)}
                             disabled={!transfer.id}
+                            sx={{ color: '#8626E9' }}
                           >
                             <Visibility fontSize="small" />
                           </IconButton>
@@ -578,6 +611,15 @@ const TransfersHistory = () => {
                   showFirstButton
                   showLastButton
                   disabled={loading}
+                  sx={{
+                    '& .MuiPaginationItem-root': {
+                      color: '#0A2540',
+                      '&.Mui-selected': {
+                        backgroundColor: '#8626E9',
+                        color: 'white',
+                      }
+                    }
+                  }}
                 />
               </Box>
             )}
@@ -591,6 +633,7 @@ const TransfersHistory = () => {
           variant="contained"
           onClick={() => navigate('/dashboard/transfer')}
           startIcon={<Download />}
+          className={styles.primaryButton}
         >
           New Transfer
         </Button>
