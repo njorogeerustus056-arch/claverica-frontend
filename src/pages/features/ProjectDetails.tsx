@@ -4,10 +4,34 @@ import {
   ArrowLeft, ArrowRight, Calculator, Shield, Zap, Globe, CreditCard,
   Smartphone, Lock, TrendingUp, Users, Star, Check, X, RefreshCw,
   BarChart3, DollarSign, Clock, Code, Terminal, PlayCircle, Bell,
-  MessageCircle, ChevronDown, HelpCircle, Home, Layers,
+  MessageCircle, ChevronDown, HelpCircle, Home, Layers, Menu,
 } from "lucide-react";
 import { projects } from "@/data/projects";
 import styles from "./ProjectDetails.module.css";
+
+/* ── Map project slugs to their image filenames ─────────────────────────── */
+const projectImages: Record<string, string> = {
+  "instant-global-payments": "/images/Project/instant-global-payments.jpg",
+  "multi-currency": "/images/Project/multi-currency.jpg",
+  "crypto-exchange-platform": "/images/Project/crypto-exchange-platform.jpg",
+  "business-banking-suite": "/images/Project/business-banking-suite.jpg",
+  "fraud-detection-ai": "/images/Project/fraud-detection-ai.jpg",
+  "smart-investment-portfolio": "/images/Project/smart-investment-portfolio.jpg",
+  "remittance-corridors": "/images/Project/remittance-corridors.jpg",
+  "high-yield-savings-vaults": "/images/Project/high-yield-savings-vaults.jpg",
+  "card-payments": "/images/Project/card-payments.jpg",
+  "bnpl": "/images/Project/bnpl.jpg",
+  "checkout-api": "/images/Project/checkout-api.jpg",
+  "subscriptions": "/images/Project/subscriptions.jpg",
+  "sme-loans": "/images/Project/sme-loans.jpg",
+  "expense-tracking-plus": "/images/Project/expense-tracking-plus.jpg",
+  "global-cards": "/images/Project/global-cards.jpg",
+  "nft-vault": "/images/Project/nft-vault.jpg",
+  "peer-to-peer-lending": "/images/Project/peer-to-peer-lending.jpg",
+  "student-banking": "/images/Project/student-banking.jpg",
+  "charity-remittance": "/images/Project/charity-remittance.jpg",
+  "kyc": "/images/Project/kyc.jpg",
+};
 
 /* ── Exchange rates (relative to USD) ───────────────────────────────────── */
 const RATES: Record<string, number> = {
@@ -77,7 +101,7 @@ function MiniChart() {
       <div className={styles.chartHeader}>
         <div>
           <h4 className={styles.chartTitle}>Transaction Volume</h4>
-          <p className="text-xs text-gray-400 mt-0.5">Monthly performance overview</p>
+          <p className="text-xs text-[#475569] mt-0.5">Monthly performance overview</p>
         </div>
         <div className={styles.chartPeriodBtns}>
           {(Object.keys(CHART_PERIODS) as (keyof typeof CHART_PERIODS)[]).map(p => (
@@ -121,7 +145,7 @@ function MiniChart() {
           <div className={styles.chartStatLabel}>Monthly Avg</div>
         </div>
         <div className={styles.chartStatItem}>
-          <div className={styles.chartStatValue} style={{ color: "var(--success)" }}>+{(((max - data[0]) / data[0]) * 100).toFixed(0)}%</div>
+          <div className={styles.chartStatValue} style={{ color: "#1E6F6F" }}>+{(((max - data[0]) / data[0]) * 100).toFixed(0)}%</div>
           <div className={styles.chartStatLabel}>Growth</div>
         </div>
       </div>
@@ -281,6 +305,7 @@ export default function ProjectDetails() {
   const [subscribed,    setSubscribed]    = useState(false);
   const [showTour,      setShowTour]      = useState(false);
   const [codeCopied,    setCodeCopied]    = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const rate = useMemo(() => RATES[toCur] / RATES[fromCur], [fromCur, toCur]);
   const converted = useMemo(() => (amount * rate).toFixed(2), [amount, rate]);
@@ -308,18 +333,21 @@ export default function ProjectDetails() {
 
   if (!project) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#F5F0E6]">
         <div className="text-center max-w-sm p-8">
           <div className="text-7xl mb-5">🔍</div>
-          <h1 className="text-2xl font-black text-gray-900 mb-3 tracking-tight">Project not found</h1>
-          <p className="text-gray-400 text-sm mb-6">That project doesn't exist or has been moved.</p>
-          <Link to="/projects" className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-colors">
+          <h1 className="text-2xl font-black text-[#0A2540] mb-3 tracking-tight">Project not found</h1>
+          <p className="text-[#475569] text-sm mb-6">That project doesn't exist or has been moved.</p>
+          <Link to="/projects" className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#8626E9] text-white rounded-xl font-bold text-sm hover:bg-[#C5A028] transition-colors">
             <ArrowLeft className="w-4 h-4" />Back to Projects
           </Link>
         </div>
       </div>
     );
   }
+
+  /* ── Get project image ── */
+  const projectImage = projectImages[project.slug] || "/images/Project/placeholder.jpg";
 
   /* ── Data ── */
   const TABS = [
@@ -330,12 +358,12 @@ export default function ProjectDetails() {
   ];
 
   const FEATURES = [
-    { icon: Zap,       title: "Lightning Transfers",    desc: "Settle in milliseconds — not days. Our optimised payment rails skip legacy banking intermediaries.", color: "from-yellow-400 to-orange-500" },
-    { icon: Shield,    title: "Bank-Grade Security",     desc: "AES-256 encryption, biometric authentication, and 24/7 AI fraud detection as standard — always.", color: "from-blue-500 to-violet-600" },
-    { icon: Globe,     title: "180+ Countries",          desc: "Send and receive in 40 currencies across 180+ countries. We handle compliance in every market.", color: "from-emerald-400 to-teal-600" },
-    { icon: Smartphone,title: "Native Mobile Apps",     desc: "Award-winning iOS and Android apps with Face ID, Apple Pay, and real-time push notifications.", color: "from-pink-500 to-rose-600" },
-    { icon: BarChart3, title: "Live Analytics",          desc: "Interactive dashboards surface trends in your cash flow, FX exposure, and savings growth in real time.", color: "from-indigo-500 to-blue-600" },
-    { icon: Bell,      title: "Instant Alerts",          desc: "Every transaction triggers an instant, customisable push alert — zero surprises on your statement.", color: "from-purple-500 to-fuchsia-600" },
+    { icon: Zap,       title: "Lightning Transfers",    desc: "Settle in milliseconds — not days. Our optimised payment rails skip legacy banking intermediaries.", color: "from-[#C5A028] to-[#8626E9]" },
+    { icon: Shield,    title: "Bank-Grade Security",     desc: "AES-256 encryption, biometric authentication, and 24/7 AI fraud detection as standard — always.", color: "from-[#8626E9] to-[#0A2540]" },
+    { icon: Globe,     title: "180+ Countries",          desc: "Send and receive in 40 currencies across 180+ countries. We handle compliance in every market.", color: "from-[#1E6F6F] to-[#0A2540]" },
+    { icon: Smartphone,title: "Native Mobile Apps",     desc: "Award-winning iOS and Android apps with Face ID, Apple Pay, and real-time push notifications.", color: "from-[#C5A028] to-[#8626E9]" },
+    { icon: BarChart3, title: "Live Analytics",          desc: "Interactive dashboards surface trends in your cash flow, FX exposure, and savings growth in real time.", color: "from-[#8626E9] to-[#1E6F6F]" },
+    { icon: Bell,      title: "Instant Alerts",          desc: "Every transaction triggers an instant, customisable push alert — zero surprises on your statement.", color: "from-[#C5A028] to-[#8626E9]" },
   ];
 
   const SEC_FEATURES = [
@@ -354,10 +382,10 @@ export default function ProjectDetails() {
   ];
 
   const STATS = [
-    { value: "2500000+", label: "Active Users",     icon: Users,     color: "text-blue-500" },
-    { value: "500000+",  label: "Txns / Day",       icon: TrendingUp,color: "text-emerald-500" },
-    { value: "180+",     label: "Countries",        icon: Globe,     color: "text-purple-500" },
-    { value: "4.9/5",    label: "App Store Rating", icon: Star,      color: "text-yellow-500" },
+    { value: "2500000+", label: "Active Users",     icon: Users,     color: "text-[#8626E9]" },
+    { value: "500000+",  label: "Txns / Day",       icon: TrendingUp,color: "text-[#1E6F6F]" },
+    { value: "180+",     label: "Countries",        icon: Globe,     color: "text-[#C5A028]" },
+    { value: "4.9/5",    label: "App Store Rating", icon: Star,      color: "text-[#C5A028]" },
   ];
 
   const TESTIMONIALS = [
@@ -385,16 +413,18 @@ export default function ProjectDetails() {
         <div className={`${styles.container} ${styles.navContainer}`}>
           <Link to="/projects" className={styles.navBack}>
             <ArrowLeft className="w-4 h-4" />
-            <span>Projects</span>
+            <span className="hidden sm:inline">Projects</span>
           </Link>
-          <div className={styles.navActions}>
+          
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center gap-4">
             <div className={styles.navLivePill}>
               <div className={styles.liveDot} />
               Live
             </div>
             <button
               onClick={() => setShowTour(true)}
-              className={`${styles.btnGhost} hidden md:inline-flex`}
+              className={styles.btnGhost}
             >
               <HelpCircle className="w-4 h-4" />Tour
             </button>
@@ -402,7 +432,40 @@ export default function ProjectDetails() {
               Get Started<ArrowRight className="w-4 h-4" />
             </Link>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-[#0A2540] p-2"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-[#0A2540] border-t-2 border-[#C5A028] px-4 py-4">
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center gap-2 text-white mb-2">
+                <div className={styles.liveDot} />
+                <span className="text-sm font-bold">Live</span>
+              </div>
+              <button
+                onClick={() => { setShowTour(true); setMobileMenuOpen(false); }}
+                className="flex items-center gap-2 text-white hover:text-[#C5A028] transition-colors py-2"
+              >
+                <HelpCircle className="w-4 h-4" />Take Tour
+              </button>
+              <Link
+                to="/signup"
+                className="bg-[#8626E9] text-white px-6 py-3 rounded-full font-bold text-center hover:bg-[#C5A028] transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Get Started
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* ── Breadcrumb ─────────────────────────────────────────────────────── */}
@@ -416,11 +479,21 @@ export default function ProjectDetails() {
         </div>
       </div>
 
-      {/* ── Hero ───────────────────────────────────────────────────────────── */}
+      {/* ── Hero with Project Image ────────────────────────────────────────── */}
       <section className={styles.heroSection}>
         <div className={styles.heroGlowBlue}  />
         <div className={styles.heroGlowCoral} />
         <div className={styles.heroGlowGold}  />
+
+        {/* Project image as subtle background */}
+        <div className="absolute inset-0 opacity-10">
+          <img 
+            src={projectImage} 
+            alt={project.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#F5F0E6] via-transparent to-[#F5F0E6]" />
+        </div>
 
         <div className={`${styles.container} relative z-10`}>
           <div className={styles.heroInner}>
@@ -446,7 +519,7 @@ export default function ProjectDetails() {
               </Link>
               <button
                 onClick={() => setShowTour(true)}
-                className="hidden md:inline-flex items-center gap-2 px-5 py-3 bg-white/60 backdrop-blur-sm border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-white hover:shadow-md transition-all"
+                className="hidden md:inline-flex items-center gap-2 px-5 py-3 bg-white/60 backdrop-blur-sm border border-[rgba(197,160,40,0.2)] text-[#475569] rounded-xl font-bold text-sm hover:bg-white hover:shadow-md transition-all"
               >
                 <Layers className="w-4 h-4" />Take Tour
               </button>
@@ -473,7 +546,7 @@ export default function ProjectDetails() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`${styles.tabBtn} ${activeTab === tab.id ? styles.tabBtnActive : ""}`}
               >
-                <Icon className="w-4 h-4" />{tab.label}
+                <Icon className="w-4 h-4" /><span className="hidden sm:inline">{tab.label}</span>
               </button>
             );
           })}
@@ -706,15 +779,15 @@ export default function ProjectDetails() {
                     <div className={`${styles.securityCheckIcon} ${secLevel >= sf.level ? styles.securityCheckActive : styles.securityCheckLocked}`}>
                       {secLevel >= sf.level
                         ? <Check className="w-4 h-4 text-white" />
-                        : <Lock className="w-3.5 h-3.5 text-gray-500" />
+                        : <Lock className="w-3.5 h-3.5 text-[#94A3B8]" />
                       }
                     </div>
                     <div>
-                      <p className="font-bold text-sm text-gray-900">{sf.name}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{sf.desc}</p>
+                      <p className="font-bold text-sm text-[#0A2540]">{sf.name}</p>
+                      <p className="text-xs text-[#475569] mt-0.5">{sf.desc}</p>
                     </div>
                     {secLevel >= sf.level && (
-                      <span className="ml-auto text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold whitespace-nowrap">Active</span>
+                      <span className="ml-auto text-xs bg-[rgba(30,111,111,0.12)] text-[#1E6F6F] px-2 py-0.5 rounded-full font-bold whitespace-nowrap">Active</span>
                     )}
                   </div>
                 ))}
@@ -730,7 +803,7 @@ export default function ProjectDetails() {
                 { icon: Bell,      title: "AI Fraud Detection",       desc: "300+ real-time signals analysed per transaction to stop fraud before it happens." },
               ].map(({ icon: Icon, title, desc }) => (
                 <div key={title} className={styles.securityCard}>
-                  <div className={`${styles.featureIconWrap} bg-gradient-to-br from-blue-600 to-violet-700`} style={{ marginBottom: "1rem" }}>
+                  <div className={`${styles.featureIconWrap} bg-gradient-to-br from-[#8626E9] to-[#0A2540]`} style={{ marginBottom: "1rem" }}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <h3 className={styles.featureTitle}>{title}</h3>
@@ -759,7 +832,7 @@ export default function ProjectDetails() {
                   <span
                     className={`${styles.integrationStatus} ${intg.statusColor === "Available" ? styles.integrationStatusAvailable : styles.integrationStatusBeta}`}
                   >
-                    <span className={`w-1.5 h-1.5 rounded-full ${intg.statusColor === "Available" ? "bg-emerald-500" : "bg-yellow-500"}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full ${intg.statusColor === "Available" ? "bg-[#1E6F6F]" : "bg-[#C5A028]"}`} />
                     {intg.status}
                   </span>
                   <h3 className={styles.integrationName}>{intg.name}</h3>
@@ -776,9 +849,9 @@ export default function ProjectDetails() {
               <div className={styles.codeBlockHeader}>
                 <div className="flex items-center gap-3">
                   <div className={styles.codeBlockDots}>
-                    <div className={`${styles.codeDot} bg-red-500`} />
-                    <div className={`${styles.codeDot} bg-yellow-500`} />
-                    <div className={`${styles.codeDot} bg-green-500`} />
+                    <div className={`${styles.codeDot} bg-[#D32F2F]`} />
+                    <div className={`${styles.codeDot} bg-[#C5A028]`} />
+                    <div className={`${styles.codeDot} bg-[#1E6F6F]`} />
                   </div>
                   <span className={styles.codeBlockTitle}>
                     <Terminal className="w-4 h-4" />
@@ -832,7 +905,7 @@ console.log('ETA:',          transfer.estimatedArrival);`}
                   <h3 className={styles.stepTitle}>{step.title}</h3>
                   <p className={styles.stepDesc}>{step.desc}</p>
                 </div>
-                <step.icon className="w-8 h-8 text-gray-300 flex-shrink-0" />
+                <step.icon className="w-8 h-8 text-[#C5A028] flex-shrink-0" />
               </div>
             ))}
           </div>
@@ -856,7 +929,7 @@ console.log('ETA:',          transfer.estimatedArrival);`}
               <div key={i} className={styles.testimonialCard}>
                 <div className={styles.testimonialStars}>
                   {Array.from({ length: t.rating }).map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <Star key={j} className="w-4 h-4 fill-[#C5A028] text-[#C5A028]" />
                   ))}
                 </div>
                 <p className={styles.testimonialText}>"{t.text}"</p>
@@ -906,7 +979,7 @@ console.log('ETA:',          transfer.estimatedArrival);`}
             Product updates, rate alerts, and fintech insights — straight to your inbox.
           </p>
           {subscribed ? (
-            <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold">
+            <div className="flex items-center justify-center gap-2 text-[#1E6F6F] font-bold">
               <Check className="w-5 h-5" />You're subscribed!
             </div>
           ) : (

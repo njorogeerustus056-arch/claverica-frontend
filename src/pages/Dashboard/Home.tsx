@@ -123,7 +123,9 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
               <WalletIcon className={styles.modalIconSvg} />
             </div>
             <div>
-              <h3 className={styles.modalTitle}>{getGreeting()}, {user?.first_name || "User"}</h3>
+              <h3 className={styles.modalTitle}>
+                <span className="text-gradient-gold-purple">{getGreeting()}</span>, {user?.first_name || "User"}
+              </h3>
               <div className={styles.modalAccount}>
                 <span className={styles.modalAccountNumber}>{user?.account_number?.slice(-6) || "******"}</span>
                 <button onClick={handleCopy} className={styles.modalCopyBtn} title="Copy account number">
@@ -160,11 +162,17 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
         </div>
 
         <div className={styles.modalActions}>
-          <button onClick={() => { onClose(); navigate("/dashboard/transfer"); }} className={styles.modalActionBtn} style={{ background: 'linear-gradient(135deg, #2563EB, #4F46E5)' }}>
+          <button 
+            onClick={() => { onClose(); navigate("/dashboard/transfer"); }} 
+            className={styles.modalActionBtn}
+          >
             <Send className={styles.modalActionIcon} />
             <span>Send</span>
           </button>
-          <button onClick={() => { onClose(); navigate("/dashboard/transfer"); }} className={styles.modalActionBtn} style={{ background: 'linear-gradient(135deg, #7C3AED, #A855F7)' }}>
+          <button 
+            onClick={() => { onClose(); navigate("/dashboard/transfer"); }} 
+            className={styles.modalActionBtn}
+          >
             <Download className={styles.modalActionIcon} />
             <span>Withdraw</span>
           </button>
@@ -199,7 +207,10 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
               <p>No transactions yet</p>
             </div>
           )}
-          <button onClick={() => { onClose(); navigate("/dashboard/transfer/history"); }} className={styles.modalViewAll}>
+          <button 
+            onClick={() => { onClose(); navigate("/dashboard/transfer/history"); }} 
+            className={styles.modalViewAll}
+          >
             View All Transactions
           </button>
         </div>
@@ -301,14 +312,14 @@ export default function Home() {
   };
 
   const quickActions = [
-    { icon: Send, label: "Send", color: "#2563EB", action: () => navigate("/dashboard/transfer"), desc: "Transfer money" },
-    { icon: Download, label: "Withdraw", color: "#7C3AED", action: () => navigate("/dashboard/transfer"), desc: "To bank account" },
-    { icon: Bitcoin, label: "Crypto", color: "#F59E0B", action: () => navigate("/dashboard/crypto"), desc: "Buy/Sell crypto", badge: "New" },
-    { icon: WalletIcon, label: "Wallet", color: "#10B981", action: () => setShowWalletModal(true), desc: "Quick overview" },
-    { icon: CreditCard, label: "Cards", color: "#8B5CF6", action: () => navigate("/dashboard/cards"), desc: `${cardsCount} active`, count: cardsCount },
-    { icon: History, label: "History", color: "#6B7280", action: () => navigate("/dashboard/transfer/history"), desc: "Transactions", badge: transactions.length > 0 ? transactions.length.toString() : null },
-    { icon: Headphones, label: "Support", color: "#3B82F6", action: () => navigate("/dashboard/support"), desc: "24/7 help" },
-    { icon: BarChart3, label: "Savings", color: "#059669", action: () => navigate("/dashboard/savings"), desc: "Grow money" },
+    { icon: Send, label: "Send", color: "#8626E9", action: () => navigate("/dashboard/transfer"), desc: "Transfer money" },
+    { icon: Download, label: "Withdraw", color: "#8626E9", action: () => navigate("/dashboard/transfer"), desc: "To bank account" },
+    { icon: Bitcoin, label: "Crypto", color: "#C5A028", action: () => navigate("/dashboard/crypto"), desc: "Buy/Sell crypto", badge: "New" },
+    { icon: WalletIcon, label: "Wallet", color: "#1E6F6F", action: () => setShowWalletModal(true), desc: "Quick overview" },
+    { icon: CreditCard, label: "Cards", color: "#8626E9", action: () => navigate("/dashboard/cards"), desc: `${cardsCount} active`, count: cardsCount },
+    { icon: History, label: "History", color: "#0A2540", action: () => navigate("/dashboard/transfer/history"), desc: "Transactions", badge: transactions.length > 0 ? transactions.length.toString() : null },
+    { icon: Headphones, label: "Support", color: "#C5A028", action: () => navigate("/dashboard/support"), desc: "24/7 help" },
+    { icon: BarChart3, label: "Savings", color: "#1E6F6F", action: () => navigate("/dashboard/savings"), desc: "Grow money" },
   ];
 
   const formatTransactionDate = (dateString: string) => {
@@ -375,14 +386,14 @@ export default function Home() {
       )}
 
       <div className={styles.container}>
-        {/* Hero Section - Condensed */}
+        {/* Hero Section - Navy to Purple Gradient */}
         <div className={styles.hero}>
           <div className={styles.heroContent}>
             {/* Top Bar - Compact */}
             <div className={styles.topBar}>
               <div className={styles.greetingSection}>
                 <h1 className={styles.greeting}>
-                  Hello, <span className={styles.userName}>{user?.first_name || "User"}</span>
+                  <span className="text-gradient-gold-purple">{getGreeting()}</span>, <span className={styles.userName}>{user?.first_name || "User"}</span>
                   <span className={styles.wave}>👋</span>
                 </h1>
                 <div className={styles.accountCompact}>
@@ -414,7 +425,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Balance Card - Smaller */}
+            {/* Balance Card - Premium Gradient */}
             <div className={styles.balanceCard}>
               <div className={styles.balanceHeader}>
                 <span className={styles.balanceLabel}>Total Balance</span>
@@ -456,7 +467,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Action Icons - Moved inside hero */}
+            {/* Action Icons */}
             <div className={styles.heroActions}>
               <button onClick={handleRefresh} className={styles.iconBtn} title="Refresh">
                 <RefreshCw className={loading ? styles.spinning : ''} />
@@ -527,7 +538,7 @@ export default function Home() {
                 </div>
                 
                 <div className={styles.mapContainer}>
-                  <CountryMap mapColor="#E5E7EB" />
+                  <CountryMap mapColor="#F5F0E6" />
                 </div>
                 
                 <div className={styles.statsGrid}>
@@ -627,8 +638,8 @@ export default function Home() {
                 
                 <div className={styles.snapshotGrid}>
                   <div className={styles.snapshotCard}>
-                    <div className={styles.snapshotIcon} style={{ background: 'rgba(16, 185, 129, 0.1)' }}>
-                      <ArrowUpRight style={{ color: '#10B981' }} />
+                    <div className={styles.snapshotIcon} style={{ background: 'rgba(30, 111, 111, 0.1)' }}>
+                      <ArrowUpRight style={{ color: '#1E6F6F' }} />
                     </div>
                     <div>
                       <p className={styles.snapshotLabel}>Income</p>

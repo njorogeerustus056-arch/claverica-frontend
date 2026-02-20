@@ -63,7 +63,7 @@ export default function Footer() {
     },
   ];
 
-  // UPDATED: Only links that exist in your routes
+  // UPDATED: Removed "Support" category completely
   const footerLinks = {
     "Platform": [
       { name: "Services", path: "/services" },
@@ -73,11 +73,6 @@ export default function Footer() {
     "Company": [
       { name: "About Us", path: "/about" },
       { name: "Contact", path: "/contact" }
-    ],
-    "Support": [
-      { name: "Help Center", path: "/contact" },
-      { name: "Live Chat", path: "/contact" },
-      { name: "Emergency", path: "/contact" }
     ]
   };
 
@@ -191,7 +186,7 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Footer Links Columns */}
+            {/* Footer Links Columns - Only Platform and Company remain */}
             {Object.entries(footerLinks).map(([category, links]) => (
               <div key={category} className={styles.linkColumn}>
                 <h3 className={styles.linkCategory}>{category}</h3>
@@ -215,7 +210,7 @@ export default function Footer() {
           <div className={styles.bottomBar}>
             <div className={styles.bottomBarContent}>
               <p className={styles.copyright}>
-                © {currentYear} ClaveRica (The Goldman Sachs Group). All rights reserved.
+                © {currentYear} ClaveRica. All rights reserved.
               </p>
               
               <div className={styles.legalLinks}>

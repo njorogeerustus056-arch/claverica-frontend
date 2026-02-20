@@ -182,7 +182,7 @@ export default function Settings() {
         </button>
       </div>
 
-      {/* Profile Summary Card - Monzo Style */}
+      {/* Profile Summary Card */}
       <div className={styles.profileCard}>
         <div className={styles.profileHeader}>
           <div className={styles.profileAvatar}>
@@ -201,7 +201,7 @@ export default function Settings() {
                   className={styles.copyBtn}
                 >
                   {copiedField === "account" ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    <CheckCircle2 className="w-4 h-4" />
                   ) : (
                     <Copy className="w-4 h-4" />
                   )}
@@ -214,21 +214,21 @@ export default function Settings() {
 
         <div className={styles.profileStats}>
           <div className={styles.statItem}>
-            <div className={styles.statIcon} style={{ background: "rgba(59, 130, 246, 0.1)" }}>
-              <Shield className={styles.statIconSvg} style={{ color: "#3B82F6" }} />
+            <div className={styles.statIcon}>
+              <Shield className={styles.statIconSvg} />
             </div>
             <div>
               <div className={styles.statLabel}>Account Status</div>
               <div className={styles.statValue}>
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <CheckCircle2 className="w-4 h-4" />
                 <span>Active</span>
               </div>
             </div>
           </div>
 
           <div className={styles.statItem}>
-            <div className={styles.statIcon} style={{ background: "rgba(16, 185, 129, 0.1)" }}>
-              <Award className={styles.statIconSvg} style={{ color: "#10B981" }} />
+            <div className={styles.statIcon}>
+              <Award className={styles.statIconSvg} />
             </div>
             <div>
               <div className={styles.statLabel}>KYC Status</div>
@@ -247,8 +247,8 @@ export default function Settings() {
           </div>
 
           <div className={styles.statItem}>
-            <div className={styles.statIcon} style={{ background: "rgba(139, 92, 246, 0.1)" }}>
-              <BarChart3 className={styles.statIconSvg} style={{ color: "#8B5CF6" }} />
+            <div className={styles.statIcon}>
+              <BarChart3 className={styles.statIconSvg} />
             </div>
             <div>
               <div className={styles.statLabel}>Security Score</div>
@@ -261,7 +261,7 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Main Content - Revolut Style */}
+      {/* Main Content */}
       <div className={styles.mainContent}>
         {/* Sidebar */}
         <div className={styles.sidebar}>
@@ -282,7 +282,7 @@ export default function Settings() {
             );
           })}
 
-          {/* Security Health - Skrill Style */}
+          {/* Security Health */}
           <div className={styles.securityHealth}>
             <div className={styles.securityHeader}>
               <ShieldCheck className={styles.securityIcon} />
@@ -320,7 +320,7 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Quick Actions - Wise Style */}
+          {/* Quick Actions */}
           <div className={styles.quickActions}>
             <h3 className={styles.quickActionsTitle}>Quick Actions</h3>
             <button
@@ -541,7 +541,7 @@ export default function Settings() {
                 </div>
                 {settings.two_factor_auth && (
                   <div className={styles.twoFactorStatus}>
-                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                    <CheckCircle2 className="w-5 h-5" />
                     <span>2FA is enabled on your account</span>
                   </div>
                 )}
