@@ -1,13 +1,12 @@
-// main.tsx - FINAL FIXED VERSION WITH CORRECT REACT IMPORT
-import React, { StrictMode, Suspense, lazy } from "react";  // ✅ Added React to imports
+// main.tsx - FINAL FIXED VERSION WITH CORRECT CSS IMPORTS
+import React, { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
-// CSS imports
-import "./styles/index.css";
-import "./styles/animations.css";
-import "swiper/swiper-bundle.css";
-import "flatpickr/dist/flatpickr.css";
+// CSS imports - ONLY EXISTING FILES!
+import "./styles/index.css";           // ✅ Master stylesheet
+import "swiper/swiper-bundle.css";      // ✅ Third-party swiper styles
+import "flatpickr/dist/flatpickr.css";  // ✅ Third-party date picker styles
 
 import { AppWrapper } from "./components/common/PageMeta";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -32,7 +31,7 @@ if (savedTheme === "dark") {
 
 // InitializeAuth component
 function InitializeAuth() {
-  React.useEffect(() => {  // ✅ Now React is imported, this works
+  React.useEffect(() => {
     const authStore = useAuthStore.getState();
     
     if (process.env.NODE_ENV === 'development') {
@@ -53,11 +52,11 @@ function InitializeAuth() {
   return null;
 }
 
-// ✅ FIXED: Provider wrapper with correct order
+// Provider wrapper with correct order
 function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <PusherProvider>           {/* ✅ Pusher first */}
-      <NotificationProvider>   {/* ✅ Then Notification can use Pusher */}
+    <PusherProvider>           {/* Pusher first */}
+      <NotificationProvider>   {/* Then Notification can use Pusher */}
         <TransferProvider>
           {children}
         </TransferProvider>

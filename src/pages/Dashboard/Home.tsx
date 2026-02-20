@@ -219,12 +219,9 @@ export default function Home() {
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [cardsCount, setCardsCount] = useState(0);
-  // Removed currentTime state as it's no longer needed
 
   const { wallet, transactions, user, loading, error, refetch } = useDashboardData();
   const { pusherConnected } = useSafePusher();
-
-  // Removed the time update useEffect
 
   useEffect(() => {
     const fetchCardsCount = async () => {
@@ -279,9 +276,6 @@ export default function Home() {
 
   const pendingTransactions = transactions.filter(tx => tx.status === "pending");
 
-  // Removed getGreeting function
-
-  // Simplified date/time - using current date from new Date()
   const formatDate = () => {
     const now = new Date();
     return now.toLocaleDateString('en-US', { 
