@@ -121,14 +121,28 @@
   background-clip: unset !important;
 }
 
-/* Waving hand animation */
+/* Waving hand animation - FIXED VISIBILITY */
 .wave {
   display: inline-block;
   animation: wave 2s infinite;
   transform-origin: 70% 70%;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   line-height: 1;
-  margin-left: 0.25rem;
+  margin-left: 0.5rem;
+  
+  /* Force the emoji to be visible */
+  color: #FFD700 !important; /* Gold color */
+  background: transparent !important;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); /* Glow effect */
+  
+  /* Ensure it's above other elements */
+  position: relative;
+  z-index: 30;
+  
+  /* Remove any inherited text colors */
+  -webkit-text-fill-color: #FFD700 !important;
+  background-clip: unset !important;
+  opacity: 1 !important;
 }
 
 @keyframes wave {
