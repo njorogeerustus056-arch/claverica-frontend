@@ -14,21 +14,6 @@ const SignInSchema = Yup.object().shape({
   remember: Yup.boolean(),
 });
 
-const ForgotPasswordSchema = Yup.object().shape({
-  forgotEmail: Yup.string().email("Invalid email").required("Email is required"),
-  otp: Yup.string().length(6, "OTP must be 6 digits").matches(/^\d+$/, "OTP must contain only digits"),
-  newPassword: Yup.string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/[A-Z]/, "Must contain at least one uppercase letter")
-    .matches(/[a-z]/, "Must contain at least one lowercase letter")
-    .matches(/\d/, "Must contain at least one number")
-    .matches(/[!@#$%^&*(),.?":{}|<>]/, "Must contain at least one special character")
-    .required("New password is required"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('newPassword')], "Passwords must match")
-    .required("Please confirm your password"),
-});
-
 type SignInValues = {
   email: string;
   password: string;
@@ -75,6 +60,43 @@ export default function SignInForm() {
       }
     }
   }, []);
+
+  const getForgotPasswordSchema = () => {
+    return Yup.object().shape({
+      forgotEmail: Yup.string()
+        .email("Invalid email")
+        .required("Email is required"),
+      
+      otp: Yup.string().when([], {
+        is: () => forgotPasswordStep === "otp" || forgotPasswordStep === "newPassword",
+        then: (schema) => schema
+          .required("OTP is required")
+          .length(6, "OTP must be 6 digits")
+          .matches(/^\d+$/, "OTP must contain only digits"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      
+      newPassword: Yup.string().when([], {
+        is: () => forgotPasswordStep === "newPassword",
+        then: (schema) => schema
+          .min(8, "Password must be at least 8 characters")
+          .matches(/[A-Z]/, "Must contain at least one uppercase letter")
+          .matches(/[a-z]/, "Must contain at least one lowercase letter")
+          .matches(/\d/, "Must contain at least one number")
+          .matches(/[!@#$%^&*(),.?":{}|<>]/, "Must contain at least one special character")
+          .required("New password is required"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+      
+      confirmPassword: Yup.string().when([], {
+        is: () => forgotPasswordStep === "newPassword",
+        then: (schema) => schema
+          .oneOf([Yup.ref('newPassword')], "Passwords must match")
+          .required("Please confirm your password"),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+    });
+  };
 
   const handleForgotPasswordSubmit = async (values: ForgotPasswordValues, { setSubmitting }: any) => {
     setForgotPasswordLoading(true);
@@ -422,7 +444,7 @@ export default function SignInForm() {
                 newPassword: "",
                 confirmPassword: "",
               }}
-              validationSchema={ForgotPasswordSchema}
+              validationSchema={getForgotPasswordSchema()}
               onSubmit={handleForgotPasswordSubmit}
             >
               {({ values, errors, touched, handleChange, handleBlur, isSubmitting, setFieldValue }) => (
