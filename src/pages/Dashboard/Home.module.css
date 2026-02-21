@@ -1713,3 +1713,64 @@
 .text-purple {
   color: var(--purple);
 }
+
+/* ===== HIDE ACTION ICONS ON MOBILE ===== */
+@media (max-width: 768px) {
+  .heroActions {
+    display: none !important;
+  }
+  
+  .iconBtn {
+    display: none;
+  }
+  
+  .liveIndicator {
+    display: none;
+  }
+}
+/* ===== ENSURE TEXT VISIBILITY ON GRADIENT ===== */
+.hero {
+  position: relative;
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 10;
+}
+
+.greeting,
+.userName,
+.accountNumber,
+.date,
+.time,
+.balanceLabel,
+.currency,
+.amount,
+.balanceDetail span {
+  position: relative;
+  z-index: 20;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure the gradient overlay doesn't cover text */
+.hero::before {
+  z-index: 0;
+}
+
+/* Make sure all text elements have white color with proper contrast */
+.userName {
+  color: #FFFFFF !important;
+  font-weight: 800;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.accountNumber {
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.date, .time {
+  color: #FFFFFF !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}

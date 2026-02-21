@@ -117,10 +117,13 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
             </div>
             <div>
               <h3 className={styles.modalTitle}>
-                <span className="text-gradient-gold-purple">Hello</span>, {user?.first_name || "User"}
+                <span className="text-gradient-gold-purple">Hello</span>
+                {user?.first_name ? `, ${user.first_name}` : ''}
               </h3>
               <div className={styles.modalAccount}>
-                <span className={styles.modalAccountNumber}>{user?.account_number?.slice(-6) || "******"}</span>
+                <span className={styles.modalAccountNumber}>
+                  {user?.account_number?.slice(-6) || "••••••"}
+                </span>
                 <button onClick={handleCopy} className={styles.modalCopyBtn} title="Copy account number">
                   <Copy className={styles.modalCopyIcon} />
                   {copied && <span className={styles.modalCopied}>Copied!</span>}
@@ -134,20 +137,20 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
         <div className={styles.modalBalance}>
           <p className={styles.modalBalanceLabel}>Total Balance</p>
           <p className={styles.modalBalanceAmount}>
-            {wallet.currency} {wallet.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {wallet?.currency || "USD"} {wallet?.balance?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
           </p>
           <div className={styles.modalBalanceDetails}>
             <div className={styles.modalBalanceItem}>
               <span className={styles.modalBalanceItemLabel}>Available</span>
               <span className={styles.modalBalanceItemValue}>
-                {wallet.currency} {wallet.available.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {wallet?.currency || "USD"} {wallet?.available?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}
               </span>
             </div>
-            {wallet.pending > 0 && (
+            {wallet?.pending > 0 && (
               <div className={styles.modalBalanceItem}>
                 <span className={styles.modalBalanceItemLabel}>Pending</span>
                 <span className={styles.modalBalanceItemValue}>
-                  {wallet.currency} {wallet.pending.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {wallet?.currency || "USD"} {wallet?.pending?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             )}
@@ -189,7 +192,7 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
                     </div>
                   </div>
                   <div className={`${styles.modalRecentAmount} ${tx.transaction_type === "credit" ? styles.creditText : styles.debitText}`}>
-                    {tx.transaction_type === "credit" ? "+" : "-"}{wallet.currency} {tx.amount.toFixed(2)}
+                    {tx.transaction_type === "credit" ? "+" : "-"}{wallet?.currency || "USD"} {tx.amount.toFixed(2)}
                   </div>
                 </div>
               ))}
@@ -360,7 +363,7 @@ export default function Home() {
       {showWalletModal && (
         <MiniWalletModal
           user={user}
-          wallet={wallet}
+          wallet={wallet || { balance: 0, available: 0, pending: 0, currency: "USD" }}
           transactions={transactions}
           onClose={() => setShowWalletModal(false)}
           navigate={navigate}
@@ -376,19 +379,32 @@ export default function Home() {
               <div className={styles.greetingSection}>
                 <h1 className={styles.greeting}>
                   <span className="text-gradient-gold-purple">Hello</span>
-                  <span className={styles.userName}>, {user?.first_name || "User"}</span>
-                  <span className={styles.wave}>👋</span>
+                  {!loading && user?.first_name ? (
+                    <>
+                      <span className={styles.userName}>, {user.first_name}</span>
+                      <span className={styles.wave}>👋</span>
+                    </>
+                  ) : (
+                    <span className={styles.userName}></span>
+                  )}
                 </h1>
                 <div className={styles.accountCompact}>
                   <div className={styles.accountBadge}>
                     <Building className={styles.accountIcon} />
-                    <span className={styles.accountNumber}>{user?.account_number || "CLV-***"}</span>
+                    <span className={styles.accountNumber}>
+                      {loading ? 'CLV-***' : user?.account_number?.slice(0, 7) || 'CLV-***'}
+                    </span>
                     <button onClick={handleCopyAccount} className={styles.copyBtn}>
                       <Copy />
                       {copied && <span className={styles.copiedTooltip}>Copied!</span>}
                     </button>
                   </div>
-                  {user?.is_verified ? (
+                  {loading ? (
+                    <div className={`${styles.verificationBadge} ${styles.pending}`}>
+                      <Clock />
+                      <span>Loading</span>
+                    </div>
+                  ) : user?.is_verified ? (
                     <div className={`${styles.verificationBadge} ${styles.verified}`}>
                       <CheckCircle />
                       <span>Verified</span>
@@ -607,8 +623,8 @@ export default function Home() {
                   Currency Converter
                 </h2>
                 <CurrencyConverter 
-                  baseAmount={wallet.balance}
-                  baseCurrency={wallet.currency}
+                  baseAmount={wallet?.balance || 0}
+                  baseCurrency={wallet?.currency || "USD"}
                 />
               </section>
 
@@ -700,13 +716,13 @@ export default function Home() {
               <FintechMetrics 
                 totalIncome={totalIncome}
                 totalExpenses={totalExpenses}
-                walletBalance={wallet.balance}
+                walletBalance={wallet?.balance || 0}
                 transactions={transactions}
-                walletCurrency={wallet.currency}
+                walletCurrency={wallet?.currency || "USD"}
               />
               <RecentOrders 
                 transactions={transactions.slice(0, 5)}
-                walletCurrency={wallet.currency}
+                walletCurrency={wallet?.currency || "USD"}
               />
             </div>
           </section>
