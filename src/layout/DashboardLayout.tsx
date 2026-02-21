@@ -42,26 +42,28 @@ function DashboardLayoutContent() {
 
           {/* Mobile Bottom Navigation - Only visible on mobile */}
           <div className={styles.mobileNav}>
-            <button className={styles.mobileNavItem}>
-              <span className={styles.mobileNavIcon}>🏠</span>
-              <span className={styles.mobileNavLabel}>Home</span>
-            </button>
-            <button className={styles.mobileNavItem}>
-              <span className={styles.mobileNavIcon}>💸</span>
-              <span className={styles.mobileNavLabel}>Send</span>
-            </button>
-            <button className={`${styles.mobileNavItem} ${styles.mobileNavActive}`}>
-              <span className={styles.mobileNavIcon}>📊</span>
-              <span className={styles.mobileNavLabel}>Dashboard</span>
-            </button>
-            <button className={styles.mobileNavItem}>
-              <span className={styles.mobileNavIcon}>💳</span>
-              <span className={styles.mobileNavLabel}>Cards</span>
-            </button>
-            <button className={styles.mobileNavItem}>
-              <span className={styles.mobileNavIcon}>👤</span>
-              <span className={styles.mobileNavLabel}>Profile</span>
-            </button>
+            <div className={styles.mobileNavItems}>
+              <button className={styles.mobileNavItem}>
+                <span className={styles.mobileNavIcon}>🏠</span>
+                <span className={styles.mobileNavLabel}>Home</span>
+              </button>
+              <button className={styles.mobileNavItem}>
+                <span className={styles.mobileNavIcon}>💸</span>
+                <span className={styles.mobileNavLabel}>Send</span>
+              </button>
+              <button className={`${styles.mobileNavItem} ${styles.mobileNavActive}`}>
+                <span className={styles.mobileNavIcon}>📊</span>
+                <span className={styles.mobileNavLabel}>Dashboard</span>
+              </button>
+              <button className={styles.mobileNavItem}>
+                <span className={styles.mobileNavIcon}>💳</span>
+                <span className={styles.mobileNavLabel}>Cards</span>
+              </button>
+              <button className={styles.mobileNavItem}>
+                <span className={styles.mobileNavIcon}>👤</span>
+                <span className={styles.mobileNavLabel}>Profile</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

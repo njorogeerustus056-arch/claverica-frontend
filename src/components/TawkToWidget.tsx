@@ -1,9 +1,14 @@
 // Copy and paste this entire file
 import { useEffect } from 'react';
 import { useAuthStore } from '../lib/store/auth';
+import { useLocation } from 'react-router-dom'; // Add this import
 
 export default function TawkToWidget() {
   const { isAuthenticated } = useAuthStore();
+  const location = useLocation(); // Add this
+  
+  // Only show on dashboard routes
+  const isDashboardRoute = location.pathname.startsWith('/dashboard');
   
   // Get env variables
   const isEnabled = import.meta.env.VITE_TAWK_ENABLED === 'true';
@@ -11,8 +16,8 @@ export default function TawkToWidget() {
   const widgetId = import.meta.env.VITE_TAWK_WIDGET_ID || 'default';
 
   useEffect(() => {
-    // Only load if enabled AND user is authenticated
-    if (!isEnabled || !isAuthenticated) return;
+    // Only load if enabled AND user is authenticated AND on dashboard route
+    if (!isEnabled || !isAuthenticated || !isDashboardRoute) return;
 
     // Check if already loaded
     if (document.querySelector('script[src*="tawk.to"]')) return;
@@ -46,7 +51,7 @@ export default function TawkToWidget() {
     
     document.body.appendChild(script);
 
-    // Cleanup on logout or unmount
+    // Cleanup when leaving dashboard or unmounting
     return () => {
       const existingScript = document.querySelector('script[src*="tawk.to"]');
       if (existingScript) {
@@ -59,7 +64,7 @@ export default function TawkToWidget() {
       // Clean up global Tawk object
       delete window.Tawk_API;
     };
-  }, [isAuthenticated, isEnabled, propertyId, widgetId]);
+  }, [isAuthenticated, isDashboardRoute, isEnabled, propertyId, widgetId]); // Add isDashboardRoute to dependencies
 
   return null; // No UI, just loads script
 }
