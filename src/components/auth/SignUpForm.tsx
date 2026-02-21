@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import { api } from "../../api"; // ✅ ADD THIS IMPORT
 
 import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import styles from "./SignUpForm.module.css";
@@ -280,13 +281,27 @@ export default function SignUpForm() {
                   income_range: showEmployment ? values.income_range : "",
                 };
 
-                // API call would go here
-                // const response = await api.auth.register(payload);
+                // ✅ MAKE THE ACTUAL API CALL
+                const response = await api.auth.register(payload);
+                
+                console.log("✅ Registration successful:", response);
 
+                // Store email and any activation info from response
                 localStorage.setItem("pendingVerificationEmail", values.email);
+                
+                // If the API returns a test activation code (for development), store it
+                if (response.note) {
+                  localStorage.setItem("testActivationCode", response.note);
+                }
+                
+                // Navigate to verification page
                 navigate("/verify-email", {
-                  state: { email: values.email }
+                  state: { 
+                    email: values.email,
+                    message: response.message || "Verification code sent to your email"
+                  }
                 });
+                
               } catch (err: any) {
                 console.error("❌ [DEBUG] Registration error:", err);
                 
@@ -295,7 +310,21 @@ export default function SignUpForm() {
                 if (err.message?.includes("already exists")) {
                   errorMessage = "Email or phone already registered. Please login or use different credentials.";
                 } else if (err.status === 400) {
-                  errorMessage = "Please check all required fields and try again.";
+                  // Handle validation errors from the backend
+                  if (err.data) {
+                    // Format the error messages nicely
+                    const fieldErrors = Object.entries(err.data)
+                      .map(([field, msgs]) => {
+                        if (Array.isArray(msgs)) {
+                          return `${field}: ${msgs.join(', ')}`;
+                        }
+                        return `${field}: ${msgs}`;
+                      })
+                      .join('. ');
+                    errorMessage = fieldErrors || "Please check all required fields and try again.";
+                  } else {
+                    errorMessage = "Please check all required fields and try again.";
+                  }
                 } else if (err.status === 500) {
                   errorMessage = "Server error. Please try again later.";
                 }
