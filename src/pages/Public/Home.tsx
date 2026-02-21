@@ -330,7 +330,7 @@ export default function Landing() {
             </span>
           </motion.div>
 
-          {/* Main Headline */}
+          {/* Main Headline - FIXED: Removed gradient class to make text white */}
           <motion.h1 
             initial={{ opacity: 0, y: -60 }} 
             animate={{ opacity: 1, y: 0 }} 
@@ -338,9 +338,7 @@ export default function Landing() {
             className={styles.heroTitle}
           >
             <span className={styles.heroTitleLine1}>Banking for the</span>
-            <span className={styles.titleGradient}>
-              Digital Age
-            </span>
+            <span>Digital Age</span>
           </motion.h1>
           
           {/* Subtitle */}

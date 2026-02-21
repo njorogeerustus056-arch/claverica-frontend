@@ -129,8 +129,25 @@
   opacity: 1;
 }
 
-/* Hero overlay - transparent to navy gradient */
-.heroOverlay {
+/* Video overlay - ONLY affects the video, not the text */
+.videoOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(10, 37, 64, 0.85) 80%,
+    var(--navy) 100%
+  );
+  z-index: 2;
+  pointer-events: none; /* Allows clicks to pass through to video */
+}
+
+/* Hero overlay - removed/combined with videoOverlay */
+/* .heroOverlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(
@@ -139,7 +156,7 @@
     var(--navy) 90%
   );
   z-index: 2;
-}
+} */
 
 .videoFallback {
   position: absolute;
@@ -151,10 +168,10 @@
   z-index: 1;
 }
 
-/* Hero Content */
+/* Hero Content - sits above overlay */
 .heroContent {
   position: relative;
-  z-index: 100;
+  z-index: 10;
   text-align: center;
   max-width: var(--container-xl);
   margin: 0 auto;
@@ -172,8 +189,11 @@
   margin-bottom: var(--space-lg);
   font-family: 'Inter', 'SF Pro Display', -apple-system, system-ui, sans-serif;
   position: relative;
-  z-index: 101;
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8) !important;
+  z-index: 11;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5) !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: #FFFFFF !important;
 }
 
 .heroTitleLine1 {
@@ -182,7 +202,19 @@
   color: #FFFFFF !important;
 }
 
-.titleGradient {
+/* Class for Digital Age text to ensure it's white */
+.heroTitleWhite {
+  display: inline-block;
+  color: #FFFFFF !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5) !important;
+  font-weight: 900;
+}
+
+/* Remove or comment out the old titleGradient class */
+/* .titleGradient {
   display: inline-block;
   color: #FFFFFF !important;
   margin-top: 0;
@@ -196,7 +228,7 @@
   -webkit-background-clip: unset !important;
   -webkit-text-fill-color: #FFFFFF !important;
   text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8) !important;
-}
+} */
 
 .heroSubtitle {
   font-size: clamp(1.5rem, 3vw, 2rem) !important;
@@ -206,8 +238,8 @@
   margin: var(--space-md) auto var(--space-xl);
   line-height: 1.6;
   position: relative;
-  z-index: 101;
-  text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7) !important;
+  z-index: 11;
+  text-shadow: 0 2px 15px rgba(0, 0, 0, 0.5) !important;
 }
 
 .trustBadge {
@@ -224,7 +256,7 @@
   margin-bottom: var(--space-lg);
   border: 1px solid var(--gold);
   position: relative;
-  z-index: 101;
+  z-index: 11;
 }
 
 .trustBadge span,
@@ -250,7 +282,7 @@
   justify-content: center;
   padding: 0 var(--space-sm);
   position: relative;
-  z-index: 101;
+  z-index: 11;
 }
 
 @media (min-width: 640px) {
@@ -277,7 +309,7 @@
   transition: all 0.3s ease;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   position: relative;
-  z-index: 101;
+  z-index: 11;
 }
 
 .btnPrimary:hover {
@@ -311,7 +343,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
-  z-index: 101;
+  z-index: 11;
 }
 
 .btnSecondary:hover {
@@ -349,7 +381,7 @@
   color: #FFFFFF !important;
   font-size: 1rem !important;
   position: relative;
-  z-index: 101;
+  z-index: 11;
 }
 
 .trustItem {

@@ -57,19 +57,24 @@
 }
 
 /* ==========================================================================
-   Simple Header (Replaces Hero)
+   Simple Header (Replaces Hero) - FIXED with Light Background
    ========================================================================== */
 
 .simpleHeader {
-  background: linear-gradient(135deg, var(--navy), var(--purple));
+  background: linear-gradient(135deg, #F5F0E6 0%, #FFFFFF 100%); /* Light cream to white gradient */
   padding: var(--space-xl) 0;
-  color: var(--white);
+  border-bottom: 3px solid var(--gold); /* Add gold accent border */
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 4px 20px rgba(197, 160, 40, 0.15); /* Subtle gold shadow */
 }
 
 .headerContent {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  position: relative;
+  z-index: 2;
 }
 
 @media (min-width: 768px) {
@@ -84,11 +89,18 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: var(--space-xs);
+  color: var(--navy); /* Dark blue for contrast on light background */
+  background: linear-gradient(135deg, var(--navy), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
 }
 
 .pageSubtitle {
   font-size: 1rem;
-  opacity: 0.9;
+  color: rgba(10, 37, 64, 0.7); /* Semi-transparent navy */
+  font-weight: 400;
 }
 
 .headerStatus {
@@ -101,18 +113,40 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--white); /* Pure white background */
   padding: var(--space-xs) var(--space-md);
   border-radius: 40px;
   font-size: 0.875rem;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(197, 160, 40, 0.3);
+  border: 1px solid rgba(197, 160, 40, 0.3); /* Gold border */
+  color: var(--navy);
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .headerStatusIcon {
   width: 16px;
   height: 16px;
   color: var(--gold);
+}
+
+.statusDotGreen {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+/* Optional: Add a subtle decorative element */
+.simpleHeader::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--purple), var(--gold));
+  opacity: 0.5;
 }
 
 /* ==========================================================================

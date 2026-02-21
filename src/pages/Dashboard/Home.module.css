@@ -99,6 +99,7 @@
   flex: 1;
 }
 
+/* FIXED: Greeting container - no color set here */
 .greeting {
   font-size: 1.5rem;
   font-weight: 700;
@@ -106,30 +107,44 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--white);
+  /* REMOVED: color: var(--white); */
 }
 
 /* FIXED: User name now pure white for maximum readability */
 .userName {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   font-weight: 800;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  background: none;
-  -webkit-background-clip: unset;
-  -webkit-text-fill-color: unset;
-  background-clip: unset;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  background-clip: unset !important;
 }
 
+/* Waving hand animation */
 .wave {
   display: inline-block;
   animation: wave 2s infinite;
   transform-origin: 70% 70%;
+  font-size: 1.5rem;
+  line-height: 1;
+  margin-left: 0.25rem;
 }
 
 @keyframes wave {
   0%, 100% { transform: rotate(0deg); }
   25% { transform: rotate(20deg); }
   75% { transform: rotate(-10deg); }
+}
+
+/* Gradient ONLY for "Hello" */
+.text-gradient-gold-purple {
+  background: linear-gradient(135deg, #FFD700, #FFFFFF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  font-weight: 700;
 }
 
 /* Account Compact */
