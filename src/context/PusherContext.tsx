@@ -58,10 +58,10 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     console.log('📡 Cleaned base URL:', baseUrl);
     
     // ✅ FIXED: Construct auth endpoint with SINGLE /api and trailing slash
-    const authEndpoint = `${baseUrl}/api/pusher/auth/`;  // ✅ Added trailing slash
+    const authEndpoint = `${baseUrl}/api/pusher/auth/`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
-    // ✅ FIXED: Force POST method for Pusher auth
+    // ✅ FIXED: Remove empty params - Pusher automatically adds socket_id and channel_name
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
       authEndpoint: authEndpoint,
@@ -70,8 +70,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
           'Authorization': `Bearer ${tokens.access}`,
           'Content-Type': 'application/json',
         },
-        params: {}, // Add empty params
-        method: 'POST', // ✅ CRITICAL: Force POST instead of GET
+        method: 'POST', // ✅ Pusher automatically adds socket_id and channel_name
       },
       authTransport: 'ajax',
     });
