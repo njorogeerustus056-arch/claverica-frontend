@@ -1,4 +1,4 @@
-// src/api.ts - COMPLETELY FIXED VERSION
+// src/api.ts - COMPLETELY FIXED VERSION WITH CARDS API
 import { useAuthStore } from './lib/store/auth';
 
 // ✅ CRITICAL FIX: Remove any trailing /api from the URL
@@ -203,7 +203,7 @@ export async function uploadFormData<T = any>(
 // ✅ FIXED: Authentication API functions - now all use /api prefix
 export const authAPI = {
   register: async (data: any) => {
-    return apiFetch("/accounts/register/", {  // Will be transformed to /api/accounts/register/
+    return apiFetch("/accounts/register/", {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -217,7 +217,7 @@ export const authAPI = {
   },
 
   resendActivation: async (data: { email: string }) => {
-    return apiFetch("/accounts/resend-activation/", {  // ✅ Will become /api/accounts/resend-activation/
+    return apiFetch("/accounts/resend-activation/", {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -463,11 +463,11 @@ export const kycAPI = {
   },
 
   getStatus: async () => {
-    return apiFetch("/kyc/simple-status/");  // ✅ FIXED: Use simple-status/
+    return apiFetch("/kyc/simple-status/");
   },
 
   checkRequirement: async (serviceType: string, amount: number) => {
-    return apiFetch("/kyc/check-requirement/", {  // ✅ FIXED: POST with body
+    return apiFetch("/kyc/check-requirement/", {
       method: 'POST',
       body: JSON.stringify({ service_type: serviceType, amount }),
     });
@@ -478,6 +478,34 @@ export const kycAPI = {
   }
 };
 
+// ✅ NEW: Cards API functions
+export const cardsAPI = {
+  getUserCards: async () => {
+    try {
+      const response = await apiFetch("/cards/user-cards/");
+      return response;
+    } catch (error: any) {
+      if (error.status === 404) {
+        console.warn('Cards endpoint not available - using mock data');
+        return { cards: [], count: 0 };
+      }
+      throw error;
+    }
+  },
+
+  getCardDetails: async (cardId: number) => {
+    return apiFetch(`/cards/${cardId}/`);
+  },
+
+  freezeCard: async (cardId: number) => {
+    return apiFetch(`/cards/${cardId}/freeze/`, { method: 'POST' });
+  },
+
+  unfreezeCard: async (cardId: number) => {
+    return apiFetch(`/cards/${cardId}/unfreeze/`, { method: 'POST' });
+  }
+};
+
 // ✅ Export all APIs as a single object
 export const api = {
   auth: authAPI,
@@ -485,6 +513,7 @@ export const api = {
   wallet: walletAPI,
   transfers: transferAPI,
   kyc: kycAPI,
+  cards: cardsAPI,  // ✅ Added cards API
   fetch: apiFetch,
   get: <T = any>(endpoint: string, options?: RequestInit) => 
     apiFetch<T>(endpoint, { ...options, method: 'GET' }),
