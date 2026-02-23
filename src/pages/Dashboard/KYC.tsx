@@ -32,11 +32,11 @@ import {
   HourglassEmpty,
   VerifiedUser,
 } from '@mui/icons-material';
-import { useAuthStore } from '../../lib/store/auth';  // ✅ FIXED import
+import { useAuthStore } from '../../lib/store/auth';
 
 const KYC = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();  // ✅ Now correctly using useAuthStore
+  const { user } = useAuthStore();
   
   const [loading, setLoading] = useState(true);
   const [kycStatus, setKycStatus] = useState<any>(null);
@@ -51,8 +51,8 @@ const KYC = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      // ✅ FIXED: Added /api prefix
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/simple-status/`, {
+      // ✅ FIXED: Removed extra /api - VITE_API_URL already has base URL
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/kyc/simple-status/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -76,7 +76,6 @@ const KYC = () => {
   };
 
   const handleCheckRequirements = () => {
-    // Navigate to transfer or trigger KYC check
     navigate('/dashboard/transfer');
   };
 
