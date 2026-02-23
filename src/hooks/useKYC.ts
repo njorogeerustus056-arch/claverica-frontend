@@ -115,26 +115,30 @@ export const useKYC = () => {
     }
   }, []);
 
-  // Get KYC status
+  // Get KYC status - FIXED: Use simple-status/ endpoint
   const getKYCStatus = useCallback(async (): Promise<KYCStatus | null> => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await apiFetch('/kyc/status/');
+      // ✅ FIXED: Use simple-status/ instead of status/
+      const response = await apiFetch('/kyc/simple-status/');
 
-      if (response.success) {
+      if (response) {
         // Transform backend response to our interface
         const status = {
-          hasApprovedKYC: response.data.latest_kyc?.status === 'approved',
-          latestSubmission: response.data.latest_kyc,
-          pendingRequests: response.data.pending_submissions || [],
+          hasApprovedKYC: response.is_approved || false,
+          latestSubmission: {
+            status: response.status || 'no_kyc',
+            submittedAt: response.submitted_at || new Date().toISOString(),
+          },
+          pendingRequests: [],
         };
         setKycStatus(status);
         return status;
       }
 
-      throw new Error(response.error);
+      throw new Error('Invalid response format');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to get status');
       return null;

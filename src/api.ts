@@ -463,11 +463,14 @@ export const kycAPI = {
   },
 
   getStatus: async () => {
-    return apiFetch("/kyc/documents/status/");
+    return apiFetch("/kyc/simple-status/");  // ✅ FIXED: Use simple-status/
   },
 
-  checkRequirement: async (amount: number, serviceType: string = 'transfer') => {
-    return apiFetch(`/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
+  checkRequirement: async (serviceType: string, amount: number) => {
+    return apiFetch("/kyc/check-requirement/", {  // ✅ FIXED: POST with body
+      method: 'POST',
+      body: JSON.stringify({ service_type: serviceType, amount }),
+    });
   },
 
   getSubmissions: async () => {
