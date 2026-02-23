@@ -73,6 +73,11 @@ export default function Crypto() {
     creativeContext?: any;
   } | null>(null);
 
+  // Fetch KYC status on mount
+  useEffect(() => {
+    refreshStatus();
+  }, [refreshStatus]);
+
   // Generate wallet addresses
   const generateWalletAddress = (symbol: string) => {
     const prefixes: Record<string, string> = {
@@ -164,7 +169,7 @@ export default function Crypto() {
     // Check KYC requirement via API
     const requirement = await checkRequirement('crypto', amount);
     
-    if (!isVerified && requirement?.kyc_required) {
+    if (!isVerified && requirement?.requiresKYC) {
       // Create creative context
       const creativeContext = {
         action,
@@ -174,7 +179,7 @@ export default function Crypto() {
         benefits: KYC_CREATIVES.getActionBenefits(action, amount, asset),
         unlockableFeature: KYC_CREATIVES.getUnlockableFeature(action),
         estimatedReward: KYC_CREATIVES.getEstimatedReward(amount, action),
-        kycThreshold: requirement?.threshold || kycThreshold,
+        kycThreshold: kycThreshold,
         creativeHook: creativeHook || `Unlock ${action.replace('_', ' ')} capabilities`,
         ctaText: KYC_CREATIVES.getCreativeCTAText(action, asset),
         tier: KYC_CREATIVES.getVerificationTier(amount),

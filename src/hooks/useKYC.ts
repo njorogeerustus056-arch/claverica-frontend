@@ -20,6 +20,7 @@ export interface KYCStatus {
 export const useKYC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [kycStatus, setKycStatus] = useState<KYCStatus | null>(null);
 
   // Add creative context helper ✅
   const getCreativeContext = useCallback((action: string, amount: number, asset?: string) => {
@@ -124,11 +125,13 @@ export const useKYC = () => {
 
       if (response.success) {
         // Transform backend response to our interface
-        return {
+        const status = {
           hasApprovedKYC: response.data.latest_kyc?.status === 'approved',
           latestSubmission: response.data.latest_kyc,
           pendingRequests: response.data.pending_submissions || [],
         };
+        setKycStatus(status);
+        return status;
       }
 
       throw new Error(response.error);
@@ -140,13 +143,22 @@ export const useKYC = () => {
     }
   }, []);
 
+  // Refresh status - alias for getKYCStatus
+  const refreshStatus = useCallback(async () => {
+    return await getKYCStatus();
+  }, [getKYCStatus]);
+
   return {
     loading,
     error,
+    kycStatus,
+    isVerified: kycStatus?.hasApprovedKYC || false,
     checkKYCRequirement, // Original
+    checkRequirement: checkKYCRequirement, // Alias for Crypto.tsx
     checkKYCRequirementWithContext, // ✅ New enhanced version
     submitDocuments,
     getKYCStatus,
+    refreshStatus, // Alias for getKYCStatus
     getCreativeContext, // ✅ Expose for direct use
     clearError: () => setError(null),
   };
