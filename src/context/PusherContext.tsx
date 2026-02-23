@@ -57,8 +57,8 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     
     console.log('📡 Cleaned base URL:', baseUrl);
     
-    // ✅ Construct auth endpoint with SINGLE /api
-    const authEndpoint = `${baseUrl}/api/pusher/auth`;
+    // ✅ FIXED: Construct auth endpoint with SINGLE /api and trailing slash
+    const authEndpoint = `${baseUrl}/api/pusher/auth/`;  // ✅ Added trailing slash
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
     // ✅ FIXED: Force POST method for Pusher auth
