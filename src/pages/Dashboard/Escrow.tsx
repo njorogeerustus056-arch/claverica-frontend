@@ -490,7 +490,8 @@ export default function Escrow() {
         timestamp: new Date().toISOString()
       };
       
-      const response = await fetch('/api/kyc-spec/collect/', {
+      // ✅ FIXED: Changed hyphen to underscore
+      const response = await fetch('/api/kyc_spec/collect/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -551,7 +552,8 @@ export default function Escrow() {
         timestamp: new Date().toISOString()
       };
       
-      const response = await fetch('/api/kyc-spec/collect/', {
+      // ✅ FIXED: Changed hyphen to underscore
+      const response = await fetch('/api/kyc_spec/collect/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
