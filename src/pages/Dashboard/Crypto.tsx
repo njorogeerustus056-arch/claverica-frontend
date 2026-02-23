@@ -201,8 +201,8 @@ export default function Crypto() {
         setShowKYCModal(true);
         return false;
       } else {
-        // Redirect to KYC page with context
-        navigate('/kyc/submit/', {
+        // ✅ FIXED: Redirect to KYC page with correct path
+        navigate('/dashboard/kyc/submit', {
           state: {
             amount,
             service_type: 'crypto',
@@ -340,8 +340,9 @@ export default function Crypto() {
     setTimeout(() => setCopiedAddress(null), 2000);
   };
 
+  // ✅ FIXED: handleVerifyNow with correct path
   const handleVerifyNow = () => {
-    navigate('/kyc/submit/', {
+    navigate('/dashboard/kyc/submit', {
       state: {
         amount: totalPortfolioValue,
         service_type: 'crypto',
@@ -915,7 +916,8 @@ export default function Crypto() {
                   </button>
                   <button
                     onClick={() => {
-                      navigate('/kyc/submit', {
+                      // ✅ FIXED: Modal redirect with correct path
+                      navigate('/dashboard/kyc/submit', {
                         state: {
                           amount: pendingAction.amount,
                           service_type: 'crypto',
