@@ -99,7 +99,6 @@
   flex: 1;
 }
 
-/* FIXED: Greeting container - no color set here */
 .greeting {
   font-size: 1.5rem;
   font-weight: 700;
@@ -107,10 +106,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  /* REMOVED: color: var(--white); */
 }
 
-/* FIXED: User name now pure white for maximum readability */
 .userName {
   color: #FFFFFF !important;
   font-weight: 800;
@@ -121,7 +118,6 @@
   background-clip: unset !important;
 }
 
-/* Waving hand animation - FIXED VISIBILITY */
 .wave {
   display: inline-block;
   animation: wave 2s infinite;
@@ -129,17 +125,11 @@
   font-size: 1.8rem;
   line-height: 1;
   margin-left: 0.5rem;
-  
-  /* Force the emoji to be visible */
-  color: #FFD700 !important; /* Gold color */
+  color: #FFD700 !important;
   background: transparent !important;
-  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); /* Glow effect */
-  
-  /* Ensure it's above other elements */
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
   position: relative;
   z-index: 30;
-  
-  /* Remove any inherited text colors */
   -webkit-text-fill-color: #FFD700 !important;
   background-clip: unset !important;
   opacity: 1 !important;
@@ -151,7 +141,6 @@
   75% { transform: rotate(-10deg); }
 }
 
-/* Gradient ONLY for "Hello" */
 .text-gradient-gold-purple {
   background: linear-gradient(135deg, #FFD700, #FFFFFF);
   -webkit-background-clip: text;
@@ -161,7 +150,6 @@
   font-weight: 700;
 }
 
-/* Account Compact */
 .accountCompact {
   display: flex;
   align-items: center;
@@ -239,7 +227,6 @@
   border: 1px solid;
 }
 
-/* FIXED: Verified badge - white text on teal */
 .verified {
   background: rgba(30, 111, 111, 0.15);
   border-color: var(--teal);
@@ -248,7 +235,6 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-/* FIXED: Pending badge - navy text on gold */
 .pending {
   background: rgba(197, 160, 40, 0.15);
   border-color: var(--gold);
@@ -256,7 +242,6 @@
   font-weight: 600;
 }
 
-/* Date Time Compact */
 .dateTimeCompact {
   text-align: right;
   background: rgba(255, 255, 255, 0.1);
@@ -280,7 +265,6 @@
   color: var(--white);
 }
 
-/* Hero Actions */
 .heroActions {
   display: flex;
   align-items: center;
@@ -360,7 +344,6 @@
   border: 2px solid var(--purple);
 }
 
-/* ===== BALANCE CARD - PREMIUM GRADIENT ===== */
 .balanceCard {
   background: linear-gradient(135deg, rgba(10, 37, 64, 0.8), rgba(134, 38, 233, 0.8));
   backdrop-filter: blur(20px);
@@ -469,7 +452,6 @@
   font-weight: 600;
 }
 
-/* ===== MAIN CONTENT ===== */
 .mainContent {
   max-width: var(--container-xl);
   margin: -1.5rem auto 0;
@@ -478,7 +460,6 @@
   z-index: 10;
 }
 
-/* ===== QUICK ACTIONS ===== */
 .quickActions {
   background: var(--cream);
   border-radius: 2rem;
@@ -629,7 +610,6 @@
   border-radius: 1rem;
 }
 
-/* ===== TWO COLUMN LAYOUT ===== */
 .twoColumn {
   display: grid;
   grid-template-columns: 1fr 360px;
@@ -637,7 +617,6 @@
   margin-bottom: 2rem;
 }
 
-/* ===== MAP SECTION ===== */
 .mapSection {
   background: var(--cream);
   border-radius: 2rem;
@@ -695,7 +674,6 @@
   letter-spacing: 0.05em;
 }
 
-/* ===== TRANSACTIONS SECTION ===== */
 .transactionsSection {
   background: var(--cream);
   border-radius: 2rem;
@@ -809,7 +787,6 @@
   color: var(--error);
 }
 
-/* ===== RIGHT COLUMN SECTIONS ===== */
 .currencySection,
 .snapshotSection,
 .statusSection {
@@ -820,7 +797,6 @@
   border: 1px solid rgba(197, 160, 40, 0.2);
 }
 
-/* Snapshot Grid */
 .snapshotGrid {
   display: flex;
   flex-direction: column;
@@ -886,7 +862,6 @@
   color: var(--error);
 }
 
-/* Status List */
 .statusList {
   display: flex;
   flex-direction: column;
@@ -922,7 +897,6 @@
   font-weight: 600;
 }
 
-/* FIXED: Verified badge in status section */
 .verifiedBadge {
   background: var(--teal);
   color: #FFFFFF;
@@ -932,7 +906,6 @@
   font-weight: 600;
 }
 
-/* FIXED: Pending badge in status section */
 .pendingBadge {
   background: var(--gold);
   color: #0A2540;
@@ -942,7 +915,6 @@
   font-weight: 600;
 }
 
-/* ===== INSIGHTS SECTION ===== */
 .insightsSection {
   margin-bottom: 2rem;
 }
@@ -953,7 +925,6 @@
   gap: 1.5rem;
 }
 
-/* ===== SUPPORT SECTION ===== */
 .supportSection {
   background: linear-gradient(135deg, var(--navy), var(--purple));
   border-radius: 2rem;
@@ -1024,7 +995,6 @@
   transform: translateY(0);
 }
 
-/* ===== MODAL STYLES ===== */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -1345,7 +1315,6 @@
   color: var(--gold);
 }
 
-/* ===== LOADING STATES ===== */
 .loadingContainer {
   min-height: 100vh;
   display: flex;
@@ -1390,7 +1359,6 @@
   100% { background-position: -200% 0; }
 }
 
-/* ===== ERROR STATE ===== */
 .errorContainer {
   min-height: 100vh;
   display: flex;
@@ -1472,7 +1440,6 @@
   color: var(--navy);
 }
 
-/* ===== EMPTY STATE ===== */
 .emptyState {
   text-align: center;
   padding: 3rem;
@@ -1512,7 +1479,6 @@
   box-shadow: 0 10px 20px -5px rgba(197, 160, 40, 0.3);
 }
 
-/* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -1529,7 +1495,6 @@
   }
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1024px) {
   .twoColumn {
     grid-template-columns: 1fr;
@@ -1643,7 +1608,6 @@
   }
 }
 
-/* ===== ACCESSIBILITY ===== */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -1654,7 +1618,6 @@
   }
 }
 
-/* ===== PRINT STYLES ===== */
 @media print {
   .hero {
     background: none;
@@ -1668,8 +1631,6 @@
   }
 }
 
-/* ===== UTILITY CLASSES ===== */
-/* FIXED: Greeting gradient - gold to white for better visibility */
 .text-gradient-gold-purple {
   background: linear-gradient(135deg, #FFD700, #FFFFFF);
   -webkit-background-clip: text;
@@ -1728,7 +1689,6 @@
   color: var(--purple);
 }
 
-/* ===== HIDE ACTION ICONS ON MOBILE ===== */
 @media (max-width: 768px) {
   .heroActions {
     display: none !important;
@@ -1742,7 +1702,7 @@
     display: none;
   }
 }
-/* ===== ENSURE TEXT VISIBILITY ON GRADIENT ===== */
+
 .hero {
   position: relative;
   z-index: 1;
@@ -1767,12 +1727,10 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Ensure the gradient overlay doesn't cover text */
 .hero::before {
   z-index: 0;
 }
 
-/* Make sure all text elements have white color with proper contrast */
 .userName {
   color: #FFFFFF !important;
   font-weight: 800;
@@ -1787,78 +1745,4 @@
 .date, .time {
   color: #FFFFFF !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-}
-/* ===== SECURITY BANNER ===== */
-.securityBanner {
-  background: linear-gradient(135deg, var(--navy), var(--purple));
-  color: var(--white);
-  padding: 1rem 2rem;
-  border-radius: 1rem;
-  text-align: center;
-  font-weight: 600;
-  margin: 1rem 0 2rem 0;
-  border: 1px solid var(--gold);
-  box-shadow: 0 4px 15px rgba(197, 160, 40, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.securityBanner::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(197, 160, 40, 0.1) 0%, transparent 70%);
-  animation: rotate 20s linear infinite;
-  z-index: 0;
-}
-
-.securityBanner:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(197, 160, 40, 0.3);
-  transition: all 0.3s ease;
-}
-
-.securityIcon {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: var(--gold);
-  position: relative;
-  z-index: 1;
-}
-
-.securityBanner span {
-  position: relative;
-  z-index: 1;
-  font-size: 1rem;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .securityBanner {
-    padding: 0.75rem 1rem;
-    margin: 0.75rem 0 1.5rem 0;
-    font-size: 0.875rem;
-  }
-  
-  .securityIcon {
-    width: 1rem;
-    height: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .securityBanner {
-    flex-direction: column;
-    gap: 0.5rem;
-    text-align: center;
-  }
 }
