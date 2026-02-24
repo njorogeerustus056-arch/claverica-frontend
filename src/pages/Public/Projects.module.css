@@ -224,7 +224,7 @@
   color: var(--white);
   font-size: 0.875rem;
   font-weight: 700;
-  margin-bottom: 8rem;
+  margin-bottom: 3rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -242,58 +242,52 @@
   animation: pulse 2s ease-in-out infinite;
 }
 
-/* MASSIVE HERO TITLE */
+/* REASONABLE HERO TITLE */
 .heroTitle {
   font-weight: 900;
   color: var(--white);
-  line-height: 1.1;
-  letter-spacing: -0.04em;
-  margin-bottom: 6rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 3rem;
 }
 
 .titleLine1 {
   display: block;
-  font-size: 8rem;
-  margin-bottom: 2rem;
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
 }
 
 .titleLine2 {
   display: block;
-  font-size: 8rem;
+  font-size: 3rem;
   background: linear-gradient(to right, var(--gold), #F5E6D3, var(--purple));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-top: 2rem;
+  margin-top: 0.5rem;
 }
 
 @media (min-width: 640px) {
   .titleLine1, .titleLine2 {
-    font-size: 12rem;
+    font-size: 4rem;
   }
 }
 
 @media (min-width: 768px) {
   .titleLine1, .titleLine2 {
-    font-size: 14rem;
+    font-size: 5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .titleLine1, .titleLine2 {
-    font-size: 16rem;
+    font-size: 6rem;
   }
 }
 
 @media (min-width: 1280px) {
   .titleLine1, .titleLine2 {
-    font-size: 18rem;
-  }
-}
-
-@media (min-width: 1536px) {
-  .titleLine1, .titleLine2 {
-    font-size: 20rem;
+    font-size: 7rem;
   }
 }
 
@@ -303,7 +297,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  margin-top: 8rem;
+  margin-top: 3rem;
 }
 
 .categoryPill {
