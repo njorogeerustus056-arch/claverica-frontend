@@ -1788,3 +1788,77 @@
   color: #FFFFFF !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
+/* ===== SECURITY BANNER ===== */
+.securityBanner {
+  background: linear-gradient(135deg, var(--navy), var(--purple));
+  color: var(--white);
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  font-weight: 600;
+  margin: 1rem 0 2rem 0;
+  border: 1px solid var(--gold);
+  box-shadow: 0 4px 15px rgba(197, 160, 40, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.securityBanner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(197, 160, 40, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+  z-index: 0;
+}
+
+.securityBanner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(197, 160, 40, 0.3);
+  transition: all 0.3s ease;
+}
+
+.securityIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--gold);
+  position: relative;
+  z-index: 1;
+}
+
+.securityBanner span {
+  position: relative;
+  z-index: 1;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .securityBanner {
+    padding: 0.75rem 1rem;
+    margin: 0.75rem 0 1.5rem 0;
+    font-size: 0.875rem;
+  }
+  
+  .securityIcon {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .securityBanner {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}

@@ -490,6 +490,12 @@ export default function Home() {
 
         {/* Main Content */}
         <div className={styles.mainContent}>
+          {/* SECURITY BANNER - ADD THIS WHERE YOU NEED IT */}
+          <div className={styles.securityBanner}>
+            <Shield className={styles.securityIcon} />
+            <span>Your Security is Our Priority</span>
+          </div>
+
           {/* Quick Actions Grid */}
           <section className={styles.quickActions}>
             <div className={styles.sectionHeader}>
