@@ -1,4 +1,4 @@
-// src/pages/Dashboard/AccountSettings.tsx
+// src/pages/Dashboard/AccountSettings.tsx - Clean Version (No Language)
 import { useState, useEffect } from "react"; 
 import { 
   User, Mail, Phone, Lock, Shield, Bell, Eye, EyeOff, 
@@ -35,8 +35,9 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "../../lib/store/auth";
 import toast, { Toaster } from 'react-hot-toast';
+import styles from './AccountSettings.module.css'; // ✅ Import styles
 
-const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL || "`${import.meta.env.VITE_API_URL}`";
+const API_URL = import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app";
 
 // Match your Django Account model exactly
 interface Account {
@@ -52,10 +53,10 @@ interface Account {
   gender?: string;
   doc_type?: string;
   doc_number?: string;
-  street?: string; // Changed from address_line1
+  street?: string;
   city?: string;
-  state?: string; // Added
-  zip_code?: string; // Added
+  state?: string;
+  zip_code?: string;
   occupation?: string;
   employer?: string;
   income_range?: string;
@@ -74,7 +75,7 @@ interface Account {
 }
 
 interface UserProfile {
-  account: string; // account_number as foreign key
+  account: string;
   bio?: string;
   profile_image?: string;
   website?: string;
@@ -166,7 +167,6 @@ export default function AccountSettings() {
     confirm_password: ''
   });
   
-  // Match your Django Account model fields exactly
   const [profileForm, setProfileForm] = useState({
     first_name: '',
     last_name: '',
@@ -189,12 +189,12 @@ export default function AccountSettings() {
     email_frequency: 'realtime'
   });
 
-  // Data states - ALL EMPTY INITIALLY (NO MOCK DATA)
+  // Data states - ALL EMPTY INITIALLY
   const [account, setAccount] = useState<Account>({
     email: "",
     first_name: "",
     last_name: "",
-    account_number: "", // EMPTY - will be filled by API
+    account_number: "",
     phone: "",
     is_verified: false,
     is_active: false
@@ -211,8 +211,8 @@ export default function AccountSettings() {
     email_frequency: 'realtime'
   });
 
-  const [connectedDevices, setConnectedDevices] = useState<ConnectedDevice[]>([]); // EMPTY
-  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]); // EMPTY
+  const [connectedDevices, setConnectedDevices] = useState<ConnectedDevice[]>([]);
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
 
   const [kycStatus, setKycStatus] = useState<KYCStatus>({
     email_verified: false,
@@ -246,7 +246,6 @@ export default function AccountSettings() {
     }
 
     try {
-      // 1. Get user data from /api/users/profile/ (updated endpoint)
       const userRes = await fetch(`${API_URL}/users/profile/`, {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -259,7 +258,6 @@ export default function AccountSettings() {
 
       const userData = await userRes.json();
       
-      // 2. Fetch user settings from /api/users/settings/
       const settingsRes = await fetch(`${API_URL}/users/settings/`, {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -277,7 +275,6 @@ export default function AccountSettings() {
         settingsData = await settingsRes.json();
       }
 
-      // 3. Fetch connected devices from /api/users/devices/
       let devicesData: ConnectedDevice[] = [];
       try {
         const devicesRes = await fetch(`${API_URL}/users/devices/`, {
@@ -293,7 +290,6 @@ export default function AccountSettings() {
         console.log("Devices endpoint error:", err);
       }
 
-      // 4. Fetch activity logs from /api/users/activity-logs/
       let logsData: any[] = [];
       try {
         const logsRes = await fetch(`${API_URL}/users/activity-logs/`, {
@@ -309,7 +305,6 @@ export default function AccountSettings() {
         console.log("Activity logs endpoint error:", err);
       }
 
-      // Update account state with REAL data
       setAccount({
         email: userData.email || "",
         first_name: userData.first_name || "",
@@ -338,41 +333,33 @@ export default function AccountSettings() {
         last_login: userData.last_login
       });
 
-      // Update user settings state
       setUserSettings(settingsData);
       setSettingsForm(settingsData);
-
-      // Update connected devices
       setConnectedDevices(devicesData);
-
-      // Update activity logs with proper status detection
       setActivityLogs(logsData.map((log: any) => ({
         ...log,
         status: log.action?.toLowerCase().includes('failed') ? 'failed' : 'success'
       })));
 
-      // Calculate KYC status based on REAL account data
       const kycDocsSubmitted = !!(userData.doc_type && userData.doc_number);
       const kycStatusValue = userData.kyc_status || (kycDocsSubmitted ? 'submitted' : 'pending');
       
       setKycStatus({
         email_verified: userData.is_verified || false,
-        phone_verified: false, // Would need separate verification endpoint
+        phone_verified: false,
         kyc_status: kycStatusValue,
         kyc_docs_submitted: kycDocsSubmitted,
         verification_score: calculateVerificationScore(userData)
       });
 
-      // Update security status
       setSecurityStatus({
         two_factor_enabled: settingsData.two_factor_enabled || false,
-        last_password_change: 'Recently', // Would need backend to provide this
-        failed_login_attempts: 0, // Would need backend data
+        last_password_change: 'Recently',
+        failed_login_attempts: 0,
         suspicious_activity: false,
         security_score: calculateSecurityScore(settingsData, userData)
       });
 
-      // Set profile form with REAL initial data
       setProfileForm({
         first_name: userData.first_name || "",
         last_name: userData.last_name || "",
@@ -407,14 +394,13 @@ export default function AccountSettings() {
   };
 
   const calculateSecurityScore = (settings: any, accountData: any): number => {
-    let score = 50; // Base score
+    let score = 50;
     if (settings.two_factor_enabled) score += 30;
     if (accountData.is_verified) score += 10;
     if (accountData.phone) score += 10;
     return Math.min(score, 100);
   };
 
-  // Update settings using PATCH method
   const updateSettings = async (updates: Partial<UserSettings>) => {
     if (!tokens?.access) {
       toast.error("Please login to update settings");
@@ -438,11 +424,9 @@ export default function AccountSettings() {
 
       const updatedSettings = await response.json();
       
-      // Update local state
       setUserSettings(prev => ({ ...prev, ...updates }));
       setSettingsForm(prev => ({ ...prev, ...updates }));
       
-      // Recalculate security score
       setSecurityStatus(prev => ({
         ...prev,
         security_score: calculateSecurityScore({ ...userSettings, ...updates }, account)
@@ -455,7 +439,6 @@ export default function AccountSettings() {
     }
   };
 
-  // Update profile using POST method
   const updateProfile = async () => {
     if (!tokens?.access) {
       toast.error("Please login to update profile");
@@ -464,7 +447,6 @@ export default function AccountSettings() {
 
     setSaving(true);
     try {
-      // Convert empty strings to null for optional fields
       const cleanedData = Object.fromEntries(
         Object.entries(profileForm).map(([key, value]) => [
           key, 
@@ -489,7 +471,7 @@ export default function AccountSettings() {
       const data = await response.json();
       toast.success("Profile updated successfully");
       setShowProfileModal(false);
-      fetchAccountData(); // Refresh data
+      fetchAccountData();
     } catch (err: any) {
       console.error("Profile update failed:", err);
       toast.error(err.message || "Failed to update profile");
@@ -498,7 +480,6 @@ export default function AccountSettings() {
     }
   };
 
-  // Change password using your endpoint
   const changePassword = async () => {
     if (!tokens?.access) {
       toast.error("Please login to change password");
@@ -535,7 +516,6 @@ export default function AccountSettings() {
       setShowPasswordModal(false);
       setPasswordForm({ current_password: '', new_password: '', confirm_password: '' });
       
-      // Update security status
       setSecurityStatus(prev => ({
         ...prev,
         last_password_change: new Date().toLocaleDateString()
@@ -548,7 +528,6 @@ export default function AccountSettings() {
     }
   };
 
-  // Verify email using your endpoint
   const verifyEmail = async () => {
     if (!tokens?.access) {
       toast.error("Please login to verify email");
@@ -575,7 +554,6 @@ export default function AccountSettings() {
     }
   };
 
-  // Verify phone using your endpoint
   const verifyPhone = async () => {
     if (!tokens?.access) {
       toast.error("Please login to verify phone");
@@ -602,7 +580,6 @@ export default function AccountSettings() {
     }
   };
 
-  // Setup 2FA using your endpoint
   const setupTwoFactor = async () => {
     if (!tokens?.access) {
       toast.error("Please login to setup 2FA");
@@ -626,7 +603,6 @@ export default function AccountSettings() {
       
       if (data.qr_code_url) {
         setShow2FAModal(true);
-        // You can display QR code from data.qr_code_url if backend provides it
       } else {
         toast.success("2FA setup initiated - Check your email for next steps");
       }
@@ -638,7 +614,6 @@ export default function AccountSettings() {
     }
   };
 
-  // Remove device using your endpoint
   const removeDevice = async (deviceId: string) => {
     if (!tokens?.access) {
       toast.error("Please login to remove device");
@@ -658,12 +633,10 @@ export default function AccountSettings() {
         throw new Error(error.message || `Failed to remove device: ${response.statusText}`);
       }
 
-      // Remove from local state
       setConnectedDevices(prev => prev.filter(device => device.device_id !== deviceId));
       setShowDeviceModal(null);
       toast.success("Device removed successfully");
       
-      // Refresh devices
       fetchAccountData();
     } catch (err: any) {
       console.error("Device removal failed:", err);
@@ -671,7 +644,6 @@ export default function AccountSettings() {
     }
   };
 
-  // Export data using your endpoint
   const exportData = async () => {
     if (!tokens?.access) {
       toast.error("Please login to export data");
@@ -692,7 +664,6 @@ export default function AccountSettings() {
 
       const data = await response.json();
       
-      // Create and download CSV file
       const blob = new Blob([data.data], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -711,7 +682,6 @@ export default function AccountSettings() {
     }
   };
 
-  // Delete account using your endpoint
   const deleteAccount = async () => {
     if (!tokens?.access) {
       toast.error("Please login to delete account");
@@ -742,7 +712,6 @@ export default function AccountSettings() {
   };
 
   const submitKYC = async () => {
-    // For now, redirect to KYC page
     window.location.href = '/kyc/submit/';
   };
 
@@ -752,27 +721,21 @@ export default function AccountSettings() {
     const strokeDashoffset = circumference - (score / 100) * circumference;
     
     const getColor = (score: number) => {
-      if (score >= 80) return "text-green-500";
-      if (score >= 60) return "text-yellow-500";
-      return "text-red-500";
-    };
-
-    const getBgColor = (score: number) => {
-      if (score >= 80) return "stroke-green-500/20";
-      if (score >= 60) return "stroke-yellow-500/20";
-      return "stroke-red-500/20";
+      if (score >= 80) return styles.scoreGreen;
+      if (score >= 60) return styles.scoreYellow;
+      return styles.scoreRed;
     };
 
     return (
-      <div className="relative w-32 h-32">
-        <svg className="w-full h-full transform -rotate-90">
+      <div className={styles.scoreCircle}>
+        <svg className={styles.scoreSvg}>
           <circle
             cx="64"
             cy="64"
             r={radius}
             strokeWidth="8"
             fill="none"
-            className={getBgColor(score)}
+            className={styles.scoreCircleBg}
           />
           <circle
             cx="64"
@@ -783,12 +746,12 @@ export default function AccountSettings() {
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
-            className={`${getColor(score)} transition-all duration-1000`}
+            className={`${styles.scoreCircleFill} ${getColor(score)}`}
           />
         </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className={`text-3xl font-bold ${getColor(score)}`}>{score}</span>
-          <span className="text-xs text-gray-500">Security Score</span>
+        <div className={styles.scoreValue}>
+          <span className={styles.scoreNumber}>{score}</span>
+          <span className={styles.scoreText}>Security Score</span>
         </div>
       </div>
     );
@@ -807,30 +770,24 @@ export default function AccountSettings() {
     const percentage = Math.round((completedCount / totalCount) * 100);
 
     return (
-      <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Verification Progress
-          </span>
-          <span className="text-sm font-bold text-blue-600">{percentage}%</span>
+      <div>
+        <div className={styles.progressHeader}>
+          <span className={styles.progressLabel}>Verification Progress</span>
+          <span className={styles.progressPercentage}>{percentage}%</span>
         </div>
-        <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+        <div className={styles.progressBar}>
           <div 
-            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
+            className={styles.progressFill}
             style={{ width: `${percentage}%` }}
           />
         </div>
-        <div className="grid grid-cols-4 gap-2">
+        <div className={styles.stepsGrid}>
           {steps.map((step, index) => (
-            <div key={index} className="text-center">
-              <div className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center mb-1 ${
-                step.completed 
-                  ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' 
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-400'
-              }`}>
-                {step.completed ? <Check className="w-4 h-4" /> : <span>{index + 1}</span>}
+            <div key={index} className={styles.step}>
+              <div className={`${styles.stepCircle} ${step.completed ? styles.stepCompleted : styles.stepPending}`}>
+                {step.completed ? <Check size={16} /> : index + 1}
               </div>
-              <span className="text-xs text-gray-600 dark:text-gray-400">{step.label}</span>
+              <span className={styles.stepLabel}>{step.label}</span>
             </div>
           ))}
         </div>
@@ -838,7 +795,6 @@ export default function AccountSettings() {
     );
   };
 
-  // Document type options matching your backend
   const documentTypes = [
     { value: "passport", label: "Passport" },
     { value: "national_id", label: "National ID Card" },
@@ -846,7 +802,6 @@ export default function AccountSettings() {
     { value: "residence_permit", label: "Residence Permit" }
   ];
 
-  // Income range options matching your backend
   const incomeRanges = [
     { value: "<10000", label: "Below $10,000 / €9,000 / £8,000" },
     { value: "10000-30000", label: "$10,000 - $30,000 / €9,000 - €27,000" },
@@ -858,7 +813,6 @@ export default function AccountSettings() {
     { value: ">200000", label: "Above $200,000 / €180,000 / £160,000" }
   ];
 
-  // Gender options matching your backend
   const genderOptions = [
     { value: "male", label: "Male" },
     { value: "female", label: "Female" },
@@ -871,10 +825,10 @@ export default function AccountSettings() {
 
   if (loading) {
     return (
-      <div className="w-full h-full bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-400 font-medium">Loading account settings...</p>
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingContent}>
+          <div className={styles.spinner}></div>
+          <p className={styles.loadingText}>Loading account settings...</p>
         </div>
       </div>
     );
@@ -882,16 +836,14 @@ export default function AccountSettings() {
 
   if (error) {
     return (
-      <div className="w-full h-full bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 max-w-md w-full border border-red-100">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-red-600" />
-          </div>
-          <h3 className="text-xl font-bold text-slate-900 dark:text-white text-center mb-2">Error Loading Settings</h3>
-          <p className="text-slate-600 dark:text-slate-400 text-center mb-6">{error}</p>
+      <div className={styles.errorContainer}>
+        <div className={styles.errorCard}>
+          <AlertCircle className={styles.errorIcon} />
+          <h3 className={styles.errorTitle}>Error Loading Settings</h3>
+          <p className={styles.errorMessage}>{error}</p>
           <button
             onClick={fetchAccountData}
-            className="w-full bg-slate-900 dark:bg-slate-700 text-white rounded-xl py-3 font-semibold hover:bg-slate-800 transition-colors"
+            className={styles.retryButton}
           >
             Retry
           </button>
@@ -901,406 +853,364 @@ export default function AccountSettings() {
   }
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900">
+    <div className={styles.container}>
       <Toaster position="top-right" />
       
-      <div className="w-full h-full p-4 md:p-6 overflow-y-auto">
-        <div className="max-w-[1600px] mx-auto space-y-6">
+      <div className={styles.content}>
+        {/* Header */}
+        <div className={styles.header}>
+          <h1 className={styles.title}>Account Settings</h1>
+          <p className={styles.subtitle}>Manage your account preferences and security settings</p>
+        </div>
 
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-              Account Settings
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Manage your account preferences, security, and privacy settings
-            </p>
-          </div>
+        {/* Profile & Security Overview */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Profile Card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={styles.profileCard}
+          >
+            <div className={styles.profileGlow} />
+            <div className={styles.profileGlow2} />
+            <div className={styles.profileContent}>
+              <div className={styles.avatarWrapper}>
+                <div className={styles.avatar}>
+                  {account.first_name?.[0] || account.email?.[0] || "U"}
+                </div>
+                <button className={styles.cameraButton}>
+                  <Camera size={16} />
+                </button>
+              </div>
+              <div className={styles.profileInfo}>
+                <h2 className={styles.profileName}>
+                  {account.first_name} {account.last_name}
+                </h2>
+                <p className={styles.profileEmail}>{account.email}</p>
+                <div className={styles.profileBadges}>
+                  {account.account_number && (
+                    <span className={styles.badge}>
+                      <CreditCard size={12} /> 
+                      {account.account_number}
+                    </span>
+                  )}
+                  {account.country && (
+                    <span className={styles.badge}>
+                      <Earth size={12} /> 
+                      {account.country}
+                    </span>
+                  )}
+                  <span className={`${styles.badge} ${account.is_verified ? styles.badgeVerified : styles.badgeUnverified}`}>
+                    {account.is_verified ? '✓ Verified' : '⚠ Needs Verification'}
+                  </span>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowProfileModal(true)}
+                className={styles.editButton}
+              >
+                <User size={16} />
+                Edit Profile
+              </button>
+            </div>
+          </motion.div>
 
-          {/* Profile & Security Overview */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Profile Card */}
-            <motion.div 
+          {/* Security Score Card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className={styles.securityCard}
+          >
+            <div className={styles.securityHeader}>
+              <h3 className={styles.securityTitle}>Security Health</h3>
+              <Shield className={styles.securityIcon} size={20} />
+            </div>
+            <div className={styles.scoreContainer}>
+              <SecurityScoreCircle score={securityStatus.security_score} />
+              <div className={styles.scoreDetails}>
+                <div className={styles.scoreDetail}>
+                  <span className={styles.scoreDetailLabel}>2FA</span>
+                  <span className={`${styles.scoreDetailValue} ${securityStatus.two_factor_enabled ? styles.scoreDetailSuccess : styles.scoreDetailError}`}>
+                    {securityStatus.two_factor_enabled ? 'Enabled' : 'Disabled'}
+                  </span>
+                </div>
+                <div className={styles.scoreDetail}>
+                  <span className={styles.scoreDetailLabel}>Email Verified</span>
+                  <span className={`${styles.scoreDetailValue} ${kycStatus.email_verified ? styles.scoreDetailSuccess : styles.scoreDetailWarning}`}>
+                    {kycStatus.email_verified ? 'Yes' : 'No'}
+                  </span>
+                </div>
+                <div className={styles.scoreDetail}>
+                  <span className={styles.scoreDetailLabel}>Last Password</span>
+                  <span className={styles.scoreDetailValue}>
+                    {securityStatus.last_password_change || 'Never'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className={styles.statsGrid}>
+          {[
+            { 
+              label: "Account Status", 
+              value: account.is_active ? "Active" : "Inactive", 
+              icon: account.is_active ? CheckCircle : XCircle, 
+              colorStart: account.is_active ? "#10B981" : "#EF4444",
+              colorEnd: account.is_active ? "#059669" : "#DC2626",
+              trend: null
+            },
+            { 
+              label: "KYC Status", 
+              value: account.kyc_status ? account.kyc_status.charAt(0).toUpperCase() + account.kyc_status.slice(1).replace('_', ' ') : 'Pending', 
+              icon: account.kyc_status === 'verified' ? BadgeCheck : BadgeAlert, 
+              colorStart: account.kyc_status === 'verified' ? "#10B981" : account.kyc_status === 'pending' ? "#F59E0B" : "#EF4444",
+              colorEnd: account.kyc_status === 'verified' ? "#059669" : account.kyc_status === 'pending' ? "#D97706" : "#DC2626",
+              trend: null
+            },
+            { 
+              label: "Security Score", 
+              value: `${securityStatus.security_score}/100`, 
+              icon: ShieldCheck, 
+              colorStart: "#3B82F6",
+              colorEnd: "#2563EB",
+              trend: null
+            },
+            { 
+              label: "Verification", 
+              value: `${Math.round((kycStatus.verification_score / 100) * 100)}%`, 
+              icon: UserCheck, 
+              colorStart: "#8B5CF6",
+              colorEnd: "#7C3AED",
+              trend: kycStatus.verification_score > 50 ? "up" : "down"
+            }
+          ].map((stat, idx) => (
+            <motion.div
+              key={idx}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden lg:col-span-2"
+              transition={{ delay: idx * 0.1 }}
+              className={styles.statCard}
+              style={{
+                '--color-start': stat.colorStart,
+                '--color-end': stat.colorEnd
+              } as React.CSSProperties}
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl" />
-              <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                <div className="relative">
-                  <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl font-bold border-4 border-white/30 shadow-lg">
-                    {account.first_name?.[0] || account.email?.[0] || "U"}
+              <div className={styles.statGlow} />
+              <div className={styles.statContent}>
+                <div className={styles.statHeader}>
+                  <div className={styles.statIcon}>
+                    <stat.icon size={20} />
                   </div>
-                  <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-white text-blue-600 rounded-lg shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
-                    <Camera className="w-4 h-4" />
-                  </button>
+                  {stat.trend && (
+                    <div className={`${styles.statTrend} ${stat.trend === 'up' ? styles.trendUp : styles.trendDown}`}>
+                      {stat.trend === 'up' ? '↑' : '↓'}
+                    </div>
+                  )}
                 </div>
-                <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-xl md:text-2xl font-bold mb-1">
-                    {account.first_name} {account.last_name}
-                  </h2>
-                  <p className="text-white/80 mb-2">{account.email}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {account.account_number && (
-                      <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
-                        <CreditCard className="w-3 h-3 inline mr-1" /> 
-                        {account.account_number}
-                      </span>
-                    )}
-                    {account.country && (
-                      <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
-                        <Earth className="w-3 h-3 inline mr-1" /> 
-                        {account.country}
-                      </span>
-                    )}
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      account.is_verified 
-                        ? 'bg-green-500/30 backdrop-blur-sm' 
-                        : 'bg-yellow-500/30 backdrop-blur-sm'
-                    }`}>
-                      {account.is_verified ? '✓ Verified' : '⚠ Needs Verification'}
-                    </span>
+                <p className={styles.statLabel}>{stat.label}</p>
+                <p className={styles.statValue}>{stat.value}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Personal Information */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className={styles.section}
+            >
+              <div className={styles.sectionHeader}>
+                <div className={styles.sectionHeaderLeft}>
+                  <div className={styles.sectionIcon}>
+                    <User size={20} />
                   </div>
+                  <h3 className={styles.sectionTitle}>Personal Information</h3>
                 </div>
                 <button 
                   onClick={() => setShowProfileModal(true)}
-                  className="px-4 py-2 bg-white text-blue-600 rounded-xl font-semibold hover:scale-105 transition-transform shadow-lg"
+                  className={styles.sectionAction}
                 >
-                  <User className="w-4 h-4 inline mr-2" />
-                  Edit Profile
+                  Edit
                 </button>
               </div>
-            </motion.div>
-
-            {/* Security Score Card */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                  Security Health
-                </h3>
-                <Shield className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="flex flex-col items-center">
-                <SecurityScoreCircle score={securityStatus.security_score} />
-                <div className="mt-4 w-full space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400">2FA</span>
-                    <span className={`font-medium ${securityStatus.two_factor_enabled ? 'text-green-600' : 'text-red-600'}`}>
-                      {securityStatus.two_factor_enabled ? 'Enabled' : 'Disabled'}
-                    </span>
+              <div className={styles.sectionContent}>
+                <div className={styles.infoGrid}>
+                  <div className={styles.infoItem}>
+                    <p className={styles.infoLabel}>First Name</p>
+                    <p className={styles.infoValue}>{account.first_name || "Not set"}</p>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400">Email Verified</span>
-                    <span className={`font-medium ${kycStatus.email_verified ? 'text-green-600' : 'text-yellow-600'}`}>
-                      {kycStatus.email_verified ? 'Yes' : 'No'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400">Last Password</span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {securityStatus.last_password_change || 'Never'}
-                    </span>
+                  <div className={styles.infoItem}>
+                    <p className={styles.infoLabel}>Last Name</p>
+                    <p className={styles.infoValue}>{account.last_name || "Not set"}</p>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { 
-                label: "Account Status", 
-                value: account.is_active ? "Active" : "Inactive", 
-                icon: account.is_active ? CheckCircle : XCircle, 
-                color: account.is_active ? "from-green-500 to-emerald-500" : "from-red-500 to-orange-500",
-                trend: null
-              },
-              { 
-                label: "KYC Status", 
-                value: account.kyc_status ? account.kyc_status.charAt(0).toUpperCase() + account.kyc_status.slice(1).replace('_', ' ') : 'Pending', 
-                icon: account.kyc_status === 'verified' ? BadgeCheck : BadgeAlert, 
-                color: account.kyc_status === 'verified' ? "from-green-500 to-emerald-500" : 
-                       account.kyc_status === 'pending' ? "from-yellow-500 to-amber-500" : "from-red-500 to-orange-500",
-                trend: null
-              },
-              { 
-                label: "Security Score", 
-                value: `${securityStatus.security_score}/100`, 
-                icon: ShieldCheck, 
-                color: "from-blue-500 to-cyan-500",
-                trend: null
-              },
-              { 
-                label: "Verification", 
-                value: `${Math.round((kycStatus.verification_score / 100) * 100)}%`, 
-                icon: UserCheck, 
-                color: "from-purple-500 to-pink-500",
-                trend: kycStatus.verification_score > 50 ? "up" : "down"
-              }
-            ].map((stat, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="group relative bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all hover:scale-105"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity`}></div>
-                <div className="relative">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-md`}>
-                      <stat.icon className="w-5 h-5 text-white" />
+                
+                <div className={styles.infoGrid}>
+                  <div className={styles.infoItem}>
+                    <p className={styles.infoLabel}>Email</p>
+                    <div className={styles.infoRow}>
+                      <p className={styles.infoValue}>{account.email}</p>
+                      {account.is_verified ? (
+                        <span className={styles.verifiedBadge}>✓ Verified</span>
+                      ) : (
+                        <button onClick={verifyEmail} className={styles.verifyButton}>
+                          Verify Email
+                        </button>
+                      )}
                     </div>
-                    {stat.trend && (
-                      <div className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                        stat.trend === 'up' 
-                          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
-                          : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                      }`}>
-                        {stat.trend === 'up' ? '↑' : '↓'}
+                  </div>
+                  <div className={styles.infoItem}>
+                    <p className={styles.infoLabel}>Phone</p>
+                    <div className={styles.infoRow}>
+                      <p className={styles.infoValue}>{account.phone || "Not set"}</p>
+                      {account.phone && !kycStatus.phone_verified && (
+                        <button onClick={verifyPhone} className={styles.verifyButton}>
+                          Verify Phone
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {account.date_of_birth && (
+                  <div className={styles.infoItem}>
+                    <p className={styles.infoLabel}>Date of Birth</p>
+                    <p className={styles.infoValue}>
+                      {new Date(account.date_of_birth).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
+
+                {(account.street || account.address_line1) && (
+                  <div className={styles.infoItem}>
+                    <p className={styles.infoLabel}>Address</p>
+                    <p className={styles.infoValue}>
+                      {account.street || account.address_line1}
+                      {account.city && `, ${account.city}`}
+                      {(account.state || account.state_province) && `, ${account.state || account.state_province}`}
+                      {account.zip_code && ` ${account.zip_code}`}
+                      {account.country && `, ${account.country}`}
+                    </p>
+                  </div>
+                )}
+
+                {account.occupation && (
+                  <div className={styles.infoGrid}>
+                    <div className={styles.infoItem}>
+                      <p className={styles.infoLabel}>Occupation</p>
+                      <p className={styles.infoValue}>{account.occupation}</p>
+                    </div>
+                    {account.employer && (
+                      <div className={styles.infoItem}>
+                        <p className={styles.infoLabel}>Employer</p>
+                        <p className={styles.infoValue}>{account.employer}</p>
                       </div>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">{stat.label}</p>
-                  <p className="text-xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                )}
 
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left Column */}
-            <div className="space-y-6">
-              {/* Personal Information */}
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden"
-              >
-                <div className="p-5 border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-md">
-                        <User className="w-5 h-5 text-white" />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                        Personal Information
-                      </h3>
-                    </div>
-                    <button 
-                      onClick={() => setShowProfileModal(true)}
-                      className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                </div>
-                <div className="p-5 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">First Name</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {account.first_name || "Not set"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Last Name</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {account.last_name || "Not set"}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Email</p>
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {account.email}
-                        </p>
-                        {account.is_verified ? (
-                          <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded text-xs font-semibold">
-                            ✓ Verified
-                          </span>
-                        ) : (
-                          <button 
-                            onClick={verifyEmail}
-                            className="px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded text-xs font-semibold hover:bg-yellow-200 dark:hover:bg-yellow-900/40 transition-colors"
-                          >
-                            Verify Email
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Phone</p>
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {account.phone || "Not set"}
-                        </p>
-                        {account.phone && !kycStatus.phone_verified && (
-                          <button 
-                            onClick={verifyPhone}
-                            className="px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded text-xs font-semibold hover:bg-yellow-200 dark:hover:bg-yellow-900/40 transition-colors"
-                          >
-                            Verify Phone
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {account.date_of_birth && (
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Date of Birth</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {new Date(account.date_of_birth).toLocaleDateString()}
-                      </p>
-                    </div>
-                  )}
-
-                  {(account.street || account.address_line1) && (
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Address</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {account.street || account.address_line1}
-                        {account.city && `, ${account.city}`}
-                        {(account.state || account.state_province) && `, ${account.state || account.state_province}`}
-                        {account.zip_code && ` ${account.zip_code}`}
-                        {account.country && `, ${account.country}`}
-                      </p>
-                    </div>
-                  )}
-
-                  {account.occupation && (
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Occupation</p>
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {account.occupation}
-                        </p>
-                      </div>
-                      {account.employer && (
-                        <div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">Employer</p>
-                          <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                            {account.employer}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {account.doc_type && (
-                    <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                      <p className="text-xs text-gray-500 dark:text-gray-400">ID Document</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {documentTypes.find(doc => doc.value === account.doc_type)?.label || account.doc_type}: {account.doc_number}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-
-              {/* Verification Progress */}
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden"
-              >
-                <div className="p-5 border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-md">
-                        <BadgeCheck className="w-5 h-5 text-white" />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                        Identity Verification
-                      </h3>
-                    </div>
-                    <button 
-                      onClick={submitKYC}
-                      className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      {kycStatus.kyc_docs_submitted ? 'Update KYC' : 'Submit KYC'}
-                    </button>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <VerificationProgress />
-                  <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                    <p className="text-sm text-blue-700 dark:text-blue-300">
-                      {kycStatus.kyc_docs_submitted 
-                        ? `Your KYC documents have been ${account.kyc_status}.`
-                        : "Complete KYC verification to access all features including higher transfer limits."}
+                {account.doc_type && (
+                  <div className={styles.docBadge}>
+                    <p className={styles.infoLabel}>ID Document</p>
+                    <p className={styles.infoValue}>
+                      {documentTypes.find(doc => doc.value === account.doc_type)?.label || account.doc_type}: {account.doc_number}
                     </p>
                   </div>
-                </div>
-              </motion.div>
+                )}
+              </div>
+            </motion.div>
 
-              {/* Connected Devices */}
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden"
-              >
-                <div className="p-5 border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-md">
-                        <Smartphone className="w-5 h-5 text-white" />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                        Connected Devices ({connectedDevices.length})
-                      </h3>
-                    </div>
-                    <button 
-                      onClick={() => setShowDevices(!showDevices)}
-                      className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      {showDevices ? 'Hide' : 'Show All'}
-                    </button>
+            {/* Verification Progress */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className={styles.section}
+            >
+              <div className={styles.sectionHeader}>
+                <div className={styles.sectionHeaderLeft}>
+                  <div className={styles.sectionIcon}>
+                    <BadgeCheck size={20} />
                   </div>
+                  <h3 className={styles.sectionTitle}>Identity Verification</h3>
                 </div>
-                <div className="p-5">
+                <button 
+                  onClick={submitKYC}
+                  className={styles.sectionAction}
+                >
+                  {kycStatus.kyc_docs_submitted ? 'Update KYC' : 'Submit KYC'}
+                </button>
+              </div>
+              <div className={styles.sectionContent}>
+                <VerificationProgress />
+                <div className={styles.infoBox}>
+                  <p className={styles.infoText}>
+                    {kycStatus.kyc_docs_submitted 
+                      ? `Your KYC documents have been ${account.kyc_status}.`
+                      : "Complete KYC verification to access all features including higher transfer limits."}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Connected Devices */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className={styles.section}
+            >
+              <div className={styles.sectionHeader}>
+                <div className={styles.sectionHeaderLeft}>
+                  <div className={styles.sectionIcon}>
+                    <Smartphone size={20} />
+                  </div>
+                  <h3 className={styles.sectionTitle}>
+                    Connected Devices ({connectedDevices.length})
+                  </h3>
+                </div>
+                <button 
+                  onClick={() => setShowDevices(!showDevices)}
+                  className={styles.sectionAction}
+                >
+                  {showDevices ? 'Hide' : 'Show All'}
+                </button>
+              </div>
+              <div className={styles.sectionContent}>
+                <div className={styles.devicesList}>
                   {connectedDevices.length > 0 ? (
                     connectedDevices.slice(0, showDevices ? undefined : 2).map((device) => (
-                      <div key={device.id} className="flex items-center justify-between p-3 mb-2 bg-gray-50 dark:bg-gray-900/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900/70 transition-colors">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                            device.device_type === 'mobile' 
-                              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600' 
-                              : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600'
-                          }`}>
+                      <div key={device.id} className={styles.deviceItem}>
+                        <div className={styles.deviceInfo}>
+                          <div className={`${styles.deviceIcon} ${device.device_type === 'mobile' ? styles.deviceIconMobile : styles.deviceIconDesktop}`}>
                             {device.device_type === 'mobile' ? (
-                              <Smartphone className="w-5 h-5" />
+                              <Smartphone size={20} />
                             ) : (
-                              <Laptop className="w-5 h-5" />
+                              <Laptop size={20} />
                             )}
                           </div>
                           <div>
-                            <p className="font-semibold text-gray-900 dark:text-white">{device.device_name}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            <p className={styles.deviceName}>{device.device_name}</p>
+                            <p className={styles.deviceMeta}>
                               Last active: {new Date(device.last_active).toLocaleDateString()}
-                              {device.is_current && " • Current session"}
+                              {device.is_current && <span className={styles.currentSession}> • Current session</span>}
                             </p>
                           </div>
                         </div>
                         <button
                           onClick={() => setShowDeviceModal(device)}
-                          className="text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg"
+                          className={styles.removeButton}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     ))
@@ -1310,43 +1220,41 @@ export default function AccountSettings() {
                     </p>
                   )}
                 </div>
-              </motion.div>
-            </div>
+              </div>
+            </motion.div>
+          </div>
 
-            {/* Right Column */}
-            <div className="space-y-6">
-              {/* Security Settings */}
-              <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden"
-              >
-                <div className="p-5 border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-md">
-                        <ShieldIcon className="w-5 h-5 text-white" />
-                      </div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                        Security Settings
-                      </h3>
-                    </div>
-                    <button 
-                      onClick={() => setShowSecurityDetails(!showSecurityDetails)}
-                      className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      {showSecurityDetails ? 'Hide' : 'Show'}
-                    </button>
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Security Settings */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className={styles.section}
+            >
+              <div className={styles.sectionHeader}>
+                <div className={styles.sectionHeaderLeft}>
+                  <div className={styles.sectionIcon}>
+                    <ShieldIcon size={20} />
                   </div>
+                  <h3 className={styles.sectionTitle}>Security Settings</h3>
                 </div>
-                <div className="p-5 space-y-4">
+                <button 
+                  onClick={() => setShowSecurityDetails(!showSecurityDetails)}
+                  className={styles.sectionAction}
+                >
+                  {showSecurityDetails ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              <div className={styles.sectionContent}>
+                <div className={styles.settingsList}>
                   {/* 2FA */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <Shield className="w-5 h-5 text-green-600" />
-                      <div>
-                        <p className="font-semibold text-gray-900 dark:text-white">Two-Factor Auth</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Extra security layer</p>
+                  <div className={styles.settingItem}>
+                    <div className={styles.settingLeft}>
+                      <Shield className={`${styles.settingIcon} ${styles.settingIconSuccess}`} size={20} />
+                      <div className={styles.settingInfo}>
+                        <p className={styles.settingTitle}>Two-Factor Auth</p>
+                        <p className={styles.settingDesc}>Extra security layer</p>
                       </div>
                     </div>
                     <button
@@ -1357,445 +1265,386 @@ export default function AccountSettings() {
                           updateSettings({ two_factor_enabled: !securityStatus.two_factor_enabled });
                         }
                       }}
-                      className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${
-                        securityStatus.two_factor_enabled 
-                          ? 'bg-gradient-to-r from-green-500 to-green-600' 
-                          : 'bg-gray-300 dark:bg-gray-600'
-                      }`}
+                      className={`${styles.toggle} ${securityStatus.two_factor_enabled ? styles.toggleActive : ''}`}
                     >
-                      <span
-                        className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 ${
-                          securityStatus.two_factor_enabled ? 'translate-x-6' : 'translate-x-0'
-                        }`}
-                      />
+                      <span className={styles.toggleKnob} />
                     </button>
                   </div>
 
                   {/* Email Notifications */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <Bell className="w-5 h-5 text-purple-600" />
-                      <div>
-                        <p className="font-semibold text-gray-900 dark:text-white">Email Notifications</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Receive important updates</p>
+                  <div className={styles.settingItem}>
+                    <div className={styles.settingLeft}>
+                      <Bell className={`${styles.settingIcon} ${styles.settingIconPurple}`} size={20} />
+                      <div className={styles.settingInfo}>
+                        <p className={styles.settingTitle}>Email Notifications</p>
+                        <p className={styles.settingDesc}>Receive important updates</p>
                       </div>
                     </div>
                     <button
                       onClick={() => updateSettings({ email_notifications: !userSettings.email_notifications })}
-                      className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${
-                        userSettings.email_notifications 
-                          ? 'bg-gradient-to-r from-blue-500 to-blue-600' 
-                          : 'bg-gray-300 dark:bg-gray-600'
-                      }`}
+                      className={`${styles.toggle} ${userSettings.email_notifications ? styles.toggleActive : ''}`}
                     >
-                      <span
-                        className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 ${
-                          userSettings.email_notifications ? 'translate-x-6' : 'translate-x-0'
-                        }`}
-                      />
+                      <span className={styles.toggleKnob} />
                     </button>
                   </div>
 
                   {/* SMS Notifications */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <PhoneIcon className="w-5 h-5 text-blue-600" />
-                      <div>
-                        <p className="font-semibold text-gray-900 dark:text-white">SMS Alerts</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Get SMS for transactions</p>
+                  <div className={styles.settingItem}>
+                    <div className={styles.settingLeft}>
+                      <PhoneIcon className={`${styles.settingIcon} ${styles.settingIconBlue}`} size={20} />
+                      <div className={styles.settingInfo}>
+                        <p className={styles.settingTitle}>SMS Alerts</p>
+                        <p className={styles.settingDesc}>Get SMS for transactions</p>
                       </div>
                     </div>
                     <button
                       onClick={() => updateSettings({ sms_notifications: !userSettings.sms_notifications })}
-                      className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${
-                        userSettings.sms_notifications 
-                          ? 'bg-gradient-to-r from-blue-500 to-blue-600' 
-                          : 'bg-gray-300 dark:bg-gray-600'
-                      }`}
+                      className={`${styles.toggle} ${userSettings.sms_notifications ? styles.toggleActive : ''}`}
                     >
-                      <span
-                        className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-200 ${
-                          userSettings.sms_notifications ? 'translate-x-6' : 'translate-x-0'
-                        }`}
-                      />
+                      <span className={styles.toggleKnob} />
                     </button>
                   </div>
-
-                  {/* ⚠️ THEME AND LANGUAGE REMOVED AS REQUESTED ⚠️ */}
                 </div>
-              </motion.div>
+              </div>
+            </motion.div>
 
-              {/* Quick Actions */}
-              <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 }}
-                className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden"
-              >
-                <div className="p-5 border-b border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-md">
-                      <Zap className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                      Quick Actions
-                    </h3>
+            {/* Quick Actions */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className={styles.section}
+            >
+              <div className={styles.sectionHeader}>
+                <div className={styles.sectionHeaderLeft}>
+                  <div className={styles.sectionIcon}>
+                    <Zap size={20} />
                   </div>
+                  <h3 className={styles.sectionTitle}>Quick Actions</h3>
                 </div>
-                <div className="p-5">
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { icon: Lock, label: "Change Password", color: "from-blue-500 to-blue-600", action: () => setShowPasswordModal(true) },
-                      { icon: Download, label: "Export Data", color: "from-green-500 to-green-600", action: () => setShowExportModal(true) },
-                      { icon: FileText, label: "Activity Log", color: "from-purple-500 to-purple-600", action: () => setShowActivityLogs(true) },
-                      { icon: LogOut, label: "Logout All", color: "from-red-500 to-red-600", action: () => logout() },
-                      { icon: HelpCircle, label: "Support", color: "from-yellow-500 to-yellow-600", action: () => toast.info("Support center coming soon") },
-                      { icon: Trash2, label: "Delete Account", color: "from-gray-500 to-gray-600", action: () => setShowDeleteModal(true) }
-                    ].map((action, idx) => (
-                      <button
-                        key={idx}
-                        onClick={action.action}
-                        className="group bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 hover:shadow-md transition-all hover:scale-105"
-                      >
-                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center mb-2 group-hover:scale-110 transition-transform`}>
-                          <action.icon className="w-5 h-5 text-white" />
-                        </div>
-                        <p className="text-sm font-semibold text-gray-900 dark:text-white text-left">{action.label}</p>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Activity Log */}
-              {showActivityLogs && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden"
-                >
-                  <div className="p-5 border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-md">
-                          <Clock className="w-5 h-5 text-white" />
-                        </div>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                          Recent Activity
-                        </h3>
+              </div>
+              <div className={styles.sectionContent}>
+                <div className={styles.actionsGrid}>
+                  {[
+                    { icon: Lock, label: "Change Password", colorStart: "#3B82F6", colorEnd: "#2563EB", action: () => setShowPasswordModal(true) },
+                    { icon: Download, label: "Export Data", colorStart: "#10B981", colorEnd: "#059669", action: () => setShowExportModal(true) },
+                    { icon: FileText, label: "Activity Log", colorStart: "#8B5CF6", colorEnd: "#7C3AED", action: () => setShowActivityLogs(true) },
+                    { icon: LogOut, label: "Logout All", colorStart: "#EF4444", colorEnd: "#DC2626", action: () => logout() },
+                    { icon: HelpCircle, label: "Support", colorStart: "#F59E0B", colorEnd: "#D97706", action: () => toast.info("Support center coming soon") },
+                    { icon: Trash2, label: "Delete Account", colorStart: "#6B7280", colorEnd: "#4B5563", action: () => setShowDeleteModal(true) }
+                  ].map((action, idx) => (
+                    <button
+                      key={idx}
+                      onClick={action.action}
+                      className={styles.actionButton}
+                      style={{
+                        '--color-start': action.colorStart,
+                        '--color-end': action.colorEnd
+                      } as React.CSSProperties}
+                    >
+                      <div className={styles.actionIcon}>
+                        <action.icon size={20} />
                       </div>
-                      <button 
-                        onClick={() => setShowActivityLogs(false)}
-                        className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                      >
-                        Close
-                      </button>
+                      <p className={styles.actionLabel}>{action.label}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Activity Log */}
+            {showActivityLogs && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className={styles.section}
+              >
+                <div className={styles.sectionHeader}>
+                  <div className={styles.sectionHeaderLeft}>
+                    <div className={styles.sectionIcon}>
+                      <Clock size={20} />
                     </div>
+                    <h3 className={styles.sectionTitle}>Recent Activity</h3>
                   </div>
-                  <div className="p-5">
-                    <div className="space-y-3">
-                      {activityLogs.length > 0 ? (
-                        activityLogs.slice(0, 10).map((log) => (
-                          <div key={log.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                            <div>
-                              <p className="font-medium text-gray-900 dark:text-white">{log.action}</p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {new Date(log.timestamp).toLocaleString()} • {log.device || 'Unknown device'}
-                              </p>
-                            </div>
-                            <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                              log.status === 'success' 
-                                ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
-                                : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                            }`}>
-                              {log.status}
-                            </span>
+                  <button 
+                    onClick={() => setShowActivityLogs(false)}
+                    className={styles.closeButton}
+                  >
+                    Close
+                  </button>
+                </div>
+                <div className={styles.sectionContent}>
+                  <div className={styles.activityLog}>
+                    {activityLogs.length > 0 ? (
+                      activityLogs.slice(0, 10).map((log) => (
+                        <div key={log.id} className={styles.logItem}>
+                          <div className={styles.logContent}>
+                            <p className={styles.logAction}>{log.action}</p>
+                            <p className={styles.logTime}>
+                              {new Date(log.timestamp).toLocaleString()} • {log.device || 'Unknown device'}
+                            </p>
                           </div>
-                        ))
-                      ) : (
-                        <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-                          No activity logs found.
-                        </p>
-                      )}
-                    </div>
+                          <span className={`${styles.logStatus} ${log.status === 'success' ? styles.logSuccess : styles.logFailed}`}>
+                            {log.status}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+                        No activity logs found.
+                      </p>
+                    )}
                   </div>
-                </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+        </div>
+
+        {/* Account Details */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={styles.section}
+        >
+          <div className={styles.sectionHeader}>
+            <div className={styles.sectionHeaderLeft}>
+              <div className={styles.sectionIcon}>
+                <CreditCard size={20} />
+              </div>
+              <h3 className={styles.sectionTitle}>Account Details</h3>
+            </div>
+          </div>
+          <div className={styles.sectionContent}>
+            <div className={styles.detailsGrid}>
+              {account.account_number && (
+                <div className={styles.detailCard}>
+                  <p className={styles.detailLabel}>Account Number</p>
+                  <p className={`${styles.detailValue} ${styles.detailMono}`}>
+                    {account.account_number}
+                  </p>
+                </div>
+              )}
+              <div className={styles.detailCard}>
+                <p className={styles.detailLabel}>Member Since</p>
+                <p className={styles.detailValue}>
+                  {account.date_joined ? new Date(account.date_joined).toLocaleDateString() : "Recently"}
+                </p>
+              </div>
+              <div className={styles.detailCard}>
+                <p className={styles.detailLabel}>Account Status</p>
+                <p className={`${styles.detailValue} ${account.is_active ? 'text-green-600' : 'text-red-600'}`}>
+                  {account.is_active ? "Active" : "Inactive"}
+                </p>
+              </div>
+              {account.kyc_status && (
+                <div className={styles.detailCard}>
+                  <p className={styles.detailLabel}>KYC Status</p>
+                  <p className={`${styles.detailValue} ${
+                    account.kyc_status === 'verified' 
+                      ? 'text-green-600' 
+                      : account.kyc_status === 'pending' || account.kyc_status === 'submitted'
+                      ? 'text-yellow-600'
+                      : 'text-red-600'
+                  }`}>
+                    {account.kyc_status.charAt(0).toUpperCase() + account.kyc_status.slice(1).replace('_', ' ')}
+                  </p>
+                </div>
+              )}
+              {account.risk_level && (
+                <div className={styles.detailCard}>
+                  <p className={styles.detailLabel}>Risk Level</p>
+                  <p className={`${styles.detailValue} ${
+                    account.risk_level === 'low' 
+                      ? 'text-green-600' 
+                      : account.risk_level === 'medium'
+                      ? 'text-yellow-600'
+                      : 'text-red-600'
+                  }`}>
+                    {account.risk_level.charAt(0).toUpperCase() + account.risk_level.slice(1)}
+                  </p>
+                </div>
+              )}
+              {account.nationality && (
+                <div className={styles.detailCard}>
+                  <p className={styles.detailLabel}>Nationality</p>
+                  <p className={styles.detailValue}>{account.nationality}</p>
+                </div>
               )}
             </div>
           </div>
-
-          {/* Account Details */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden"
-          >
-            <div className="p-5 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center shadow-md">
-                  <CreditCard className="w-5 h-5 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                  Account Details
-                </h3>
-              </div>
-            </div>
-            <div className="p-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {account.account_number && (
-                  <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Account Number</p>
-                    <p className="text-sm font-bold text-gray-900 dark:text-white font-mono">
-                      {account.account_number}
-                    </p>
-                  </div>
-                )}
-                <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Member Since</p>
-                  <p className="text-sm font-bold text-gray-900 dark:text-white">
-                    {account.date_joined ? new Date(account.date_joined).toLocaleDateString() : "Recently"}
-                  </p>
-                </div>
-                <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Account Status</p>
-                  <p className={`text-sm font-bold ${
-                    account.is_active 
-                      ? 'text-green-600 dark:text-green-400' 
-                      : 'text-red-600 dark:text-red-400'
-                  }`}>
-                    {account.is_active ? "Active" : "Inactive"}
-                  </p>
-                </div>
-                {account.kyc_status && (
-                  <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">KYC Status</p>
-                    <p className={`text-sm font-bold ${
-                      account.kyc_status === 'verified' 
-                        ? 'text-green-600 dark:text-green-400' 
-                        : account.kyc_status === 'pending' || account.kyc_status === 'submitted'
-                        ? 'text-yellow-600 dark:text-yellow-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}>
-                      {account.kyc_status.charAt(0).toUpperCase() + account.kyc_status.slice(1).replace('_', ' ')}
-                    </p>
-                  </div>
-                )}
-                {account.risk_level && (
-                  <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Risk Level</p>
-                    <p className={`text-sm font-bold ${
-                      account.risk_level === 'low' 
-                        ? 'text-green-600 dark:text-green-400' 
-                        : account.risk_level === 'medium'
-                        ? 'text-yellow-600 dark:text-yellow-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}>
-                      {account.risk_level.charAt(0).toUpperCase() + account.risk_level.slice(1)}
-                    </p>
-                  </div>
-                )}
-                {account.nationality && (
-                  <div className="p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Nationality</p>
-                    <p className="text-sm font-bold text-gray-900 dark:text-white">
-                      {account.nationality}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Modals - All modals remain the same */}
+      {/* Modals */}
       <AnimatePresence>
         {/* Profile Modal */}
         {showProfileModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className={styles.modalOverlay}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-gray-800 rounded-3xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className={styles.modal}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Profile</h3>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Edit Profile</h3>
                 <button 
                   onClick={() => setShowProfileModal(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl"
+                  className={styles.modalClose}
                 >
-                  <X className="w-5 h-5" />
+                  <X size={20} />
                 </button>
               </div>
               
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      First Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={profileForm.first_name}
-                      onChange={(e) => setProfileForm({...profileForm, first_name: e.target.value})}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Last Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={profileForm.last_name}
-                      onChange={(e) => setProfileForm({...profileForm, last_name: e.target.value})}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Phone Number *
-                  </label>
+              <div className={styles.formGrid}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>First Name *</label>
                   <input
-                    type="tel"
-                    value={profileForm.phone}
-                    onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
-                    placeholder="+254 XXX XXX XXX"
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    type="text"
+                    value={profileForm.first_name}
+                    onChange={(e) => setProfileForm({...profileForm, first_name: e.target.value})}
+                    className={styles.formInput}
                     required
                   />
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Date of Birth
-                    </label>
-                    <input
-                      type="date"
-                      value={profileForm.date_of_birth}
-                      onChange={(e) => setProfileForm({...profileForm, date_of_birth: e.target.value})}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Gender
-                    </label>
-                    <select
-                      value={profileForm.gender}
-                      onChange={(e) => setProfileForm({...profileForm, gender: e.target.value})}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    >
-                      <option value="">Select Gender</option>
-                      {genderOptions.map((gender) => (
-                        <option key={gender.value} value={gender.value}>
-                          {gender.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Address
-                  </label>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Last Name *</label>
                   <input
                     type="text"
-                    value={profileForm.street}
-                    onChange={(e) => setProfileForm({...profileForm, street: e.target.value})}
-                    placeholder="Street address"
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none mb-3"
+                    value={profileForm.last_name}
+                    onChange={(e) => setProfileForm({...profileForm, last_name: e.target.value})}
+                    className={styles.formInput}
+                    required
                   />
-                  <div className="grid grid-cols-3 gap-4">
-                    <input
-                      type="text"
-                      value={profileForm.city}
-                      onChange={(e) => setProfileForm({...profileForm, city: e.target.value})}
-                      placeholder="City"
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    />
-                    <input
-                      type="text"
-                      value={profileForm.state}
-                      onChange={(e) => setProfileForm({...profileForm, state: e.target.value})}
-                      placeholder="State/Region"
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    />
-                    <input
-                      type="text"
-                      value={profileForm.zip_code}
-                      onChange={(e) => setProfileForm({...profileForm, zip_code: e.target.value})}
-                      placeholder="Postal Code"
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    />
-                  </div>
                 </div>
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Phone Number *</label>
+                <input
+                  type="tel"
+                  value={profileForm.phone}
+                  onChange={(e) => setProfileForm({...profileForm, phone: e.target.value})}
+                  placeholder="+254 XXX XXX XXX"
+                  className={styles.formInput}
+                  required
+                />
+              </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Occupation
-                    </label>
-                    <input
-                      type="text"
-                      value={profileForm.occupation}
-                      onChange={(e) => setProfileForm({...profileForm, occupation: e.target.value})}
-                      placeholder="e.g., Software Engineer"
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Employer
-                    </label>
-                    <input
-                      type="text"
-                      value={profileForm.employer}
-                      onChange={(e) => setProfileForm({...profileForm, employer: e.target.value})}
-                      placeholder="e.g., Claverica Ltd"
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                    />
-                  </div>
+              <div className={styles.formGrid}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Date of Birth</label>
+                  <input
+                    type="date"
+                    value={profileForm.date_of_birth}
+                    onChange={(e) => setProfileForm({...profileForm, date_of_birth: e.target.value})}
+                    className={styles.formInput}
+                  />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Income Range
-                  </label>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Gender</label>
                   <select
-                    value={profileForm.income_range}
-                    onChange={(e) => setProfileForm({...profileForm, income_range: e.target.value})}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    value={profileForm.gender}
+                    onChange={(e) => setProfileForm({...profileForm, gender: e.target.value})}
+                    className={styles.formSelect}
                   >
-                    <option value="">Select Income Range</option>
-                    {incomeRanges.map((range) => (
-                      <option key={range.value} value={range.value}>
-                        {range.label}
+                    <option value="">Select Gender</option>
+                    {genderOptions.map((gender) => (
+                      <option key={gender.value} value={gender.value}>
+                        {gender.label}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
-              <div className="flex gap-3 mt-8">
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Address</label>
+                <input
+                  type="text"
+                  value={profileForm.street}
+                  onChange={(e) => setProfileForm({...profileForm, street: e.target.value})}
+                  placeholder="Street address"
+                  className={`${styles.formInput} mb-3`}
+                />
+                <div className={styles.formGrid}>
+                  <input
+                    type="text"
+                    value={profileForm.city}
+                    onChange={(e) => setProfileForm({...profileForm, city: e.target.value})}
+                    placeholder="City"
+                    className={styles.formInput}
+                  />
+                  <input
+                    type="text"
+                    value={profileForm.state}
+                    onChange={(e) => setProfileForm({...profileForm, state: e.target.value})}
+                    placeholder="State/Region"
+                    className={styles.formInput}
+                  />
+                  <input
+                    type="text"
+                    value={profileForm.zip_code}
+                    onChange={(e) => setProfileForm({...profileForm, zip_code: e.target.value})}
+                    placeholder="Postal Code"
+                    className={styles.formInput}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formGrid}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Occupation</label>
+                  <input
+                    type="text"
+                    value={profileForm.occupation}
+                    onChange={(e) => setProfileForm({...profileForm, occupation: e.target.value})}
+                    placeholder="e.g., Software Engineer"
+                    className={styles.formInput}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Employer</label>
+                  <input
+                    type="text"
+                    value={profileForm.employer}
+                    onChange={(e) => setProfileForm({...profileForm, employer: e.target.value})}
+                    placeholder="e.g., Claverica Ltd"
+                    className={styles.formInput}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Income Range</label>
+                <select
+                  value={profileForm.income_range}
+                  onChange={(e) => setProfileForm({...profileForm, income_range: e.target.value})}
+                  className={styles.formSelect}
+                >
+                  <option value="">Select Income Range</option>
+                  {incomeRanges.map((range) => (
+                    <option key={range.value} value={range.value}>
+                      {range.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.buttonGroup}>
                 <button
                   onClick={() => setShowProfileModal(false)}
-                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className={`${styles.button} ${styles.buttonCancel}`}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={updateProfile}
                   disabled={saving}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-medium hover:from-blue-700 hover:to-blue-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className={`${styles.button} ${styles.buttonPrimary}`}
                 >
-                  {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                  {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
                   {saving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
@@ -1805,73 +1654,67 @@ export default function AccountSettings() {
 
         {/* Password Modal */}
         {showPasswordModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className={styles.modalOverlay}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-gray-800 rounded-3xl p-6 max-w-md w-full"
+              className={styles.modal}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Change Password</h3>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Change Password</h3>
                 <button 
                   onClick={() => setShowPasswordModal(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl"
+                  className={styles.modalClose}
                 >
-                  <X className="w-5 h-5" />
+                  <X size={20} />
                 </button>
               </div>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Current Password
-                  </label>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Current Password</label>
                   <input
                     type="password"
                     value={passwordForm.current_password}
                     onChange={(e) => setPasswordForm({...passwordForm, current_password: e.target.value})}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className={styles.formInput}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    New Password
-                  </label>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>New Password</label>
                   <input
                     type="password"
                     value={passwordForm.new_password}
                     onChange={(e) => setPasswordForm({...passwordForm, new_password: e.target.value})}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className={styles.formInput}
                   />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  <p className={styles.formHint}>
                     Minimum 8 characters with at least one uppercase letter, one lowercase letter, and one number
                   </p>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Confirm New Password
-                  </label>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Confirm New Password</label>
                   <input
                     type="password"
                     value={passwordForm.confirm_password}
                     onChange={(e) => setPasswordForm({...passwordForm, confirm_password: e.target.value})}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    className={styles.formInput}
                   />
                 </div>
               </div>
-              <div className="flex gap-3 mt-8">
+              <div className={styles.buttonGroup}>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className={`${styles.button} ${styles.buttonCancel}`}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={changePassword}
                   disabled={saving}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-medium hover:from-blue-700 hover:to-blue-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className={`${styles.button} ${styles.buttonPrimary}`}
                 >
-                  {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Key className="w-5 h-5" />}
+                  {saving ? <Loader2 className="animate-spin" size={20} /> : <Key size={20} />}
                   {saving ? 'Changing...' : 'Change Password'}
                 </button>
               </div>
@@ -1881,50 +1724,46 @@ export default function AccountSettings() {
 
         {/* 2FA Modal */}
         {show2FAModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className={styles.modalOverlay}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-gray-800 rounded-3xl p-6 max-w-md w-full"
+              className={styles.modal}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Setup Two-Factor Auth</h3>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Setup Two-Factor Auth</h3>
                 <button 
                   onClick={() => setShow2FAModal(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl"
+                  className={styles.modalClose}
                 >
-                  <X className="w-5 h-5" />
+                  <X size={20} />
                 </button>
               </div>
               
-              <div className="space-y-6">
-                <div className="text-center">
-                  <div className="w-32 h-32 mx-auto bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center mb-4">
-                    <QrCode className="w-16 h-16 text-gray-400" />
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    Scan this QR code with your authenticator app
-                  </p>
+              <div className={styles.qrContainer}>
+                <div className={styles.qrPlaceholder}>
+                  <QrCode size={64} />
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Enter 6-digit code from authenticator
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="000000"
-                    maxLength={6}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-center text-2xl tracking-widest font-mono"
-                  />
-                </div>
+                <p className={styles.qrText}>
+                  Scan this QR code with your authenticator app
+                </p>
               </div>
               
-              <div className="flex gap-3 mt-8">
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Enter 6-digit code from authenticator</label>
+                <input
+                  type="text"
+                  placeholder="000000"
+                  maxLength={6}
+                  className={styles.codeInput}
+                />
+              </div>
+              
+              <div className={styles.buttonGroup}>
                 <button
                   onClick={() => setShow2FAModal(false)}
-                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className={`${styles.button} ${styles.buttonCancel}`}
                 >
                   Cancel
                 </button>
@@ -1933,7 +1772,7 @@ export default function AccountSettings() {
                     toast.success("2FA enabled successfully");
                     setShow2FAModal(false);
                   }}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl font-medium hover:from-green-700 hover:to-green-800 transition-all"
+                  className={`${styles.button} ${styles.buttonPrimary}`}
                 >
                   Verify & Enable
                 </button>
@@ -1944,61 +1783,57 @@ export default function AccountSettings() {
 
         {/* Device Removal Modal */}
         {showDeviceModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className={styles.modalOverlay}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-gray-800 rounded-3xl p-6 max-w-md w-full"
+              className={styles.modal}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Remove Device</h3>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Remove Device</h3>
                 <button 
                   onClick={() => setShowDeviceModal(null)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl"
+                  className={styles.modalClose}
                 >
-                  <X className="w-5 h-5" />
+                  <X size={20} />
                 </button>
               </div>
               
               <div className="space-y-4">
-                <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
-                  <p className="text-sm text-red-700 dark:text-red-400">
+                <div className={styles.warningBox}>
+                  <p className={styles.warningText}>
                     Are you sure you want to remove this device? You'll be logged out from this device.
                   </p>
                 </div>
                 
-                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                    showDeviceModal.device_type === 'mobile' 
-                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600' 
-                      : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600'
-                  }`}>
+                <div className={styles.devicePreview}>
+                  <div className={`${styles.deviceIcon} ${showDeviceModal.device_type === 'mobile' ? styles.deviceIconMobile : styles.deviceIconDesktop}`}>
                     {showDeviceModal.device_type === 'mobile' ? (
-                      <Smartphone className="w-5 h-5" />
+                      <Smartphone size={20} />
                     ) : (
-                      <Laptop className="w-5 h-5" />
+                      <Laptop size={20} />
                     )}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900 dark:text-white">{showDeviceModal.device_name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className={styles.deviceName}>{showDeviceModal.device_name}</p>
+                    <p className={styles.deviceMeta}>
                       Last active: {new Date(showDeviceModal.last_active).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
               </div>
               
-              <div className="flex gap-3 mt-8">
+              <div className={styles.buttonGroup}>
                 <button
                   onClick={() => setShowDeviceModal(null)}
-                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className={`${styles.button} ${styles.buttonCancel}`}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => removeDevice(showDeviceModal.device_id)}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-medium hover:from-red-700 hover:to-red-800 transition-all"
+                  className={`${styles.button} ${styles.buttonDanger}`}
                 >
                   Remove Device
                 </button>
@@ -2009,26 +1844,26 @@ export default function AccountSettings() {
 
         {/* Export Modal */}
         {showExportModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className={styles.modalOverlay}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-gray-800 rounded-3xl p-6 max-w-md w-full"
+              className={styles.modal}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Export Your Data</h3>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Export Your Data</h3>
                 <button 
                   onClick={() => setShowExportModal(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl"
+                  className={styles.modalClose}
                 >
-                  <X className="w-5 h-5" />
+                  <X size={20} />
                 </button>
               </div>
               
               <div className="space-y-6">
-                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl">
-                  <p className="text-sm text-yellow-700 dark:text-yellow-400">
+                <div className={styles.exportWarning}>
+                  <p className={styles.exportWarningText}>
                     ⚠️ This file contains sensitive information. Keep it secure and don't share it.
                   </p>
                 </div>
@@ -2037,39 +1872,39 @@ export default function AccountSettings() {
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                     Your data will be exported in CSV format and include:
                   </p>
-                  <ul className="space-y-2">
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-green-500" />
-                      <span className="text-sm">Personal information</span>
+                  <ul className={styles.exportList}>
+                    <li className={styles.exportItem}>
+                      <Check size={16} className={styles.exportCheck} />
+                      <span>Personal information</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-green-500" />
-                      <span className="text-sm">Account settings</span>
+                    <li className={styles.exportItem}>
+                      <Check size={16} className={styles.exportCheck} />
+                      <span>Account settings</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-green-500" />
-                      <span className="text-sm">Transaction history (last 2 years)</span>
+                    <li className={styles.exportItem}>
+                      <Check size={16} className={styles.exportCheck} />
+                      <span>Transaction history (last 2 years)</span>
                     </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-green-500" />
-                      <span className="text-sm">Connected devices</span>
+                    <li className={styles.exportItem}>
+                      <Check size={16} className={styles.exportCheck} />
+                      <span>Connected devices</span>
                     </li>
                   </ul>
                 </div>
               </div>
               
-              <div className="flex gap-3 mt-8">
+              <div className={styles.buttonGroup}>
                 <button
                   onClick={() => setShowExportModal(false)}
-                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className={`${styles.button} ${styles.buttonCancel}`}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={exportData}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl font-medium hover:from-green-700 hover:to-green-800 transition-all flex items-center justify-center gap-2"
+                  className={`${styles.button} ${styles.buttonPrimary}`}
                 >
-                  <Download className="w-5 h-5" />
+                  <Download size={20} />
                   Export Data
                 </button>
               </div>
@@ -2079,26 +1914,26 @@ export default function AccountSettings() {
 
         {/* Delete Account Modal */}
         {showDeleteModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className={styles.modalOverlay}>
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-gray-800 rounded-3xl p-6 max-w-md w-full"
+              className={styles.modal}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Delete Account</h3>
+              <div className={styles.modalHeader}>
+                <h3 className={styles.modalTitle}>Delete Account</h3>
                 <button 
                   onClick={() => setShowDeleteModal(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl"
+                  className={styles.modalClose}
                 >
-                  <X className="w-5 h-5" />
+                  <X size={20} />
                 </button>
               </div>
               
               <div className="space-y-6">
-                <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl">
-                  <p className="text-sm text-red-700 dark:text-red-400">
+                <div className={styles.deleteWarning}>
+                  <p className={styles.deleteWarningText}>
                     ⚠️ This action is irreversible. All your data will be permanently deleted.
                   </p>
                 </div>
@@ -2107,37 +1942,37 @@ export default function AccountSettings() {
                   <p className="text-gray-600 dark:text-gray-400 mb-4">
                     When you delete your account:
                   </p>
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-2">
-                      <X className="w-4 h-4 text-red-500 mt-0.5" />
-                      <span className="text-sm">All personal data will be permanently deleted</span>
+                  <ul className={styles.deleteList}>
+                    <li className={styles.deleteItem}>
+                      <X size={16} className={styles.deleteIcon} />
+                      <span>All personal data will be permanently deleted</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <X className="w-4 h-4 text-red-500 mt-0.5" />
-                      <span className="text-sm">Your transaction history will be removed</span>
+                    <li className={styles.deleteItem}>
+                      <X size={16} className={styles.deleteIcon} />
+                      <span>Your transaction history will be removed</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <X className="w-4 h-4 text-red-500 mt-0.5" />
-                      <span className="text-sm">You will lose access to all features</span>
+                    <li className={styles.deleteItem}>
+                      <X size={16} className={styles.deleteIcon} />
+                      <span>You will lose access to all features</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <X className="w-4 h-4 text-red-500 mt-0.5" />
-                      <span className="text-sm">Your account number will be deactivated</span>
+                    <li className={styles.deleteItem}>
+                      <X size={16} className={styles.deleteIcon} />
+                      <span>Your account number will be deactivated</span>
                     </li>
                   </ul>
                 </div>
               </div>
               
-              <div className="flex gap-3 mt-8">
+              <div className={styles.buttonGroup}>
                 <button
                   onClick={() => setShowDeleteModal(false)}
-                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className={`${styles.button} ${styles.buttonCancel}`}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={deleteAccount}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl font-medium hover:from-red-700 hover:to-red-800 transition-all"
+                  className={`${styles.button} ${styles.buttonDanger}`}
                 >
                   Delete Account
                 </button>

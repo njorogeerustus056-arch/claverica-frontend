@@ -817,6 +817,35 @@ const Transfer = () => {
     }
   };
 
+  if (loading && !balance) {
+    return (
+      <Container maxWidth="lg" className={styles.container}>
+        <Box mb={4}>
+          <div className={styles.skeletonTextShort} style={{ height: '40px', marginBottom: '20px' }}></div>
+          <div className={styles.skeletonText} style={{ height: '48px', width: '70%' }}></div>
+          <div className={styles.skeletonTextShort} style={{ width: '40%' }}></div>
+        </Box>
+        
+        <Grid container spacing={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <div className={styles.skeletonCard}></div>
+          </Grid>
+          <Grid size={{ xs: 12, md: 8 }}>
+            <div className={styles.skeletonCard}>
+              <div style={{ padding: '24px' }}>
+                <div className={styles.skeletonText} style={{ width: '40%' }}></div>
+                {[1,2,3,4].map(i => (
+                  <div key={i} className={styles.skeletonText} style={{ marginTop: '20px' }}></div>
+                ))}
+                <div className={styles.skeletonButton} style={{ marginTop: '24px' }}></div>
+              </div>
+            </div>
+          </Grid>
+        </Grid>
+      </Container>
+    );
+  }
+
   return (
     <Container maxWidth="lg" className={styles.container}>
       {/* KYC Modal */}

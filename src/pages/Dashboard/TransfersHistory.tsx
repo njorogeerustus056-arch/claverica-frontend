@@ -240,6 +240,40 @@ const TransfersHistory = () => {
     setError(null);
   };
 
+  if (loading && transfers.length === 0) {
+    return (
+      <Container maxWidth="xl" className={styles.container}>
+        <Box mb={4}>
+          <div className={styles.skeletonTextShort} style={{ height: '40px', marginBottom: '20px' }}></div>
+          <div className={styles.skeletonText} style={{ height: '48px', width: '60%' }}></div>
+          <div className={styles.skeletonTextShort} style={{ width: '30%' }}></div>
+        </Box>
+        
+        {/* Stats skeletons */}
+        <Grid container spacing={3} sx={{ mb: 3 }}>
+          {[1,2,3,4].map(i => (
+            <Grid key={i} size={{ xs: 12, sm: 6, md: 3 }}>
+              <div className={styles.skeletonCard} style={{ height: '120px' }}></div>
+            </Grid>
+          ))}
+        </Grid>
+        
+        {/* Filter skeleton */}
+        <div className={styles.skeletonCard} style={{ height: '120px', marginBottom: '24px' }}></div>
+        
+        {/* Table skeleton */}
+        <div className={styles.skeletonCard}>
+          <div style={{ padding: '20px' }}>
+            <div className={styles.skeletonText} style={{ width: '30%', marginBottom: '20px' }}></div>
+            {[1,2,3,4,5].map(i => (
+              <div key={i} className={styles.skeletonTable}></div>
+            ))}
+          </div>
+        </div>
+      </Container>
+    );
+  }
+
   return (
     <Container maxWidth="xl" className={styles.container}>
       {/* Error Snackbar */}
