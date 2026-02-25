@@ -1,0 +1,759 @@
+// src/pages/features/ProjectDetails.tsx
+import { useParams, Link } from "react-router-dom";
+import { projects, type Project } from "@/data/projects";
+import { ArrowLeft, ArrowRight, CheckCircle, Zap, Shield, Globe, Sparkles, Bell, MessageCircle, Calculator, Lock, CreditCard, TrendingUp, Users, Clock, Smartphone } from "lucide-react";
+import { useState, useEffect } from "react";
+
+const projectImageMap: Record<string, string> = {
+  // Projects WITH actual images
+  "global-transfers": "instant-global-payments.jpg",
+  "crypto-wallet": "crypto-exchange-platform.jpg",
+  "savings-vaults": "high-yield-savings-vaults.jpg",
+  "p2p-lending": "peer-to-peer-lending.jpg",
+  "business-payments": "business-banking-suite.jpg",
+  "fraud-detection": "fraud-detection-ai.jpg",
+  "expense-splitter": "expense-tracking-plus.jpg",
+  "investing": "smart-investment-portfolio.jpg",
+  
+  // Projects WITHOUT images (use placeholder)
+  "multi-currency": "placeholder.jpg",
+  "global-cards": "placeholder.jpg",
+  "card-payments": "placeholder.jpg",
+  "subscriptions": "placeholder.jpg",
+  "checkout-api": "placeholder.jpg",
+  "remittance-corridors": "placeholder.jpg",
+  "bnpl": "placeholder.jpg",
+  "kyc": "placeholder.jpg",
+  "student-banking": "placeholder.jpg",
+  "sme-loans": "placeholder.jpg",
+  "charity-remittance": "placeholder.jpg",
+  "nft-vault": "placeholder.jpg",
+};
+
+export default function ProjectDetails() {
+  const { slug } = useParams<{ slug: string }>();
+  const project = projects.find((p) => p.slug === slug);
+  const [email, setEmail] = useState("");
+
+  // Debug image loading
+  useEffect(() => {
+    if (project) {
+      console.log('=== IMAGE DEBUG INFO ===');
+      console.log('Project slug:', project.slug);
+      console.log('Mapped image:', projectImageMap[project.slug]);
+      
+      const imageName = projectImageMap[project.slug];
+      const imageUrl = `/images/Project/${imageName}`;
+      console.log('Image URL:', imageUrl);
+      
+      // Test image loading
+      const img = new Image();
+      img.onload = () => {
+        console.log('✅ Image loads successfully');
+        console.log('Natural size:', img.naturalWidth, 'x', img.naturalHeight);
+      };
+      img.onerror = () => {
+        console.log('❌ Image failed to load');
+        console.log('Testing placeholder...');
+        
+        const fallbackImg = new Image();
+        fallbackImg.src = '/images/Project/placeholder.jpg';
+        fallbackImg.onload = () => console.log('✅ Placeholder loads');
+        fallbackImg.onerror = () => console.log('❌ Placeholder also fails!');
+      };
+      img.src = imageUrl;
+    }
+  }, [project]);
+
+  if (!project) {
+    return (
+      <div className="auth-layout min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-blue-50">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Project Not Found</h1>
+          <Link
+            to="/projects"
+            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to All Projects
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const Icon = project.icon;
+
+  return (
+    <div className="auth-layout min-h-screen bg-white">
+
+      {/* Sticky Top Bar with CTA */}
+      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <Link
+            to="/projects"
+            className="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" />
+            <span className="hidden sm:inline">All Projects</span>
+            <span className="sm:hidden">Back</span>
+          </Link>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              to="/contact"
+              className="hidden md:flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 text-gray-700 hover:text-gray-900 font-medium transition-colors text-sm"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Contact Sales
+            </Link>
+            <Link
+              to="/signup"
+              className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all text-sm"
+            >
+              Get Started
+              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Hero Section */}
+      <section className="relative py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-gray-50 to-white">
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-blue-500 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500 rounded-full blur-3xl" />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto">
+          <div className="text-center max-w-4xl mx-auto">
+            {/* Category Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-gray-200 mb-6 sm:mb-8">
+              <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${project.color}`} />
+              <span className="text-xs sm:text-sm font-semibold text-gray-700">
+                {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+              </span>
+            </div>
+
+            {/* Icon */}
+            <div className={`inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-br ${project.color} mb-6 sm:mb-8 shadow-lg`}>
+              <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-gray-900 mb-4 sm:mb-6 tracking-tight px-4">
+              {project.title}
+            </h1>
+
+            {/* Description */}
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-8 sm:mb-12 leading-relaxed font-light px-4">
+              {project.description}
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-8 sm:mb-12 px-4">
+              <Link
+                to="/signup"
+                className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-bold text-base sm:text-lg hover:shadow-2xl hover:scale-105 transition-all"
+              >
+                Start Free Trial
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+              </Link>
+              <Link
+                to="/contact"
+                className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-white text-gray-700 rounded-full font-bold text-base sm:text-lg border-2 border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all"
+              >
+                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                Contact Sales
+              </Link>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm text-gray-500 px-4">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-green-600" />
+                <span>Bank-level security</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-blue-600" />
+                <span>190+ countries</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-purple-600" />
+                <span>Instant setup</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Lock className="w-4 h-4 text-amber-600" />
+                <span>FCA Regulated</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Visual Product Showcase - FIXED VERSION */}
+      <section className="py-12 sm:py-20 px-4 sm:px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-gray-200 bg-gradient-to-br from-gray-100 to-gray-50">
+            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+              {/* Loading state */}
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                  <div className="text-gray-500 text-sm">Loading visualization...</div>
+                </div>
+              </div>
+              
+              {/* Main Image with robust error handling */}
+              <img
+                src={`/images/Project/${projectImageMap[project.slug]}`}
+                alt={project.title}
+                className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500"
+                loading="lazy"
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  img.style.opacity = '1';
+                  // Hide loading indicator
+                  const loader = img.parentElement?.querySelector('.flex');
+                  if (loader) {
+                    (loader as HTMLElement).style.display = 'none';
+                  }
+                }}
+                onError={(e) => {
+                  console.warn(`Image failed for project: ${project.slug}`);
+                  
+                  const img = e.currentTarget;
+                  const loader = img.parentElement?.querySelector('.flex');
+                  
+                  if (loader) {
+                    // Update loader to show content instead of broken image
+                    loader.innerHTML = `
+                      <div class="text-center p-8 w-full">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br ${project.color} mb-4">
+                          <span class="text-white font-bold text-lg">${project.title.charAt(0)}</span>
+                        </div>
+                        <div class="text-gray-700 font-bold text-xl mb-2">${project.title}</div>
+                        <div class="text-gray-600 mb-4">${project.description.substring(0, 120)}...</div>
+                        <div class="text-xs text-gray-500">Project visualization</div>
+                      </div>
+                    `;
+                    loader.classList.remove('from-gray-200', 'to-gray-300', 'animate-pulse');
+                    loader.classList.add('from-blue-50', 'to-purple-50');
+                  }
+                  
+                  img.style.display = 'none';
+                }}
+              />
+              
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Live Currency Calculator - Wise Style */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                <Calculator className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Live Transfer Calculator</h3>
+            </div>
+            
+            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">You send</label>
+                  <div className="flex border border-gray-300 rounded-lg overflow-hidden hover:border-blue-500 transition-colors">
+                    <input 
+                      type="number" 
+                      className="flex-1 px-4 sm:px-6 py-3 sm:py-4 outline-none text-lg font-medium"
+                      defaultValue="1000" 
+                    />
+                    <select className="border-l border-gray-300 px-3 sm:px-4 bg-gray-50 text-sm sm:text-base font-medium">
+                      <option>USD</option>
+                      <option>EUR</option>
+                      <option>GBP</option>
+                      <option>JPY</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">They receive</label>
+                  <div className="flex border border-gray-300 rounded-lg overflow-hidden bg-gray-50">
+                    <div className="flex-1 px-4 sm:px-6 py-3 sm:py-4 text-lg font-bold">£845.60</div>
+                    <select className="border-l border-gray-300 px-3 sm:px-4 bg-gray-50 text-sm sm:text-base font-medium">
+                      <option>GBP</option>
+                      <option>EUR</option>
+                      <option>USD</option>
+                      <option>CAD</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 p-3 sm:p-4 bg-blue-50 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm sm:text-base">
+                  <div className="text-center">
+                    <div className="text-gray-600 mb-1">Fee</div>
+                    <div className="font-bold text-gray-900">$4.99</div>
+                  </div>
+                  <div className="text-center border-l border-r border-gray-200">
+                    <div className="text-gray-600 mb-1">Exchange Rate</div>
+                    <div className="font-bold text-gray-900">1 USD = 0.85 GBP</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-gray-600 mb-1">You Save</div>
+                    <div className="font-bold text-green-600">85% vs banks</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600">
+                <Zap className="w-4 h-4 text-green-600" />
+                <span>Transfer arrives in <span className="font-bold">1-2 seconds</span></span>
+              </div>
+            </div>
+            
+            <p className="mt-4 text-xs text-gray-500 text-center">
+              Rates are live and update every 30 seconds. Actual fees may vary based on transfer amount and destination.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Fee Comparison Table - Wise Style */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">No Hidden Fees - Compare & Save</h3>
+            <p className="text-gray-600 mt-2">Transparent pricing like you've never seen before</p>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full bg-white rounded-xl shadow-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-4 font-semibold text-gray-900">Service</th>
+                  <th className="text-left p-4 font-semibold text-green-600">Our Fee</th>
+                  <th className="text-left p-4 font-semibold text-gray-600">Traditional Banks</th>
+                  <th className="text-left p-4 font-semibold text-gray-600">Other Fintechs</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b hover:bg-gray-50">
+                  <td className="p-4 font-medium">International Transfer</td>
+                  <td className="p-4 text-green-600 font-bold">0.5%</td>
+                  <td className="p-4">3-5%</td>
+                  <td className="p-4">1.5-2%</td>
+                </tr>
+                <tr className="border-b hover:bg-gray-50">
+                  <td className="p-4 font-medium">Currency Exchange</td>
+                  <td className="p-4 text-green-600 font-bold">0.3%</td>
+                  <td className="p-4">2-4%</td>
+                  <td className="p-4">0.5-1%</td>
+                </tr>
+                <tr className="border-b hover:bg-gray-50">
+                  <td className="p-4 font-medium">Monthly Account</td>
+                  <td className="p-4 text-green-600 font-bold">Free</td>
+                  <td className="p-4">$10-25</td>
+                  <td className="p-4">Free - $5</td>
+                </tr>
+                <tr className="hover:bg-gray-50">
+                  <td className="p-4 font-medium">ATM Withdrawal</td>
+                  <td className="p-4 text-green-600 font-bold">1%</td>
+                  <td className="p-4">2-3% + $5</td>
+                  <td className="p-4">1-2%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Security Badges - Skrill Style */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">Trusted & Regulated</h3>
+            <p className="text-gray-600 mt-2">Your money is protected with the highest security standards</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="text-center p-6 bg-gray-50 rounded-xl">
+              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                <Lock className="w-6 h-6 text-green-600" />
+              </div>
+              <h4 className="font-bold text-gray-900 mb-1">256-bit Encryption</h4>
+              <p className="text-sm text-gray-600">Military-grade security</p>
+            </div>
+            
+            <div className="text-center p-6 bg-gray-50 rounded-xl">
+              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-6 h-6 text-blue-600" />
+              </div>
+              <h4 className="font-bold text-gray-900 mb-1">FCA Regulated</h4>
+              <p className="text-sm text-gray-600">Financial Conduct Authority</p>
+            </div>
+            
+            <div className="text-center p-6 bg-gray-50 rounded-xl">
+              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-4">
+                <CreditCard className="w-6 h-6 text-purple-600" />
+              </div>
+              <h4 className="font-bold text-gray-900 mb-1">PCI DSS Compliant</h4>
+              <p className="text-sm text-gray-600">Payment Card Industry</p>
+            </div>
+            
+            <div className="text-center p-6 bg-gray-50 rounded-xl">
+              <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+                <Globe className="w-6 h-6 text-amber-600" />
+              </div>
+              <h4 className="font-bold text-gray-900 mb-1">2FA Protection</h4>
+              <p className="text-sm text-gray-600">Two-factor authentication</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Project-Specific Stats */}
+      {project.stats && project.stats.length > 0 && (
+        <section className="py-12 sm:py-16 px-4 sm:px-6 bg-gray-50">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-3 gap-6 sm:gap-8">
+              {project.stats.map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className={`text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-to-r ${project.color} bg-clip-text text-transparent mb-2`}>
+                    {stat.value}
+                  </div>
+                  <p className="text-sm sm:text-base text-gray-600 font-medium">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Project-Specific Features */}
+      {project.features && project.features.length > 0 && (
+        <section className="py-12 sm:py-20 px-4 sm:px-6 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-10 sm:mb-12">
+              <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-3 sm:mb-4">
+                What's included
+              </h2>
+              <p className="text-lg sm:text-xl text-gray-600 font-light">
+                Everything you need to get started
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              {project.features.map((feature, index) => (
+                <div key={index} className="flex items-start gap-4 p-5 sm:p-6 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 hover:shadow-lg transition-shadow">
+                  <div className={`flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br ${project.color} flex items-center justify-center`}>
+                    <CheckCircle className="w-5 h-5 text-white" />
+                  </div>
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base pt-1.5">{feature}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Key Features Grid */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-3 sm:mb-4">
+              Why choose us
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600 font-light">
+              Built for the way you work, with features that actually matter
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="group p-6 sm:p-8 bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-5 sm:mb-6">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">Lightning Fast</h3>
+              <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+                Transfers complete in seconds, not days. Real-time processing with transparent fees.
+              </p>
+            </div>
+
+            <div className="group p-6 sm:p-8 bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-5 sm:mb-6">
+                <Shield className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">Secure by Default</h3>
+              <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+                Military-grade encryption and multi-factor authentication protect every transaction.
+              </p>
+            </div>
+
+            <div className="group p-6 sm:p-8 bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-5 sm:mb-6">
+                <Globe className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">Global Reach</h3>
+              <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+                Send money anywhere in the world with local payment methods and currencies.
+              </p>
+            </div>
+
+            <div className="group p-6 sm:p-8 bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-5 sm:mb-6">
+                <CheckCircle className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">Zero Hidden Fees</h3>
+              <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+                What you see is what you pay. No surprise charges, no hidden costs.
+              </p>
+            </div>
+
+            <div className="group p-6 sm:p-8 bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center mb-5 sm:mb-6">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">AI-Powered</h3>
+              <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+                Smart insights and automation that learns from your spending patterns.
+              </p>
+            </div>
+
+            <div className="group p-6 sm:p-8 bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div className="w-12 h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center mb-5 sm:mb-6">
+                <Bell className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">Real-Time Updates</h3>
+              <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+                Get instant notifications for every transaction and account activity.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Integration Partners - Modern Style */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">Works With Your Tools</h3>
+            <p className="text-gray-600 mt-2">Seamlessly integrate with your existing stack</p>
+          </div>
+          
+          <div className="grid grid-cols-3 md:grid-cols-6 gap-6 items-center">
+            <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+              <div className="text-gray-400 font-bold text-lg">Stripe</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+              <div className="text-gray-400 font-bold text-lg">Shopify</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+              <div className="text-gray-400 font-bold text-lg">QuickBooks</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+              <div className="text-gray-400 font-bold text-lg">Xero</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+              <div className="text-gray-400 font-bold text-lg">Slack</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+              <div className="text-gray-400 font-bold text-lg">Zapier</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-3 sm:mb-4">
+              How it works
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-600 font-light">
+              Get started in minutes, not hours
+            </p>
+          </div>
+
+          <div className="space-y-6 sm:space-y-8">
+            <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8 p-6 sm:p-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl sm:rounded-3xl">
+              <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white text-xl sm:text-2xl font-bold shadow-lg">
+                1
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Sign up in 2 minutes</h3>
+                <p className="text-gray-600 text-base sm:text-lg">
+                  Create your account with just your email. No lengthy forms, no hassle.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8 p-6 sm:p-8 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl sm:rounded-3xl">
+              <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white text-xl sm:text-2xl font-bold shadow-lg">
+                2
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Verify your identity</h3>
+                <p className="text-gray-600 text-base sm:text-lg">
+                  Quick and secure verification using your phone. We'll have you ready in minutes.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8 p-6 sm:p-8 bg-gradient-to-br from-pink-50 to-orange-50 rounded-2xl sm:rounded-3xl">
+              <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-pink-600 to-orange-600 flex items-center justify-center text-white text-xl sm:text-2xl font-bold shadow-lg">
+                3
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Start using instantly</h3>
+                <p className="text-gray-600 text-base sm:text-lg">
+                  That's it! Send money, manage accounts, and access all features immediately.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof Stats */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            <div className="text-center p-4">
+              <div className="text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 sm:mb-3">
+                10M+
+              </div>
+              <p className="text-sm sm:text-base text-gray-600 font-medium">Active Users</p>
+            </div>
+            <div className="text-center p-4">
+              <div className="text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 sm:mb-3">
+                $50B+
+              </div>
+              <p className="text-sm sm:text-base text-gray-600 font-medium">Processed</p>
+            </div>
+            <div className="text-center p-4">
+              <div className="text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-pink-600 to-orange-600 bg-clip-text text-transparent mb-2 sm:mb-3">
+                190+
+              </div>
+              <p className="text-sm sm:text-base text-gray-600 font-medium">Countries</p>
+            </div>
+            <div className="text-center p-4">
+              <div className="text-4xl sm:text-5xl md:text-6xl font-black bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent mb-2 sm:mb-3">
+                4.9★
+              </div>
+              <p className="text-sm sm:text-base text-gray-600 font-medium">App Rating</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Big CTA Section */}
+      <section className="py-20 sm:py-32 px-4 sm:px-6 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl opacity-50" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl opacity-50" />
+
+        <div className="relative max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white mb-4 sm:mb-6 px-4">
+            Ready to transform your finances?
+          </h2>
+          <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-8 sm:mb-12 font-light px-4">
+            Join millions who've already made the switch to smarter banking
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 px-4">
+            <Link
+              to="/signup"
+              className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-white text-blue-600 rounded-full font-bold text-base sm:text-lg hover:shadow-2xl hover:scale-105 transition-all"
+            >
+              Create Free Account
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </Link>
+            <Link
+              to="/contact"
+              className="w-full sm:w-auto flex items-center justify-center gap-3 px-8 sm:px-10 py-4 sm:py-5 bg-white/10 backdrop-blur-sm text-white rounded-full font-bold text-base sm:text-lg border-2 border-white/30 hover:bg-white/20 transition-all"
+            >
+              <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+              Talk to Sales
+            </Link>
+          </div>
+
+          <p className="text-white/80 text-xs sm:text-sm px-4">
+            No credit card required • Free forever • Cancel anytime
+          </p>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-100 to-purple-100 mb-5 sm:mb-6">
+            <Bell className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600" />
+          </div>
+          <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 mb-3 sm:mb-4">
+            Never miss an update
+          </h3>
+          <p className="text-base sm:text-lg text-gray-600 mb-8 sm:mb-10 font-light px-4">
+            Get the latest fintech insights, product updates, and exclusive offers delivered to your inbox
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto px-4">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-5 sm:px-6 py-3 sm:py-4 rounded-full border-2 border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 outline-none transition-all text-base sm:text-lg"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <button 
+              className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-bold hover:shadow-xl hover:scale-105 transition-all whitespace-nowrap text-base"
+              onClick={() => {
+                if (email) {
+                  alert(`Thank you! You'll receive updates at ${email}`);
+                  setEmail("");
+                }
+              }}
+            >
+              Subscribe
+            </button>
+          </div>
+
+          <p className="text-xs sm:text-sm text-gray-500 mt-4 px-4">
+            Join 100,000+ subscribers. Unsubscribe anytime.
+          </p>
+        </div>
+      </section>
+
+      {/* Footer CTA Bar */}
+      <section className="py-6 sm:py-8 px-4 sm:px-6 bg-gray-50 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="text-center md:text-left">
+            <p className="text-sm sm:text-base text-gray-600 font-medium">
+              Questions? Our team is here to help
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/help"
+              className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base text-gray-700 hover:text-gray-900 font-medium transition-colors"
+            >
+              Help Center
+            </Link>
+            <Link
+              to="/contact"
+              className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all text-sm sm:text-base"
+            >
+              <MessageCircle className="w-4 h-4" />
+              Contact Us
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

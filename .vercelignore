@@ -1,0 +1,21 @@
+# Prevent problematic files from being deployed
+public/force-localhost.js
+force-localhost.js
+*.backup
+
+# Node modules are installed fresh
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Cache directories
+.vite/
+.next/
+.nuxt/
+
+# Environment files (except production)
+.env
+.env.local
+.env.development

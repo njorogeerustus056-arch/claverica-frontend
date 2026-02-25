@@ -1,0 +1,670 @@
+/* ============================================= */
+/* CLAVERICA FINTECH - MASTER STYLESHEET         */
+/* Complete styling implementation based on guide */
+/* ============================================= */
+
+/* ============================================= */
+/* TAILWIND & FONTS                              */
+/* ============================================= */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+@import "tailwindcss";
+
+/* ============================================= */
+/* MASTER COLOR PALETTE                          */
+/* ============================================= */
+:root {
+  /* Primary Colors */
+  --navy: #0A2540;      /* Deep navy - primary brand, trust, stability */
+  --purple: #8626E9;    /* Purple - secondary brand, innovation, premium */
+  --gold: #C5A028;      /* Warm gold - accent, premium features, highlights */
+  
+  /* Supporting Colors */
+  --teal: #1E6F6F;      /* Deep teal - success, positive metrics, bridges */
+  --cream: #F5F0E6;     /* Warm white - backgrounds, cards, soft surfaces */
+  --white: #FFFFFF;     /* Pure white - text on dark, contrast elements */
+  
+  /* Error Color (keep standard red for user familiarity) */
+  --error: #D32F2F;
+  
+  /* Semantic Extensions */
+  --success: var(--teal);
+  --warning: var(--gold);
+  --primary: var(--navy);
+  --secondary: var(--purple);
+  --accent: var(--gold);
+  
+  /* ============================================= */
+  /* SPACING SYSTEM                                */
+  /* ============================================= */
+  --space-xs: 0.5rem;    /* 8px */
+  --space-sm: 1rem;      /* 16px */
+  --space-md: 1.5rem;    /* 24px */
+  --space-lg: 2rem;      /* 32px */
+  --space-xl: 3rem;      /* 48px */
+  --space-2xl: 4rem;     /* 64px */
+  
+  /* Container max-widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+}
+
+/* ============================================= */
+/* TAILWIND THEME OVERRIDES                       */
+/* ============================================= */
+@theme {
+  --font-outfit: 'Outfit', sans-serif;
+  --color-navy: #0A2540;
+  --color-purple: #8626E9;
+  --color-gold: #C5A028;
+  --color-teal: #1E6F6F;
+  --color-cream: #F5F0E6;
+}
+
+/* ============================================= */
+/* GLOBAL RESETS & BASE STYLES                    */
+/* ============================================= */
+html, body, #root {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  font-family: 'Outfit', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  color: var(--navy);
+  background: var(--white);
+}
+
+/* ============================================= */
+/* CONTAINER SYSTEM                               */
+/* ============================================= */
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--space-sm);
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 var(--space-md);
+    max-width: var(--container-sm);
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: var(--container-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: var(--container-lg);
+    padding: 0 var(--space-lg);
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: var(--container-xl);
+  }
+}
+
+/* ============================================= */
+/* NAVIGATION BAR                                 */
+/* ============================================= */
+.navbar {
+  background: linear-gradient(180deg, 
+    rgba(197, 160, 40, 0.15) 0%,
+    var(--navy) 30%,
+    var(--navy) 100%
+  );
+  backdrop-filter: blur(10px);
+  position: fixed;
+  width: 100%;
+  z-index: 50;
+}
+
+.nav-links {
+  color: var(--white);
+  transition: color 0.3s ease;
+}
+
+.nav-links:hover {
+  color: var(--gold);
+}
+
+/* Mobile Navigation */
+@media (max-width: 640px) {
+  .mobile-menu {
+    background: var(--navy);
+    border-top: 2px solid var(--gold);
+  }
+}
+
+/* ============================================= */
+/* BUTTON SYSTEMS                                 */
+/* ============================================= */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 40px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* Primary Button */
+.btn-primary {
+  background: var(--purple);
+  color: var(--white);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: var(--gold);
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px -5px rgba(197, 160, 40, 0.4);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background: transparent;
+  color: var(--navy);
+  border: 2px solid var(--navy);
+}
+
+.btn-secondary:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+/* Outline Gold Button */
+.btn-outline-gold {
+  background: transparent;
+  color: var(--gold);
+  border: 2px solid var(--gold);
+}
+
+.btn-outline-gold:hover {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+/* Mobile Buttons */
+@media (max-width: 640px) {
+  .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+  }
+}
+
+/* ============================================= */
+/* HERO SECTION                                   */
+/* ============================================= */
+.hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--navy) 90%
+  );
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-title {
+  color: var(--white);
+  font-size: 3.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.hero-title-highlight {
+  background: linear-gradient(135deg, var(--gold), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-badge {
+  background: rgba(197, 160, 40, 0.15);
+  border: 1px solid var(--gold);
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
+  display: inline-block;
+}
+
+/* Mobile Hero */
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+}
+
+/* ============================================= */
+/* CARDS & CONTAINERS                             */
+/* ============================================= */
+.card {
+  background: var(--cream);
+  border: 1px solid rgba(197, 160, 40, 0.2);
+  border-radius: 24px;
+  padding: var(--space-lg);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 30px -10px rgba(10, 37, 64, 0.2);
+  border-color: var(--gold);
+}
+
+.card-premium {
+  background: linear-gradient(135deg, var(--navy), var(--purple));
+  color: var(--white);
+}
+
+.card-premium .card-title {
+  color: var(--white);
+}
+
+.card-premium .card-accent {
+  color: var(--gold);
+}
+
+/* Card Grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 640px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+}
+
+/* ============================================= */
+/* FORMS & INPUTS                                 */
+/* ============================================= */
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-label {
+  color: var(--navy);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.input-field {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: var(--cream);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(197, 160, 40, 0.15);
+  background: var(--white);
+}
+
+.input-field.error {
+  border-color: var(--error);
+}
+
+.input-success {
+  border-color: var(--teal);
+}
+
+/* Mobile Inputs */
+@media (max-width: 640px) {
+  .input-field {
+    padding: 1.25rem;
+    font-size: 16px;
+  }
+}
+
+/* ============================================= */
+/* STATISTICS & METRICS                           */
+/* ============================================= */
+.stat-card {
+  background: var(--white);
+  padding: var(--space-lg);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(10, 37, 64, 0.05);
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--navy), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-label {
+  color: var(--teal);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-positive {
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.stat-highlight {
+  color: var(--gold);
+}
+
+/* ============================================= */
+/* BADGES & TAGS                                  */
+/* ============================================= */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 40px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-premium {
+  background: linear-gradient(135deg, var(--gold), var(--purple));
+  color: var(--white);
+}
+
+.badge-success {
+  background: rgba(30, 111, 111, 0.12);
+  color: var(--teal);
+}
+
+.badge-featured {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.badge-verified {
+  background: var(--teal);
+  color: var(--white);
+}
+
+.badge-purple {
+  background: var(--purple);
+  color: var(--white);
+}
+
+/* ============================================= */
+/* TABLES & COMPARISON CHARTS                     */
+/* ============================================= */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-header {
+  background: var(--navy);
+  color: var(--white);
+}
+
+.table-header th {
+  padding: var(--space-sm);
+  font-weight: 700;
+}
+
+.table-row {
+  border-bottom: 1px solid rgba(197, 160, 40, 0.15);
+}
+
+.table-row:hover {
+  background: rgba(197, 160, 40, 0.05);
+}
+
+.table-cell {
+  padding: var(--space-sm);
+  color: var(--navy);
+}
+
+.table-cell-highlight {
+  color: var(--purple);
+  font-weight: 700;
+}
+
+.table-cell-positive {
+  color: var(--teal);
+  font-weight: 700;
+}
+
+/* Responsive Table */
+@media (max-width: 640px) {
+  .table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* ============================================= */
+/* PROGRESS & LOADING STATES                      */
+/* ============================================= */
+.progress-bar {
+  height: 8px;
+  background: var(--cream);
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--purple));
+  border-radius: 40px;
+  transition: width 0.5s ease;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--cream);
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-loader {
+  background: linear-gradient(
+    90deg,
+    var(--cream) 25%,
+    rgba(197, 160, 40, 0.1) 50%,
+    var(--cream) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ============================================= */
+/* FOOTER                                         */
+/* ============================================= */
+.footer {
+  background: var(--navy);
+  color: var(--white);
+  padding: var(--space-2xl) 0 var(--space-lg);
+  margin-top: var(--space-2xl);
+}
+
+.footer-title {
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: var(--gold);
+}
+
+.footer-divider {
+  border-color: rgba(197, 160, 40, 0.2);
+  margin: var(--space-lg) 0;
+}
+
+.footer-copyright {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+}
+
+/* Footer Responsive */
+@media (max-width: 640px) {
+  .footer {
+    padding: var(--space-xl) 0 var(--space-md);
+    text-align: center;
+  }
+  
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+}
+
+/* ============================================= */
+/* DARK MODE SUPPORT (OPTIONAL)                   */
+/* ============================================= */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cream: #1A1F2E;
+    --white: #E5E7EB;
+  }
+  
+  body {
+    background: var(--navy);
+    color: var(--white);
+  }
+  
+  .card {
+    background: #1E293B;
+    border-color: rgba(197, 160, 40, 0.2);
+  }
+  
+  .stat-card {
+    background: #1E293B;
+  }
+}
+
+/* ============================================= */
+/* UTILITY CLASSES                                */
+/* ============================================= */
+.text-gradient-gold-purple {
+  background: linear-gradient(135deg, var(--gold), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-navy-purple {
+  background: linear-gradient(135deg, var(--navy), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-cream {
+  background-color: var(--cream);
+}
+
+.bg-navy {
+  background-color: var(--navy);
+}
+
+.bg-purple {
+  background-color: var(--purple);
+}
+
+.bg-gold {
+  background-color: var(--gold);
+}
+
+.bg-teal {
+  background-color: var(--teal);
+}
+
+.text-navy {
+  color: var(--navy);
+}
+
+.text-purple {
+  color: var(--purple);
+}
+
+.text-gold {
+  color: var(--gold);
+}
+
+.text-teal {
+  color: var(--teal);
+}
+
+.border-gold-subtle {
+  border: 1px solid rgba(197, 160, 40, 0.2);
+}
+
+.hover-gold:hover {
+  color: var(--gold);
+}
+
+/* ============================================= */
+/* QUICK REFERENCE - Keep as CSS comments         */
+/* ============================================= */
+/*
+🎯 QUICK COLOR REFERENCE:
+- Primary: navy (#0A2540) or purple (#8626E9)
+- Accent: gold (#C5A028) - use sparingly
+- Success: teal (#1E6F6F) only
+- Backgrounds: cream (#F5F0E6) instead of white
+- Hover states: always gold
+- Borders: gold with 10-20% opacity
+*/
