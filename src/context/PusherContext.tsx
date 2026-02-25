@@ -61,16 +61,17 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const authEndpoint = `${baseUrl}/api/pusher/auth/`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
-    // ✅ FIXED: Remove empty params - Pusher automatically adds socket_id and channel_name
+    // ✅ FIXED: Remove Content-Type header - Pusher-js will set it correctly
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
       authEndpoint: authEndpoint,
       auth: {
         headers: {
           'Authorization': `Bearer ${tokens.access}`,
-          'Content-Type': 'application/json',
+          // ❌ REMOVED: 'Content-Type': 'application/json', - Pusher sets this automatically
         },
-        method: 'POST', // ✅ Pusher automatically adds socket_id and channel_name
+        method: 'POST',
+        params: {}, // Empty params to ensure proper formatting
       },
       authTransport: 'ajax',
     });
@@ -173,7 +174,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
 
     channel.bind('wallet.debited', (data: any) => {
       console.log('💸 Money sent:', data);
-      toast(`$${data.amount} sent to ${data.recipient}`, {
+      toast(`$${data.amount} sent`, {
         icon: '💸',
       });
       triggerRefresh();

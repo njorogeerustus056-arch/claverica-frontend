@@ -1,8 +1,8 @@
-// src/context/NotificationContext.tsx - FIXED VERSION WITH SAFETY WRAPPER
+// src/context/NotificationContext.tsx - FIXED VERSION WITH useSafePusher
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '../lib/store/auth';
-import { usePusher } from './PusherContext';
-import api, { Notification } from '../api';  // ✅ UPDATED: from '../services/api' to '../api'
+import { useSafePusher } from '../hooks/useSafePusher';  // ✅ IMPORT useSafePusher
+import api, { Notification } from '../api';
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -41,14 +41,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   
   const { isAuthenticated, tokens, syncFromLocalStorage } = useAuthStore();
   
-  // ✅ SAFETY: Try-catch for Pusher
-  let pusherConnected = false;
-  try {
-    const { connected } = usePusher();
-    pusherConnected = connected;
-  } catch (e) {
-    console.log('⚠️ Pusher not available yet - using polling only');
-  }
+  // ✅ FIXED: Use SafePusher instead of directly calling usePusher
+  const { pusherConnected } = useSafePusher();
 
   useEffect(() => {
     syncFromLocalStorage();

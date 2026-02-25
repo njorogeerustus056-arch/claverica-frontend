@@ -1,10 +1,19 @@
-// src/hooks/useSafePusher.ts
+// src/hooks/useSafePusher.ts - CORRECTED VERSION
 import { useState, useEffect } from 'react';
 import { usePusher } from '../context/PusherContext';
 
 export const useSafePusher = () => {
   const [pusherConnected, setPusherConnected] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  
+  // ✅ Call hook at top level - ALWAYS
+  let pusher;
+  try {
+    pusher = usePusher();
+  } catch (error) {
+    // Context might not be available yet
+    pusher = { connected: false };
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -13,11 +22,12 @@ export const useSafePusher = () => {
 
     const attemptConnection = () => {
       try {
-        const { connected } = usePusher();
         if (isMounted) {
-          setPusherConnected(connected);
+          setPusherConnected(pusher?.connected || false);
           setIsReady(true);
-          console.log('✅ Safe Pusher connected');
+          if (pusher?.connected) {
+            console.log('✅ Safe Pusher connected');
+          }
         }
       } catch (error) {
         if (retryCount < maxRetries && isMounted) {
@@ -40,7 +50,7 @@ export const useSafePusher = () => {
       isMounted = false;
       clearTimeout(timer);
     };
-  }, []);
+  }, [pusher?.connected]); // ✅ Add dependency
 
   return { pusherConnected, isReady };
 };
