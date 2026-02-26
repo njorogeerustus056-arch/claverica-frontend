@@ -81,9 +81,9 @@ export default function App() {
             <Route path="/" element={
               <>
                 <PublicNavbar />
-                <div className="pt-16 md:pt-20 lg:pt-24">
+                {/* <div className="pt-16 md:pt-20 lg:pt-24"> */}
                   <Home />
-                </div>
+                {/* </div> */}
                 <Footer />
               </>
             } />
@@ -111,9 +111,9 @@ export default function App() {
             <Route path="/projects" element={
               <>
                 <PublicNavbar />
-                <div className="pt-16 md:pt-20 lg:pt-24">
+                {/* <div className="pt-16 md:pt-20 lg:pt-24"> */}
                   <Projects />
-                </div>
+                {/* </div> */}
                 <Footer />
               </>
             } />
