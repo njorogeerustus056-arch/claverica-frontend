@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth";
+import { api } from "../../api"; // ✅ Import api instead of apiClient
 import { 
   User, Mail, Phone, Shield, CheckCircle2, 
   Calendar, MapPin, Building, Edit, Download,
@@ -9,9 +10,8 @@ import {
   ChevronRight, Briefcase, Home, Globe, FileText,
   Map
 } from "lucide-react";
-import apiClient from "../../lib/api/client";
 
-const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL || "`${import.meta.env.VITE_API_URL}`";
+// No need for API_URL constant - use api.ts
 
 interface ProfileData {
   // Basic user info
@@ -82,44 +82,43 @@ export default function Profile() {
       setLoading(true);
       setError(null);
 
-      // ✅ FIXED: Removed duplicate /api/ from endpoint
-      const userResponse = await apiClient.get('/users/profile/');
-      const userData = userResponse.data;
+      // ✅ FIXED: Use api.ts instead of raw apiClient
+      const userData = await api.auth.getProfile();
       
-      // 2. Get wallet balance from /api/transactions/wallet/balance/
+      // 2. Get wallet balance
       let walletBalance = 0;
       try {
-        const walletResponse = await apiClient.get('/transactions/wallet/balance/');
-        walletBalance = walletResponse.data.balance || 0;
+        const walletData = await api.wallet.getBalance();
+        walletBalance = walletData.balance || 0;
       } catch (walletError) {
         console.log("Wallet endpoint not available");
       }
 
-      // 3. Get transaction stats from /api/transactions/recent/
+      // 3. Get transaction stats
       let totalTransactions = 0;
       let monthlyIncome = 0;
       let monthlyExpenses = 0;
       
       try {
-        const txResponse = await apiClient.get('/transactions/recent/');
-        const transactions = txResponse.data.transactions || txResponse.data || [];
+        const txData = await api.wallet.getTransactions();
+        const transactions = txData.transactions || txData || [];
         
         // Calculate stats
         const currentMonth = new Date().getMonth();
         const currentYear = new Date().getFullYear();
         
         const monthlyTransactions = transactions.filter((tx: any) => {
-          const txDate = new Date(tx.created_at || tx.date);
+          const txDate = new Date(tx.created_at || tx.timestamp);
           return txDate.getMonth() === currentMonth && 
                  txDate.getFullYear() === currentYear;
         });
         
         monthlyIncome = monthlyTransactions
-          .filter((tx: any) => (tx.transaction_type === "credit" || tx.type === "deposit") && tx.status === "completed")
+          .filter((tx: any) => tx.transaction_type === "credit" && tx.status === "completed")
           .reduce((sum: number, tx: any) => sum + (tx.amount || 0), 0);
         
         monthlyExpenses = monthlyTransactions
-          .filter((tx: any) => (tx.transaction_type === "debit" || tx.type === "withdrawal") && tx.status === "completed")
+          .filter((tx: any) => tx.transaction_type === "debit" && tx.status === "completed")
           .reduce((sum: number, tx: any) => sum + (tx.amount || 0), 0);
         
         totalTransactions = transactions.length;
@@ -177,7 +176,7 @@ export default function Profile() {
       setProfile(profileData);
     } catch (err: any) {
       console.error("Profile fetch error:", err);
-      setError(err.response?.data?.message || "Failed to load profile");
+      setError(err.message || "Failed to load profile");
       
       // Fallback to auth store data
       if (authUser) {
@@ -203,7 +202,7 @@ export default function Profile() {
     }
   };
 
-  // Helper functions
+  // Helper functions (same as before)
   const formatAddress = () => {
     if (!profile) return "No address provided";
     

@@ -1,3 +1,4 @@
+// src/pages/dashboard/Home.tsx
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -34,6 +35,8 @@ import {
   Target,
   PieChart,
   ArrowRight,
+  X,
+  Menu,
 } from "lucide-react";
 import { useAuthStore } from "../../lib/store/auth";
 import { useDashboardData } from "../../hooks/useDashboardData";
@@ -215,6 +218,11 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
   );
 }
 
+// Card Skeleton Component
+function CardSkeleton() {
+  return <div className={styles.cardSkeleton}></div>;
+}
+
 export default function Home() {
   const { tokens } = useAuthStore();
   const navigate = useNavigate();
@@ -222,24 +230,45 @@ export default function Home() {
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [cardsCount, setCardsCount] = useState(0);
+  const [cardsLoading, setCardsLoading] = useState(true);
+  const [cardsError, setCardsError] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { wallet, transactions, user, loading, error, refetch } = useDashboardData();
   const { pusherConnected } = useSafePusher();
 
+  // Add WebSocket listeners for real-time updates
+  useEffect(() => {
+    if (pusherConnected) {
+      // These would be implemented with your Pusher channel
+      console.log('🔌 WebSocket connected - ready for real-time updates');
+      // channel.bind('wallet.credited', handleBalanceUpdate);
+      // channel.bind('wallet.debited', handleBalanceUpdate);
+    }
+  }, [pusherConnected]);
+
   useEffect(() => {
     const fetchCardsCount = async () => {
+      setCardsLoading(true);
+      setCardsError(null);
       try {
-        const response = await api.get('/api/cards/user-cards/');
+        // ✅ FIXED: Use the dedicated cards API method
+        const response = await api.cards.getUserCards();
+        
         let cardsArray = [];
-        if (Array.isArray(response.data)) {
-          cardsArray = response.data;
-        } else if (response.data && Array.isArray(response.data.cards)) {
-          cardsArray = response.data.cards;
+        if (response && Array.isArray(response.cards)) {
+          cardsArray = response.cards;
+        } else if (Array.isArray(response)) {
+          cardsArray = response;
         }
+        
         setCardsCount(cardsArray.length);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Failed to fetch cards:', err);
+        setCardsError(err.message || 'Failed to load cards');
         setCardsCount(0);
+      } finally {
+        setCardsLoading(false);
       }
     };
     
@@ -296,12 +325,22 @@ export default function Home() {
     });
   };
 
+  // Quick actions with loading/error states for cards
   const quickActions = [
     { icon: Send, label: "Send", color: "#8626E9", action: () => navigate("/dashboard/transfer"), desc: "Transfer money" },
     { icon: Download, label: "Withdraw", color: "#8626E9", action: () => navigate("/dashboard/transfer"), desc: "To bank account" },
     { icon: Bitcoin, label: "Crypto", color: "#C5A028", action: () => navigate("/dashboard/crypto"), desc: "Buy/Sell crypto", badge: "New" },
     { icon: WalletIcon, label: "Wallet", color: "#1E6F6F", action: () => setShowWalletModal(true), desc: "Quick overview" },
-    { icon: CreditCard, label: "Cards", color: "#8626E9", action: () => navigate("/dashboard/cards"), desc: `${cardsCount} active`, count: cardsCount },
+    { 
+      icon: CreditCard, 
+      label: "Cards", 
+      color: "#8626E9", 
+      action: () => navigate("/dashboard/cards"), 
+      desc: cardsLoading ? "Loading..." : cardsError ? "Error" : `${cardsCount} active`,
+      count: cardsCount,
+      loading: cardsLoading,
+      error: cardsError
+    },
     { icon: History, label: "History", color: "#0A2540", action: () => navigate("/dashboard/transfer/history"), desc: "Transactions", badge: transactions.length > 0 ? transactions.length.toString() : null },
     { icon: Headphones, label: "Support", color: "#C5A028", action: () => navigate("/dashboard/support"), desc: "24/7 help" },
     { icon: BarChart3, label: "Savings", color: "#1E6F6F", action: () => navigate("/dashboard/savings"), desc: "Grow money" },
@@ -369,6 +408,36 @@ export default function Home() {
           navigate={navigate}
         />
       )}
+
+      {/* Mobile Menu */}
+      <div className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.open : ''}`}>
+        <div className={styles.mobileMenuHeader}>
+          <span className={styles.mobileMenuTitle}>Menu</span>
+          <button 
+            className={styles.mobileMenuClose}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <X />
+          </button>
+        </div>
+        <div className={styles.mobileNavLinks}>
+          <button className={styles.mobileNavLink} onClick={() => { navigate("/dashboard/transfer"); setMobileMenuOpen(false); }}>
+            <Send /> Send Money
+          </button>
+          <button className={styles.mobileNavLink} onClick={() => { navigate("/dashboard/cards"); setMobileMenuOpen(false); }}>
+            <CreditCard /> Cards
+          </button>
+          <button className={styles.mobileNavLink} onClick={() => { navigate("/dashboard/crypto"); setMobileMenuOpen(false); }}>
+            <Bitcoin /> Crypto
+          </button>
+          <button className={styles.mobileNavLink} onClick={() => { navigate("/dashboard/support"); setMobileMenuOpen(false); }}>
+            <Headphones /> Support
+          </button>
+          <button className={styles.mobileNavLink} onClick={() => { navigate("/dashboard/settings"); setMobileMenuOpen(false); }}>
+            <MoreVertical /> Settings
+          </button>
+        </div>
+      </div>
 
       <div className={styles.container}>
         {/* Hero Section - Navy to Purple Gradient */}
@@ -468,22 +537,27 @@ export default function Home() {
 
             {/* Action Icons */}
             <div className={styles.heroActions}>
-              <button onClick={handleRefresh} className={styles.iconBtn} title="Refresh">
-                <RefreshCw className={loading ? styles.spinning : ''} />
+              <button className={styles.hamburgerBtn} onClick={() => setMobileMenuOpen(true)}>
+                <Menu />
               </button>
-              {pusherConnected && (
-                <div className={styles.liveIndicator}>
-                  <span className={styles.liveDot}></span>
-                  <span className={styles.liveText}>Live</span>
-                </div>
-              )}
-              <button className={styles.iconBtn} title="Notifications" onClick={() => navigate("/dashboard/notifications")}>
-                <Bell />
-                {pendingTransactions.length > 0 && <span className={styles.notificationDot}></span>}
-              </button>
-              <button className={styles.iconBtn} title="Settings" onClick={() => navigate("/dashboard/settings")}>
-                <MoreVertical />
-              </button>
+              <div className={styles.desktopNav}>
+                <button onClick={handleRefresh} className={styles.iconBtn} title="Refresh">
+                  <RefreshCw className={loading ? styles.spinning : ''} />
+                </button>
+                {pusherConnected && (
+                  <div className={styles.liveIndicator}>
+                    <span className={styles.liveDot}></span>
+                    <span className={styles.liveText}>Live</span>
+                  </div>
+                )}
+                <button className={styles.iconBtn} title="Notifications" onClick={() => navigate("/dashboard/notifications")}>
+                  <Bell />
+                  {pendingTransactions.length > 0 && <span className={styles.notificationDot}></span>}
+                </button>
+                <button className={styles.iconBtn} title="Settings" onClick={() => navigate("/dashboard/settings")}>
+                  <MoreVertical />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -509,11 +583,19 @@ export default function Home() {
                     <span className={styles.actionLabel}>{action.label}</span>
                     <span className={styles.actionDesc}>{action.desc}</span>
                   </div>
-                  {action.count > 0 && <span className={styles.actionCount}>{action.count}</span>}
-                  {action.badge && <span className={styles.actionBadge}>{action.badge}</span>}
+                  {action.count > 0 && !action.loading && <span className={styles.actionCount}>{action.count}</span>}
+                  {action.badge && !action.loading && <span className={styles.actionBadge}>{action.badge}</span>}
+                  {action.loading && <CardSkeleton />}
                 </button>
               ))}
             </div>
+            
+            {/* Show card error if any */}
+            {cardsError && (
+              <div className={styles.cardError}>
+                <Shield /> Failed to load cards: {cardsError}
+              </div>
+            )}
           </section>
 
           {/* Two Column Layout */}
@@ -693,7 +775,9 @@ export default function Home() {
                   </div>
                   <div className={styles.statusItem}>
                     <span className={styles.statusLabel}>Cards</span>
-                    <span className={styles.statusValue}>{cardsCount}</span>
+                    <span className={styles.statusValue}>
+                      {cardsLoading ? <Clock /> : cardsCount}
+                    </span>
                   </div>
                   <div className={styles.statusItem}>
                     <span className={styles.statusLabel}>Verification</span>

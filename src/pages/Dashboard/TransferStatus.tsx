@@ -102,10 +102,26 @@ const TransferStatusPage = () => {
 
   if (loading) {
     return (
-      <Container maxWidth="md" className={styles.container}>
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-          <CircularProgress />
+      <Container maxWidth="lg" className={styles.container}>
+        <Box mb={4}>
+          <div className={styles.skeletonTextShort} style={{ height: '40px', marginBottom: '20px' }}></div>
+          <div className={styles.skeletonText} style={{ height: '48px', width: '50%' }}></div>
+          <div className={styles.skeletonTextShort} style={{ width: '30%' }}></div>
         </Box>
+        
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <div className={styles.skeletonCard} style={{ height: '300px' }}>
+              <div style={{ padding: '24px' }}>
+                <div className={styles.skeletonAvatar}></div>
+                <div className={styles.skeletonText} style={{ width: '40%', margin: '16px auto' }}></div>
+                <div className={styles.skeletonText} style={{ width: '60%', margin: '0 auto' }}></div>
+                <div className={styles.skeletonText} style={{ width: '80%', margin: '24px auto' }}></div>
+                <div className={styles.skeletonTextShort} style={{ width: '50%', margin: '0 auto' }}></div>
+              </div>
+            </div>
+          </Grid>
+        </Grid>
       </Container>
     );
   }
