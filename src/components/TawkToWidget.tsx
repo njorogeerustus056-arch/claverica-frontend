@@ -1,19 +1,19 @@
 // Copy and paste this entire file
 import { useEffect } from 'react';
 import { useAuthStore } from '../lib/store/auth';
-import { useLocation } from 'react-router-dom'; // Add this import
+import { useLocation } from 'react-router-dom';
 
 export default function TawkToWidget() {
   const { isAuthenticated } = useAuthStore();
-  const location = useLocation(); // Add this
+  const location = useLocation();
   
   // Only show on dashboard routes
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
   
-  // Get env variables
+  // Get env variables - UPDATED with new IDs
   const isEnabled = import.meta.env.VITE_TAWK_ENABLED === 'true';
-  const propertyId = import.meta.env.VITE_TAWK_PROPERTY_ID || '6990e9d3e68ce71c379eec8d';
-  const widgetId = import.meta.env.VITE_TAWK_WIDGET_ID || 'default';
+  const propertyId = import.meta.env.VITE_TAWK_PROPERTY_ID || '69a0b278865cc31c343af01b';
+  const widgetId = import.meta.env.VITE_TAWK_WIDGET_ID || '1jidri9sm';
 
   useEffect(() => {
     // Only load if enabled AND user is authenticated AND on dashboard route
@@ -34,13 +34,17 @@ export default function TawkToWidget() {
     script.onload = () => {
       console.log('✅ Tawk.to loaded successfully');
       
-      // Optional: Set user data if available
+      // Set user data if available
       const user = useAuthStore.getState().user;
       if (user && window.Tawk_API) {
         window.Tawk_API.setAttributes({
           name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'User',
           email: user.email || '',
           hash: user.id
+        }, function(error) {
+          if (error) {
+            console.error('Error setting user attributes:', error);
+          }
         });
       }
     };
@@ -64,7 +68,7 @@ export default function TawkToWidget() {
       // Clean up global Tawk object
       delete window.Tawk_API;
     };
-  }, [isAuthenticated, isDashboardRoute, isEnabled, propertyId, widgetId]); // Add isDashboardRoute to dependencies
+  }, [isAuthenticated, isDashboardRoute, isEnabled, propertyId, widgetId]);
 
   return null; // No UI, just loads script
 }
