@@ -1,4 +1,4 @@
-// src/context/PusherContext.tsx - FINAL FIX WITH TRANSPORT CONFIGURATION
+// src/context/PusherContext.tsx - FINAL FIX WITH CORRECT US3 CLUSTER
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAuthStore } from '../lib/store/auth';
@@ -76,12 +76,12 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const authEndpoint = `${baseUrl}/api/pusher/auth/`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
-    // 🔥 FIXED: Ensure all options are properly passed to Pusher
+    // 🔥 FIXED: Ensure all options are properly passed to Pusher with CORRECT US3 cluster
     console.log('🔧 Creating Pusher instance NOW...');
     
     try {
       const pusherConfig = {
-        cluster: 'ap2',
+        cluster: 'us3', // ✅ CORRECT - matches Pusher dashboard
         authEndpoint: authEndpoint,
         auth: {
           headers: {
@@ -92,9 +92,9 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
           params: {},
         },
         authTransport: 'ajax',
-        wsHost: 'ws-ap2.pusher.com',
-        wssHost: 'ws-ap2.pusher.com',
-        httpHost: 'sockjs-ap2.pusher.com',
+        wsHost: 'ws-us3.pusher.com', // ✅ CORRECT for US3
+        wssHost: 'ws-us3.pusher.com', // ✅ CORRECT for US3
+        httpHost: 'sockjs-us3.pusher.com', // ✅ CORRECT for US3
         forceTLS: true,
         disableStats: true,
         // 🔥 CRITICAL FIX: Only use WebSocket transports
