@@ -1,4 +1,4 @@
-// src/context/PusherContext.tsx - FINAL FIX WITH CORRECT US3 CLUSTER
+// src/context/PusherContext.tsx - FINAL FIX WITH CONNECTION OPTIONS
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAuthStore } from '../lib/store/auth';
@@ -107,6 +107,18 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       const pusher = new Pusher('b1283987f8301fdce6e34', pusherConfig);
 
       console.log('✅ Pusher instance CREATED successfully');
+
+      // 🔥 CRITICAL FIX: Force options onto connection
+      if (pusher.connection) {
+        // Manually set the options that aren't being passed
+        pusher.connection.options = {
+          ...pusher.connection.options,
+          wsHost: 'ws-us3.pusher.com',
+          wssHost: 'ws-us3.pusher.com',
+          forceTLS: true,
+          enabledTransports: ['ws', 'wss']
+        };
+      }
 
       // 🔥 Verify options were passed correctly
       console.log('✅ Pusher connection options:', {
