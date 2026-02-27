@@ -1,4 +1,4 @@
-// src/context/PusherContext.tsx - COMPLETELY FIXED VERSION
+// src/context/PusherContext.tsx - FINAL FIXED VERSION
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAuthStore } from '../lib/store/auth';
@@ -77,9 +77,9 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const authEndpoint = `${baseUrl}/api/pusher/auth/`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
-    // ✅ UPDATED: Better WebSocket configuration for ap2 cluster using env vars
-    const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
-      cluster: 'ap2', // 🔥 HARDCODED to ap2 to ensure correct cluster
+    // 🔥 FINAL FIX: EVERYTHING HARDCODED - NO ENV VARS
+    const pusher = new Pusher('b1283987f8301fdce6e34', { // Hardcoded key
+      cluster: 'ap2', // Hardcoded cluster
       authEndpoint: authEndpoint,
       auth: {
         headers: {
@@ -90,14 +90,12 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         params: {},
       },
       authTransport: 'ajax',
-      // 🔥 Use environment variables with fallbacks
-      wsHost: import.meta.env.VITE_PUSHER_WS_HOST || 'ws-ap2.pusher.com',
-      wssHost: import.meta.env.VITE_PUSHER_WSS_HOST || 'ws-ap2.pusher.com',
-      httpHost: import.meta.env.VITE_PUSHER_HTTP_HOST || 'sockjs-ap2.pusher.com',
-      // 🔥 Use env vars for boolean settings
-      forceTLS: import.meta.env.VITE_PUSHER_FORCE_TLS === 'true',
-      disableStats: import.meta.env.VITE_PUSHER_DISABLE_STATS === 'true',
-      // 🔥 Enable all transports for maximum compatibility
+      // 🔥 ALL HARDCODED - NO FALLBACKS
+      wsHost: 'ws-ap2.pusher.com',
+      wssHost: 'ws-ap2.pusher.com',
+      httpHost: 'sockjs-ap2.pusher.com',
+      forceTLS: true, // Hardcoded to true
+      disableStats: true,
       enabledTransports: ['ws', 'wss', 'xhr_streaming', 'xhr_polling'],
     });
 
