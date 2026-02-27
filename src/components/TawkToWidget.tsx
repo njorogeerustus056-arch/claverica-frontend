@@ -7,8 +7,23 @@ export default function TawkToWidget() {
   const { isAuthenticated } = useAuthStore();
   const location = useLocation();
   
-  // Only show on dashboard routes
+  // 🚫 Block on public routes - especially login/signup pages
+  const isPublicRoute = 
+    location.pathname === '/signin' || 
+    location.pathname === '/signup' || 
+    location.pathname === '/verify-email' ||
+    location.pathname === '/activate' ||
+    location.pathname === '/activate-account' ||
+    location.pathname === '/' ||
+    location.pathname.startsWith('/about') ||
+    location.pathname.startsWith('/services') ||
+    location.pathname.startsWith('/projects') ||
+    location.pathname.startsWith('/contact') ||
+    location.pathname.startsWith('/features');
+  
+  // Only show on dashboard routes AND authenticated AND not public
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
+  const shouldShow = isAuthenticated && isDashboardRoute && !isPublicRoute;
   
   // Get env variables - UPDATED with new IDs
   const isEnabled = import.meta.env.VITE_TAWK_ENABLED === 'true';
@@ -16,8 +31,17 @@ export default function TawkToWidget() {
   const widgetId = import.meta.env.VITE_TAWK_WIDGET_ID || '1jidri9sm';
 
   useEffect(() => {
-    // Only load if enabled AND user is authenticated AND on dashboard route
-    if (!isEnabled || !isAuthenticated || !isDashboardRoute) return;
+    // Clean up if we shouldn't show
+    if (!shouldShow || !isEnabled) {
+      // Remove any existing Tawk.to scripts/iframes
+      const existingScript = document.querySelector('script[src*="tawk.to"]');
+      if (existingScript) {
+        existingScript.remove();
+      }
+      document.querySelectorAll('iframe[src*="tawk.to"]').forEach(el => el.remove());
+      delete window.Tawk_API;
+      return;
+    }
 
     // Check if already loaded
     if (document.querySelector('script[src*="tawk.to"]')) return;
@@ -68,7 +92,7 @@ export default function TawkToWidget() {
       // Clean up global Tawk object
       delete window.Tawk_API;
     };
-  }, [isAuthenticated, isDashboardRoute, isEnabled, propertyId, widgetId]);
+  }, [shouldShow, isEnabled, propertyId, widgetId]); // Updated dependencies
 
   return null; // No UI, just loads script
 }

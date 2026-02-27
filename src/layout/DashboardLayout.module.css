@@ -259,14 +259,3 @@
     opacity: 1 !important;
     visibility: visible !important;
 }
-
-/* 🆕 NEW: Hide settings menu (gear icon/bars) */
-:global(.tawk-nav-menu),
-:global(.tawk-menu),
-:global(.tawk-more-options),
-:global([class*="tawk"][class*="menu"]),
-:global([class*="tawk"][class*="setting"]),
-:global([class*="tawk"][class*="gear"]),
-:global([class*="tawk"][class*="cog"]) {
-    display: none !important;
-}
