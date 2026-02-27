@@ -237,3 +237,25 @@
     transition: none;
   }
 }
+
+/* ===== TAWK.TO CUSTOMIZATIONS ===== */
+/* Hide the "We Are Here" message bubble completely */
+:global(.tawk-message-container) {
+    display: none !important;
+}
+
+/* Hide any status text */
+:global(.tawk-status-text) {
+    display: none !important;
+}
+
+/* Hide the entire status container if needed */
+:global(.tawk-status-container) {
+    display: none !important;
+}
+
+/* Make sure the chat button remains visible and functional */
+:global(.tawk-button) {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
