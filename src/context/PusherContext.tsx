@@ -1,4 +1,4 @@
-// src/context/PusherContext.tsx - FINAL FIX WITH CONNECTION OPTIONS
+// src/context/PusherContext.tsx - PRODUCTION READY WITH NEW KEY
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAuthStore } from '../lib/store/auth';
@@ -76,12 +76,12 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const authEndpoint = `${baseUrl}/api/pusher/auth/`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
-    // 🔥 FIXED: Ensure all options are properly passed to Pusher with CORRECT US3 cluster
+    // 🔥 PRODUCTION: Using new Pusher key
     console.log('🔧 Creating Pusher instance NOW...');
     
     try {
       const pusherConfig = {
-        cluster: 'us3', // ✅ CORRECT - matches Pusher dashboard
+        cluster: 'us3',
         authEndpoint: authEndpoint,
         auth: {
           headers: {
@@ -92,25 +92,24 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
           params: {},
         },
         authTransport: 'ajax',
-        wsHost: 'ws-us3.pusher.com', // ✅ CORRECT for US3
-        wssHost: 'ws-us3.pusher.com', // ✅ CORRECT for US3
-        httpHost: 'sockjs-us3.pusher.com', // ✅ CORRECT for US3
+        wsHost: 'ws-us3.pusher.com',
+        wssHost: 'ws-us3.pusher.com',
+        httpHost: 'sockjs-us3.pusher.com',
         forceTLS: true,
         disableStats: true,
-        // 🔥 CRITICAL FIX: Only use WebSocket transports
         enabledTransports: ['ws', 'wss'],
         disabledTransports: ['xhr_streaming', 'xhr_polling', 'sockjs'],
       };
 
       console.log('📋 Pusher config being used:', pusherConfig);
 
-      const pusher = new Pusher('b1283987f8301fdce6e34', pusherConfig);
+      // 🔥 NEW PRODUCTION KEY FROM PUSHER DASHBOARD
+      const pusher = new Pusher('bca27bf95e4d459c2acd', pusherConfig);
 
       console.log('✅ Pusher instance CREATED successfully');
 
       // 🔥 CRITICAL FIX: Force options onto connection
       if (pusher.connection) {
-        // Manually set the options that aren't being passed
         pusher.connection.options = {
           ...pusher.connection.options,
           wsHost: 'ws-us3.pusher.com',
@@ -159,7 +158,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         setConnected(false);
       });
 
-      // Subscribe to channel - use id as fallback if account_number not available
+      // Subscribe to channel
       const channelIdentifier = user.account_number || user.id;
       const channelName = `private-user-${channelIdentifier}`;
       
