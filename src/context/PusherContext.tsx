@@ -102,6 +102,23 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
 
       console.log('✅ Pusher instance CREATED successfully');
 
+      // 🔥 NEW DEBUG CODE - Show what config is actually being used
+      console.log('🔍 Pusher config:', {
+        key: pusher.key,
+        cluster: pusher.config.cluster,
+        wsHost: pusher.config.wsHost,
+        wssHost: pusher.config.wssHost
+      });
+
+      // 🔥 Monkey-patch to catch the actual WebSocket URL
+      if (pusher.connection && pusher.connection.createWebSocket) {
+        const originalCreateWebSocket = pusher.connection.createWebSocket;
+        pusher.connection.createWebSocket = function(url) {
+          console.log('🔌 ACTUAL WebSocket URL being used:', url);
+          return originalCreateWebSocket.call(this, url);
+        };
+      }
+
       // Connection event handlers
       pusher.connection.bind('connected', () => {
         console.log('✅✅✅ Pusher CONNECTED successfully!');
@@ -144,7 +161,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         setError('Failed to subscribe to user channel');
       });
 
-      // ===== ALL YOUR EVENT BINDINGS HERE =====
+      // ===== NOTIFICATION EVENTS =====
       channel.bind('notification.created', (data: any) => {
         console.log('📨 New notification received:', data);
         toast.success(data.title || 'New Notification', { icon: '🔔', duration: 5000 });
