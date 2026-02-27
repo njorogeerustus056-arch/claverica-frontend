@@ -1,47 +1,23 @@
 // Copy and paste this entire file
 import { useEffect } from 'react';
 import { useAuthStore } from '../lib/store/auth';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom'; // Add this import
 
 export default function TawkToWidget() {
   const { isAuthenticated } = useAuthStore();
-  const location = useLocation();
+  const location = useLocation(); // Add this
   
-  // 🚫 Block on public routes - especially login/signup pages
-  const isPublicRoute = 
-    location.pathname === '/signin' || 
-    location.pathname === '/signup' || 
-    location.pathname === '/verify-email' ||
-    location.pathname === '/activate' ||
-    location.pathname === '/activate-account' ||
-    location.pathname === '/' ||
-    location.pathname.startsWith('/about') ||
-    location.pathname.startsWith('/services') ||
-    location.pathname.startsWith('/projects') ||
-    location.pathname.startsWith('/contact') ||
-    location.pathname.startsWith('/features');
-  
-  // Only show on dashboard routes AND authenticated AND not public
+  // Only show on dashboard routes
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
-  const shouldShow = isAuthenticated && isDashboardRoute && !isPublicRoute;
   
-  // Get env variables - UPDATED with new IDs
+  // Get env variables
   const isEnabled = import.meta.env.VITE_TAWK_ENABLED === 'true';
-  const propertyId = import.meta.env.VITE_TAWK_PROPERTY_ID || '69a0b278865cc31c343af01b';
-  const widgetId = import.meta.env.VITE_TAWK_WIDGET_ID || '1jidri9sm';
+  const propertyId = import.meta.env.VITE_TAWK_PROPERTY_ID || '6990e9d3e68ce71c379eec8d';
+  const widgetId = import.meta.env.VITE_TAWK_WIDGET_ID || 'default';
 
   useEffect(() => {
-    // Clean up if we shouldn't show
-    if (!shouldShow || !isEnabled) {
-      // Remove any existing Tawk.to scripts/iframes
-      const existingScript = document.querySelector('script[src*="tawk.to"]');
-      if (existingScript) {
-        existingScript.remove();
-      }
-      document.querySelectorAll('iframe[src*="tawk.to"]').forEach(el => el.remove());
-      delete window.Tawk_API;
-      return;
-    }
+    // Only load if enabled AND user is authenticated AND on dashboard route
+    if (!isEnabled || !isAuthenticated || !isDashboardRoute) return;
 
     // Check if already loaded
     if (document.querySelector('script[src*="tawk.to"]')) return;
@@ -58,17 +34,13 @@ export default function TawkToWidget() {
     script.onload = () => {
       console.log('✅ Tawk.to loaded successfully');
       
-      // Set user data if available
+      // Optional: Set user data if available
       const user = useAuthStore.getState().user;
       if (user && window.Tawk_API) {
         window.Tawk_API.setAttributes({
           name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'User',
           email: user.email || '',
           hash: user.id
-        }, function(error) {
-          if (error) {
-            console.error('Error setting user attributes:', error);
-          }
         });
       }
     };
@@ -92,7 +64,7 @@ export default function TawkToWidget() {
       // Clean up global Tawk object
       delete window.Tawk_API;
     };
-  }, [shouldShow, isEnabled, propertyId, widgetId]); // Updated dependencies
+  }, [isAuthenticated, isDashboardRoute, isEnabled, propertyId, widgetId]); // Add isDashboardRoute to dependencies
 
   return null; // No UI, just loads script
 }
