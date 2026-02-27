@@ -1,4 +1,4 @@
-// src/context/PusherContext.tsx - COMPLETE FIX WITH DEBUG LOGS
+// src/context/PusherContext.tsx - FINAL FIX WITH TRANSPORT CONFIGURATION
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Pusher from 'pusher-js';
 import { useAuthStore } from '../lib/store/auth';
@@ -76,11 +76,11 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const authEndpoint = `${baseUrl}/api/pusher/auth/`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
-    // 🔥 FORCE CREATE PUSHER INSTANCE - NO CONDITIONS
+    // 🔥 FIXED: Ensure all options are properly passed to Pusher
     console.log('🔧 Creating Pusher instance NOW...');
     
     try {
-      const pusher = new Pusher('b1283987f8301fdce6e34', {
+      const pusherConfig = {
         cluster: 'ap2',
         authEndpoint: authEndpoint,
         auth: {
@@ -97,27 +97,32 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
         httpHost: 'sockjs-ap2.pusher.com',
         forceTLS: true,
         disableStats: true,
-        enabledTransports: ['ws', 'wss', 'xhr_streaming', 'xhr_polling'],
-      });
+        // 🔥 CRITICAL FIX: Only use WebSocket transports
+        enabledTransports: ['ws', 'wss'],
+        disabledTransports: ['xhr_streaming', 'xhr_polling', 'sockjs'],
+      };
+
+      console.log('📋 Pusher config being used:', pusherConfig);
+
+      const pusher = new Pusher('b1283987f8301fdce6e34', pusherConfig);
 
       console.log('✅ Pusher instance CREATED successfully');
 
-      // 🔥 NEW DEBUG CODE - Show what config is actually being used
+      // 🔥 Verify options were passed correctly
+      console.log('✅ Pusher connection options:', {
+        enabledTransports: pusher.connection.options?.enabledTransports,
+        wsHost: pusher.connection.options?.wsHost,
+        wssHost: pusher.connection.options?.wssHost,
+        forceTLS: pusher.connection.options?.forceTLS
+      });
+
+      // 🔍 Show what config is actually being used
       console.log('🔍 Pusher config:', {
         key: pusher.key,
         cluster: pusher.config.cluster,
         wsHost: pusher.config.wsHost,
         wssHost: pusher.config.wssHost
       });
-
-      // 🔥 Monkey-patch to catch the actual WebSocket URL
-      if (pusher.connection && pusher.connection.createWebSocket) {
-        const originalCreateWebSocket = pusher.connection.createWebSocket;
-        pusher.connection.createWebSocket = function(url) {
-          console.log('🔌 ACTUAL WebSocket URL being used:', url);
-          return originalCreateWebSocket.call(this, url);
-        };
-      }
 
       // Connection event handlers
       pusher.connection.bind('connected', () => {
@@ -277,7 +282,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       setError('Failed to initialize Pusher');
     }
 
-  }, [user?.id, user?.email, user?.is_staff, user?.is_superuser, tokens?.access]); // Removed account_number dependency
+  }, [user?.id, user?.email, user?.is_staff, user?.is_superuser, tokens?.access]);
 
   return (
     <PusherContext.Provider value={{ connected, error }}>
