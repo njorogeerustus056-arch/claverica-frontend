@@ -77,28 +77,28 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const authEndpoint = `${baseUrl}/api/pusher/auth/`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
-    // ✅ UPDATED: Better WebSocket configuration for ap2 cluster
+    // ✅ UPDATED: Better WebSocket configuration for ap2 cluster using env vars
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
       authEndpoint: authEndpoint,
       auth: {
         headers: {
           'Authorization': `Bearer ${tokens.access}`,
-          'Accept': 'application/json', // Added Accept header
+          'Accept': 'application/json',
         },
         method: 'POST',
         params: {},
       },
       authTransport: 'ajax',
-      // 🔥 NEW: Explicit WebSocket hosts for ap2 cluster
-      wsHost: 'ws-ap2.pusher.com',
-      wssHost: 'ws-ap2.pusher.com',
-      httpHost: 'sockjs-ap2.pusher.com',
-      // 🔥 NEW: Force TLS and enable all transports
-      forceTLS: true,
+      // 🔥 Use environment variables with fallbacks
+      wsHost: import.meta.env.VITE_PUSHER_WS_HOST || 'ws-ap2.pusher.com',
+      wssHost: import.meta.env.VITE_PUSHER_WSS_HOST || 'ws-ap2.pusher.com',
+      httpHost: import.meta.env.VITE_PUSHER_HTTP_HOST || 'sockjs-ap2.pusher.com',
+      // 🔥 Use env vars for boolean settings
+      forceTLS: import.meta.env.VITE_PUSHER_FORCE_TLS === 'true',
+      disableStats: import.meta.env.VITE_PUSHER_DISABLE_STATS === 'true',
+      // 🔥 Enable all transports for maximum compatibility
       enabledTransports: ['ws', 'wss', 'xhr_streaming', 'xhr_polling'],
-      // 🔥 NEW: Disable stats for cleaner connection
-      disableStats: true,
     });
 
     // Connection event handlers
