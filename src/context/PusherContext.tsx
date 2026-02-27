@@ -77,19 +77,28 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     const authEndpoint = `${baseUrl}/api/pusher/auth/`;
     console.log('🔐 Final auth endpoint:', authEndpoint);
 
-    // ✅ FIXED: Remove Content-Type header - Pusher-js will set it correctly
+    // ✅ UPDATED: Better WebSocket configuration for ap2 cluster
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
       authEndpoint: authEndpoint,
       auth: {
         headers: {
           'Authorization': `Bearer ${tokens.access}`,
-          // ❌ REMOVED: 'Content-Type': 'application/json', - Pusher sets this automatically
+          'Accept': 'application/json', // Added Accept header
         },
         method: 'POST',
-        params: {}, // Empty params to ensure proper formatting
+        params: {},
       },
       authTransport: 'ajax',
+      // 🔥 NEW: Explicit WebSocket hosts for ap2 cluster
+      wsHost: 'ws-ap2.pusher.com',
+      wssHost: 'ws-ap2.pusher.com',
+      httpHost: 'sockjs-ap2.pusher.com',
+      // 🔥 NEW: Force TLS and enable all transports
+      forceTLS: true,
+      enabledTransports: ['ws', 'wss', 'xhr_streaming', 'xhr_polling'],
+      // 🔥 NEW: Disable stats for cleaner connection
+      disableStats: true,
     });
 
     // Connection event handlers
