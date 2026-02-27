@@ -35,12 +35,28 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!user?.account_number || !tokens?.access) {
-      console.log('⏸️ Pusher: No user or token available');
+    // 🚨 CRITICAL FIX: Check if account_number exists before proceeding
+    if (!user) {
+      console.log('⏸️ Pusher: No user available');
       return;
     }
 
-    console.log('🔌 Initializing Pusher for user:', user.account_number);
+    if (!user.account_number) {
+      console.log('⏸️ Pusher: User account_number not available yet. Waiting...');
+      // Don't try to connect until account_number is available
+      return;
+    }
+
+    if (!tokens?.access) {
+      console.log('⏸️ Pusher: No token available');
+      return;
+    }
+
+    console.log('🔌 Initializing Pusher for user:', {
+      account_number: user.account_number,
+      id: user.id,
+      email: user.email
+    });
     
     // ✅ Token debugging
     console.log('🔑 Token available:', !!tokens.access);
@@ -89,24 +105,36 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
     });
 
     pusher.connection.bind('error', (err: any) => {
-      console.error('❌ Pusher connection error:', err);
+      console.error('❌ Pusher connection error DETAILS:', {
+        message: err.message,
+        data: err.data,
+        type: err.type,
+        error: err.error
+      });
       setError(err.message || 'Pusher connection failed');
       setConnected(false);
     });
 
-    // Subscribe to user-specific private channel
+    // ✅ Use account_number as backend expects (not id)
     const channelName = `private-user-${user.account_number}`;
     console.log('📡 Subscribing to channel:', channelName);
+    console.log('📡 Channel name length:', channelName.length);
+    console.log('📡 Channel name characters:', channelName.split('').map(c => c.charCodeAt(0)));
     
     const channel = pusher.subscribe(channelName);
 
     // Channel subscription events
     channel.bind('pusher:subscription_succeeded', () => {
-      console.log(`✅ Subscribed to ${channelName}`);
+      console.log(`✅ Successfully subscribed to ${channelName}`);
     });
 
     channel.bind('pusher:subscription_error', (err: any) => {
       console.error(`❌ Subscription error for ${channelName}:`, err);
+      console.error('Error details:', {
+        message: err.message,
+        data: err.data,
+        type: err.type
+      });
       setError('Failed to subscribe to user channel');
     });
 
@@ -263,7 +291,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
       pusher.unsubscribe(channelName);
       pusher.disconnect();
     };
-  }, [user?.account_number, user?.is_staff, user?.is_superuser, tokens?.access]);
+  }, [user?.account_number, user?.id, user?.email, user?.is_staff, user?.is_superuser, tokens?.access]);
 
   return (
     <PusherContext.Provider value={{ connected, error }}>
