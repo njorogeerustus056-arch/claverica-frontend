@@ -79,7 +79,7 @@ export const PusherProvider: React.FC<PusherProviderProps> = ({ children }) => {
 
     // ✅ UPDATED: Better WebSocket configuration for ap2 cluster using env vars
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
-      cluster: import.meta.env.VITE_PUSHER_CLUSTER,
+      cluster: 'ap2', // 🔥 HARDCODED to ap2 to ensure correct cluster
       authEndpoint: authEndpoint,
       auth: {
         headers: {
