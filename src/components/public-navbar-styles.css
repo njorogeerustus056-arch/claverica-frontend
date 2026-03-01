@@ -216,8 +216,8 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.90),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94);
 
       font-size: 1.15rem; 
   font-weight: 700;       

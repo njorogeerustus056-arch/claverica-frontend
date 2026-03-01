@@ -350,7 +350,7 @@ export default function Projects() {
 
           {/* MASSIVE TITLE */}
           <h1 className={styles.heroTitle}>
-            <span className={styles.titleLine1}>Financial Tech</span>
+            <span className={styles.titleLine3}>Financial Tech</span>
             <span className={styles.titleLine2}>Reimagined</span>
           </h1>
 
