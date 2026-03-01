@@ -273,11 +273,11 @@
 
   background: linear-gradient(
     90deg,
-    #9A3412 0%,   /* deep burnt orange */
-    #C2410C 25%,  /* strong orange */
-    #EA580C 60%,  /* vivid orange */
-    #FB923C 85%,  /* lighter orange */
-    #FDBA74 100%  /* soft bright edge */
+    #9A3412 0%,    
+    #C2410C 25%,   
+    #EA580C 60%,   
+    #FB923C 85%,   
+    #FDBA74 100%   
   );
 
   -webkit-background-clip: text;
