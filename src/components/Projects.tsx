@@ -84,6 +84,7 @@ export default function Projects() {
             muted
             loop
             playsInline
+            poster="/images/fallback_pik_2.png"
           >
             <source src="/videos/Service1.mp4" type="video/mp4" />
           </video>

@@ -267,6 +267,26 @@
   margin-top: 0.5rem;
 }
 
+.titleLine3 {
+  display: block;
+  font-size: 5rem;
+
+  background: linear-gradient(
+    90deg,
+    #9A3412 0%,    
+    #C2410C 25%,   
+    #EA580C 60%,   
+    #FB923C 85%,   
+    #FDBA74 100%   
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  margin-top: 0.5rem;
+}
+
 @media (min-width: 640px) {
   .titleLine1, .titleLine2 {
     font-size: 4rem;

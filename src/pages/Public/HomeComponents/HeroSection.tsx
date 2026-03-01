@@ -105,6 +105,7 @@ const HeroSection = () => {
                     playsInline
                     preload="auto"
                     className={styles.videoBackground}
+                    poster="/images/fallback_pik.png" 
                 >
                     <source src="/videos/Home1.mp4" type="video/mp4" />
                     Your browser does not support the video tag.
