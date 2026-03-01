@@ -38,16 +38,16 @@ function getStableStats(id: string | number) {
     .split("")
     .reduce((acc, c) => acc + c.charCodeAt(0), 0);
   return {
-    users:  100_000 + ((s * 1_234_567) % 400_000),
-    rating: (3.5   + ((s * 31) % 150) / 100).toFixed(1),
-    growth: 50     + ((s * 97) % 150),
-    views:  5_000  + ((s * 421) % 45_000),
+    users: 100_000 + ((s * 1_234_567) % 400_000),
+    rating: (3.5 + ((s * 31) % 150) / 100).toFixed(1),
+    growth: 50 + ((s * 97) % 150),
+    views: 5_000 + ((s * 421) % 45_000),
   };
 }
 
 function fmt(n: number) {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000)     return `${(n / 1_000).toFixed(0)}K`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
   return String(n);
 }
 
@@ -75,15 +75,15 @@ const Skeleton = () => (
    MAIN COMPONENT
    ════════════════════════════════════════════════════════════════════════════ */
 export default function Projects() {
-  const [activeFilter, setActiveFilter]   = useState("all");
-  const [viewMode, setViewMode]           = useState<"grid" | "list">("grid");
-  const [searchQuery, setSearchQuery]     = useState("");
-  const [sortBy, setSortBy]               = useState("popular");
-  const [showFilters, setShowFilters]     = useState(false);
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("popular");
+  const [showFilters, setShowFilters] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
-  const [isLoading, setIsLoading]         = useState(true);
-  const [email, setEmail]                 = useState("");
-  const [subscribed, setSubscribed]       = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -95,20 +95,20 @@ export default function Projects() {
   }, []);
 
   useEffect(() => {
-    videoRef.current?.play().catch(() => {});
+    videoRef.current?.play().catch(() => { });
     const t = setTimeout(() => setIsLoading(false), 900);
     return () => clearTimeout(t);
   }, []);
 
   /* ── Categories ── */
   const categories = [
-    { id: "all",      label: "All Projects", icon: Globe },
-    { id: "payments", label: "Payments",     icon: CreditCard },
-    { id: "banking",  label: "Banking",      icon: Wallet },
-    { id: "crypto",   label: "Crypto",       icon: LineChart },
-    { id: "lending",  label: "Lending",      icon: TrendingUp },
-    { id: "business", label: "Business",     icon: BarChart3 },
-    { id: "security", label: "Security",     icon: Shield },
+    { id: "all", label: "All Projects", icon: Globe },
+    { id: "payments", label: "Payments", icon: CreditCard },
+    { id: "banking", label: "Banking", icon: Wallet },
+    { id: "crypto", label: "Crypto", icon: LineChart },
+    { id: "lending", label: "Lending", icon: TrendingUp },
+    { id: "business", label: "Business", icon: BarChart3 },
+    { id: "security", label: "Security", icon: Shield },
   ];
 
   /* ── Filtered + sorted ── */
@@ -143,7 +143,7 @@ export default function Projects() {
   const TrendingCard = ({ project, rank }: { project: Project; rank: number }) => {
     const s = stableStats[String(project.id)];
     const imagePath = projectImages[project.slug] || "/images/Project/placeholder.jpg";
-    
+
     return (
       <Link
         to={`/projects/${project.slug}`}
@@ -156,13 +156,13 @@ export default function Projects() {
 
         {/* Image */}
         <div className={styles.trendingImageContainer}>
-          <img 
-            src={imagePath} 
+          <img
+            src={imagePath}
             alt={project.title}
             className={styles.trendingImage}
           />
           <div className={styles.trendingOverlay} />
-          
+
           {/* Quick stats overlay */}
           <div className={styles.trendingStats}>
             <div className={styles.trendingStat}>
@@ -202,20 +202,20 @@ export default function Projects() {
   const GridCard = ({ project }: { project: Project }) => {
     const s = stableStats[String(project.id)];
     const imagePath = projectImages[project.slug] || "/images/Project/placeholder.jpg";
-    
+
     return (
       <Link
         to={`/projects/${project.slug}`}
         className={styles.gridCard}
       >
         <div className={styles.gridImageContainer}>
-          <img 
-            src={imagePath} 
+          <img
+            src={imagePath}
             alt={project.title}
             className={styles.gridImage}
           />
           <div className={styles.gridOverlay} />
-          
+
           <div className={styles.gridStats}>
             <div className={styles.gridStat}>
               <Users className={styles.gridStatIcon} />{fmt(s?.users ?? 0)}
@@ -249,15 +249,15 @@ export default function Projects() {
   const ListCard = ({ project }: { project: Project }) => {
     const s = stableStats[String(project.id)];
     const imagePath = projectImages[project.slug] || "/images/Project/placeholder.jpg";
-    
+
     return (
       <Link
         to={`/projects/${project.slug}`}
         className={styles.listCard}
       >
         <div className={styles.listImageContainer}>
-          <img 
-            src={imagePath} 
+          <img
+            src={imagePath}
             alt={project.title}
             className={styles.listImage}
           />
@@ -292,7 +292,7 @@ export default function Projects() {
       <nav className={styles.navbar}>
         <div className={styles.navContainer}>
           <Link to="/" className={styles.logo}>ClaveRica</Link>
-          
+
           {/* Desktop Navigation */}
           <div className={styles.navLinks}>
             <Link to="/projects" className={styles.navLink}>Projects</Link>
@@ -304,7 +304,7 @@ export default function Projects() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={styles.mobileMenuBtn}
           >
@@ -329,8 +329,9 @@ export default function Projects() {
       <section className={styles.heroSection}>
         {/* Video */}
         <div className={styles.videoContainer}>
-          <video ref={videoRef} className={styles.video} autoPlay muted loop playsInline>
+          <video ref={videoRef} className={styles.video} autoPlay muted loop playsInline poster="/images/fallback_pik_2.png" >
             <source src="/videos/Service1.mp4" type="video/mp4" />
+            
           </video>
           <div className={styles.videoOverlay} />
         </div>
@@ -395,7 +396,7 @@ export default function Projects() {
 
           {isLoading ? (
             <div className={styles.trendingGrid}>
-              {[0,1,2].map(i => <Skeleton key={i} />)}
+              {[0, 1, 2].map(i => <Skeleton key={i} />)}
             </div>
           ) : (
             <div className={styles.trendingGrid}>
@@ -492,7 +493,7 @@ export default function Projects() {
           {/* Results */}
           {isLoading ? (
             <div className={viewMode === "grid" ? styles.gridLayout : ""}>
-              {[0,1,2,3,4,5].map(i => <Skeleton key={i} />)}
+              {[0, 1, 2, 3, 4, 5].map(i => <Skeleton key={i} />)}
             </div>
           ) : filtered.length === 0 ? (
             <div className={styles.emptyState}>
@@ -549,7 +550,7 @@ export default function Projects() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(["Category","Users","Rating","Growth","API","Mobile"] as const).map(row => (
+                  {(["Category", "Users", "Rating", "Growth", "API", "Mobile"] as const).map(row => (
                     <tr key={row} className={styles.tableRow}>
                       <td className={styles.tableCell}>{row}</td>
                       {filtered.slice(0, 3).map(p => {
@@ -557,9 +558,9 @@ export default function Projects() {
                         return (
                           <td key={p.id} className={styles.tableCell}>
                             {row === "Category" && <span className={styles.categoryBadge}>{p.category}</span>}
-                            {row === "Users"    && <span>{fmt(s?.users ?? 0)}</span>}
-                            {row === "Rating"   && <div className={styles.ratingCell}><Star className={styles.ratingStar} />{s?.rating}</div>}
-                            {row === "Growth"   && <span className={styles.growthCell}>+{s?.growth}%</span>}
+                            {row === "Users" && <span>{fmt(s?.users ?? 0)}</span>}
+                            {row === "Rating" && <div className={styles.ratingCell}><Star className={styles.ratingStar} />{s?.rating}</div>}
+                            {row === "Growth" && <span className={styles.growthCell}>+{s?.growth}%</span>}
                             {(row === "API" || row === "Mobile") && <Check className={styles.checkIcon} />}
                           </td>
                         );
