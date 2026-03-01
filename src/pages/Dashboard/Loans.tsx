@@ -1,4 +1,4 @@
-// src/pages/Dashboard/Loans.tsx - UPDATED WITH CLAVERICA STYLING
+// src/pages/Dashboard/Loans.tsx - UPDATED WITH CLEAN COLOR SYSTEM
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -51,7 +51,7 @@ import api from '../../api';
 import "./Loans.module.css";
 
 // ─────────────────────────────────────────────────────────────
-// LOAN PRODUCT DATA (Updated with ClaveRica colors)
+// LOAN PRODUCT DATA (Clean color system)
 // ─────────────────────────────────────────────────────────────
 const loanProducts = [
   {
@@ -59,8 +59,8 @@ const loanProducts = [
     name: "Personal Loan",
     provider: "Claverica Finance",
     icon: Wallet,
-    color: "from-purple-500 to-purple-600",
-    badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+    color: "purple",  // Using semantic type instead of hex
+    badgeColor: "bg-purple/10 text-purple border-purple/20",
     interest: "4.9%",
     amount: "Up to $50,000",
     term: "12-60 months",
@@ -82,8 +82,8 @@ const loanProducts = [
     name: "Business Loan",
     provider: "Claverica Business",
     icon: Building,
-    color: "from-teal-600 to-teal-700",
-    badgeColor: "bg-teal-500/20 text-teal-400 border-teal-500/30",
+    color: "teal",
+    badgeColor: "bg-teal/10 text-teal border-teal/20",
     interest: "6.5%",
     amount: "Up to $250,000",
     term: "6-84 months",
@@ -105,8 +105,8 @@ const loanProducts = [
     name: "Emergency Cash",
     provider: "Claverica Instant",
     icon: Zap,
-    color: "from-gold-600 to-amber-600",
-    badgeColor: "bg-gold-500/20 text-gold-400 border-gold-500/30",
+    color: "gold",
+    badgeColor: "bg-gold/10 text-gold border-gold/20",
     interest: "7.9%",
     amount: "Up to $10,000",
     term: "3-24 months",
@@ -128,8 +128,8 @@ const loanProducts = [
     name: "Education Loan",
     provider: "Claverica Learn",
     icon: GraduationCap,
-    color: "from-navy-700 to-navy-900",
-    badgeColor: "bg-navy-500/20 text-navy-400 border-navy-500/30",
+    color: "charcoal",
+    badgeColor: "bg-charcoal/10 text-charcoal border-charcoal/20",
     interest: "3.9%",
     amount: "Up to $100,000",
     term: "Up to 120 months",
@@ -151,8 +151,8 @@ const loanProducts = [
     name: "Smart Mortgage",
     provider: "Claverica Homes",
     icon: Home,
-    color: "from-purple-600 to-navy-800",
-    badgeColor: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+    color: "purple",
+    badgeColor: "bg-purple/10 text-purple border-purple/20",
     interest: "3.2%",
     amount: "Up to $1,000,000",
     term: "120-360 months",
@@ -174,8 +174,8 @@ const loanProducts = [
     name: "Auto Loan",
     provider: "Claverica Drive",
     icon: Car,
-    color: "from-teal-600 to-teal-800",
-    badgeColor: "bg-teal-500/20 text-teal-400 border-teal-500/30",
+    color: "teal",
+    badgeColor: "bg-teal/10 text-teal border-teal/20",
     interest: "5.2%",
     amount: "Up to $75,000",
     term: "24-84 months",
@@ -197,8 +197,8 @@ const loanProducts = [
     name: "Medical Loan",
     provider: "Claverica Health",
     icon: Heart,
-    color: "from-gold-600 to-rose-600",
-    badgeColor: "bg-gold-500/20 text-gold-400 border-gold-500/30",
+    color: "gold",
+    badgeColor: "bg-gold/10 text-gold border-gold/20",
     interest: "6.9%",
     amount: "Up to $150,000",
     term: "12-96 months",
@@ -220,8 +220,8 @@ const loanProducts = [
     name: "Investment Loan",
     provider: "Claverica Capital",
     icon: LineChart,
-    color: "from-gold-600 to-purple-600",
-    badgeColor: "bg-gold-500/20 text-gold-400 border-gold-500/30",
+    color: "gold",
+    badgeColor: "bg-gold/10 text-gold border-gold/20",
     interest: "8.5%",
     amount: "Up to $500,000",
     term: "6-36 months",
@@ -241,7 +241,7 @@ const loanProducts = [
 ];
 
 // ─────────────────────────────────────────────────────────────
-// SUCCESS MODAL (Updated with ClaveRica colors)
+// SUCCESS MODAL (Clean color system)
 // ─────────────────────────────────────────────────────────────
 const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: {
   isOpen: boolean;
@@ -264,7 +264,7 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-50 bg-charcoal/70 backdrop-blur-md"
             aria-hidden="true"
           />
           
@@ -277,42 +277,42 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
             aria-modal="true"
             aria-labelledby="success-modal-title"
           >
-            <div className="bg-gradient-to-b from-cream to-white dark:from-slate-900 dark:to-slate-950 border border-gold/20 dark:border-slate-800 rounded-2xl p-6 shadow-2xl shadow-navy/10 dark:shadow-black/40">
+            <div className="bg-ivory dark:bg-charcoal border border-gold/20 dark:border-gold/10 rounded-2xl p-6 shadow-2xl shadow-charcoal/10 dark:shadow-black/40">
               {/* Top accent - gold to purple gradient */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold via-purple to-teal rounded-t-2xl" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-purple rounded-t-2xl" />
               
               {/* Header with celebration */}
               <div className="flex items-center gap-3 mb-4">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal to-teal/80 flex items-center justify-center shadow-lg shadow-teal/30" aria-hidden="true">
-                    <CheckCircle className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 rounded-xl bg-slate/20 dark:bg-slate/30 flex items-center justify-center" aria-hidden="true">
+                    <CheckCircle className="w-6 h-6 text-slate" />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-gold to-rose-500 rounded-full animate-pulse" aria-hidden="true" />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gold rounded-full animate-pulse" aria-hidden="true" />
                 </div>
                 <div>
-                  <h3 id="success-modal-title" className="text-lg font-bold text-navy dark:text-white">You're on the list! 🎉</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-500">Early Access Program</p>
+                  <h3 id="success-modal-title" className="text-lg font-bold text-charcoal dark:text-ivory">You're on the list! 🎉</h3>
+                  <p className="text-sm text-charcoal/60 dark:text-ivory/60">Early Access Program</p>
                 </div>
               </div>
               
               {/* Message */}
               <div className="mb-6">
-                <p className="text-slate-700 dark:text-slate-300 mb-3">
-                  ✨ <span className="font-semibold text-purple dark:text-purple-300">{loanName}</span> interest submitted successfully!
+                <p className="text-charcoal/80 dark:text-ivory/80 mb-3">
+                  ✨ <span className="font-semibold text-purple dark:text-purple">{loanName}</span> interest submitted successfully!
                 </p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-sm text-charcoal/60 dark:text-ivory/60">
                   You're now in our priority queue. We'll contact you with exclusive rates when loans launch.
                 </p>
               </div>
               
               {/* Reference Card */}
-              <div className="bg-gradient-to-r from-cream to-white dark:from-slate-800 dark:to-slate-900 border border-gold/20 dark:border-slate-700 rounded-xl p-4 mb-6">
+              <div className="bg-ivory dark:bg-charcoal/80 border border-gold/20 dark:border-gold/10 rounded-xl p-4 mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-purple/20 border border-purple/30 flex items-center justify-center" aria-hidden="true">
                       <BadgeCheck className="w-4 h-4 text-purple" />
                     </div>
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Reference ID</span>
+                    <span className="text-sm font-medium text-charcoal/70 dark:text-ivory/70">Reference ID</span>
                   </div>
                   <button 
                     onClick={handleCopyReferenceId}
@@ -322,34 +322,34 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
                     Copy
                   </button>
                 </div>
-                <div className="font-mono text-sm text-navy dark:text-white bg-slate-100/50 dark:bg-slate-950/50 rounded-lg p-3 border border-gold/20 dark:border-slate-700">
+                <div className="font-mono text-sm text-charcoal dark:text-ivory bg-charcoal/5 dark:bg-ivory/5 rounded-lg p-3 border border-gold/20 dark:border-gold/10">
                   {referenceId}
                 </div>
               </div>
               
-              {/* What's Next - ClaveRica style */}
+              {/* What's Next - Clean ClaveRica style */}
               <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-3 bg-gradient-to-r from-gold/10 to-amber-500/5 border border-gold/20 rounded-xl p-3">
+                <div className="flex items-center gap-3 bg-gold/10 border border-gold/20 rounded-xl p-3">
                   <Rocket className="w-4 h-4 text-gold" />
                   <div>
-                    <p className="text-xs font-semibold text-gold/80 dark:text-gold">Priority Position</p>
-                    <p className="text-xs text-gold/60 dark:text-gold/60">You'll be first to access when we launch</p>
+                    <p className="text-xs font-semibold text-gold">Priority Position</p>
+                    <p className="text-xs text-charcoal/60 dark:text-ivory/60">You'll be first to access when we launch</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3 bg-gradient-to-r from-purple/10 to-purple/5 border border-purple/20 rounded-xl p-3">
+                <div className="flex items-center gap-3 bg-purple/10 border border-purple/20 rounded-xl p-3">
                   <Bell className="w-4 h-4 text-purple" />
                   <div>
-                    <p className="text-xs font-semibold text-purple/80 dark:text-purple">Exclusive Updates</p>
-                    <p className="text-xs text-purple/60 dark:text-purple/60">Get early notifications & special offers</p>
+                    <p className="text-xs font-semibold text-purple">Exclusive Updates</p>
+                    <p className="text-xs text-charcoal/60 dark:text-ivory/60">Get early notifications & special offers</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3 bg-gradient-to-r from-teal/10 to-teal/5 border border-teal/20 rounded-xl p-3">
-                  <Gift className="w-4 h-4 text-teal" />
+                <div className="flex items-center gap-3 bg-slate/10 border border-slate/20 rounded-xl p-3">
+                  <Gift className="w-4 h-4 text-slate" />
                   <div>
-                    <p className="text-xs font-semibold text-teal/80 dark:text-teal">Launch Bonus</p>
-                    <p className="text-xs text-teal/60 dark:text-teal/60">Eligible for early adopter rewards</p>
+                    <p className="text-xs font-semibold text-slate">Launch Bonus</p>
+                    <p className="text-xs text-charcoal/60 dark:text-ivory/60">Eligible for early adopter rewards</p>
                   </div>
                 </div>
               </div>
@@ -357,7 +357,7 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
               {/* Action Button - Purple to Gold gradient */}
               <button
                 onClick={onClose}
-                className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 hover:shadow-xl hover:shadow-gold/40 transition-all duration-300 flex items-center justify-center gap-2"
+                className="w-full py-3 text-sm font-semibold text-ivory bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 hover:shadow-xl hover:shadow-gold/40 transition-all duration-300 flex items-center justify-center gap-2"
                 aria-label="Continue exploring loan options"
               >
                 Continue Exploring
@@ -365,7 +365,7 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
               </button>
               
               {/* Small print */}
-              <p className="text-xs text-slate-500 dark:text-slate-600 text-center mt-4">
+              <p className="text-xs text-charcoal/50 dark:text-ivory/50 text-center mt-4">
                 Our team will contact you within 24-48 hours. No commitment required.
               </p>
             </div>
@@ -377,7 +377,7 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
 };
 
 // ─────────────────────────────────────────────────────────────
-// EARLY ACCESS MODAL (Updated with ClaveRica colors)
+// EARLY ACCESS MODAL (Clean color system)
 // ─────────────────────────────────────────────────────────────
 const EarlyAccessModal = ({
   open,
@@ -407,7 +407,7 @@ const EarlyAccessModal = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-50 bg-charcoal/70 backdrop-blur-md"
             aria-hidden="true"
           />
           
@@ -421,69 +421,69 @@ const EarlyAccessModal = ({
             aria-modal="true"
             aria-labelledby="early-access-title"
           >
-            <div className="bg-gradient-to-b from-cream to-white dark:from-slate-900 dark:to-slate-950 border border-gold/20 dark:border-slate-800 rounded-2xl overflow-hidden shadow-2xl shadow-navy/20 dark:shadow-black/50">
+            <div className="bg-ivory dark:bg-charcoal border border-gold/20 dark:border-gold/10 rounded-2xl overflow-hidden shadow-2xl shadow-charcoal/20 dark:shadow-black/50">
               {/* Animated gradient header - gold to purple */}
-              <div className="h-2 bg-gradient-to-r from-gold via-purple to-teal animate-gradient-x" aria-hidden="true" />
+              <div className="h-2 bg-gradient-to-r from-gold to-purple animate-pulse" aria-hidden="true" />
               
               <div className="p-6">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-5">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple to-purple/80 flex items-center justify-center shadow-lg shadow-purple/30" aria-hidden="true">
-                      <Rocket className="w-5 h-5 text-white" />
+                    <div className="w-10 h-10 rounded-xl bg-purple/20 flex items-center justify-center" aria-hidden="true">
+                      <Rocket className="w-5 h-5 text-purple" />
                     </div>
                     <div>
-                      <h3 id="early-access-title" className="text-base font-bold text-navy dark:text-white">Join Early Access</h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-500">Get priority when {loanName} launches</p>
+                      <h3 id="early-access-title" className="text-base font-bold text-charcoal dark:text-ivory">Join Early Access</h3>
+                      <p className="text-xs text-charcoal/60 dark:text-ivory/60">Get priority when {loanName} launches</p>
                     </div>
                   </div>
                   <button
                     onClick={onClose}
-                    className="w-7 h-7 rounded-lg bg-cream dark:bg-slate-800 border border-gold/20 dark:border-slate-700 hover:border-gold dark:hover:border-gold flex items-center justify-center transition-colors"
+                    className="w-7 h-7 rounded-lg bg-ivory dark:bg-charcoal border border-gold/20 dark:border-gold/10 hover:border-gold flex items-center justify-center transition-colors"
                     aria-label="Close early access modal"
                   >
-                    <X className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
+                    <X className="w-3.5 h-3.5 text-charcoal/60 dark:text-ivory/60" />
                   </button>
                 </div>
 
-                {/* Benefits - ClaveRica colors */}
+                {/* Benefits - Clean color system */}
                 <div className="space-y-3 mb-6">
                   {[
                     { icon: Target, text: "Priority position in waitlist", color: "purple" },
-                    { icon: Gift, text: "Exclusive launch offers", color: "teal" },
+                    { icon: Gift, text: "Exclusive launch offers", color: "slate" },
                     { icon: Bell, text: "Early notifications", color: "gold" },
-                    { icon: Users, text: "Dedicated support", color: "navy" },
+                    { icon: Users, text: "Dedicated support", color: "charcoal" },
                   ].map((benefit, idx) => {
                     const Icon = benefit.icon;
                     const colorClass = benefit.color === 'purple' ? 'border-purple/20 bg-purple/10 text-purple' :
-                                      benefit.color === 'teal' ? 'border-teal/20 bg-teal/10 text-teal' :
+                                      benefit.color === 'slate' ? 'border-slate/20 bg-slate/10 text-slate' :
                                       benefit.color === 'gold' ? 'border-gold/20 bg-gold/10 text-gold' :
-                                      'border-navy/20 bg-navy/10 text-navy';
+                                      'border-charcoal/20 bg-charcoal/10 text-charcoal dark:text-ivory';
                     return (
                       <div key={idx} className={`flex items-center gap-3 rounded-lg border p-3 ${colorClass}`}>
                         <Icon className="w-4 h-4" />
-                        <span className="text-xs text-slate-700 dark:text-slate-300">{benefit.text}</span>
+                        <span className="text-xs text-charcoal/80 dark:text-ivory/80">{benefit.text}</span>
                       </div>
                     );
                   })}
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center justify-around bg-cream/50 dark:bg-slate-900/50 rounded-xl p-3 mb-6">
+                <div className="flex items-center justify-around bg-charcoal/5 dark:bg-ivory/5 rounded-xl p-3 mb-6">
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1">
                       <Users className="w-3 h-3 text-purple" />
-                      <p className="text-lg font-bold text-navy dark:text-white">150+</p>
+                      <p className="text-lg font-bold text-charcoal dark:text-ivory">150+</p>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-500">Already waiting</p>
+                    <p className="text-xs text-charcoal/60 dark:text-ivory/60">Already waiting</p>
                   </div>
-                  <div className="h-8 w-px bg-gold/20 dark:bg-slate-700" />
+                  <div className="h-8 w-px bg-gold/20 dark:bg-gold/10" />
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1">
-                      <Calendar className="w-3 h-3 text-teal" />
-                      <p className="text-lg font-bold text-navy dark:text-white">Q2 2024</p>
+                      <Calendar className="w-3 h-3 text-slate" />
+                      <p className="text-lg font-bold text-charcoal dark:text-ivory">Q2 2024</p>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-500">Expected launch</p>
+                    <p className="text-xs text-charcoal/60 dark:text-ivory/60">Expected launch</p>
                   </div>
                 </div>
 
@@ -493,7 +493,7 @@ const EarlyAccessModal = ({
                     onClick={onSubmit}
                     onKeyDown={handleKeyDown}
                     disabled={isSubmitting}
-                    className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full py-3 text-sm font-semibold text-ivory bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     aria-label={`Join waitlist for ${loanName}`}
                     aria-busy={isSubmitting}
                   >
@@ -511,7 +511,7 @@ const EarlyAccessModal = ({
                   </button>
                   <button
                     onClick={onClose}
-                    className="w-full py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-gold transition-colors"
+                    className="w-full py-2.5 text-sm font-semibold text-charcoal/60 dark:text-ivory/60 hover:text-gold transition-colors"
                     aria-label="Skip early access for now"
                   >
                     Not now
@@ -705,14 +705,13 @@ function LoansContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream via-white to-purple-50/30 
-                    dark:from-navy dark:via-slate-900 dark:to-purple-950/20">
-      {/* Animated background grid */}
-      <div className="fixed inset-0 overflow-hidden">
+    <div className="min-h-screen bg-ivory dark:bg-charcoal">
+      {/* Animated background grid - using brand colors */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
-                        from-purple-500/5 via-transparent to-transparent" />
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238626E9' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                        from-purple/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238626E9' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }} />
       </div>
 
@@ -727,16 +726,16 @@ function LoansContent() {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple to-purple/80 flex items-center justify-center shadow-xl shadow-purple/30" aria-hidden="true">
-                  <DollarSign className="w-7 h-7 text-white" />
+                <div className="w-14 h-14 rounded-2xl bg-purple/20 flex items-center justify-center" aria-hidden="true">
+                  <DollarSign className="w-7 h-7 text-purple" />
                 </div>
-                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-gold to-purple text-white text-xs font-bold px-2 py-1 rounded-lg shadow-lg">
+                <div className="absolute -top-2 -right-2 bg-gold text-charcoal text-xs font-bold px-2 py-1 rounded-lg">
                   EARLY ACCESS
                 </div>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-navy dark:text-white tracking-tight">Smart Loans</h1>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                <h1 className="text-3xl font-bold text-charcoal dark:text-ivory tracking-tight">Smart Loans</h1>
+                <p className="text-sm text-charcoal/60 dark:text-ivory/60 mt-1">
                   Join {stats.by_product.loan}+ others on the waitlist
                 </p>
               </div>
@@ -746,45 +745,45 @@ function LoansContent() {
             <div className="flex items-center gap-4">
               <div className="hidden sm:flex items-center gap-4">
                 <div className="text-right">
-                  <p className="text-xs text-slate-600 dark:text-slate-500">Pre-approved for</p>
-                  <p className="text-lg font-bold text-navy dark:text-white">$50,000</p>
+                  <p className="text-xs text-charcoal/60 dark:text-ivory/60">Pre-approved for</p>
+                  <p className="text-lg font-bold text-charcoal dark:text-ivory">$50,000</p>
                 </div>
-                <div className="h-8 w-px bg-gold/20 dark:bg-slate-700" />
+                <div className="h-8 w-px bg-gold/20 dark:bg-gold/10" />
                 <div className="text-right">
-                  <p className="text-xs text-slate-600 dark:text-slate-500">Best Rate</p>
-                  <p className="text-lg font-bold text-teal dark:text-teal">3.2%</p>
+                  <p className="text-xs text-charcoal/60 dark:text-ivory/60">Best Rate</p>
+                  <p className="text-lg font-bold text-slate dark:text-slate">3.2%</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Welcome Banner - ClaveRica style */}
-          <div className="bg-gradient-to-r from-cream to-white dark:from-navy dark:to-slate-800 border border-gold/20 dark:border-slate-700 rounded-2xl overflow-hidden shadow-xl">
-            <div className="h-1 bg-gradient-to-r from-gold via-purple to-teal" aria-hidden="true" />
+          {/* Welcome Banner - Clean ClaveRica style */}
+          <div className="bg-ivory dark:bg-charcoal/80 border border-gold/20 dark:border-gold/10 rounded-2xl overflow-hidden">
+            <div className="h-1 bg-gradient-to-r from-gold to-purple" aria-hidden="true" />
             <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-5">
               <div>
-                <h2 className="text-lg font-bold text-navy dark:text-white">
-                  Welcome back, <span className="text-purple dark:text-purple-300">{user?.first_name || "valued customer"}</span>
+                <h2 className="text-lg font-bold text-charcoal dark:text-ivory">
+                  Welcome back, <span className="text-purple">{user?.first_name || "valued customer"}</span>
                 </h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                <p className="text-sm text-charcoal/60 dark:text-ivory/60 mt-1">
                   Submit interest for exclusive early access rates
                 </p>
               </div>
               <div className="flex items-center gap-6">
                 {[
                   { icon: Zap, value: "Instant", label: "Waitlist", color: "gold" },
-                  { icon: Lock, value: "Secure", label: "Submission", color: "teal" },
+                  { icon: Lock, value: "Secure", label: "Submission", color: "slate" },
                   { icon: Gift, value: "Bonus", label: "On Launch", color: "purple" },
                 ].map((stat) => {
                   const Icon = stat.icon;
-                  const colorClass = stat.color === 'gold' ? 'text-gold' : stat.color === 'teal' ? 'text-teal' : 'text-purple';
+                  const colorClass = stat.color === 'gold' ? 'text-gold' : stat.color === 'slate' ? 'text-slate' : 'text-purple';
                   return (
                     <div key={stat.label} className="text-center">
                       <div className="flex items-center justify-center gap-1">
                         <Icon className={`w-4 h-4 ${colorClass}`} />
                         <p className={`text-lg font-bold ${colorClass}`}>{stat.value}</p>
                       </div>
-                      <p className="text-xs text-slate-600 dark:text-slate-500">{stat.label}</p>
+                      <p className="text-xs text-charcoal/60 dark:text-ivory/60">{stat.label}</p>
                     </div>
                   );
                 })}
@@ -805,7 +804,7 @@ function LoansContent() {
             onKeyDown={handleEligibilityKeyDown}
             role="button"
             tabIndex={0}
-            className="cursor-pointer transform hover:scale-[1.02] transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2 dark:focus:ring-offset-navy rounded-xl"
+            className="cursor-pointer transform hover:scale-[1.02] transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2 dark:focus:ring-offset-charcoal rounded-xl"
             aria-label="View exclusive loan rates based on your eligibility score"
           >
             <EligibilityBadge
@@ -856,24 +855,24 @@ function LoansContent() {
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
             <div>
-              <h2 className="text-xl font-bold text-navy dark:text-white">Available Loan Products</h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">Submit interest for early access</p>
+              <h2 className="text-xl font-bold text-charcoal dark:text-ivory">Available Loan Products</h2>
+              <p className="text-sm text-charcoal/60 dark:text-ivory/60 mt-0.5">Submit interest for early access</p>
             </div>
             <div className="flex items-center gap-3">
               {compareLoans.length > 0 && (
                 <button
                   onClick={() => setIsComparing(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple to-gold rounded-xl shadow-lg shadow-purple/25 hover:shadow-xl hover:shadow-gold/40 transition-all focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2 dark:focus:ring-offset-navy"
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-ivory bg-gradient-to-r from-purple to-gold rounded-xl shadow-lg shadow-purple/25 hover:shadow-xl hover:shadow-gold/40 transition-all focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2 dark:focus:ring-offset-charcoal"
                   aria-label={`Compare ${compareLoans.length} selected loans`}
                 >
                   Compare ({compareLoans.length})
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}
-              <div className="flex items-center gap-2 bg-cream/50 dark:bg-slate-800/50 border border-gold/20 dark:border-slate-700/50 rounded-lg px-3 py-1.5">
-                <Shield className="w-3.5 h-3.5 text-teal" />
-                <span className="text-xs text-slate-700 dark:text-slate-400">
-                  <span className="text-teal font-semibold">Secure</span> & encrypted
+              <div className="flex items-center gap-2 bg-charcoal/5 dark:bg-ivory/5 border border-gold/20 dark:border-gold/10 rounded-lg px-3 py-1.5">
+                <Shield className="w-3.5 h-3.5 text-slate" />
+                <span className="text-xs text-charcoal/70 dark:text-ivory/70">
+                  <span className="text-slate font-semibold">Secure</span> & encrypted
                 </span>
               </div>
             </div>
@@ -932,38 +931,38 @@ function LoansContent() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
         >
-          <div className="bg-gradient-to-r from-cream to-white dark:from-navy dark:to-slate-800 border border-gold/20 dark:border-slate-700 rounded-2xl overflow-hidden shadow-xl">
-            <div className="h-1 bg-gradient-to-r from-gold via-purple to-teal animate-gradient-x" aria-hidden="true" />
+          <div className="bg-ivory dark:bg-charcoal/80 border border-gold/20 dark:border-gold/10 rounded-2xl overflow-hidden">
+            <div className="h-1 bg-gradient-to-r from-gold via-purple to-slate animate-pulse" aria-hidden="true" />
             <div className="p-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple to-purple/80 flex items-center justify-center shadow-lg shadow-purple/30" aria-hidden="true">
-                  <Rocket className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-purple/20 flex items-center justify-center" aria-hidden="true">
+                  <Rocket className="w-6 h-6 text-purple" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-navy dark:text-white">Ready for Early Access?</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Join {stats.by_product.loan}+ others on the waitlist</p>
+                  <h3 className="text-base font-bold text-charcoal dark:text-ivory">Ready for Early Access?</h3>
+                  <p className="text-sm text-charcoal/60 dark:text-ivory/60">Join {stats.by_product.loan}+ others on the waitlist</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                 {[
                   { icon: Zap, label: "Priority Access", sub: "Be first in line", color: "purple" },
-                  { icon: Gift, label: "Launch Bonus", sub: "Exclusive offers", color: "teal" },
+                  { icon: Gift, label: "Launch Bonus", sub: "Exclusive offers", color: "slate" },
                   { icon: Bell, label: "Early Notify", sub: "Get notified first", color: "gold" },
-                  { icon: Lock, label: "No Commitment", sub: "Free to submit", color: "navy" },
+                  { icon: Lock, label: "No Commitment", sub: "Free to submit", color: "charcoal" },
                 ].map((feature) => {
                   const Icon = feature.icon;
                   const colorClass = feature.color === 'purple' ? 'border-purple/20 bg-purple/5 text-purple' :
-                                    feature.color === 'teal' ? 'border-teal/20 bg-teal/5 text-teal' :
+                                    feature.color === 'slate' ? 'border-slate/20 bg-slate/5 text-slate' :
                                     feature.color === 'gold' ? 'border-gold/20 bg-gold/5 text-gold' :
-                                    'border-navy/20 bg-navy/5 text-navy';
+                                    'border-charcoal/20 bg-charcoal/5 text-charcoal dark:text-ivory';
                   return (
                     <div key={feature.label} className={`rounded-xl border ${colorClass} p-4`}>
                       <div className="flex items-center gap-2 mb-2">
                         <Icon className="w-4 h-4" />
-                        <span className="text-xs font-semibold text-navy dark:text-white">{feature.label}</span>
+                        <span className="text-xs font-semibold text-charcoal dark:text-ivory">{feature.label}</span>
                       </div>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">{feature.sub}</p>
+                      <p className="text-xs text-charcoal/60 dark:text-ivory/60">{feature.sub}</p>
                     </div>
                   );
                 })}
@@ -972,7 +971,7 @@ function LoansContent() {
               <button
                 onClick={handleStartVerification}
                 disabled={isSubmitting}
-                className="w-full py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2 dark:focus:ring-offset-navy"
+                className="w-full py-3 text-sm font-semibold text-ivory bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2 dark:focus:ring-offset-charcoal"
                 aria-label="Join early access waitlist for loans"
                 aria-busy={isSubmitting}
               >
@@ -989,7 +988,7 @@ function LoansContent() {
                 )}
               </button>
 
-              <p className="text-xs text-slate-600 dark:text-slate-500 text-center mt-4">
+              <p className="text-xs text-charcoal/60 dark:text-ivory/60 text-center mt-4">
                 No commitment required. We'll contact you when loans launch.
               </p>
             </div>
