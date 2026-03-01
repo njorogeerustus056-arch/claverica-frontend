@@ -1,5 +1,5 @@
 // src/pages/dashboard/Home.tsx
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Eye,
@@ -21,12 +21,16 @@ import {
   ChevronRight,
   History,
   Bitcoin,
+  ExternalLink,
   MoreVertical,
   CheckCircle,
+  MessageSquare,
   Headphones,
   BarChart3,
   Globe,
   TrendingUp as TrendingUpIcon,
+  Users,
+  Calendar,
   Zap,
   Target,
   PieChart,
@@ -43,7 +47,30 @@ import { RecentOrders } from "../../components/fintech/RecentOrders";
 import CountryMap from "../../components/ecommerce/CountryMap";
 import api from "../../api";
 import styles from './Home.module.css';
-import type { Transaction, WalletBalance, UserData } from "../../types/dashboard";
+
+interface Transaction {
+  id: number;
+  amount: number;
+  transaction_type: "credit" | "debit";
+  description: string;
+  created_at: string;
+  status: "completed" | "pending" | "failed";
+}
+
+interface WalletBalance {
+  balance: number;
+  available: number;
+  pending: number;
+  currency: string;
+}
+
+interface UserData {
+  first_name: string;
+  last_name: string;
+  account_number: string;
+  email: string;
+  is_verified: boolean;
+}
 
 // Mini Wallet Modal Component
 interface MiniWalletProps {
@@ -93,7 +120,7 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
             </div>
             <div>
               <h3 className={styles.modalTitle}>
-                <span className={styles.greetingHighlight}>Hello</span>
+                <span className="text-gradient-gold-purple">Hello</span>
                 {user?.first_name ? `, ${user.first_name}` : ''}
               </h3>
               <div className={styles.modalAccount}>
@@ -136,14 +163,14 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
         <div className={styles.modalActions}>
           <button 
             onClick={() => { onClose(); navigate("/dashboard/transfer"); }} 
-            className={`${styles.modalActionBtn} ${styles.modalActionPrimary}`}
+            className={styles.modalActionBtn}
           >
             <Send className={styles.modalActionIcon} />
             <span>Send</span>
           </button>
           <button 
             onClick={() => { onClose(); navigate("/dashboard/transfer"); }} 
-            className={`${styles.modalActionBtn} ${styles.modalActionSecondary}`}
+            className={styles.modalActionBtn}
           >
             <Download className={styles.modalActionIcon} />
             <span>Withdraw</span>
@@ -210,9 +237,13 @@ export default function Home() {
   const { wallet, transactions, user, loading, error, refetch } = useDashboardData();
   const { pusherConnected } = useSafePusher();
 
+  // Add WebSocket listeners for real-time updates
   useEffect(() => {
     if (pusherConnected) {
+      // These would be implemented with your Pusher channel
       console.log('🔌 WebSocket connected - ready for real-time updates');
+      // channel.bind('wallet.credited', handleBalanceUpdate);
+      // channel.bind('wallet.debited', handleBalanceUpdate);
     }
   }, [pusherConnected]);
 
@@ -221,6 +252,7 @@ export default function Home() {
       setCardsLoading(true);
       setCardsError(null);
       try {
+        // ✅ FIXED: Use the dedicated cards API method
         const response = await api.cards.getUserCards();
         
         let cardsArray = [];
@@ -266,24 +298,15 @@ export default function Home() {
     }
   };
 
-  const totalIncome = useMemo(() => 
-    transactions
-      .filter(tx => tx.transaction_type === "credit" && tx.status === "completed")
-      .reduce((sum, tx) => sum + tx.amount, 0),
-    [transactions]
-  );
+  const totalIncome = transactions
+    .filter(tx => tx.transaction_type === "credit" && tx.status === "completed")
+    .reduce((sum, tx) => sum + tx.amount, 0);
 
-  const totalExpenses = useMemo(() => 
-    transactions
-      .filter(tx => tx.transaction_type === "debit" && tx.status === "completed")
-      .reduce((sum, tx) => sum + tx.amount, 0),
-    [transactions]
-  );
+  const totalExpenses = transactions
+    .filter(tx => tx.transaction_type === "debit" && tx.status === "completed")
+    .reduce((sum, tx) => sum + tx.amount, 0);
 
-  const pendingTransactions = useMemo(() => 
-    transactions.filter(tx => tx.status === "pending"),
-    [transactions]
-  );
+  const pendingTransactions = transactions.filter(tx => tx.status === "pending");
 
   const formatDate = () => {
     const now = new Date();
@@ -302,25 +325,25 @@ export default function Home() {
     });
   };
 
-  // Quick actions with semantic color mapping
+  // Quick actions with loading/error states for cards
   const quickActions = [
-    { icon: Send, label: "Send", type: "primary", action: () => navigate("/dashboard/transfer"), desc: "Transfer money" },
-    { icon: Download, label: "Withdraw", type: "primary", action: () => navigate("/dashboard/transfer"), desc: "To bank account" },
-    { icon: Bitcoin, label: "Crypto", type: "accent", action: () => navigate("/dashboard/crypto"), desc: "Buy/Sell crypto", badge: "New" },
-    { icon: WalletIcon, label: "Wallet", type: "success", action: () => setShowWalletModal(true), desc: "Quick overview" },
+    { icon: Send, label: "Send", color: "#8626E9", action: () => navigate("/dashboard/transfer"), desc: "Transfer money" },
+    { icon: Download, label: "Withdraw", color: "#8626E9", action: () => navigate("/dashboard/transfer"), desc: "To bank account" },
+    { icon: Bitcoin, label: "Crypto", color: "#C5A028", action: () => navigate("/dashboard/crypto"), desc: "Buy/Sell crypto", badge: "New" },
+    { icon: WalletIcon, label: "Wallet", color: "#1E6F6F", action: () => setShowWalletModal(true), desc: "Quick overview" },
     { 
       icon: CreditCard, 
       label: "Cards", 
-      type: "secondary", 
+      color: "#8626E9", 
       action: () => navigate("/dashboard/cards"), 
       desc: cardsLoading ? "Loading..." : cardsError ? "Error" : `${cardsCount} active`,
       count: cardsCount,
       loading: cardsLoading,
       error: cardsError
     },
-    { icon: History, label: "History", type: "neutral", action: () => navigate("/dashboard/transfer/history"), desc: "Transactions", badge: transactions.length > 0 ? transactions.length.toString() : null },
-    { icon: Headphones, label: "Support", type: "accent", action: () => navigate("/dashboard/support"), desc: "24/7 help" },
-    { icon: BarChart3, label: "Savings", type: "success", action: () => navigate("/dashboard/savings"), desc: "Grow money" },
+    { icon: History, label: "History", color: "#0A2540", action: () => navigate("/dashboard/transfer/history"), desc: "Transactions", badge: transactions.length > 0 ? transactions.length.toString() : null },
+    { icon: Headphones, label: "Support", color: "#C5A028", action: () => navigate("/dashboard/support"), desc: "24/7 help" },
+    { icon: BarChart3, label: "Savings", color: "#1E6F6F", action: () => navigate("/dashboard/savings"), desc: "Grow money" },
   ];
 
   const formatTransactionDate = (dateString: string) => {
@@ -417,14 +440,14 @@ export default function Home() {
       </div>
 
       <div className={styles.container}>
-        {/* Hero Section */}
+        {/* Hero Section - Navy to Purple Gradient */}
         <div className={styles.hero}>
           <div className={styles.heroContent}>
-            {/* Top Bar */}
+            {/* Top Bar - Compact */}
             <div className={styles.topBar}>
               <div className={styles.greetingSection}>
                 <h1 className={styles.greeting}>
-                  <span className={styles.greetingHighlight}>Hello</span>
+                  <span className="text-gradient-gold-purple">Hello</span>
                   {!loading && user?.first_name ? (
                     <>
                       <span className={styles.userName}>, {user.first_name}</span>
@@ -470,7 +493,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Balance Card */}
+            {/* Balance Card - Premium Gradient */}
             <div className={styles.balanceCard}>
               <div className={styles.balanceHeader}>
                 <span className={styles.balanceLabel}>Total Balance</span>
@@ -552,15 +575,15 @@ export default function Home() {
             
             <div className={styles.actionGrid}>
               {quickActions.map((action, idx) => (
-                <button key={idx} onClick={action.action} className={`${styles.actionCard} ${styles[`actionCard-${action.type}`]}`}>
-                  <div className={`${styles.actionIcon} ${styles[`actionIcon-${action.type}`]}`}>
+                <button key={idx} onClick={action.action} className={styles.actionCard}>
+                  <div className={styles.actionIcon} style={{ background: action.color }}>
                     <action.icon />
                   </div>
                   <div className={styles.actionInfo}>
                     <span className={styles.actionLabel}>{action.label}</span>
                     <span className={styles.actionDesc}>{action.desc}</span>
                   </div>
-                  {action.count > 0 && !action.loading && <span className={`${styles.actionCount} ${styles[`actionCount-${action.type}`]}`}>{action.count}</span>}
+                  {action.count > 0 && !action.loading && <span className={styles.actionCount}>{action.count}</span>}
                   {action.badge && !action.loading && <span className={styles.actionBadge}>{action.badge}</span>}
                   {action.loading && <CardSkeleton />}
                 </button>
@@ -596,7 +619,7 @@ export default function Home() {
                 </div>
                 
                 <div className={styles.mapContainer}>
-                  <CountryMap mapColor="var(--ivory)" />
+                  <CountryMap mapColor="#F5F0E6" />
                 </div>
                 
                 <div className={styles.statsGrid}>
@@ -696,8 +719,8 @@ export default function Home() {
                 
                 <div className={styles.snapshotGrid}>
                   <div className={styles.snapshotCard}>
-                    <div className={`${styles.snapshotIcon} ${styles.snapshotIconIncome}`}>
-                      <ArrowUpRight />
+                    <div className={styles.snapshotIcon} style={{ background: 'rgba(30, 111, 111, 0.1)' }}>
+                      <ArrowUpRight style={{ color: '#1E6F6F' }} />
                     </div>
                     <div>
                       <p className={styles.snapshotLabel}>Income</p>
@@ -708,8 +731,8 @@ export default function Home() {
                   </div>
                   
                   <div className={styles.snapshotCard}>
-                    <div className={`${styles.snapshotIcon} ${styles.snapshotIconExpenses}`}>
-                      <ArrowDownRight />
+                    <div className={styles.snapshotIcon} style={{ background: 'rgba(239, 68, 68, 0.1)' }}>
+                      <ArrowDownRight style={{ color: '#EF4444' }} />
                     </div>
                     <div>
                       <p className={styles.snapshotLabel}>Expenses</p>
