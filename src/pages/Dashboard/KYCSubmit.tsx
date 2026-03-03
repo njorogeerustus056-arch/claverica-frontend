@@ -47,8 +47,7 @@ import styles from './KYCSubmit.module.css';
 const KYCSubmit = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuthStore();
-  const token = localStorage.getItem('token');
+  const { user, tokens } = useAuthStore(); // ✅ FIXED: Added tokens
   
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -189,8 +188,8 @@ const KYCSubmit = () => {
       if (idBack) formDataToSend.append('id_back_image', idBack);
       if (selfie) formDataToSend.append('facial_image', selfie);
       
-      // Get auth token (from context or localStorage)
-      const authToken = token || localStorage.getItem('token');
+      // ✅ FIXED: Get token from auth store, not localStorage
+      const authToken = tokens?.access || localStorage.getItem('access_token');
       
       if (!authToken) {
         setError('Authentication required. Please login again.');
@@ -198,8 +197,8 @@ const KYCSubmit = () => {
         return;
       }
 
-      // ✅ FIXED: Removed extra /api - VITE_API_URL already has base URL
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/kyc/documents/`, {
+      // ✅ FIXED: Correct URL with /api/ prefix
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/documents/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authToken}`

@@ -36,7 +36,7 @@ import { useAuthStore } from '../../lib/store/auth';
 
 const KYC = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, tokens } = useAuthStore(); // ✅ FIXED: Added tokens
   
   const [loading, setLoading] = useState(true);
   const [kycStatus, setKycStatus] = useState<any>(null);
@@ -50,11 +50,12 @@ const KYC = () => {
   const fetchKYCStatus = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      // ✅ FIXED: Added /api prefix to match backend structure
+      // ✅ FIXED: Get token from auth store, not localStorage
+      const authToken = tokens?.access || localStorage.getItem('access_token');
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/simple-status/`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${authToken}`,
         },
       });
 
