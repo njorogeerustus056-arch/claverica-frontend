@@ -1,41 +1,25 @@
-// src/pages/Dashboard/AccountSettings.tsx - Clean Version (No Language)
+// src/pages/Dashboard/AccountSettings.tsx - UPDATED WITH ONLY EXISTING APIS
 import { useState, useEffect } from "react"; 
 import { 
   User, Mail, Phone, Lock, Shield, Bell, Eye, EyeOff, 
   Smartphone, Globe, Download, Trash2, ChevronRight,
   Check, X, MapPin, Monitor, AlertCircle, Key, Camera,
-  Save, Loader2, QrCode, Upload, Earth,
-  Database, CreditCard, Building, ShieldCheck,
-  Smartphone as Mobile, Laptop, Tablet, Calendar,
-  LogOut, HelpCircle, Users, FileText, Percent,
-  Wifi, WifiOff, CheckCircle, XCircle, Wallet,
+  Save, Loader2, CreditCard, Building,
+  Laptop, Tablet, Calendar,
+  LogOut, HelpCircle, Users, FileText,
+  CheckCircle, XCircle, Wallet,
   BarChart3, Shield as ShieldIcon, Clock, Zap,
-  Target, Thermometer, AlertTriangle, Fingerprint,
-  Globe2, Smartphone as PhoneIcon, Cpu, Battery,
-  Network, HardDrive, Cpu as CpuIcon, HardDrive as StorageIcon,
-  BatteryCharging, Wifi as WifiIcon, Radio, Satellite,
-  ShieldOff, Shield as ShieldOn, LockKeyhole,
-  UserCheck, UserX, UserPlus, UserMinus,
-  TrendingUp, TrendingDown, PieChart, LineChart,
-  DollarSign, Bitcoin, Coins, WalletCards,
-  Banknote, Receipt, BadgeCheck, BadgeAlert,
-  FileKey, FileLock, FileQuestion, FileWarning,
-  KeyRound, KeySquare, ScanFace, ScanQrCode,
-  QrCode as QrCodeIcon, ScanText, ScanLine,
-  ReceiptText, ReceiptEuro, ReceiptPound,
-  Landmark, Building2, Factory, Home,
-  Store, ShoppingCart, ShoppingBag, BaggageClaim,
-  Briefcase, Suitcase, Luggage, Package,
-  Truck, Ship, Plane, Train,
-  Car, Bike, Bus, Tram,
-  Navigation, Compass, Map, MapPinned,
-  Navigation2, NavigationOff, Compass as CompassIcon,
-  HardHat, Briefcase as BriefcaseIcon, GraduationCap
+  Target, AlertTriangle,
+  Globe2, Smartphone as PhoneIcon,
+  UserCheck, UserX,
+  TrendingUp, TrendingDown,
+  BadgeCheck, BadgeAlert,
+  Briefcase, MapPinned
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "../../lib/store/auth";
 import toast, { Toaster } from 'react-hot-toast';
-import styles from './AccountSettings.module.css'; // ✅ Import styles
+import styles from './AccountSettings.module.css';
 
 const API_URL = import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app";
 
@@ -61,9 +45,6 @@ interface Account {
   employer?: string;
   income_range?: string;
   date_joined?: string;
-  activation_code?: string;
-  activation_code_sent_at?: string;
-  activation_code_expires_at?: string;
   address_line1?: string;
   state_province?: string;
   country?: string;
@@ -74,16 +55,6 @@ interface Account {
   last_login?: string;
 }
 
-interface UserProfile {
-  account: string;
-  bio?: string;
-  profile_image?: string;
-  website?: string;
-  twitter?: string;
-  linkedin?: string;
-  date_of_birth?: string;
-}
-
 interface UserSettings {
   profile_visibility: string;
   email_notifications: boolean;
@@ -91,37 +62,6 @@ interface UserSettings {
   email_frequency: string;
   two_factor_enabled?: boolean;
   last_password_change?: string;
-  push_notifications?: boolean;
-  activity_logs_enabled?: boolean;
-  security_pin_enabled?: boolean;
-  biometric_enabled?: boolean;
-}
-
-interface ConnectedDevice {
-  id: number;
-  device_id: string;
-  device_name: string;
-  device_type: string;
-  last_active: string;
-  location?: string;
-  ip_address?: string;
-  is_current: boolean;
-  country?: string;
-  browser?: string;
-  created_at?: string;
-}
-
-interface ActivityLog {
-  id: number;
-  action: string;
-  description?: string;
-  timestamp: string;
-  device: string;
-  browser?: string;
-  location?: string;
-  ip_address?: string;
-  country?: string;
-  status: 'success' | 'failed';
 }
 
 interface KYCStatus {
@@ -146,19 +86,9 @@ export default function AccountSettings() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // UI States
-  const [showActivityLogs, setShowActivityLogs] = useState(false);
-  const [showDevices, setShowDevices] = useState(false);
-  const [showSecurityDetails, setShowSecurityDetails] = useState(false);
-  
   // Modal states
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [show2FAModal, setShow2FAModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showExportModal, setShowExportModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [showKYCModal, setShowKYCModal] = useState(false);
-  const [showDeviceModal, setShowDeviceModal] = useState<ConnectedDevice | null>(null);
 
   // Form states
   const [passwordForm, setPasswordForm] = useState({
@@ -189,7 +119,7 @@ export default function AccountSettings() {
     email_frequency: 'realtime'
   });
 
-  // Data states - ALL EMPTY INITIALLY
+  // Data states
   const [account, setAccount] = useState<Account>({
     email: "",
     first_name: "",
@@ -200,19 +130,12 @@ export default function AccountSettings() {
     is_active: false
   });
 
-  const [userProfile, setUserProfile] = useState<UserProfile>({
-    account: ""
-  });
-
   const [userSettings, setUserSettings] = useState<UserSettings>({
     profile_visibility: 'public',
     email_notifications: true,
     sms_notifications: false,
     email_frequency: 'realtime'
   });
-
-  const [connectedDevices, setConnectedDevices] = useState<ConnectedDevice[]>([]);
-  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
 
   const [kycStatus, setKycStatus] = useState<KYCStatus>({
     email_verified: false,
@@ -230,7 +153,7 @@ export default function AccountSettings() {
     security_score: 0
   });
 
-  // Fetch account data from REAL APIs
+  // Fetch account data from REAL APIs only
   useEffect(() => {
     fetchAccountData();
   }, []);
@@ -246,7 +169,8 @@ export default function AccountSettings() {
     }
 
     try {
-      const userRes = await fetch(`${API_URL}/users/profile/`, {
+      // Using /api/ prefix - CORRECT
+      const userRes = await fetch(`${API_URL}/api/users/profile/`, {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
         },
@@ -258,7 +182,8 @@ export default function AccountSettings() {
 
       const userData = await userRes.json();
       
-      const settingsRes = await fetch(`${API_URL}/users/settings/`, {
+      // Using /api/ prefix - CORRECT
+      const settingsRes = await fetch(`${API_URL}/api/users/settings/`, {
         headers: {
           Authorization: `Bearer ${tokens.access}`,
         },
@@ -273,36 +198,6 @@ export default function AccountSettings() {
       
       if (settingsRes.ok) {
         settingsData = await settingsRes.json();
-      }
-
-      let devicesData: ConnectedDevice[] = [];
-      try {
-        const devicesRes = await fetch(`${API_URL}/users/devices/`, {
-          headers: {
-            Authorization: `Bearer ${tokens.access}`,
-          },
-        });
-        if (devicesRes.ok) {
-          const devicesResponse = await devicesRes.json();
-          devicesData = devicesResponse.devices || [];
-        }
-      } catch (err) {
-        console.log("Devices endpoint error:", err);
-      }
-
-      let logsData: any[] = [];
-      try {
-        const logsRes = await fetch(`${API_URL}/users/activity-logs/`, {
-          headers: {
-            Authorization: `Bearer ${tokens.access}`,
-          },
-        });
-        if (logsRes.ok) {
-          const logsResponse = await logsRes.json();
-          logsData = logsResponse.logs || [];
-        }
-      } catch (err) {
-        console.log("Activity logs endpoint error:", err);
       }
 
       setAccount({
@@ -335,11 +230,6 @@ export default function AccountSettings() {
 
       setUserSettings(settingsData);
       setSettingsForm(settingsData);
-      setConnectedDevices(devicesData);
-      setActivityLogs(logsData.map((log: any) => ({
-        ...log,
-        status: log.action?.toLowerCase().includes('failed') ? 'failed' : 'success'
-      })));
 
       const kycDocsSubmitted = !!(userData.doc_type && userData.doc_number);
       const kycStatusValue = userData.kyc_status || (kycDocsSubmitted ? 'submitted' : 'pending');
@@ -408,7 +298,8 @@ export default function AccountSettings() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/users/settings/update/`, {
+      // Using /api/ prefix - CORRECT
+      const response = await fetch(`${API_URL}/api/users/settings/update/`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -454,7 +345,8 @@ export default function AccountSettings() {
         ])
       );
 
-      const response = await fetch(`${API_URL}/users/profile/update/`, {
+      // Using /api/ prefix - CORRECT
+      const response = await fetch(`${API_URL}/api/users/profile/update/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -468,7 +360,6 @@ export default function AccountSettings() {
         throw new Error(errorData.message || `Failed to update profile: ${response.statusText}`);
       }
 
-      const data = await response.json();
       toast.success("Profile updated successfully");
       setShowProfileModal(false);
       fetchAccountData();
@@ -498,7 +389,8 @@ export default function AccountSettings() {
 
     setSaving(true);
     try {
-      const response = await fetch(`${API_URL}/users/password/change/`, {
+      // Using /api/ prefix - CORRECT
+      const response = await fetch(`${API_URL}/api/users/password/change/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${tokens.access}`,
@@ -528,191 +420,8 @@ export default function AccountSettings() {
     }
   };
 
-  const verifyEmail = async () => {
-    if (!tokens?.access) {
-      toast.error("Please login to verify email");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/users/email/verify/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `Failed to send verification email: ${response.statusText}`);
-      }
-
-      toast.success("Verification email sent. Please check your inbox.");
-    } catch (err: any) {
-      console.error("Email verification failed:", err);
-      toast.error(err.message || "Failed to send verification email");
-    }
-  };
-
-  const verifyPhone = async () => {
-    if (!tokens?.access) {
-      toast.error("Please login to verify phone");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/users/phone/verify/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `Failed to send verification SMS: ${response.statusText}`);
-      }
-
-      toast.success("Verification SMS sent. Please check your phone.");
-    } catch (err: any) {
-      console.error("Phone verification failed:", err);
-      toast.error(err.message || "Failed to send verification SMS");
-    }
-  };
-
-  const setupTwoFactor = async () => {
-    if (!tokens?.access) {
-      toast.error("Please login to setup 2FA");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/users/2fa/setup/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `Failed to setup 2FA: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.qr_code_url) {
-        setShow2FAModal(true);
-      } else {
-        toast.success("2FA setup initiated - Check your email for next steps");
-      }
-      
-      setSecurityStatus(prev => ({ ...prev, two_factor_enabled: true }));
-    } catch (err: any) {
-      console.error("2FA setup failed:", err);
-      toast.error(err.message || "Failed to setup 2FA");
-    }
-  };
-
-  const removeDevice = async (deviceId: string) => {
-    if (!tokens?.access) {
-      toast.error("Please login to remove device");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/users/devices/${deviceId}/remove/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `Failed to remove device: ${response.statusText}`);
-      }
-
-      setConnectedDevices(prev => prev.filter(device => device.device_id !== deviceId));
-      setShowDeviceModal(null);
-      toast.success("Device removed successfully");
-      
-      fetchAccountData();
-    } catch (err: any) {
-      console.error("Device removal failed:", err);
-      toast.error(err.message || "Failed to remove device");
-    }
-  };
-
-  const exportData = async () => {
-    if (!tokens?.access) {
-      toast.error("Please login to export data");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/users/data/export/`, {
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-        },
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `Failed to export data: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      const blob = new Blob([data.data], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = data.filename || `claverica-account-data-${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      
-      toast.success("Data exported successfully");
-      setShowExportModal(false);
-    } catch (err: any) {
-      console.error("Data export failed:", err);
-      toast.error(err.message || "Failed to export data");
-    }
-  };
-
-  const deleteAccount = async () => {
-    if (!tokens?.access) {
-      toast.error("Please login to delete account");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/users/delete/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ confirmation: 'DELETE MY ACCOUNT' }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `Failed to delete account: ${response.statusText}`);
-      }
-
-      toast.success("Account deactivation requested.");
-      setTimeout(() => logout(), 2000);
-    } catch (err: any) {
-      console.error("Account deletion failed:", err);
-      toast.error(err.message || "Failed to delete account");
-    }
-  };
-
   const submitKYC = async () => {
-    window.location.href = '/kyc/submit/';
+    window.location.href = '/dashboard/kyc';
   };
 
   const SecurityScoreCircle = ({ score }: { score: number }) => {
@@ -728,7 +437,7 @@ export default function AccountSettings() {
 
     return (
       <div className={styles.scoreCircle}>
-        <svg className={styles.scoreSvg}>
+        <svg className={styles.scoreSvg} viewBox="0 0 128 128">
           <circle
             cx="64"
             cy="64"
@@ -896,7 +605,7 @@ export default function AccountSettings() {
                   )}
                   {account.country && (
                     <span className={styles.badge}>
-                      <Earth size={12} /> 
+                      <Globe2 size={12} /> 
                       {account.country}
                     </span>
                   )}
@@ -1062,9 +771,7 @@ export default function AccountSettings() {
                       {account.is_verified ? (
                         <span className={styles.verifiedBadge}>✓ Verified</span>
                       ) : (
-                        <button onClick={verifyEmail} className={styles.verifyButton}>
-                          Verify Email
-                        </button>
+                        <span className={styles.verifyButton}>Verify Email</span>
                       )}
                     </div>
                   </div>
@@ -1072,11 +779,6 @@ export default function AccountSettings() {
                     <p className={styles.infoLabel}>Phone</p>
                     <div className={styles.infoRow}>
                       <p className={styles.infoValue}>{account.phone || "Not set"}</p>
-                      {account.phone && !kycStatus.phone_verified && (
-                        <button onClick={verifyPhone} className={styles.verifyButton}>
-                          Verify Phone
-                        </button>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -1161,67 +863,6 @@ export default function AccountSettings() {
                 </div>
               </div>
             </motion.div>
-
-            {/* Connected Devices */}
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className={styles.section}
-            >
-              <div className={styles.sectionHeader}>
-                <div className={styles.sectionHeaderLeft}>
-                  <div className={styles.sectionIcon}>
-                    <Smartphone size={20} />
-                  </div>
-                  <h3 className={styles.sectionTitle}>
-                    Connected Devices ({connectedDevices.length})
-                  </h3>
-                </div>
-                <button 
-                  onClick={() => setShowDevices(!showDevices)}
-                  className={styles.sectionAction}
-                >
-                  {showDevices ? 'Hide' : 'Show All'}
-                </button>
-              </div>
-              <div className={styles.sectionContent}>
-                <div className={styles.devicesList}>
-                  {connectedDevices.length > 0 ? (
-                    connectedDevices.slice(0, showDevices ? undefined : 2).map((device) => (
-                      <div key={device.id} className={styles.deviceItem}>
-                        <div className={styles.deviceInfo}>
-                          <div className={`${styles.deviceIcon} ${device.device_type === 'mobile' ? styles.deviceIconMobile : styles.deviceIconDesktop}`}>
-                            {device.device_type === 'mobile' ? (
-                              <Smartphone size={20} />
-                            ) : (
-                              <Laptop size={20} />
-                            )}
-                          </div>
-                          <div>
-                            <p className={styles.deviceName}>{device.device_name}</p>
-                            <p className={styles.deviceMeta}>
-                              Last active: {new Date(device.last_active).toLocaleDateString()}
-                              {device.is_current && <span className={styles.currentSession}> • Current session</span>}
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => setShowDeviceModal(device)}
-                          className={styles.removeButton}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-                      No connected devices found.
-                    </p>
-                  )}
-                </div>
-              </div>
-            </motion.div>
           </div>
 
           {/* Right Column */}
@@ -1239,16 +880,10 @@ export default function AccountSettings() {
                   </div>
                   <h3 className={styles.sectionTitle}>Security Settings</h3>
                 </div>
-                <button 
-                  onClick={() => setShowSecurityDetails(!showSecurityDetails)}
-                  className={styles.sectionAction}
-                >
-                  {showSecurityDetails ? 'Hide' : 'Show'}
-                </button>
               </div>
               <div className={styles.sectionContent}>
                 <div className={styles.settingsList}>
-                  {/* 2FA */}
+                  {/* 2FA - informational only since endpoint doesn't exist */}
                   <div className={styles.settingItem}>
                     <div className={styles.settingLeft}>
                       <Shield className={`${styles.settingIcon} ${styles.settingIconSuccess}`} size={20} />
@@ -1257,18 +892,9 @@ export default function AccountSettings() {
                         <p className={styles.settingDesc}>Extra security layer</p>
                       </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        if (!securityStatus.two_factor_enabled) {
-                          setupTwoFactor();
-                        } else {
-                          updateSettings({ two_factor_enabled: !securityStatus.two_factor_enabled });
-                        }
-                      }}
-                      className={`${styles.toggle} ${securityStatus.two_factor_enabled ? styles.toggleActive : ''}`}
-                    >
-                      <span className={styles.toggleKnob} />
-                    </button>
+                    <span className={`${styles.settingBadge} ${securityStatus.two_factor_enabled ? styles.badgeSuccess : styles.badgeDisabled}`}>
+                      {securityStatus.two_factor_enabled ? 'Enabled' : 'Coming Soon'}
+                    </span>
                   </div>
 
                   {/* Email Notifications */}
@@ -1327,11 +953,9 @@ export default function AccountSettings() {
                 <div className={styles.actionsGrid}>
                   {[
                     { icon: Lock, label: "Change Password", colorStart: "#3B82F6", colorEnd: "#2563EB", action: () => setShowPasswordModal(true) },
-                    { icon: Download, label: "Export Data", colorStart: "#10B981", colorEnd: "#059669", action: () => setShowExportModal(true) },
-                    { icon: FileText, label: "Activity Log", colorStart: "#8B5CF6", colorEnd: "#7C3AED", action: () => setShowActivityLogs(true) },
-                    { icon: LogOut, label: "Logout All", colorStart: "#EF4444", colorEnd: "#DC2626", action: () => logout() },
-                    { icon: HelpCircle, label: "Support", colorStart: "#F59E0B", colorEnd: "#D97706", action: () => toast.info("Support center coming soon") },
-                    { icon: Trash2, label: "Delete Account", colorStart: "#6B7280", colorEnd: "#4B5563", action: () => setShowDeleteModal(true) }
+                    { icon: FileText, label: "Complete KYC", colorStart: "#8B5CF6", colorEnd: "#7C3AED", action: () => submitKYC() },
+                    { icon: LogOut, label: "Logout", colorStart: "#EF4444", colorEnd: "#DC2626", action: () => logout() },
+                    { icon: HelpCircle, label: "Support", colorStart: "#F59E0B", colorEnd: "#D97706", action: () => toast.info("Support center coming soon") }
                   ].map((action, idx) => (
                     <button
                       key={idx}
@@ -1351,53 +975,6 @@ export default function AccountSettings() {
                 </div>
               </div>
             </motion.div>
-
-            {/* Activity Log */}
-            {showActivityLogs && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className={styles.section}
-              >
-                <div className={styles.sectionHeader}>
-                  <div className={styles.sectionHeaderLeft}>
-                    <div className={styles.sectionIcon}>
-                      <Clock size={20} />
-                    </div>
-                    <h3 className={styles.sectionTitle}>Recent Activity</h3>
-                  </div>
-                  <button 
-                    onClick={() => setShowActivityLogs(false)}
-                    className={styles.closeButton}
-                  >
-                    Close
-                  </button>
-                </div>
-                <div className={styles.sectionContent}>
-                  <div className={styles.activityLog}>
-                    {activityLogs.length > 0 ? (
-                      activityLogs.slice(0, 10).map((log) => (
-                        <div key={log.id} className={styles.logItem}>
-                          <div className={styles.logContent}>
-                            <p className={styles.logAction}>{log.action}</p>
-                            <p className={styles.logTime}>
-                              {new Date(log.timestamp).toLocaleString()} • {log.device || 'Unknown device'}
-                            </p>
-                          </div>
-                          <span className={`${styles.logStatus} ${log.status === 'success' ? styles.logSuccess : styles.logFailed}`}>
-                            {log.status}
-                          </span>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-                        No activity logs found.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            )}
           </div>
         </div>
 
@@ -1433,7 +1010,7 @@ export default function AccountSettings() {
               </div>
               <div className={styles.detailCard}>
                 <p className={styles.detailLabel}>Account Status</p>
-                <p className={`${styles.detailValue} ${account.is_active ? 'text-green-600' : 'text-red-600'}`}>
+                <p className={`${styles.detailValue} ${account.is_active ? styles.textSuccess : styles.textError}`}>
                   {account.is_active ? "Active" : "Inactive"}
                 </p>
               </div>
@@ -1442,10 +1019,10 @@ export default function AccountSettings() {
                   <p className={styles.detailLabel}>KYC Status</p>
                   <p className={`${styles.detailValue} ${
                     account.kyc_status === 'verified' 
-                      ? 'text-green-600' 
+                      ? styles.textSuccess 
                       : account.kyc_status === 'pending' || account.kyc_status === 'submitted'
-                      ? 'text-yellow-600'
-                      : 'text-red-600'
+                      ? styles.textWarning
+                      : styles.textError
                   }`}>
                     {account.kyc_status.charAt(0).toUpperCase() + account.kyc_status.slice(1).replace('_', ' ')}
                   </p>
@@ -1456,10 +1033,10 @@ export default function AccountSettings() {
                   <p className={styles.detailLabel}>Risk Level</p>
                   <p className={`${styles.detailValue} ${
                     account.risk_level === 'low' 
-                      ? 'text-green-600' 
+                      ? styles.textSuccess 
                       : account.risk_level === 'medium'
-                      ? 'text-yellow-600'
-                      : 'text-red-600'
+                      ? styles.textWarning
+                      : styles.textError
                   }`}>
                     {account.risk_level.charAt(0).toUpperCase() + account.risk_level.slice(1)}
                   </p>
@@ -1716,265 +1293,6 @@ export default function AccountSettings() {
                 >
                   {saving ? <Loader2 className="animate-spin" size={20} /> : <Key size={20} />}
                   {saving ? 'Changing...' : 'Change Password'}
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-
-        {/* 2FA Modal */}
-        {show2FAModal && (
-          <div className={styles.modalOverlay}>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className={styles.modal}
-            >
-              <div className={styles.modalHeader}>
-                <h3 className={styles.modalTitle}>Setup Two-Factor Auth</h3>
-                <button 
-                  onClick={() => setShow2FAModal(false)}
-                  className={styles.modalClose}
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              
-              <div className={styles.qrContainer}>
-                <div className={styles.qrPlaceholder}>
-                  <QrCode size={64} />
-                </div>
-                <p className={styles.qrText}>
-                  Scan this QR code with your authenticator app
-                </p>
-              </div>
-              
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Enter 6-digit code from authenticator</label>
-                <input
-                  type="text"
-                  placeholder="000000"
-                  maxLength={6}
-                  className={styles.codeInput}
-                />
-              </div>
-              
-              <div className={styles.buttonGroup}>
-                <button
-                  onClick={() => setShow2FAModal(false)}
-                  className={`${styles.button} ${styles.buttonCancel}`}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    toast.success("2FA enabled successfully");
-                    setShow2FAModal(false);
-                  }}
-                  className={`${styles.button} ${styles.buttonPrimary}`}
-                >
-                  Verify & Enable
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-
-        {/* Device Removal Modal */}
-        {showDeviceModal && (
-          <div className={styles.modalOverlay}>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className={styles.modal}
-            >
-              <div className={styles.modalHeader}>
-                <h3 className={styles.modalTitle}>Remove Device</h3>
-                <button 
-                  onClick={() => setShowDeviceModal(null)}
-                  className={styles.modalClose}
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              
-              <div className="space-y-4">
-                <div className={styles.warningBox}>
-                  <p className={styles.warningText}>
-                    Are you sure you want to remove this device? You'll be logged out from this device.
-                  </p>
-                </div>
-                
-                <div className={styles.devicePreview}>
-                  <div className={`${styles.deviceIcon} ${showDeviceModal.device_type === 'mobile' ? styles.deviceIconMobile : styles.deviceIconDesktop}`}>
-                    {showDeviceModal.device_type === 'mobile' ? (
-                      <Smartphone size={20} />
-                    ) : (
-                      <Laptop size={20} />
-                    )}
-                  </div>
-                  <div>
-                    <p className={styles.deviceName}>{showDeviceModal.device_name}</p>
-                    <p className={styles.deviceMeta}>
-                      Last active: {new Date(showDeviceModal.last_active).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className={styles.buttonGroup}>
-                <button
-                  onClick={() => setShowDeviceModal(null)}
-                  className={`${styles.button} ${styles.buttonCancel}`}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => removeDevice(showDeviceModal.device_id)}
-                  className={`${styles.button} ${styles.buttonDanger}`}
-                >
-                  Remove Device
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-
-        {/* Export Modal */}
-        {showExportModal && (
-          <div className={styles.modalOverlay}>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className={styles.modal}
-            >
-              <div className={styles.modalHeader}>
-                <h3 className={styles.modalTitle}>Export Your Data</h3>
-                <button 
-                  onClick={() => setShowExportModal(false)}
-                  className={styles.modalClose}
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              
-              <div className="space-y-6">
-                <div className={styles.exportWarning}>
-                  <p className={styles.exportWarningText}>
-                    ⚠️ This file contains sensitive information. Keep it secure and don't share it.
-                  </p>
-                </div>
-                
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                    Your data will be exported in CSV format and include:
-                  </p>
-                  <ul className={styles.exportList}>
-                    <li className={styles.exportItem}>
-                      <Check size={16} className={styles.exportCheck} />
-                      <span>Personal information</span>
-                    </li>
-                    <li className={styles.exportItem}>
-                      <Check size={16} className={styles.exportCheck} />
-                      <span>Account settings</span>
-                    </li>
-                    <li className={styles.exportItem}>
-                      <Check size={16} className={styles.exportCheck} />
-                      <span>Transaction history (last 2 years)</span>
-                    </li>
-                    <li className={styles.exportItem}>
-                      <Check size={16} className={styles.exportCheck} />
-                      <span>Connected devices</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className={styles.buttonGroup}>
-                <button
-                  onClick={() => setShowExportModal(false)}
-                  className={`${styles.button} ${styles.buttonCancel}`}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={exportData}
-                  className={`${styles.button} ${styles.buttonPrimary}`}
-                >
-                  <Download size={20} />
-                  Export Data
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-
-        {/* Delete Account Modal */}
-        {showDeleteModal && (
-          <div className={styles.modalOverlay}>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className={styles.modal}
-            >
-              <div className={styles.modalHeader}>
-                <h3 className={styles.modalTitle}>Delete Account</h3>
-                <button 
-                  onClick={() => setShowDeleteModal(false)}
-                  className={styles.modalClose}
-                >
-                  <X size={20} />
-                </button>
-              </div>
-              
-              <div className="space-y-6">
-                <div className={styles.deleteWarning}>
-                  <p className={styles.deleteWarningText}>
-                    ⚠️ This action is irreversible. All your data will be permanently deleted.
-                  </p>
-                </div>
-                
-                <div>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    When you delete your account:
-                  </p>
-                  <ul className={styles.deleteList}>
-                    <li className={styles.deleteItem}>
-                      <X size={16} className={styles.deleteIcon} />
-                      <span>All personal data will be permanently deleted</span>
-                    </li>
-                    <li className={styles.deleteItem}>
-                      <X size={16} className={styles.deleteIcon} />
-                      <span>Your transaction history will be removed</span>
-                    </li>
-                    <li className={styles.deleteItem}>
-                      <X size={16} className={styles.deleteIcon} />
-                      <span>You will lose access to all features</span>
-                    </li>
-                    <li className={styles.deleteItem}>
-                      <X size={16} className={styles.deleteIcon} />
-                      <span>Your account number will be deactivated</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className={styles.buttonGroup}>
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  className={`${styles.button} ${styles.buttonCancel}`}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={deleteAccount}
-                  className={`${styles.button} ${styles.buttonDanger}`}
-                >
-                  Delete Account
                 </button>
               </div>
             </motion.div>

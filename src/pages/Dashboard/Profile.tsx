@@ -1,17 +1,16 @@
-// src/pages/Dashboard/Profile.tsx - FIXED VERSION
+// src/pages/Dashboard/Profile.tsx - UPDATED WITH HOMEPAGE COLOR SYSTEM
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth";
-import { api } from "../../api"; // ✅ Import api instead of apiClient
+import { api } from "../../api";
 import { 
   User, Mail, Phone, Shield, CheckCircle2, 
   Calendar, MapPin, Building, Edit, Download,
   Share2, Award, Clock, TrendingUp, CreditCard,
   ChevronRight, Briefcase, Home, Globe, FileText,
-  Map
+  Map, AlertCircle, Loader2
 } from "lucide-react";
-
-// No need for API_URL constant - use api.ts
+import styles from './Profile.module.css';
 
 interface ProfileData {
   // Basic user info
@@ -31,7 +30,7 @@ interface ProfileData {
   date_joined?: string;
   last_login?: string;
   
-  // Address information (REAL FIELDS)
+  // Address information
   address_line1?: string;
   address_line2?: string;
   city?: string;
@@ -40,7 +39,7 @@ interface ProfileData {
   country?: string;
   country_of_residence?: string;
   
-  // Employment information (REAL FIELDS)
+  // Employment information
   occupation?: string;
   employer?: string;
   income_range?: string;
@@ -52,7 +51,7 @@ interface ProfileData {
   doc_type?: string;
   doc_number?: string;
   
-  // Stats (from available endpoints)
+  // Stats
   wallet_balance?: number;
   total_transactions?: number;
   monthly_income?: number;
@@ -82,10 +81,9 @@ export default function Profile() {
       setLoading(true);
       setError(null);
 
-      // ✅ FIXED: Use api.ts instead of raw apiClient
       const userData = await api.auth.getProfile();
       
-      // 2. Get wallet balance
+      // Get wallet balance
       let walletBalance = 0;
       try {
         const walletData = await api.wallet.getBalance();
@@ -94,7 +92,7 @@ export default function Profile() {
         console.log("Wallet endpoint not available");
       }
 
-      // 3. Get transaction stats
+      // Get transaction stats
       let totalTransactions = 0;
       let monthlyIncome = 0;
       let monthlyExpenses = 0;
@@ -103,7 +101,6 @@ export default function Profile() {
         const txData = await api.wallet.getTransactions();
         const transactions = txData.transactions || txData || [];
         
-        // Calculate stats
         const currentMonth = new Date().getMonth();
         const currentYear = new Date().getFullYear();
         
@@ -126,7 +123,6 @@ export default function Profile() {
         console.log("Transactions endpoint not available");
       }
 
-      // Combine data - USING REAL BACKEND FIELDS
       const profileData: ProfileData = {
         // Basic info
         id: userData.id,
@@ -138,14 +134,14 @@ export default function Profile() {
         is_verified: userData.is_verified || false,
         is_active: userData.is_active !== false,
         
-        // Personal info (REAL DATA)
+        // Personal info
         date_of_birth: userData.date_of_birth || "",
         gender: userData.gender || "",
         nationality: userData.nationality || "",
         date_joined: userData.date_joined || "",
         last_login: userData.last_login || "",
         
-        // Address info (REAL DATA)
+        // Address info
         address_line1: userData.address_line1 || "",
         address_line2: userData.address_line2 || "",
         city: userData.city || "",
@@ -154,19 +150,19 @@ export default function Profile() {
         country: userData.country || "",
         country_of_residence: userData.country_of_residence || "",
         
-        // Employment info (REAL DATA)
+        // Employment info
         occupation: userData.occupation || "",
         employer: userData.employer || "",
         income_range: userData.income_range || "",
         
-        // KYC & Verification (REAL DATA)
+        // KYC & Verification
         kyc_status: userData.kyc_status || "pending",
         risk_level: userData.risk_level || "low",
         account_status: userData.account_status || "active",
         doc_type: userData.doc_type || "",
         doc_number: userData.doc_number || "",
         
-        // Stats from available endpoints
+        // Stats
         wallet_balance: walletBalance,
         total_transactions: totalTransactions,
         monthly_income: monthlyIncome,
@@ -178,7 +174,6 @@ export default function Profile() {
       console.error("Profile fetch error:", err);
       setError(err.message || "Failed to load profile");
       
-      // Fallback to auth store data
       if (authUser) {
         setProfile({
           email: authUser.email || "user@example.com",
@@ -202,7 +197,6 @@ export default function Profile() {
     }
   };
 
-  // Helper functions (same as before)
   const formatAddress = () => {
     if (!profile) return "No address provided";
     
@@ -233,13 +227,13 @@ export default function Profile() {
 
   const getKycStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      'verified': 'text-green-600 dark:text-green-400',
-      'pending': 'text-amber-600 dark:text-amber-400',
-      'under_review': 'text-blue-600 dark:text-blue-400',
-      'rejected': 'text-red-600 dark:text-red-400',
-      'submitted': 'text-purple-600 dark:text-purple-400'
+      'verified': styles.statusSuccess,
+      'pending': styles.statusWarning,
+      'under_review': styles.statusInfo,
+      'rejected': styles.statusError,
+      'submitted': styles.statusPurple
     };
-    return colors[status] || 'text-slate-600 dark:text-slate-400';
+    return colors[status] || styles.statusDefault;
   };
 
   const getKycStatusText = (status: string) => {
@@ -253,7 +247,6 @@ export default function Profile() {
     return texts[status] || status.charAt(0).toUpperCase() + status.slice(1);
   };
 
-  // Memoized calculations
   const netFlow = useMemo(() => {
     return (profile?.monthly_income || 0) - (profile?.monthly_expenses || 0);
   }, [profile?.monthly_income, profile?.monthly_expenses]);
@@ -273,14 +266,8 @@ export default function Profile() {
     await fetchProfileData();
   };
 
-  const downloadStatement = async () => {
-    try {
-      // TODO: Implement statement download
-      alert("Statement download feature coming soon!");
-    } catch (error) {
-      console.error("Failed to download statement:", error);
-      alert("Statement download will be available soon!");
-    }
+  const downloadStatement = () => {
+    toast.info("Statement download coming soon!");
   };
 
   const completeKyc = () => {
@@ -289,10 +276,10 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-400 font-medium">Loading your profile...</p>
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingContent}>
+          <div className={styles.spinner}></div>
+          <p className={styles.loadingText}>Loading your profile...</p>
         </div>
       </div>
     );
@@ -300,16 +287,14 @@ export default function Profile() {
 
   if (error && !profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 max-w-md w-full">
-          <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Shield className="w-6 h-6 text-red-600 dark:text-red-400" />
-          </div>
-          <h3 className="text-xl font-bold text-slate-900 dark:text-white text-center mb-2">Error</h3>
-          <p className="text-slate-600 dark:text-slate-400 text-center mb-6">{error}</p>
+      <div className={styles.errorContainer}>
+        <div className={styles.errorCard}>
+          <AlertCircle className={styles.errorIcon} />
+          <h3 className={styles.errorTitle}>Error</h3>
+          <p className={styles.errorMessage}>{error}</p>
           <button
             onClick={fetchProfileData}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl py-3 font-semibold hover:opacity-90 transition-opacity"
+            className={styles.retryButton}
           >
             Try Again
           </button>
@@ -321,170 +306,160 @@ export default function Profile() {
   if (!profile) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className={styles.container}>
+      <div className={styles.content}>
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
-                My Profile
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400">
-                Manage your personal information and account details
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-xl font-medium transition-all flex items-center gap-2 disabled:opacity-50"
-              >
-                {isRefreshing ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-slate-500 border-t-transparent rounded-full animate-spin"></div>
-                    Refreshing...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Refresh
-                  </>
-                )}
-              </button>
-              <button
-                onClick={handleEditProfile}
-                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-medium transition-all flex items-center gap-2"
-              >
-                <Edit className="w-4 h-4" />
-                Edit Profile
-              </button>
-            </div>
+        <div className={styles.header}>
+          <div>
+            <h1 className={styles.title}>My Profile</h1>
+            <p className={styles.subtitle}>
+              Manage your personal information and account details
+            </p>
+          </div>
+          <div className={styles.headerActions}>
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className={styles.refreshButton}
+            >
+              {isRefreshing ? (
+                <>
+                  <Loader2 className={styles.buttonIcon + ' ' + styles.spinning} />
+                  Refreshing...
+                </>
+              ) : (
+                <>
+                  <svg className={styles.buttonIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Refresh
+                </>
+              )}
+            </button>
+            <button
+              onClick={handleEditProfile}
+              className={styles.editButton}
+            >
+              <Edit className={styles.buttonIcon} />
+              Edit Profile
+            </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className={styles.grid}>
           {/* Left Column - Profile Card */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className={styles.leftColumn}>
             {/* Main Profile Card */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 md:p-8">
-              <div className="flex flex-col md:flex-row md:items-start gap-6">
+            <div className={styles.profileCard}>
+              <div className={styles.profileHeader}>
                 {/* Avatar */}
-                <div className="relative">
-                  <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-lg">
-                    <div className="text-white text-3xl font-bold">
-                      {profile.first_name?.[0]}{profile.last_name?.[0]}
-                    </div>
+                <div className={styles.avatarWrapper}>
+                  <div className={styles.avatar}>
+                    {profile.first_name?.[0]}{profile.last_name?.[0]}
                   </div>
                   {profile.kyc_status === 'verified' && (
-                    <div className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
-                      <CheckCircle2 className="w-5 h-5 text-white" />
+                    <div className={styles.verifiedBadge}>
+                      <CheckCircle2 className={styles.verifiedIcon} />
                     </div>
                   )}
                 </div>
 
                 {/* Profile Info */}
-                <div className="flex-1">
-                  <div className="mb-6">
-                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1">
+                <div className={styles.profileInfo}>
+                  <div className={styles.profileHeaderTop}>
+                    <h2 className={styles.profileName}>
                       {profile.first_name} {profile.last_name}
                     </h2>
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className={`px-3 py-1 text-sm font-bold rounded-full ${
-                        profile.kyc_status === 'verified' 
-                          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
-                          : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                    <div className={styles.profileBadges}>
+                      <span className={`${styles.tierBadge} ${
+                        profile.kyc_status === 'verified' ? styles.tierVerified : styles.tierPending
                       }`}>
                         {tier} Tier
                       </span>
-                      <span className="text-slate-600 dark:text-slate-400 text-sm">
-                        Account: {profile.account_number}
+                      <span className={styles.accountNumber}>
+                        {profile.account_number}
                       </span>
-                      <span className={`text-sm font-medium ${getKycStatusColor(profile.kyc_status || 'pending')}`}>
+                      <span className={`${styles.kycBadge} ${getKycStatusColor(profile.kyc_status || 'pending')}`}>
                         KYC: {getKycStatusText(profile.kyc_status || 'pending')}
                       </span>
                     </div>
                   </div>
 
-                  {/* Account Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Mail className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                        <p className="text-sm text-slate-600 dark:text-slate-400">Email</p>
+                  {/* Account Details Grid */}
+                  <div className={styles.detailsGrid}>
+                    <div className={styles.detailItem}>
+                      <Mail className={styles.detailIcon} />
+                      <div>
+                        <p className={styles.detailLabel}>Email</p>
+                        <p className={styles.detailValue}>{profile.email}</p>
                       </div>
-                      <p className="text-slate-900 dark:text-white font-medium truncate">{profile.email}</p>
                     </div>
                     
-                    <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CreditCard className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                        <p className="text-sm text-slate-600 dark:text-slate-400">Account Number</p>
+                    <div className={styles.detailItem}>
+                      <CreditCard className={styles.detailIcon} />
+                      <div>
+                        <p className={styles.detailLabel}>Account Number</p>
+                        <p className={`${styles.detailValue} ${styles.monoText}`}>{profile.account_number}</p>
                       </div>
-                      <p className="text-slate-900 dark:text-white font-mono font-bold">{profile.account_number}</p>
                     </div>
                     
-                    <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Phone className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                        <p className="text-sm text-slate-600 dark:text-slate-400">Phone</p>
+                    <div className={styles.detailItem}>
+                      <Phone className={styles.detailIcon} />
+                      <div>
+                        <p className={styles.detailLabel}>Phone</p>
+                        <p className={styles.detailValue}>{profile.phone || "Not provided"}</p>
                       </div>
-                      <p className="text-slate-900 dark:text-white font-medium">{profile.phone || "Not provided"}</p>
                     </div>
                     
-                    <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Calendar className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                        <p className="text-sm text-slate-600 dark:text-slate-400">Account Status</p>
+                    <div className={styles.detailItem}>
+                      <Shield className={styles.detailIcon} />
+                      <div>
+                        <p className={styles.detailLabel}>Account Status</p>
+                        <p className={`${styles.detailValue} ${
+                          profile.account_status === 'active' ? styles.textSuccess : styles.textError
+                        }`}>
+                          {profile.account_status?.toUpperCase() || "Active"}
+                        </p>
                       </div>
-                      <p className={`font-medium ${
-                        profile.account_status === 'active'
-                          ? 'text-green-600 dark:text-green-400' 
-                          : 'text-red-600 dark:text-red-400'
-                      }`}>
-                        {profile.account_status?.toUpperCase() || "Active"}
-                      </p>
                     </div>
                   </div>
 
                   {/* Address & Employment */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Location</h3>
+                  <div className={styles.infoSections}>
+                    <div className={styles.infoSection}>
+                      <div className={styles.infoSectionHeader}>
+                        <MapPin className={styles.infoSectionIcon} />
+                        <h3 className={styles.infoSectionTitle}>Location</h3>
                       </div>
-                      <div className="space-y-1">
-                        <p className="text-slate-700 dark:text-slate-300">
+                      <div className={styles.infoSectionContent}>
+                        <p className={styles.infoText}>
                           {profile.country_of_residence || profile.country || "Not specified"}
                         </p>
-                        <p className="text-slate-600 dark:text-slate-400 text-sm">
+                        <p className={styles.infoSubtext}>
                           {formatAddress()}
                         </p>
                         {profile.nationality && (
-                          <p className="text-slate-600 dark:text-slate-400 text-sm">
+                          <p className={styles.infoSubtext}>
                             Nationality: {profile.nationality}
                           </p>
                         )}
                       </div>
                     </div>
                     
-                    <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Briefcase className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Occupation</h3>
+                    <div className={styles.infoSection}>
+                      <div className={styles.infoSectionHeader}>
+                        <Briefcase className={styles.infoSectionIcon} />
+                        <h3 className={styles.infoSectionTitle}>Occupation</h3>
                       </div>
-                      <div className="space-y-1">
-                        <p className="text-slate-900 dark:text-white font-medium">
+                      <div className={styles.infoSectionContent}>
+                        <p className={styles.infoText}>
                           {profile.occupation || "Not specified"}
                         </p>
-                        <p className="text-slate-600 dark:text-slate-400 text-sm">
+                        <p className={styles.infoSubtext}>
                           {profile.employer || "No employer specified"}
                         </p>
                         {profile.income_range && (
-                          <p className="text-slate-600 dark:text-slate-400 text-sm">
+                          <p className={styles.infoSubtext}>
                             Income: {profile.income_range}
                           </p>
                         )}
@@ -492,23 +467,23 @@ export default function Profile() {
                     </div>
                   </div>
 
-                  {/* Personal Info */}
-                  <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Date of Birth</p>
-                      <p className="text-slate-900 dark:text-white font-medium">
+                  {/* Personal Info Grid */}
+                  <div className={styles.personalGrid}>
+                    <div className={styles.personalItem}>
+                      <p className={styles.personalLabel}>Date of Birth</p>
+                      <p className={styles.personalValue}>
                         {formatDate(profile.date_of_birth)}
                       </p>
                     </div>
-                    <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Gender</p>
-                      <p className="text-slate-900 dark:text-white font-medium">
+                    <div className={styles.personalItem}>
+                      <p className={styles.personalLabel}>Gender</p>
+                      <p className={styles.personalValue}>
                         {profile.gender ? profile.gender.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) : "Not specified"}
                       </p>
                     </div>
-                    <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Member Since</p>
-                      <p className="text-slate-900 dark:text-white font-medium">
+                    <div className={styles.personalItem}>
+                      <p className={styles.personalLabel}>Member Since</p>
+                      <p className={styles.personalValue}>
                         {formatDate(profile.date_joined)}
                       </p>
                     </div>
@@ -518,58 +493,60 @@ export default function Profile() {
             </div>
 
             {/* Financial Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Monthly Income</p>
+            <div className={styles.statsGrid}>
+              <div className={styles.statCard}>
+                <div className={styles.statHeader}>
+                  <TrendingUp className={`${styles.statIcon} ${styles.statIconSuccess}`} />
+                  <p className={styles.statLabel}>Monthly Income</p>
                 </div>
-                <p className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+                <p className={styles.statValue}>
                   ${(profile.monthly_income || 0).toLocaleString()}
                 </p>
-                <p className="text-slate-600 dark:text-slate-400 text-sm">This month's earnings</p>
+                <p className={styles.statSubtext}>This month's earnings</p>
               </div>
               
-              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <TrendingUp className="w-6 h-6 text-red-600 dark:text-red-400" />
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Monthly Expenses</p>
+              <div className={styles.statCard}>
+                <div className={styles.statHeader}>
+                  <TrendingUp className={`${styles.statIcon} ${styles.statIconError}`} />
+                  <p className={styles.statLabel}>Monthly Expenses</p>
                 </div>
-                <p className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+                <p className={styles.statValue}>
                   ${(profile.monthly_expenses || 0).toLocaleString()}
                 </p>
-                <p className="text-slate-600 dark:text-slate-400 text-sm">This month's spending</p>
+                <p className={styles.statSubtext}>This month's spending</p>
               </div>
               
-              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Total Transactions</p>
+              <div className={styles.statCard}>
+                <div className={styles.statHeader}>
+                  <Clock className={`${styles.statIcon} ${styles.statIconPurple}`} />
+                  <p className={styles.statLabel}>Total Transactions</p>
                 </div>
-                <p className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+                <p className={styles.statValue}>
                   {(profile.total_transactions || 0).toLocaleString()}
                 </p>
-                <p className="text-slate-600 dark:text-slate-400 text-sm">All-time transactions</p>
+                <p className={styles.statSubtext}>All-time transactions</p>
               </div>
             </div>
 
             {/* Net Flow */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
-                <h3 className="text-xl font-bold text-white">Monthly Net Flow</h3>
-                <span className={`text-2xl font-bold ${
-                  netFlow >= 0 ? 'text-green-300' : 'text-red-300'
+            <div className={styles.netFlowCard}>
+              <div className={styles.netFlowHeader}>
+                <h3 className={styles.netFlowTitle}>Monthly Net Flow</h3>
+                <span className={`${styles.netFlowAmount} ${
+                  netFlow >= 0 ? styles.netFlowPositive : styles.netFlowNegative
                 }`}>
                   ${Math.abs(netFlow).toLocaleString()} {netFlow >= 0 ? 'Surplus' : 'Deficit'}
                 </span>
               </div>
-              <div className="h-2 bg-white/30 rounded-full overflow-hidden">
+              <div className={styles.progressBar}>
                 <div 
-                  className={`h-full ${netFlow >= 0 ? 'bg-green-400' : 'bg-red-400'} transition-all duration-1000`}
+                  className={`${styles.progressFill} ${
+                    netFlow >= 0 ? styles.progressPositive : styles.progressNegative
+                  }`}
                   style={{ width: `${Math.min(Math.abs(netFlow) / ((profile.monthly_income || 1) * 2) * 100, 100)}%` }}
                 />
               </div>
-              <p className="text-white/80 text-sm mt-3">
+              <p className={styles.netFlowText}>
                 {netFlow >= 0 
                   ? 'You are saving money this month!'
                   : 'Your expenses exceed your income this month.'}
@@ -578,103 +555,94 @@ export default function Profile() {
           </div>
 
           {/* Right Column - Actions & Verification */}
-          <div className="space-y-6">
+          <div className={styles.rightColumn}>
             {/* Verification Status */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
-                <Shield className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className={styles.verificationCard}>
+              <h3 className={styles.cardTitle}>
+                <Shield className={styles.cardTitleIcon} />
                 Verification Status
               </h3>
               
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      profile.kyc_status === 'verified' 
-                        ? 'bg-green-100 dark:bg-green-900/30' 
-                        : profile.kyc_status === 'rejected'
-                        ? 'bg-red-100 dark:bg-red-900/30'
-                        : 'bg-amber-100 dark:bg-amber-900/30'
+              <div className={styles.verificationList}>
+                <div className={styles.verificationItem}>
+                  <div className={styles.verificationLeft}>
+                    <div className={`${styles.verificationIcon} ${
+                      profile.kyc_status === 'verified' ? styles.iconSuccess : 
+                      profile.kyc_status === 'rejected' ? styles.iconError : styles.iconWarning
                     }`}>
                       {profile.kyc_status === 'verified' ? (
-                        <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        <CheckCircle2 className={styles.iconSize} />
                       ) : profile.kyc_status === 'rejected' ? (
-                        <svg className="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <AlertCircle className={styles.iconSize} />
                       ) : (
-                        <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                        <Clock className={styles.iconSize} />
                       )}
                     </div>
                     <div>
-                      <p className="text-slate-900 dark:text-white font-medium">Identity Verification</p>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm">
+                      <p className={styles.verificationTitle}>Identity Verification</p>
+                      <p className={styles.verificationSubtitle}>
                         {getKycStatusText(profile.kyc_status || 'pending')}
                       </p>
                     </div>
                   </div>
-                  <span className={`font-bold ${getKycStatusColor(profile.kyc_status || 'pending')}`}>
+                  <span className={`${styles.verificationStatus} ${getKycStatusColor(profile.kyc_status || 'pending')}`}>
                     {profile.kyc_status === 'verified' ? 'Complete' : 
                      profile.kyc_status === 'rejected' ? 'Failed' : 'Required'}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                      <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+                <div className={styles.verificationItem}>
+                  <div className={styles.verificationLeft}>
+                    <div className={`${styles.verificationIcon} ${profile.is_verified ? styles.iconSuccess : styles.iconWarning}`}>
+                      <CheckCircle2 className={styles.iconSize} />
                     </div>
                     <div>
-                      <p className="text-slate-900 dark:text-white font-medium">Email Verified</p>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm">
+                      <p className={styles.verificationTitle}>Email Verified</p>
+                      <p className={styles.verificationSubtitle}>
                         {profile.is_verified ? 'Confirmed' : 'Pending'}
                       </p>
                     </div>
                   </div>
-                  <span className={`font-bold ${
-                    profile.is_verified 
-                      ? 'text-green-600 dark:text-green-400' 
-                      : 'text-amber-600 dark:text-amber-400'
+                  <span className={`${styles.verificationStatus} ${
+                    profile.is_verified ? styles.statusSuccess : styles.statusWarning
                   }`}>
                     {profile.is_verified ? 'Complete' : 'Required'}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                      <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+                <div className={styles.verificationItem}>
+                  <div className={styles.verificationLeft}>
+                    <div className={`${styles.verificationIcon} ${styles.iconSuccess}`}>
+                      <CheckCircle2 className={styles.iconSize} />
                     </div>
                     <div>
-                      <p className="text-slate-900 dark:text-white font-medium">Account Status</p>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm">
+                      <p className={styles.verificationTitle}>Account Status</p>
+                      <p className={styles.verificationSubtitle}>
                         {profile.account_status?.toUpperCase() || "Active"}
                       </p>
                     </div>
                   </div>
-                  <span className={`font-bold ${
-                    profile.account_status === 'active'
-                      ? 'text-green-600 dark:text-green-400' 
-                      : 'text-red-600 dark:text-red-400'
+                  <span className={`${styles.verificationStatus} ${
+                    profile.account_status === 'active' ? styles.statusSuccess : styles.statusError
                   }`}>
                     {profile.account_status === 'active' ? 'Active' : 'Inactive'}
                   </span>
                 </div>
 
                 {profile.doc_type && (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                        <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <div className={styles.verificationItem}>
+                    <div className={styles.verificationLeft}>
+                      <div className={`${styles.verificationIcon} ${styles.iconInfo}`}>
+                        <FileText className={styles.iconSize} />
                       </div>
                       <div>
-                        <p className="text-slate-900 dark:text-white font-medium">Document Type</p>
-                        <p className="text-slate-600 dark:text-slate-400 text-sm">
+                        <p className={styles.verificationTitle}>Document Type</p>
+                        <p className={styles.verificationSubtitle}>
                           {profile.doc_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                         </p>
                       </div>
                     </div>
-                    <span className="font-bold text-blue-600 dark:text-blue-400">
+                    <span className={`${styles.verificationStatus} ${styles.statusInfo}`}>
                       {profile.doc_number ? 'Provided' : 'Missing'}
                     </span>
                   </div>
@@ -684,7 +652,7 @@ export default function Profile() {
               {profile.kyc_status !== 'verified' && (
                 <button
                   onClick={completeKyc}
-                  className="w-full mt-6 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-bold transition-all"
+                  className={styles.kycButton}
                 >
                   {profile.kyc_status === 'rejected' ? 'Resubmit KYC Documents' : 'Complete Identity Verification'}
                 </button>
@@ -692,61 +660,65 @@ export default function Profile() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Quick Actions</h3>
-              <div className="space-y-3">
+            <div className={styles.actionsCard}>
+              <h3 className={styles.cardTitle}>
+                <Zap className={styles.cardTitleIcon} />
+                Quick Actions
+              </h3>
+              <div className={styles.actionsList}>
                 <button
                   onClick={downloadStatement}
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-xl transition-all flex items-center justify-between"
+                  className={styles.actionButton}
                 >
-                  <div className="flex items-center gap-3">
-                    <Download className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+                  <div className={styles.actionLeft}>
+                    <Download className={styles.actionIcon} />
                     <span>Download Statements</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                  <ChevronRight className={styles.actionArrow} />
                 </button>
                 
                 <button
                   onClick={() => navigate('/dashboard/support')}
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-xl transition-all flex items-center justify-between"
+                  className={styles.actionButton}
                 >
-                  <div className="flex items-center gap-3">
-                    <Share2 className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+                  <div className={styles.actionLeft}>
+                    <Share2 className={styles.actionIcon} />
                     <span>Contact Support</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                  <ChevronRight className={styles.actionArrow} />
                 </button>
                 
                 <button
                   onClick={() => navigate('/dashboard/settings')}
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-xl transition-all flex items-center justify-between"
+                  className={styles.actionButton}
                 >
-                  <div className="flex items-center gap-3">
-                    <Award className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+                  <div className={styles.actionLeft}>
+                    <Award className={styles.actionIcon} />
                     <span>Account Settings</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                  <ChevronRight className={styles.actionArrow} />
                 </button>
 
                 <button
                   onClick={() => navigate('/dashboard/referrals')}
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-xl transition-all flex items-center justify-between"
+                  className={styles.actionButton}
                 >
-                  <div className="flex items-center gap-3">
-                    <User className="w-5 h-5 text-slate-500 dark:text-slate-400" />
+                  <div className={styles.actionLeft}>
+                    <User className={styles.actionIcon} />
                     <span>Refer Friends</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                  <ChevronRight className={styles.actionArrow} />
                 </button>
               </div>
             </div>
 
             {/* Account Tier Benefits */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+            <div className={styles.benefitsCard}>
+              <h3 className={styles.cardTitle}>
+                <Award className={styles.cardTitleIcon} />
                 {tier} Tier Benefits
               </h3>
-              <ul className="space-y-2">
+              <ul className={styles.benefitsList}>
                 {(profile.kyc_status === 'verified' ? [
                   "Higher transaction limits",
                   "Priority customer support",
@@ -760,9 +732,9 @@ export default function Profile() {
                   "Free bank transfers",
                   "24/7 fraud monitoring"
                 ]).map((benefit, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                    <span className="text-slate-700 dark:text-slate-300 text-sm">{benefit}</span>
+                  <li key={idx} className={styles.benefitItem}>
+                    <CheckCircle2 className={styles.benefitIcon} />
+                    <span className={styles.benefitText}>{benefit}</span>
                   </li>
                 ))}
               </ul>

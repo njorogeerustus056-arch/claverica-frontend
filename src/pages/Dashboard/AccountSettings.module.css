@@ -1,6 +1,6 @@
 /* src/pages/Dashboard/AccountSettings.module.css */
+/* UPDATED WITH HOMEPAGE COLOR SYSTEM */
 
-/* ===== ACCOUNT SETTINGS STYLES ===== */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /* ===== VARIABLES ===== */
@@ -14,16 +14,6 @@
   --error: #EF4444;
   --success: #10B981;
   --warning: #F59E0B;
-  --gray-50: #F9FAFB;
-  --gray-100: #F3F4F6;
-  --gray-200: #E5E7EB;
-  --gray-300: #D1D5DB;
-  --gray-400: #9CA3AF;
-  --gray-500: #6B7280;
-  --gray-600: #4B5563;
-  --gray-700: #374151;
-  --gray-800: #1F2937;
-  --gray-900: #111827;
 }
 
 /* ===== LAYOUT ===== */
@@ -37,6 +27,69 @@
   max-width: 1600px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
+}
+
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3, h4, h5, h6,
+.title,
+.profileName,
+.settingTitle,
+.statValue,
+.infoValue,
+.deviceName,
+.logAction,
+.detailValue,
+.actionLabel,
+.modalTitle {
+  color: var(--navy);
+}
+
+.subtitle,
+.statLabel,
+.infoLabel,
+.settingDesc,
+.deviceMeta,
+.logTime,
+.detailLabel,
+.formHint,
+.stepLabel,
+.qrText,
+.exportItem,
+.deleteItem,
+.formLabel,
+.progressLabel,
+.scoreText,
+.noDevices,
+.noLogs,
+.exportSubtitle,
+.deleteSubtitle {
+  color: var(--teal);
+}
+
+/* Tertiary text - Navy with opacity */
+.modalClose,
+.timeAgo,
+.helperText,
+.exportItem span,
+.deleteItem span {
+  color: rgba(10, 37, 64, 0.6);
+}
+
+/* Status colors */
+.textSuccess {
+  color: var(--teal);
+}
+
+.textWarning {
+  color: var(--gold);
+}
+
+.textError {
+  color: var(--error);
+}
+
+.textPurple {
+  color: var(--purple);
 }
 
 /* ===== LOADING STATE ===== */
@@ -56,7 +109,7 @@
 .spinner {
   width: 64px;
   height: 64px;
-  border: 4px solid var(--gray-200);
+  border: 4px solid rgba(30, 111, 111, 0.1);
   border-top-color: var(--purple);
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -64,7 +117,7 @@
 }
 
 .loadingText {
-  color: var(--gray-600);
+  color: var(--teal);
   font-weight: 500;
 }
 
@@ -105,7 +158,7 @@
 }
 
 .errorMessage {
-  color: var(--gray-500);
+  color: var(--teal);
   margin-bottom: 2rem;
 }
 
@@ -135,12 +188,10 @@
 .title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--navy);
   margin-bottom: 0.5rem;
 }
 
 .subtitle {
-  color: var(--gray-500);
   font-size: 1rem;
 }
 
@@ -210,6 +261,7 @@
   font-weight: 700;
   border: 4px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  color: var(--white);
 }
 
 .cameraButton {
@@ -232,6 +284,8 @@
 
 .cameraButton:hover {
   transform: scale(1.1);
+  background: var(--gold);
+  color: var(--navy);
 }
 
 .profileInfo {
@@ -249,10 +303,11 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  color: var(--white);
 }
 
 .profileEmail {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
   margin-bottom: 0.75rem;
 }
 
@@ -279,6 +334,7 @@
   border-radius: 9999px;
   font-size: 0.875rem;
   font-weight: 500;
+  color: var(--white);
 }
 
 .badgeVerified {
@@ -315,7 +371,7 @@
   background: var(--white);
   border-radius: 24px;
   padding: 1.5rem;
-  border: 1px solid var(--gray-200);
+  border: 1px solid rgba(197, 160, 40, 0.2);
   box-shadow: 0 4px 12px rgba(10, 37, 64, 0.05);
 }
 
@@ -329,7 +385,6 @@
 .securityTitle {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--navy);
 }
 
 .securityIcon {
@@ -355,7 +410,7 @@
 }
 
 .scoreCircleBg {
-  stroke: var(--gray-200);
+  stroke: rgba(30, 111, 111, 0.1);
   stroke-width: 8;
   fill: none;
 }
@@ -391,11 +446,11 @@
 .scoreNumber {
   font-size: 2rem;
   font-weight: 700;
+  color: var(--navy);
 }
 
 .scoreText {
   font-size: 0.75rem;
-  color: var(--gray-500);
 }
 
 .scoreDetails {
@@ -413,11 +468,12 @@
 }
 
 .scoreDetailLabel {
-  color: var(--gray-500);
+  color: var(--teal);
 }
 
 .scoreDetailValue {
   font-weight: 600;
+  color: var(--navy);
 }
 
 .scoreDetailSuccess {
@@ -437,6 +493,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+  margin-top: 2rem;
 }
 
 @media (min-width: 768px) {
@@ -449,7 +506,7 @@
   background: var(--white);
   border-radius: 16px;
   padding: 1rem;
-  border: 1px solid var(--gray-200);
+  border: 1px solid rgba(197, 160, 40, 0.2);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -503,7 +560,7 @@
 }
 
 .trendUp {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(30, 111, 111, 0.1);
   color: var(--teal);
 }
 
@@ -514,28 +571,26 @@
 
 .statLabel {
   font-size: 0.875rem;
-  color: var(--gray-500);
   margin-bottom: 0.25rem;
 }
 
 .statValue {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--navy);
 }
 
 /* ===== SECTION STYLES ===== */
 .section {
   background: var(--white);
   border-radius: 16px;
-  border: 1px solid var(--gray-200);
+  border: 1px solid rgba(197, 160, 40, 0.2);
   overflow: hidden;
   margin-bottom: 1.5rem;
 }
 
 .sectionHeader {
   padding: 1.25rem;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid rgba(197, 160, 40, 0.2);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -561,7 +616,6 @@
 .sectionTitle {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--navy);
 }
 
 .sectionAction {
@@ -587,6 +641,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .infoItem {
@@ -595,14 +650,14 @@
 
 .infoLabel {
   font-size: 0.75rem;
-  color: var(--gray-500);
   margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .infoValue {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--navy);
 }
 
 .infoRow {
@@ -629,7 +684,7 @@
 
 .verifiedBadge {
   padding: 0.25rem 0.5rem;
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(30, 111, 111, 0.1);
   color: var(--teal);
   border-radius: 4px;
   font-size: 0.75rem;
@@ -658,7 +713,6 @@
 .progressLabel {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--gray-700);
 }
 
 .progressPercentage {
@@ -669,7 +723,7 @@
 
 .progressBar {
   height: 8px;
-  background: var(--gray-200);
+  background: rgba(30, 111, 111, 0.1);
   border-radius: 9999px;
   overflow: hidden;
 }
@@ -704,18 +758,17 @@
 }
 
 .stepCompleted {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(30, 111, 111, 0.1);
   color: var(--teal);
 }
 
 .stepPending {
-  background: var(--gray-100);
-  color: var(--gray-400);
+  background: rgba(197, 160, 40, 0.1);
+  color: var(--teal);
 }
 
 .stepLabel {
   font-size: 0.75rem;
-  color: var(--gray-600);
 }
 
 .infoBox {
@@ -742,13 +795,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem;
-  background: var(--gray-50);
+  background: rgba(30, 111, 111, 0.05);
   border-radius: 12px;
   transition: all 0.2s ease;
 }
 
 .deviceItem:hover {
-  background: var(--gray-100);
+  background: rgba(30, 111, 111, 0.1);
 }
 
 .deviceInfo {
@@ -778,13 +831,11 @@
 
 .deviceName {
   font-weight: 600;
-  color: var(--navy);
   margin-bottom: 0.125rem;
 }
 
 .deviceMeta {
   font-size: 0.75rem;
-  color: var(--gray-500);
 }
 
 .currentSession {
@@ -807,6 +858,11 @@
   background: rgba(239, 68, 68, 0.1);
 }
 
+.noDevices, .noLogs {
+  text-align: center;
+  padding: 1rem;
+}
+
 /* ===== SETTINGS ITEMS ===== */
 .settingsList {
   display: flex;
@@ -819,7 +875,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  background: var(--gray-50);
+  background: rgba(30, 111, 111, 0.05);
   border-radius: 12px;
 }
 
@@ -853,12 +909,10 @@
 
 .settingTitle {
   font-weight: 600;
-  color: var(--navy);
 }
 
 .settingDesc {
   font-size: 0.75rem;
-  color: var(--gray-500);
 }
 
 .toggle {
@@ -866,7 +920,7 @@
   width: 48px;
   height: 24px;
   border-radius: 9999px;
-  background: var(--gray-300);
+  background: rgba(30, 111, 111, 0.2);
   border: none;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -900,7 +954,7 @@
 }
 
 .actionButton {
-  background: var(--gray-50);
+  background: rgba(30, 111, 111, 0.05);
   border: none;
   border-radius: 12px;
   padding: 1rem;
@@ -934,7 +988,6 @@
 .actionLabel {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--navy);
 }
 
 /* ===== ACTIVITY LOG ===== */
@@ -947,7 +1000,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem;
-  background: var(--gray-50);
+  background: rgba(30, 111, 111, 0.05);
   border-radius: 12px;
   margin-bottom: 0.5rem;
 }
@@ -958,13 +1011,11 @@
 
 .logAction {
   font-weight: 500;
-  color: var(--navy);
   margin-bottom: 0.125rem;
 }
 
 .logTime {
   font-size: 0.75rem;
-  color: var(--gray-500);
 }
 
 .logStatus {
@@ -975,7 +1026,7 @@
 }
 
 .logSuccess {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(30, 111, 111, 0.1);
   color: var(--teal);
 }
 
@@ -985,7 +1036,7 @@
 }
 
 .closeButton {
-  color: var(--gray-500);
+  color: var(--teal);
   background: none;
   border: none;
   padding: 0.5rem;
@@ -994,7 +1045,7 @@
 }
 
 .closeButton:hover {
-  color: var(--navy);
+  color: var(--gold);
 }
 
 /* ===== ACCOUNT DETAILS GRID ===== */
@@ -1018,20 +1069,20 @@
 
 .detailCard {
   padding: 1rem;
-  background: var(--gray-50);
+  background: rgba(30, 111, 111, 0.05);
   border-radius: 12px;
 }
 
 .detailLabel {
   font-size: 0.75rem;
-  color: var(--gray-500);
   margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .detailValue {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--navy);
 }
 
 .detailMono {
@@ -1042,7 +1093,7 @@
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(10, 37, 64, 0.7);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -1059,6 +1110,7 @@
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  border: 1px solid rgba(197, 160, 40, 0.2);
 }
 
 .modalHeader {
@@ -1071,7 +1123,6 @@
 .modalTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--navy);
 }
 
 .modalClose {
@@ -1080,17 +1131,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gray-100);
+  background: rgba(30, 111, 111, 0.1);
   border: none;
   border-radius: 8px;
-  color: var(--gray-500);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .modalClose:hover {
-  background: var(--gray-200);
-  color: var(--navy);
+  background: rgba(197, 160, 40, 0.1);
+  color: var(--gold);
 }
 
 /* ===== FORM STYLES ===== */
@@ -1115,36 +1165,36 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--gray-700);
   margin-bottom: 0.5rem;
 }
 
 .formInput {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: var(--gray-50);
-  border: 1px solid var(--gray-300);
+  background: var(--white);
+  border: 1px solid rgba(197, 160, 40, 0.2);
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.2s ease;
+  color: var(--navy);
 }
 
 .formInput:focus {
   outline: none;
   border-color: var(--purple);
   box-shadow: 0 0 0 3px rgba(134, 38, 233, 0.1);
-  background: var(--white);
 }
 
 .formSelect {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: var(--gray-50);
-  border: 1px solid var(--gray-300);
+  background: var(--white);
+  border: 1px solid rgba(197, 160, 40, 0.2);
   border-radius: 12px;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: var(--navy);
 }
 
 .formSelect:focus {
@@ -1155,7 +1205,6 @@
 
 .formHint {
   font-size: 0.75rem;
-  color: var(--gray-500);
   margin-top: 0.25rem;
 }
 
@@ -1181,12 +1230,13 @@
 }
 
 .buttonCancel {
-  background: var(--gray-200);
-  color: var(--gray-800);
+  background: rgba(30, 111, 111, 0.1);
+  color: var(--teal);
 }
 
 .buttonCancel:hover {
-  background: var(--gray-300);
+  background: rgba(197, 160, 40, 0.1);
+  color: var(--gold);
 }
 
 .buttonPrimary {
@@ -1225,30 +1275,30 @@
   width: 128px;
   height: 128px;
   margin: 0 auto 1rem;
-  background: var(--gray-100);
+  background: rgba(30, 111, 111, 0.05);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gray-400);
+  color: var(--teal);
 }
 
 .qrText {
-  color: var(--gray-600);
   font-size: 0.875rem;
 }
 
 .codeInput {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: var(--gray-50);
-  border: 1px solid var(--gray-300);
+  background: var(--white);
+  border: 1px solid rgba(197, 160, 40, 0.2);
   border-radius: 12px;
   font-size: 1.5rem;
   text-align: center;
   letter-spacing: 0.5rem;
   font-family: 'JetBrains Mono', monospace;
   transition: all 0.2s ease;
+  color: var(--navy);
 }
 
 .codeInput:focus {
@@ -1275,7 +1325,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: var(--gray-50);
+  background: rgba(30, 111, 111, 0.05);
   border-radius: 12px;
   margin-bottom: 1rem;
 }
@@ -1289,8 +1339,13 @@
 }
 
 .exportWarningText {
-  color: var(--warning);
+  color: var(--gold);
   font-size: 0.875rem;
+}
+
+.exportSubtitle {
+  color: var(--teal);
+  margin-bottom: 0.5rem;
 }
 
 .exportList {
@@ -1305,7 +1360,6 @@
   gap: 0.5rem;
   padding: 0.5rem 0;
   font-size: 0.875rem;
-  color: var(--gray-600);
 }
 
 .exportCheck {
@@ -1326,6 +1380,11 @@
   font-weight: 500;
 }
 
+.deleteSubtitle {
+  color: var(--teal);
+  margin-bottom: 0.5rem;
+}
+
 .deleteList {
   list-style: none;
   padding: 0;
@@ -1338,7 +1397,6 @@
   gap: 0.5rem;
   padding: 0.5rem 0;
   font-size: 0.875rem;
-  color: var(--gray-600);
 }
 
 .deleteIcon {
@@ -1426,5 +1484,9 @@
   
   .removeButton {
     align-self: flex-end;
+  }
+  
+  .actionsGrid {
+    grid-template-columns: 1fr;
   }
 }

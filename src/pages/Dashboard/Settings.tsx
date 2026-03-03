@@ -1,3 +1,4 @@
+// src/pages/Settings.tsx - UPDATED WITH HOMEPAGE COLOR SYSTEM
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth";
@@ -11,19 +12,15 @@ import {
   Bell,
   Globe,
   Shield,
-  Moon,
   Download,
   Trash2,
   CheckCircle2,
-  XCircle,
   Smartphone,
   Mail,
   Key,
   Eye,
   EyeOff,
   CreditCard,
-  ArrowUpRight,
-  AlertCircle,
   ChevronRight,
   LogOut,
   ShieldCheck,
@@ -34,16 +31,11 @@ import {
   Phone,
   Mail as MailIcon,
   FileText,
-  Home,
-  PieChart,
-  TrendingUp,
-  Users,
   MapPin,
   Briefcase,
-  Calendar,
+  TrendingUp,
   Copy,
   Edit,
-  ExternalLink,
 } from "lucide-react";
 
 export default function Settings() {
@@ -161,7 +153,7 @@ export default function Settings() {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loadingSpinner}></div>
-        <p>Loading your settings...</p>
+        <p className={styles.loadingText}>Loading your settings...</p>
       </div>
     );
   }
@@ -177,7 +169,7 @@ export default function Settings() {
           </p>
         </div>
         <button onClick={handleLogout} className={styles.logoutBtn}>
-          <LogOut className="w-4 h-4" />
+          <LogOut className={styles.logoutIcon} />
           <span>Logout</span>
         </button>
       </div>
@@ -201,9 +193,9 @@ export default function Settings() {
                   className={styles.copyBtn}
                 >
                   {copiedField === "account" ? (
-                    <CheckCircle2 className="w-4 h-4" />
+                    <CheckCircle2 className={styles.copyIcon} />
                   ) : (
-                    <Copy className="w-4 h-4" />
+                    <Copy className={styles.copyIcon} />
                   )}
                 </button>
               </span>
@@ -220,7 +212,7 @@ export default function Settings() {
             <div>
               <div className={styles.statLabel}>Account Status</div>
               <div className={styles.statValue}>
-                <CheckCircle2 className="w-4 h-4" />
+                <CheckCircle2 className={styles.statValueIcon} />
                 <span>Active</span>
               </div>
             </div>
@@ -294,13 +286,13 @@ export default function Settings() {
                   <path
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none"
-                    stroke="#E5E7EB"
+                    stroke="rgba(30, 111, 111, 0.2)"
                     strokeWidth="3"
                   />
                   <path
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none"
-                    stroke="#3B82F6"
+                    stroke="var(--teal)"
                     strokeWidth="3"
                     strokeDasharray="85, 100"
                   />
@@ -365,7 +357,7 @@ export default function Settings() {
                   <div className={styles.infoValue}>
                     {user?.first_name} {user?.last_name}
                     <button className={styles.editBtn}>
-                      <Edit className="w-4 h-4" />
+                      <Edit className={styles.editIcon} />
                     </button>
                   </div>
                 </div>
@@ -375,7 +367,7 @@ export default function Settings() {
                   <div className={styles.infoValue}>
                     {user?.email}
                     <span className={styles.verifiedBadge}>
-                      <CheckCircle2 className="w-4 h-4" />
+                      <CheckCircle2 className={styles.verifiedIcon} />
                       Verified
                     </span>
                   </div>
@@ -519,7 +511,7 @@ export default function Settings() {
                 </div>
 
                 <button type="submit" className={styles.submitBtn}>
-                  <Key className="w-4 h-4" />
+                  <Key className={styles.submitIcon} />
                   Update Password
                 </button>
               </form>
@@ -541,30 +533,10 @@ export default function Settings() {
                 </div>
                 {settings.two_factor_auth && (
                   <div className={styles.twoFactorStatus}>
-                    <CheckCircle2 className="w-5 h-5" />
+                    <CheckCircle2 className={styles.twoFactorIcon} />
                     <span>2FA is enabled on your account</span>
                   </div>
                 )}
-              </div>
-
-              <div className={styles.devicesSection}>
-                <h3>Connected Devices</h3>
-                <div className={styles.device}>
-                  <Smartphone className={styles.deviceIcon} />
-                  <div className={styles.deviceInfo}>
-                    <div>iPhone 14 Pro</div>
-                    <div className={styles.deviceMeta}>Last active: 2 hours ago • Nairobi, Kenya</div>
-                  </div>
-                  <span className={styles.currentDevice}>Current</span>
-                </div>
-                <div className={styles.device}>
-                  <Smartphone className={styles.deviceIcon} />
-                  <div className={styles.deviceInfo}>
-                    <div>MacBook Pro</div>
-                    <div className={styles.deviceMeta}>Last active: Yesterday • Nairobi, Kenya</div>
-                  </div>
-                  <button className={styles.removeDevice}>Remove</button>
-                </div>
               </div>
             </div>
           )}
