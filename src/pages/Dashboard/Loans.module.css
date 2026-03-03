@@ -30,6 +30,12 @@
   --white: #FFFFFF;
   --white-rgb: 255, 255, 255;
   
+  /* TEXT COLORS - Enhanced contrast */
+  --text-primary: #0A2540;      /* Navy for primary text */
+  --text-secondary: #1E6F6F;     /* Teal for secondary text */
+  --text-light: #FFFFFF;         /* White for dark backgrounds */
+  --text-muted: rgba(10, 37, 64, 0.7); /* Semi-transparent navy */
+  
   /* FUNCTIONAL - Red for errors */
   --error: #EF4444;
   --error-rgb: 239, 68, 68;
@@ -58,6 +64,13 @@
   
   /* Font Family */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* Font Weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
 }
 
 /* ===== CONTAINER ===== */
@@ -67,6 +80,8 @@
   position: relative;
   overflow-x: hidden;
   font-family: var(--font-sans);
+  color: var(--text-primary);
+  line-height: 1.5;
 }
 
 /* ===== BACKGROUND ELEMENTS ===== */
@@ -147,7 +162,7 @@
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 1rem;
-  background: rgba(var(--purple-rgb), 0.15);
+  background: linear-gradient(135deg, rgba(var(--purple-rgb), 0.15), rgba(var(--purple-rgb), 0.05));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -166,16 +181,17 @@
   background: var(--gold);
   color: var(--navy);
   font-size: 0.625rem;
-  font-weight: 700;
+  font-weight: var(--font-bold);
   padding: 0.25rem 0.5rem;
   border-radius: 0.5rem;
   white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
 .headerTitle {
   font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--navy);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
   letter-spacing: -0.025em;
   margin-bottom: 0.25rem;
   line-height: 1.2;
@@ -196,8 +212,8 @@
 
 .headerSubtitle {
   font-size: 0.875rem;
-  color: var(--teal);
-  font-weight: 500;
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
 }
 
 .userStats {
@@ -213,15 +229,16 @@
 
 .userStatLabel {
   font-size: 0.75rem;
-  color: var(--teal);
+  color: var(--text-secondary);
   margin-bottom: 0.25rem;
-  font-weight: 500;
+  font-weight: var(--font-medium);
+  letter-spacing: 0.02em;
 }
 
 .userStatValue {
   font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--navy);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
 }
 
 .rateValue {
@@ -265,8 +282,8 @@
 
 .welcomeTitle {
   font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--navy);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
   line-height: 1.3;
 }
@@ -279,13 +296,14 @@
 
 .welcomeName {
   color: var(--purple);
-  font-weight: 700;
+  font-weight: var(--font-bold);
 }
 
 .welcomeText {
   font-size: 0.875rem;
-  color: var(--teal);
+  color: var(--text-secondary);
   line-height: 1.5;
+  font-weight: var(--font-normal);
 }
 
 .welcomeStats {
@@ -315,15 +333,16 @@
 
 .welcomeStatValue {
   font-size: 1.125rem;
-  font-weight: 700;
+  font-weight: var(--font-bold);
   line-height: 1.2;
 }
 
 .welcomeStatLabel {
   font-size: 0.7rem;
-  color: var(--teal);
-  font-weight: 500;
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
   white-space: nowrap;
+  letter-spacing: 0.02em;
 }
 
 .statGold {
@@ -391,8 +410,8 @@
 
 .productsTitle {
   font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--navy);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
   line-height: 1.3;
 }
@@ -405,7 +424,8 @@
 
 .productsSubtitle {
   font-size: 0.875rem;
-  color: var(--teal);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
 }
 
 .productsActions {
@@ -423,7 +443,7 @@
   background: linear-gradient(135deg, var(--purple), var(--gold));
   color: var(--white);
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
@@ -461,13 +481,13 @@
 
 .securityText {
   font-size: 0.75rem;
-  color: var(--navy);
-  font-weight: 500;
+  color: var(--text-primary);
+  font-weight: var(--font-medium);
 }
 
 .securityHighlight {
   color: var(--teal);
-  font-weight: 600;
+  font-weight: var(--font-semibold);
 }
 
 /* ===== LOAN GRID ===== */
@@ -558,8 +578,8 @@
 
 .ctaTitle {
   font-size: 1rem;
-  font-weight: 700;
-  color: var(--navy);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
   line-height: 1.3;
 }
@@ -572,7 +592,8 @@
 
 .ctaSubtitle {
   font-size: 0.875rem;
-  color: var(--teal);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
 }
 
 /* ===== FEATURE GRID ===== */
@@ -652,8 +673,8 @@
 
 .featureLabel {
   font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--navy);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
@@ -665,7 +686,8 @@
 
 .featureSubtext {
   font-size: 0.7rem;
-  color: var(--teal);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
   line-height: 1.4;
   word-break: break-word;
 }
@@ -681,7 +703,7 @@
   background: linear-gradient(135deg, var(--purple), var(--gold));
   color: var(--white);
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
@@ -723,7 +745,8 @@
 
 .ctaFootnote {
   font-size: 0.75rem;
-  color: var(--teal);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
   text-align: center;
   line-height: 1.5;
 }
@@ -845,8 +868,8 @@
 
 .modalTitle {
   font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--navy);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
   line-height: 1.3;
 }
@@ -859,7 +882,8 @@
 
 .modalSubtitle {
   font-size: 0.875rem;
-  color: var(--teal);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
 }
 
 .modalMessage {
@@ -867,26 +891,28 @@
 }
 
 .modalMessageText {
-  color: var(--navy);
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   line-height: 1.5;
   font-size: 0.95rem;
+  font-weight: var(--font-normal);
 }
 
 .modalMessageHighlight {
-  font-weight: 600;
+  font-weight: var(--font-bold);
   color: var(--purple);
 }
 
 .modalMessageNote {
   font-size: 0.875rem;
-  color: var(--teal);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
   line-height: 1.5;
 }
 
 /* ===== REFERENCE CARD ===== */
 .referenceCard {
-  background: var(--cream);
+  background: var(--white);
   border: 1px solid rgba(var(--gold-rgb), 0.2);
   border-radius: var(--radius-md);
   padding: 1rem;
@@ -927,13 +953,13 @@
 
 .referenceLabel {
   font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--navy);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
 }
 
 .copyButton {
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   color: var(--purple);
   background: var(--white);
   border: 1px solid rgba(var(--purple-rgb), 0.2);
@@ -952,12 +978,13 @@
 .referenceValue {
   font-family: monospace;
   font-size: 0.875rem;
-  color: var(--navy);
-  background: var(--white);
+  color: var(--text-primary);
+  background: rgba(var(--navy-rgb), 0.02);
   border-radius: var(--radius-md);
   padding: 0.75rem;
   border: 1px solid rgba(var(--gold-rgb), 0.2);
   word-break: break-all;
+  font-weight: var(--font-medium);
 }
 
 /* ===== WHAT'S NEXT GRID ===== */
@@ -987,14 +1014,15 @@
 
 .whatsNextTitle {
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   color: var(--gold);
   margin-bottom: 0.125rem;
 }
 
 .whatsNextText {
   font-size: 0.7rem;
-  color: var(--teal);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
   line-height: 1.4;
 }
 
@@ -1010,7 +1038,7 @@
   background: linear-gradient(135deg, var(--purple), var(--gold));
   color: var(--white);
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
@@ -1036,7 +1064,8 @@
 
 .modalFootnote {
   font-size: 0.7rem;
-  color: var(--teal);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
   text-align: center;
   padding-bottom: 1.5rem;
   line-height: 1.5;
@@ -1082,8 +1111,8 @@
 
 .earlyAccessTitle {
   font-size: 1rem;
-  font-weight: 700;
-  color: var(--navy);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
   margin-bottom: 0.125rem;
   line-height: 1.3;
 }
@@ -1096,7 +1125,8 @@
 
 .earlyAccessSubtitle {
   font-size: 0.75rem;
-  color: var(--teal);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
 }
 
 .earlyAccessCloseButton {
@@ -1121,7 +1151,7 @@
 .earlyAccessCloseIcon {
   width: 0.875rem;
   height: 0.875rem;
-  color: var(--navy);
+  color: var(--text-primary);
 }
 
 /* ===== EARLY ACCESS BENEFITS ===== */
@@ -1149,7 +1179,8 @@
 
 .benefitText {
   font-size: 0.75rem;
-  color: var(--navy);
+  color: var(--text-primary);
+  font-weight: var(--font-medium);
   line-height: 1.4;
 }
 
@@ -1190,7 +1221,7 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: var(--cream);
+  background: rgba(var(--cream-rgb), 0.5);
   border-radius: var(--radius-md);
   padding: 1rem;
   margin-bottom: 1.25rem;
@@ -1218,15 +1249,15 @@
 
 .statNumber {
   font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--navy);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
   line-height: 1.2;
 }
 
 .statLabel {
   font-size: 0.7rem;
-  color: var(--teal);
-  font-weight: 500;
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
   white-space: nowrap;
 }
 
@@ -1253,7 +1284,7 @@
   background: linear-gradient(135deg, var(--purple), var(--gold));
   color: var(--white);
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
@@ -1285,9 +1316,9 @@
   width: 100%;
   padding: 0.625rem;
   background: transparent;
-  color: var(--teal);
+  color: var(--text-secondary);
   border-radius: var(--radius-md);
-  font-weight: 500;
+  font-weight: var(--font-medium);
   font-size: 0.875rem;
   border: 1px solid transparent;
   cursor: pointer;
