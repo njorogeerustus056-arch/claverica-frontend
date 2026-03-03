@@ -8,7 +8,6 @@ import {
   TrendingDown,
   BarChart3,
   Target,
-  ArrowDownRight,
   Info,
 } from "lucide-react";
 import {
@@ -20,6 +19,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import styles from "./LoanCalculator.module.css";
 
 interface LoanCalculatorProps {
   loanAmount: number;
@@ -32,7 +32,7 @@ interface LoanCalculatorProps {
 
 // ─── Thin neon-rule separator ────────────────────────────────
 const NeonRule = () => (
-  <div className="w-full h-px bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-30" />
+  <div className={styles.neonRule} />
 );
 
 // ─── Metric tile used in summary row ────────────────────────
@@ -40,7 +40,7 @@ const MetricTile = ({
   label,
   value,
   sub,
-  accent = "cyan",
+  accent = "teal",
   icon: Icon,
 }: {
   label: string;
@@ -50,27 +50,20 @@ const MetricTile = ({
   icon: React.ComponentType<{ className?: string }>;
 }) => {
   const accentMap: Record<string, string> = {
-    cyan: "text-cyan-400 border-cyan-500/20 bg-cyan-500/5",
-    emerald: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
-    violet: "text-violet-400 border-violet-500/20 bg-violet-500/5",
-    rose: "text-rose-400 border-rose-500/20 bg-rose-500/5",
+    teal: styles.tileTeal,
+    purple: styles.tilePurple,
+    gold: styles.tileGold,
   };
-  const cls = accentMap[accent] || accentMap.cyan;
+  const tileClass = accentMap[accent] || styles.tileTeal;
 
   return (
-    <div
-      className={`rounded-xl border ${cls} p-4 flex flex-col gap-1.5 transition-all duration-300 hover:border-opacity-60`}
-    >
-      <div className="flex items-center gap-2">
-        <Icon className={`w-3.5 h-3.5 ${cls.split(" ")[0]}`} />
-        <span className="text-xs font-medium text-slate-500 uppercase tracking-widest">
-          {label}
-        </span>
+    <div className={`${styles.metricTile} ${tileClass}`}>
+      <div className={styles.tileHeader}>
+        <Icon className={styles.tileIcon} />
+        <span className={styles.tileLabel}>{label}</span>
       </div>
-      <span className="text-2xl font-bold text-white font-variant-numeric tabular-nums">
-        {value}
-      </span>
-      {sub && <span className="text-xs text-slate-500">{sub}</span>}
+      <span className={styles.tileValue}>{value}</span>
+      {sub && <span className={styles.tileSubtext}>{sub}</span>}
     </div>
   );
 };
@@ -92,22 +85,23 @@ const FintechSlider = ({
   formatValue: (v: number) => string;
 }) => {
   const pct = ((value - min) / (max - min)) * 100;
+
   return (
-    <div className="relative flex flex-col gap-3">
+    <div className={styles.sliderContainer}>
       {/* value bubble */}
       <div
-        className="absolute -top-6 flex items-center"
+        className={styles.sliderBubble}
         style={{ left: `calc(${pct}% - 24px)` }}
       >
-        <span className="bg-slate-800 border border-cyan-500/40 text-cyan-300 text-xs font-bold px-2.5 py-0.5 rounded-md whitespace-nowrap shadow-lg shadow-black/30">
+        <span className={styles.bubbleText}>
           {formatValue(value)}
         </span>
       </div>
 
       {/* track */}
-      <div className="relative w-full h-1.5 rounded-full bg-slate-700/60">
+      <div className={styles.sliderTrack}>
         <div
-          className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500"
+          className={styles.sliderFill}
           style={{ width: `${pct}%` }}
         />
         <input
@@ -117,19 +111,19 @@ const FintechSlider = ({
           step={step}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          className={styles.sliderInput}
         />
         {/* thumb */}
         <div
-          className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-2 border-cyan-500 shadow-md shadow-cyan-500/30 pointer-events-none"
+          className={styles.sliderThumb}
           style={{ left: `calc(${pct}% - 8px)` }}
         />
       </div>
 
       {/* min / max labels */}
-      <div className="flex justify-between">
-        <span className="text-xs text-slate-600">{formatValue(min)}</span>
-        <span className="text-xs text-slate-600">{formatValue(max)}</span>
+      <div className={styles.sliderLabels}>
+        <span className={styles.sliderMinMax}>{formatValue(min)}</span>
+        <span className={styles.sliderMinMax}>{formatValue(max)}</span>
       </div>
     </div>
   );
@@ -198,55 +192,43 @@ const LoanCalculator = ({
   }) => (
     <button
       onClick={onClick}
-      className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all duration-200 ${
-        active
-          ? "bg-cyan-500/15 border border-cyan-500/50 text-cyan-300 shadow-sm shadow-cyan-500/10"
-          : "bg-slate-800/60 border border-slate-700/40 text-slate-500 hover:border-slate-500 hover:text-slate-300"
-      }`}
+      className={`${styles.chip} ${active ? styles.chipActive : styles.chipInactive}`}
     >
       {children}
     </button>
   );
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-      {/* ── top accent stripe ────────────────────────────── */}
-      <div className="h-0.5 bg-gradient-to-r from-cyan-500 via-violet-500 to-rose-500" />
+    <div className={styles.container}>
+      {/* top accent stripe */}
+      <div className={styles.topAccent} />
 
-      <div className="p-6 lg:p-8">
+      <div className={styles.content}>
         {/* header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-slate-800 border border-cyan-500/30 flex items-center justify-center">
-              <Calculator className="w-5 h-5 text-cyan-400" />
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <Calculator className={styles.headerIconSvg} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white tracking-tight">
-                Loan Calculator
-              </h2>
-              <p className="text-xs text-slate-500">
-                Real-time payment estimates
-              </p>
+              <h2 className={styles.headerTitle}>Loan Calculator</h2>
+              <p className={styles.headerSubtitle}>Real-time payment estimates</p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 bg-slate-800/60 border border-slate-700/40 rounded-lg px-2.5 py-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-slate-400 font-medium">Live</span>
+          <div className={styles.liveBadge}>
+            <div className={styles.liveDot} />
+            <span className={styles.liveText}>Live</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
-          {/* ── LEFT: controls ──────────────────────────── */}
-          <div className="flex flex-col gap-6">
+        <div className={styles.grid}>
+          {/* LEFT: controls */}
+          <div className={styles.controlsColumn}>
             {/* Amount */}
-            <div className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-5">
-              <div className="flex items-center justify-between mb-5">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
-                  Loan Amount
-                </span>
-                <span className="text-xl font-bold text-white tabular-nums">
-                  ${loanAmount.toLocaleString()}
-                </span>
+            <div className={styles.controlCard}>
+              <div className={styles.controlHeader}>
+                <span className={styles.controlLabel}>Loan Amount</span>
+                <span className={styles.controlValue}>${loanAmount.toLocaleString()}</span>
               </div>
               <FintechSlider
                 min={1000}
@@ -256,7 +238,7 @@ const LoanCalculator = ({
                 onChange={setLoanAmount}
                 formatValue={(v) => `$${(v / 1000).toFixed(0)}k`}
               />
-              <div className="flex flex-wrap gap-1.5 mt-4">
+              <div className={styles.chipContainer}>
                 {amountChips.map((a) => (
                   <Chip key={a} active={loanAmount === a} onClick={() => setLoanAmount(a)}>
                     ${(a / 1000).toFixed(0)}k
@@ -266,15 +248,13 @@ const LoanCalculator = ({
             </div>
 
             {/* Term */}
-            <div className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-5">
-              <div className="flex items-center justify-between mb-5">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
-                  Loan Term
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-violet-400" />
-                  <span className="text-xl font-bold text-white tabular-nums">
-                    {selectedTerm} <span className="text-sm font-medium text-slate-500">mo</span>
+            <div className={styles.controlCard}>
+              <div className={styles.controlHeader}>
+                <span className={styles.controlLabel}>Loan Term</span>
+                <div className={styles.controlValueGroup}>
+                  <Calendar className={styles.controlIcon} />
+                  <span className={styles.controlValue}>
+                    {selectedTerm} <span className={styles.controlUnit}>mo</span>
                   </span>
                 </div>
               </div>
@@ -286,7 +266,7 @@ const LoanCalculator = ({
                 onChange={setSelectedTerm}
                 formatValue={(v) => `${v} mo`}
               />
-              <div className="flex flex-wrap gap-1.5 mt-4">
+              <div className={styles.chipContainer}>
                 {termChips.map((t) => (
                   <Chip key={t} active={selectedTerm === t} onClick={() => setSelectedTerm(t)}>
                     {t} mo
@@ -296,15 +276,13 @@ const LoanCalculator = ({
             </div>
 
             {/* Rate */}
-            <div className="bg-slate-800/40 border border-slate-700/40 rounded-xl p-5">
-              <div className="flex items-center justify-between mb-5">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
-                  Interest Rate
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <Percent className="w-3.5 h-3.5 text-rose-400" />
-                  <span className="text-xl font-bold text-white tabular-nums">
-                    {interestRate}<span className="text-sm font-medium text-slate-500">%</span>
+            <div className={styles.controlCard}>
+              <div className={styles.controlHeader}>
+                <span className={styles.controlLabel}>Interest Rate</span>
+                <div className={styles.controlValueGroup}>
+                  <Percent className={styles.controlIcon} />
+                  <span className={styles.controlValue}>
+                    {interestRate}<span className={styles.controlUnit}>%</span>
                   </span>
                 </div>
               </div>
@@ -316,7 +294,7 @@ const LoanCalculator = ({
                 onChange={setInterestRate}
                 formatValue={(v) => `${v}%`}
               />
-              <div className="flex flex-wrap gap-1.5 mt-4">
+              <div className={styles.chipContainer}>
                 {rateChips.map((r) => (
                   <Chip key={r} active={interestRate === r} onClick={() => setInterestRate(r)}>
                     {r}%
@@ -327,55 +305,51 @@ const LoanCalculator = ({
 
             {/* selected loan badge */}
             {selectedLoan && (
-              <div className="bg-slate-800/40 border border-violet-500/20 rounded-xl p-4 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-violet-500/10 border border-violet-500/30 flex items-center justify-center text-lg">
+              <div className={styles.selectedLoanBadge}>
+                <div className={styles.selectedLoanIcon}>
                   {selectedLoan.providerLogo}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-violet-400 uppercase tracking-wider">
-                    Selected Provider
-                  </p>
-                  <p className="text-sm text-white font-medium truncate">
-                    {selectedLoan.name}
-                  </p>
+                <div className={styles.selectedLoanInfo}>
+                  <p className={styles.selectedLoanLabel}>Selected Provider</p>
+                  <p className={styles.selectedLoanName}>{selectedLoan.name}</p>
                 </div>
-                <span className="text-xs font-bold text-violet-300 bg-violet-500/10 border border-violet-500/30 px-2 py-0.5 rounded-md">
+                <span className={styles.selectedLoanRate}>
                   {selectedLoan.interest} APR
                 </span>
               </div>
             )}
           </div>
 
-          {/* ── RIGHT: results ──────────────────────────── */}
-          <div className="flex flex-col gap-5">
+          {/* RIGHT: results */}
+          <div className={styles.resultsColumn}>
             {/* summary tiles */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className={styles.tilesGrid}>
               <MetricTile
                 label="Monthly"
                 value={`$${monthly.toLocaleString()}`}
                 sub="per month"
-                accent="cyan"
+                accent="teal"
                 icon={Target}
               />
               <MetricTile
                 label="Total Interest"
                 value={`$${totalInterest.toLocaleString()}`}
                 sub={`${interestPct}% of principal`}
-                accent="rose"
+                accent="purple"
                 icon={TrendingDown}
               />
               <MetricTile
                 label="Total Repayment"
                 value={`$${totalRepayment.toLocaleString()}`}
                 sub="over full term"
-                accent="emerald"
+                accent="gold"
                 icon={BarChart3}
               />
               <MetricTile
                 label="Effective Cost"
                 value={`${interestPct}%`}
                 sub="interest / principal"
-                accent="violet"
+                accent="purple"
                 icon={Percent}
               />
             </div>
@@ -383,58 +357,57 @@ const LoanCalculator = ({
             <NeonRule />
 
             {/* chart */}
-            <div className="bg-slate-800/30 border border-slate-700/40 rounded-xl p-4">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
-                  Amortisation Curve
-                </span>
-                <div className="flex gap-3">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                    <span className="text-xs text-slate-500">Principal</span>
+            <div className={styles.chartCard}>
+              <div className={styles.chartHeader}>
+                <span className={styles.chartTitle}>Amortisation Curve</span>
+                <div className={styles.chartLegend}>
+                  <div className={styles.legendItem}>
+                    <div className={`${styles.legendDot} ${styles.legendDotTeal}`} />
+                    <span className={styles.legendText}>Principal</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-violet-400" />
-                    <span className="text-xs text-slate-500">Interest</span>
+                  <div className={styles.legendItem}>
+                    <div className={`${styles.legendDot} ${styles.legendDotPurple}`} />
+                    <span className={styles.legendText}>Interest</span>
                   </div>
                 </div>
               </div>
 
-              <div className="h-48">
+              <div className={styles.chartContainer}>
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={chartData} margin={{ top: 6, right: 4, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="gPrincipal" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.5} />
-                        <stop offset="100%" stopColor="#22d3ee" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#1E6F6F" stopOpacity={0.5} />
+                        <stop offset="100%" stopColor="#1E6F6F" stopOpacity={0} />
                       </linearGradient>
                       <linearGradient id="gInterest" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#a78bfa" stopOpacity={0.5} />
-                        <stop offset="100%" stopColor="#a78bfa" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#8626E9" stopOpacity={0.5} />
+                        <stop offset="100%" stopColor="#8626E9" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" vertical={false} />
                     <XAxis
                       dataKey="month"
-                      stroke="#475569"
-                      tick={{ fontSize: 10, fill: "#64748b" }}
+                      stroke="#9CA3AF"
+                      tick={{ fontSize: 10, fill: "#6B7280" }}
                       axisLine={false}
                       tickLine={false}
                     />
                     <YAxis
-                      stroke="#475569"
-                      tick={{ fontSize: 10, fill: "#64748b" }}
+                      stroke="#9CA3AF"
+                      tick={{ fontSize: 10, fill: "#6B7280" }}
                       axisLine={false}
                       tickLine={false}
                       tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
                     />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#1e293b",
-                        border: "1px solid #334155",
+                        backgroundColor: "#FFFFFF",
+                        border: "1px solid rgba(197, 160, 40, 0.2)",
                         borderRadius: "8px",
-                        color: "#f1f5f9",
+                        color: "#0A2540",
                         fontSize: 12,
+                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
                       }}
                       formatter={(value: number) => [`$${value.toLocaleString()}`]}
                       labelFormatter={(l: number) => `Month ${l}`}
@@ -442,7 +415,7 @@ const LoanCalculator = ({
                     <Area
                       type="monotone"
                       dataKey="principal"
-                      stroke="#22d3ee"
+                      stroke="#1E6F6F"
                       strokeWidth={2}
                       fill="url(#gPrincipal)"
                       name="Principal"
@@ -450,7 +423,7 @@ const LoanCalculator = ({
                     <Area
                       type="monotone"
                       dataKey="interest"
-                      stroke="#a78bfa"
+                      stroke="#8626E9"
                       strokeWidth={2}
                       fill="url(#gInterest)"
                       name="Interest"
@@ -461,12 +434,12 @@ const LoanCalculator = ({
             </div>
 
             {/* insight callout */}
-            <div className="flex items-start gap-3 bg-slate-800/30 border border-slate-700/30 rounded-xl p-4">
-              <Info className="w-4 h-4 text-cyan-400 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-slate-500 leading-relaxed">
-                At <span className="text-cyan-300 font-semibold">{interestRate}% APR</span> over{" "}
-                <span className="text-violet-300 font-semibold">{selectedTerm} months</span>, you will pay{" "}
-                <span className="text-rose-300 font-semibold">
+            <div className={styles.insightCard}>
+              <Info className={styles.insightIcon} />
+              <p className={styles.insightText}>
+                At <span className={styles.insightHighlight}>{interestRate}% APR</span> over{" "}
+                <span className={styles.insightHighlightPurple}>{selectedTerm} months</span>, you will pay{" "}
+                <span className={styles.insightHighlightGold}>
                   ${totalInterest.toLocaleString()}
                 </span>{" "}
                 in total interest. Shorter terms reduce interest cost but raise your monthly payment.

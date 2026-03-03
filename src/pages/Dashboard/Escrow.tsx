@@ -1,4 +1,4 @@
-// src/pages/Dashboard/Escrow.tsx - CORRECTED VERSION
+// src/pages/Dashboard/Escrow.tsx - CORRECTED VERSION WITH CSS MODULES
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -60,6 +60,7 @@ import {
   Camera,
   PenTool
 } from "lucide-react";
+import styles from "./Escrow.module.css";
 
 // ==================== ESCROW TEMPLATES ====================
 const ESCROW_TEMPLATES = [
@@ -71,7 +72,7 @@ const ESCROW_TEMPLATES = [
     icon: PenTool,
     color: "from-blue-500 to-cyan-600",
     gradient: "bg-gradient-to-br from-blue-500 to-cyan-600",
-    bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20",
+    bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50",
     features: [
       "Milestone-based payments",
       "File & deliverable sharing",
@@ -102,7 +103,7 @@ const ESCROW_TEMPLATES = [
     icon: ShoppingBag,
     color: "from-green-500 to-emerald-600",
     gradient: "bg-gradient-to-br from-green-500 to-emerald-600",
-    bgColor: "bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20",
+    bgColor: "bg-gradient-to-br from-green-50 to-emerald-50",
     features: [
       "Buyer protection guarantee",
       "Delivery verification",
@@ -133,7 +134,7 @@ const ESCROW_TEMPLATES = [
     icon: Building,
     color: "from-purple-500 to-violet-600",
     gradient: "bg-gradient-to-br from-purple-500 to-violet-600",
-    bgColor: "bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20",
+    bgColor: "bg-gradient-to-br from-purple-50 to-violet-50",
     features: [
       "High-value transaction support",
       "Legal document storage",
@@ -164,7 +165,7 @@ const ESCROW_TEMPLATES = [
     icon: Code,
     color: "from-indigo-500 to-blue-600",
     gradient: "bg-gradient-to-br from-indigo-500 to-blue-600",
-    bgColor: "bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20",
+    bgColor: "bg-gradient-to-br from-indigo-50 to-blue-50",
     features: [
       "Git repository integration",
       "Code review milestones",
@@ -195,7 +196,7 @@ const ESCROW_TEMPLATES = [
     icon: Camera,
     color: "from-pink-500 to-rose-600",
     gradient: "bg-gradient-to-br from-pink-500 to-rose-600",
-    bgColor: "bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20",
+    bgColor: "bg-gradient-to-br from-pink-50 to-rose-50",
     features: [
       "Content review cycles",
       "Revision round tracking",
@@ -226,7 +227,7 @@ const ESCROW_TEMPLATES = [
     icon: BarChart3,
     color: "from-amber-500 to-orange-600",
     gradient: "bg-gradient-to-br from-amber-500 to-orange-600",
-    bgColor: "bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20",
+    bgColor: "bg-gradient-to-br from-amber-50 to-orange-50",
     features: [
       "Multi-million dollar support",
       "Due diligence tracking",
@@ -385,6 +386,28 @@ const releaseEscrowFunds = async (escrowId: string, token: string) => {
   };
 };
 
+// Status config
+const getStatusConfig = (status: string) => {
+  const configs = {
+    active: {
+      className: styles.statusActive,
+      icon: <Clock className={styles.statusIcon} />,
+      label: "Active"
+    },
+    pending: {
+      className: styles.statusPending,
+      icon: <AlertCircle className={styles.statusIcon} />,
+      label: "Pending"
+    },
+    completed: {
+      className: styles.statusCompleted,
+      icon: <CheckCircle2 className={styles.statusIcon} />,
+      label: "Completed"
+    }
+  };
+  return configs[status as keyof typeof configs] || configs.pending;
+};
+
 // ==================== MAIN COMPONENT ====================
 export default function Escrow() {
   const navigate = useNavigate();
@@ -418,14 +441,8 @@ export default function Escrow() {
   const [showTemplatesModal, setShowTemplatesModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState<any>(null);
 
-  // Load user escrows - FIXED AUTH CHECK
+  // Load user escrows
   useEffect(() => {
-    // TEMPORARY: Comment out auth check for testing
-    // if (!isAuthenticated || !token) {
-    //   navigate('/auth/signin', { state: { redirectTo: '/dashboard/escrow' } });
-    //   return;
-    // }
-
     setLoading("initial");
     fetchEscrowData(token || 'mock-token')
       .then((data) => {
@@ -438,7 +455,7 @@ export default function Escrow() {
       })
       .catch(console.error)
       .finally(() => setLoading(null));
-  }, []); // Empty dependency array for now
+  }, []);
 
   // Tier system
   const isVerified = user?.is_verified || false;
@@ -490,7 +507,6 @@ export default function Escrow() {
         timestamp: new Date().toISOString()
       };
       
-      // ✅ FIXED: Changed hyphen to underscore
       const response = await fetch('/api/kyc_spec/collect/', {
         method: 'POST',
         headers: {
@@ -552,7 +568,6 @@ export default function Escrow() {
         timestamp: new Date().toISOString()
       };
       
-      // ✅ FIXED: Changed hyphen to underscore
       const response = await fetch('/api/kyc_spec/collect/', {
         method: 'POST',
         headers: {
@@ -613,70 +628,46 @@ export default function Escrow() {
     }
   };
 
-  // Status config
-  const getStatusConfig = (status: string) => {
-    const configs = {
-      active: {
-        color: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-        icon: <Clock className="w-3.5 h-3.5" />,
-        label: "Active"
-      },
-      pending: {
-        color: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
-        icon: <AlertCircle className="w-3.5 h-3.5" />,
-        label: "Pending"
-      },
-      completed: {
-        color: "bg-green-500/20 text-green-300 border-green-500/30",
-        icon: <CheckCircle2 className="w-3.5 h-3.5" />,
-        label: "Completed"
-      }
-    };
-    return configs[status as keyof typeof configs] || configs.pending;
-  };
-
   if (loading === "initial") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white text-lg">Loading escrow dashboard...</p>
-        </div>
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
+        <p className={styles.loadingText}>Loading escrow dashboard...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className={styles.mainContainer}>
+      <div className={styles.contentWrapper}>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10"
+          className={styles.headerSection}
         >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
-                <Shield className="w-6 h-6 text-white" />
+          <div className={styles.headerTop}>
+            <div className={styles.headerLeft}>
+              <div className={styles.headerIcon}>
+                <Shield className={styles.headerIconSvg} />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Escrow</h1>
-                <p className="text-slate-600 dark:text-slate-400">Secure transactions with confidence</p>
+                <h1 className={styles.headerTitle}>Escrow</h1>
+                <p className={styles.headerSubtitle}>Secure transactions with confidence</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className={styles.headerActions}>
               <button 
                 onClick={() => setShowFilterModal(true)}
-                className="px-4 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-300 dark:border-slate-700 flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                className={styles.filterButton}
               >
-                <Filter className="w-4 h-4" />
-                <span className="font-medium">Filter</span>
+                <Filter className={styles.buttonIcon} />
+                <span>Filter</span>
               </button>
               {userEscrows.length > 0 && (
                 <button 
                   onClick={() => setShowEscrowsModal(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 transition-all"
+                  className={styles.viewEscrowsButton}
                 >
                   View Escrows ({userEscrows.length})
                 </button>
@@ -685,40 +676,37 @@ export default function Escrow() {
           </div>
           
           {/* Hero Banner */}
-          <div className="bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-emerald-500/10 dark:from-blue-900/30 dark:via-cyan-900/30 dark:to-emerald-900/30 rounded-2xl p-6 border border-slate-300/30 dark:border-slate-700/30">
-            <div className="flex items-center justify-between">
+          <div className={styles.heroBanner}>
+            <div className={styles.heroContent}>
               <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="px-3 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-bold rounded-full">
-                    NEW
-                  </div>
-                  <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
-                    <Crown className="w-4 h-4" />
-                    <span className="font-medium">Tier-Based Benefits</span>
-                  </div>
+                <div className={styles.heroBadge}>
+                  <Sparkles className={styles.badgeIcon} />
+                  <span>NEW</span>
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
+                <div className={styles.tierBadgeWrapper}>
+                  <Crown className={styles.tierIcon} />
+                  <span className={styles.tierText}>Tier-Based Benefits</span>
+                </div>
+                <h2 className={styles.heroTitle}>
                   Transaction Security, Simplified
                 </h2>
-                <p className="text-slate-700 dark:text-slate-300 max-w-2xl">
+                <p className={styles.heroDescription}>
                   Secure transactions starting from $0/month with instant setup, 
-                  24/7 support, and tier-based benefits. <span className="font-semibold text-emerald-600 dark:text-emerald-400">Save up to 40%</span> compared to traditional escrow services.
+                  24/7 support, and tier-based benefits. <span className={styles.highlight}>Save up to 40%</span> compared to traditional escrow services.
                 </p>
               </div>
-              <div className="hidden lg:block">
-                <div className="flex items-center gap-4">
-                  <div className="text-center">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
-                      <Zap className="w-8 h-8 text-white" />
-                    </div>
-                    <p className="text-sm font-medium mt-2">Instant Setup</p>
+              <div className={styles.heroFeatures}>
+                <div className={styles.heroFeature}>
+                  <div className={styles.featureCircle}>
+                    <Zap className={styles.featureIcon} />
                   </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 flex items-center justify-center">
-                      <Shield className="w-8 h-8 text-white" />
-                    </div>
-                    <p className="text-sm font-medium mt-2">Secure Holding</p>
+                  <p className={styles.featureLabel}>Instant Setup</p>
+                </div>
+                <div className={styles.heroFeature}>
+                  <div className={styles.featureCircle}>
+                    <Shield className={styles.featureIcon} />
                   </div>
+                  <p className={styles.featureLabel}>Secure Holding</p>
                 </div>
               </div>
             </div>
@@ -726,104 +714,100 @@ export default function Escrow() {
         </motion.div>
 
         {/* Stats Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between">
+        <div className={styles.statsGrid}>
+          <div className={styles.statCard}>
+            <div className={styles.statContent}>
               <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Active Escrows</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
+                <p className={styles.statLabel}>Active Escrows</p>
+                <p className={styles.statValue}>
                   {userEscrows.filter(e => e.status === 'active').length}
                 </p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+                <p className={styles.statSubtext}>
                   ${userStats.monthlyVolume.toLocaleString()} total
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div className={styles.statIcon}>
+                <Shield className={styles.statIconSvg} />
               </div>
             </div>
           </div>
           
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between">
+          <div className={styles.statCard}>
+            <div className={styles.statContent}>
               <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Total Volume</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
+                <p className={styles.statLabel}>Total Volume</p>
+                <p className={styles.statValue}>
                   ${userStats.monthlyVolume.toLocaleString()}
                 </p>
-                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                <p className={styles.statSubtext}>
                   Limit: ${TIERS[currentTier].limits.monthlyVolume.toLocaleString()}/mo
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-green-100 to-emerald-200 dark:from-green-900/30 dark:to-emerald-800/30 flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
+              <div className={styles.statIcon}>
+                <TrendingUp className={styles.statIconSvg} />
               </div>
             </div>
           </div>
           
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between">
+          <div className={styles.statCard}>
+            <div className={styles.statContent}>
               <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Current Tier</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                  {currentTier}
-                </p>
-                <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                <p className={styles.statLabel}>Current Tier</p>
+                <p className={styles.statValue}>{currentTier}</p>
+                <p className={styles.statSubtext}>
                   Level {TIERS[currentTier].level}
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-100 to-violet-200 dark:from-purple-900/30 dark:to-violet-800/30 flex items-center justify-center">
-                <Award className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+              <div className={styles.statIcon}>
+                <Award className={styles.statIconSvg} />
               </div>
             </div>
           </div>
           
-          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between">
+          <div className={styles.statCard}>
+            <div className={styles.statContent}>
               <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Available Templates</p>
-                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">
-                  {filteredTemplates.length}
-                </p>
-                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                <p className={styles.statLabel}>Available Templates</p>
+                <p className={styles.statValue}>{filteredTemplates.length}</p>
+                <p className={styles.statSubtext}>
                   {ESCROW_TEMPLATES.length} total
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-amber-100 to-orange-200 dark:from-amber-900/30 dark:to-orange-800/30 flex items-center justify-center">
-                <FileText className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+              <div className={styles.statIcon}>
+                <FileText className={styles.statIconSvg} />
               </div>
             </div>
           </div>
         </div>
 
         {/* Templates Section */}
-        <div className="mb-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 md:mb-0">
+        <div className={styles.templatesSection}>
+          <div className={styles.templatesHeader}>
+            <h2 className={styles.sectionTitle}>
               Escrow Templates
-              <span className="ml-3 text-sm font-normal text-slate-600 dark:text-slate-400">
+              <span className={styles.templatesCount}>
                 {filteredTemplates.length} templates available
               </span>
             </h2>
             
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <div className={styles.templatesControls}>
+              <div className={styles.searchContainer}>
+                <Search className={styles.searchIcon} />
                 <input
                   type="text"
                   placeholder="Search templates..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={styles.searchInput}
                 />
               </div>
               
-              <div className="flex gap-2">
+              <div className={styles.filterTabs}>
                 {["all", "free", "premium"].map((filter) => (
                   <button
                     key={filter}
                     onClick={() => setActiveFilter(filter)}
-                    className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize ${activeFilter === filter ? 'bg-blue-500 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}`}
+                    className={`${styles.filterTab} ${activeFilter === filter ? styles.activeFilter : ''}`}
                   >
                     {filter}
                   </button>
@@ -832,7 +816,7 @@ export default function Escrow() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={styles.templatesGrid}>
             {filteredTemplates.map((template) => {
               const Icon = template.icon;
               const isDetailed = showDetails === template.id;
@@ -842,48 +826,33 @@ export default function Escrow() {
               return (
                 <div
                   key={template.id}
-                  className={`${template.bgColor} rounded-2xl p-6 border-2 transition-all relative overflow-hidden group ${isComparing ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-transparent hover:border-slate-300 dark:hover:border-slate-700'}`}
+                  className={`${styles.templateCard} ${isComparing ? styles.comparing : ''}`}
                 >
                   {/* Badges */}
-                  {template.badge && (
-                    <div className="absolute top-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                      {template.badge}
-                    </div>
-                  )}
-                  
-                  {isLocked && (
-                    <div className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                      TIER LOCKED
-                    </div>
-                  )}
+                  <div className={styles.badgeContainer}>
+                    {template.badge && (
+                      <div className={styles.featuredBadge}>
+                        {template.badge}
+                      </div>
+                    )}
+                    
+                    {isLocked && (
+                      <div className={styles.lockedBadge}>
+                        <Lock className={styles.lockedIcon} />
+                        TIER LOCKED
+                      </div>
+                    )}
+                  </div>
                   
                   {/* Template Header */}
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className={`w-14 h-14 rounded-xl ${template.gradient} flex items-center justify-center shadow-lg`}>
-                          <Icon className="w-7 h-7 text-white" />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-bold text-slate-900 dark:text-white">{template.name}</h3>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">{template.tagline}</p>
-                        </div>
+                  <div className={styles.templateHeader}>
+                    <div className={styles.templateHeaderLeft}>
+                      <div className={styles.templateIcon}>
+                        <Icon className={styles.templateIconSvg} />
                       </div>
-                      
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-4 h-4 text-amber-500" />
-                          <span className="text-sm font-medium">{template.rating}</span>
-                          <span className="text-sm text-slate-600 dark:text-slate-400">
-                            ({template.reviews} reviews)
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Users className="w-4 h-4 text-blue-500" />
-                          <span className="text-sm text-slate-600 dark:text-slate-400">
-                            {template.templateUsage.toLocaleString()} uses
-                          </span>
-                        </div>
+                      <div>
+                        <h3 className={styles.templateName}>{template.name}</h3>
+                        <p className={styles.templateTagline}>{template.tagline}</p>
                       </div>
                     </div>
                     
@@ -893,28 +862,41 @@ export default function Escrow() {
                           ? prev.filter(id => id !== template.id)
                           : [...prev, template.id].slice(0, 3)
                       )}
-                      className={`p-2 rounded-lg ${isComparing ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}
+                      className={`${styles.compareButton} ${isComparing ? styles.activeCompare : ''}`}
                     >
-                      <BarChart3 className="w-4 h-4" />
+                      <BarChart3 className={styles.compareIcon} />
                     </button>
                   </div>
                   
+                  {/* Template Meta */}
+                  <div className={styles.templateMeta}>
+                    <div className={styles.rating}>
+                      <Star className={styles.starIcon} />
+                      <span className={styles.ratingValue}>{template.rating}</span>
+                      <span className={styles.reviewCount}>({template.reviews} reviews)</span>
+                    </div>
+                    <div className={styles.usageInfo}>
+                      <Users className={styles.usageIcon} />
+                      <span>{template.templateUsage.toLocaleString()} uses</span>
+                    </div>
+                  </div>
+                  
                   {/* Pricing */}
-                  <div className="mb-6">
-                    <div className="flex items-baseline justify-between mb-4">
+                  <div className={styles.pricingSection}>
+                    <div className={styles.priceContainer}>
                       <div>
-                        <div className="text-3xl font-bold text-slate-900 dark:text-white">
+                        <div className={styles.priceAmount}>
                           ${template.monthly === 0 ? '0' : template.monthly}
                         </div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">
+                        <div className={styles.pricePeriod}>
                           {template.monthly === 0 ? 'Free forever' : 'per month'}
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-emerald-600 dark:text-emerald-400 font-medium">
+                      <div className={styles.priceMeta}>
+                        <div className={styles.savingsBadge}>
                           {template.savings}
                         </div>
-                        <div className="text-xs text-slate-600 dark:text-slate-400">
+                        <div className={styles.setupTime}>
                           Setup: {template.setupTime}
                         </div>
                       </div>
@@ -923,49 +905,54 @@ export default function Escrow() {
                     {/* Toggle Details */}
                     <button
                       onClick={() => setShowDetails(showDetails === template.id ? null : template.id)}
-                      className="w-full flex items-center justify-between p-3 bg-white/50 dark:bg-slate-800/50 rounded-xl mb-4"
+                      className={styles.detailsToggle}
                     >
-                      <span className="font-medium text-slate-900 dark:text-white">
-                        Template Details
-                      </span>
-                      <ChevronRight className={`w-4 h-4 transition-transform ${isDetailed ? 'rotate-90' : ''}`} />
+                      <span>Template Details</span>
+                      <ChevronRight className={`${styles.chevron} ${isDetailed ? styles.chevronOpen : ''}`} />
                     </button>
                     
                     {/* Expanded Details */}
-                    {isDetailed && (
-                      <div className="space-y-4 mb-4">
-                        <div>
-                          <h4 className="font-medium text-slate-900 dark:text-white mb-2">Coverage Includes:</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {template.coverage.map((item, idx) => (
-                              <span key={idx} className="px-3 py-1 bg-white dark:bg-slate-800 rounded-full text-sm">
-                                {item}
-                              </span>
-                            ))}
+                    <AnimatePresence>
+                      {isDetailed && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className={styles.expandedDetails}
+                        >
+                          <div className={styles.coverageSection}>
+                            <h4 className={styles.coverageTitle}>Coverage Includes:</h4>
+                            <div className={styles.coverageTags}>
+                              {template.coverage.map((item, idx) => (
+                                <span key={idx} className={styles.coverageTag}>
+                                  {item}
+                                </span>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">Tier Required</p>
-                            <p className="font-medium text-slate-900 dark:text-white">{template.tierRequired}</p>
+                          
+                          <div className={styles.detailsGrid}>
+                            <div>
+                              <p className={styles.detailLabel}>Tier Required</p>
+                              <p className={styles.detailValue}>{template.tierRequired}</p>
+                            </div>
+                            <div>
+                              <p className={styles.detailLabel}>Category</p>
+                              <p className={styles.detailValue}>{template.category}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">Category</p>
-                            <p className="font-medium text-slate-900 dark:text-white">{template.category}</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                   
                   {/* Features */}
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Key Features:</h4>
-                    <ul className="space-y-2">
+                  <div className={styles.featuresSection}>
+                    <h4 className={styles.featuresTitle}>Key Features:</h4>
+                    <ul className={styles.featuresList}>
                       {template.features.slice(0, isDetailed ? template.features.length : 4).map((feature, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        <li key={idx} className={styles.featureItem}>
+                          <CheckCircle2 className={styles.featureIcon} />
                           <span>{feature}</span>
                         </li>
                       ))}
@@ -973,49 +960,45 @@ export default function Escrow() {
                   </div>
                   
                   {/* Action Buttons */}
-                  <div className="space-y-3">
+                  <div className={styles.actionButtons}>
                     <button
                       onClick={() => isLocked ? setShowDetailsModal(template) : handleUseTemplate(template.id)}
                       disabled={loading === template.id}
-                      className={`w-full font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group-hover:shadow-lg ${
-                        isLocked
-                          ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white'
-                          : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
-                      }`}
+                      className={`${styles.primaryButton} ${isLocked ? styles.lockedButton : ''}`}
                     >
                       {loading === template.id ? (
                         <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <Loader2 className={styles.spinnerIcon} />
                           Processing Request...
                         </>
                       ) : isLocked ? (
                         <>
-                          <Lock className="w-4 h-4" />
+                          <Lock className={styles.buttonIcon} />
                           Unlock {template.tierRequired} Tier
-                          <ChevronRight className="w-4 h-4" />
+                          <ChevronRight className={styles.buttonChevron} />
                         </>
                       ) : (
                         <>
-                          <Sparkle className="w-4 h-4" />
+                          <Sparkle className={styles.buttonIcon} />
                           Use This Template
-                          <ChevronRight className="w-4 h-4" />
+                          <ChevronRight className={styles.buttonChevron} />
                         </>
                       )}
                     </button>
                     
-                    <div className="flex gap-2">
+                    <div className={styles.secondaryButtons}>
                       <button 
                         onClick={() => setShowCalculatorModal(true)}
-                        className="flex-1 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                        className={styles.secondaryButton}
                       >
-                        <Calculator className="w-4 h-4 inline mr-1" />
+                        <Calculator className={styles.buttonIcon} />
                         Calculate
                       </button>
                       <button 
                         onClick={() => setShowChatSupportModal(true)}
-                        className="flex-1 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                        className={styles.secondaryButton}
                       >
-                        <AlertCircle className="w-4 h-4 inline mr-1" />
+                        <AlertCircle className={styles.buttonIcon} />
                         Get Help
                       </button>
                     </div>
@@ -1027,143 +1010,136 @@ export default function Escrow() {
         </div>
 
         {/* Active Escrows Section */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+        <div className={styles.escrowsSection}>
+          <div className={styles.escrowsHeader}>
+            <h2 className={styles.sectionTitle}>
               Your Escrow Accounts
-              <span className="ml-3 text-sm font-normal text-slate-600 dark:text-slate-400">
+              <span className={styles.escrowsCount}>
                 {filteredEscrows.length} active accounts
               </span>
             </h2>
             <button 
               onClick={() => setShowCreateModal(true)}
-              className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl font-medium transition-all flex items-center gap-2"
+              className={styles.createButton}
             >
-              <Plus className="w-5 h-5" />
+              <Plus className={styles.buttonIcon} />
               Create Custom Escrow
             </button>
           </div>
           
           {filteredEscrows.length === 0 ? (
-            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl p-12 text-center border border-blue-200 dark:border-blue-800">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FileText className="w-10 h-10 text-gray-400" />
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>
+                <FileText className={styles.emptyIconSvg} />
               </div>
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
-                No Escrow Accounts Found
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400 mb-8">
+              <h3 className={styles.emptyTitle}>No Escrow Accounts Found</h3>
+              <p className={styles.emptyMessage}>
                 {searchQuery 
                   ? "No escrows match your search criteria"
                   : "Start by selecting a template above or create a custom escrow"}
               </p>
-              <div className="flex gap-4 justify-center">
+              <div className={styles.emptyActions}>
                 <button 
                   onClick={() => setShowTemplatesModal(true)}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl font-medium"
+                  className={styles.primaryButton}
                 >
                   Browse Templates
                 </button>
                 <button 
                   onClick={() => setShowCreateModal(true)}
-                  className="px-6 py-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl font-medium border border-slate-300 dark:border-slate-700"
+                  className={styles.secondaryButton}
                 >
                   Create Custom
                 </button>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-6">
+            <div className={styles.escrowsList}>
               {filteredEscrows.map((escrow) => {
                 const statusConfig = getStatusConfig(escrow.status);
-                const template = ESCROW_TEMPLATES.find(t => t.id === escrow.template);
                 
                 return (
-                  <div key={escrow.id} className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
-                    <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-4">
+                  <div key={escrow.id} className={styles.escrowCard}>
+                    <div className={styles.escrowContent}>
+                      <div className={styles.escrowMain}>
+                        <div className={styles.escrowHeader}>
                           <div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">{escrow.title}</h3>
-                            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{escrow.id}</p>
+                            <h3 className={styles.escrowTitle}>{escrow.title}</h3>
+                            <p className={styles.escrowId}>{escrow.id}</p>
                           </div>
-                          <div className="flex items-center gap-3">
-                            <span className={`inline-flex items-center gap-2 px-3 py-1 text-sm font-bold rounded-lg border ${statusConfig.color}`}>
+                          <div className={styles.escrowBadges}>
+                            <span className={`${styles.statusBadge} ${statusConfig.className}`}>
                               {statusConfig.icon}
                               {statusConfig.label}
                             </span>
                             {escrow.tierLocked && currentTier === "Basic" && (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold bg-amber-500/20 text-amber-300 rounded-lg">
-                                <Lock className="w-3 h-3" />
+                              <span className={styles.tierLockedBadge}>
+                                <Lock className={styles.tierLockedIcon} />
                                 Tier Locked
                               </span>
                             )}
                           </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                          <div>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">Amount</p>
-                            <p className="text-lg font-bold text-slate-900 dark:text-white">${escrow.amount.toLocaleString()}</p>
+                        <div className={styles.escrowDetails}>
+                          <div className={styles.detailItem}>
+                            <p className={styles.detailLabel}>Amount</p>
+                            <p className={styles.detailValue}>${escrow.amount.toLocaleString()}</p>
                           </div>
-                          <div>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">Category</p>
-                            <p className="text-lg font-bold text-slate-900 dark:text-white">{escrow.category}</p>
+                          <div className={styles.detailItem}>
+                            <p className={styles.detailLabel}>Category</p>
+                            <p className={styles.detailValue}>{escrow.category}</p>
                           </div>
-                          <div>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">Progress</p>
-                            <p className="text-lg font-bold text-slate-900 dark:text-white">{escrow.progress}%</p>
+                          <div className={styles.detailItem}>
+                            <p className={styles.detailLabel}>Progress</p>
+                            <p className={styles.detailValue}>{escrow.progress}%</p>
                           </div>
-                          <div>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">Release Date</p>
-                            <p className="text-lg font-bold text-slate-900 dark:text-white">
+                          <div className={styles.detailItem}>
+                            <p className={styles.detailLabel}>Release Date</p>
+                            <p className={styles.detailValue}>
                               {new Date(escrow.releaseDate).toLocaleDateString()}
                             </p>
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-6">
-                          <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4 text-blue-500" />
-                            <span className="text-sm text-slate-600 dark:text-slate-400">Buyer:</span>
-                            <span className="text-sm font-medium text-slate-900 dark:text-white">{escrow.buyer}</span>
+                        <div className={styles.escrowParties}>
+                          <div className={styles.partyInfo}>
+                            <Users className={styles.partyIcon} />
+                            <span className={styles.partyLabel}>Buyer:</span>
+                            <span className={styles.partyName}>{escrow.buyer}</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4 text-green-500" />
-                            <span className="text-sm text-slate-600 dark:text-slate-400">Seller:</span>
-                            <span className="text-sm font-medium text-slate-900 dark:text-white">{escrow.seller}</span>
+                          <div className={styles.partyInfo}>
+                            <Users className={styles.partyIcon} />
+                            <span className={styles.partyLabel}>Seller:</span>
+                            <span className={styles.partyName}>{escrow.seller}</span>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="flex flex-col sm:flex-row lg:flex-col gap-3 lg:w-64">
+                      <div className={styles.escrowActions}>
                         <button
                           onClick={() => setShowDetailsModal(escrow)}
-                          className="px-4 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                          className={styles.viewButton}
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye className={styles.buttonIcon} />
                           View Details
                         </button>
                         {escrow.status === "active" && (
                           <button
                             onClick={() => handleReleaseFunds(escrow.id)}
                             disabled={loading === `release-${escrow.id}` || (escrow.tierLocked && currentTier === "Basic")}
-                            className={`px-4 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 ${
-                              escrow.tierLocked && currentTier === "Basic"
-                                ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white'
-                                : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white'
-                            }`}
+                            className={`${styles.releaseButton} ${escrow.tierLocked && currentTier === "Basic" ? styles.lockedReleaseButton : ''}`}
                           >
                             {loading === `release-${escrow.id}` ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <Loader2 className={styles.spinnerIcon} />
                             ) : escrow.tierLocked && currentTier === "Basic" ? (
                               <>
-                                <Lock className="w-4 h-4" />
+                                <Lock className={styles.buttonIcon} />
                                 Upgrade to Release
                               </>
                             ) : (
                               <>
-                                <CheckCircle2 className="w-4 h-4" />
+                                <CheckCircle2 className={styles.buttonIcon} />
                                 Release Funds
                               </>
                             )}
@@ -1181,428 +1157,490 @@ export default function Escrow() {
         {/* ===== MODALS ===== */}
 
         {/* Success Modal */}
-        {showSuccessModal.visible && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-md w-full mx-auto shadow-2xl">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-r from-emerald-100 to-green-100 dark:from-emerald-900/30 dark:to-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
-                  Request Submitted! 🎉
-                </h3>
-                
-                <p className="text-slate-600 dark:text-slate-400 mb-6">
-                  {showSuccessModal.message}
-                </p>
-                
-                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl p-4 mb-6 border border-blue-200 dark:border-blue-800">
-                  <div className="text-sm text-blue-800 dark:text-blue-300 mb-2">Reference ID</div>
-                  <div className="font-mono text-lg font-bold text-blue-900 dark:text-blue-200">
-                    {showSuccessModal.referenceId}
+        <AnimatePresence>
+          {showSuccessModal.visible && (
+            <div className={styles.modalOverlay} onClick={() => setShowSuccessModal({ visible: false, referenceId: '', planName: '', message: '', contactTimeline: '' })}>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className={styles.modalContent}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles.successModal}>
+                  <div className={styles.successIconContainer}>
+                    <CheckCircle2 className={styles.successIcon} />
                   </div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mt-2">
-                    {showSuccessModal.planName}
-                  </div>
-                </div>
-                
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-4 mb-6 border border-amber-200 dark:border-amber-800">
-                  <div className="flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
-                    <div className="text-left">
-                      <h4 className="font-semibold text-amber-800 dark:text-amber-300 mb-1">Next Steps</h4>
-                      <ul className="text-sm text-amber-700 dark:text-amber-400 space-y-1">
-                        <li>• Our team will contact you within {showSuccessModal.contactTimeline}</li>
-                        <li>• Have your transaction details ready</li>
-                        <li>• Check your email for confirmation</li>
-                        <li>• Prepare any required documents</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <button
-                    onClick={() => setShowSuccessModal({ visible: false, referenceId: '', planName: '', message: '', contactTimeline: '' })}
-                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 rounded-xl transition-all"
-                  >
-                    Continue Browsing
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowSuccessModal({ visible: false, referenceId: '', planName: '', message: '', contactTimeline: '' });
-                      setShowEscrowsModal(true);
-                    }}
-                    className="w-full py-3 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
-                  >
-                    View Your Escrows
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Filter Modal */}
-        {showFilterModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-sm w-full">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Filter Options</h3>
-                <button onClick={() => setShowFilterModal(false)} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Amount Range</label>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="50000" 
-                    defaultValue="25000"
-                    className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
-                  />
-                  <div className="flex justify-between text-xs text-slate-500 mt-1">
-                    <span>$0</span>
-                    <span>$25K</span>
-                    <span>$50K</span>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
-                  <div className="space-y-2">
-                    {['Services', 'Goods', 'Property', 'Tech', 'Media', 'Business'].map(type => (
-                      <label key={type} className="flex items-center">
-                        <input type="checkbox" className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-                        <span className="ml-2 text-sm text-slate-700 dark:text-slate-300">{type}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tier Access</label>
-                  <div className="flex items-center gap-2">
-                    {['Basic', 'Verified', 'Pro'].map(tier => (
-                      <button key={tier} className="flex-1 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm">
-                        {tier}
+                  
+                  <h3 className={styles.modalTitle}>Request Submitted! 🎉</h3>
+                  
+                  <p className={styles.modalMessage}>
+                    {showSuccessModal.message}
+                  </p>
+                  
+                  <div className={styles.referenceCard}>
+                    <div className={styles.referenceHeader}>
+                      <div className={styles.referenceLabel}>Reference ID</div>
+                      <button 
+                        onClick={() => navigator.clipboard.writeText(showSuccessModal.referenceId)}
+                        className={styles.copyButton}
+                      >
+                        Copy
                       </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex gap-3 pt-4">
-                  <button 
-                    onClick={() => setShowFilterModal(false)}
-                    className="flex-1 py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setShowFilterModal(false);
-                      alert('Filters applied!');
-                    }}
-                    className="flex-1 py-3 bg-blue-500 text-white rounded-xl font-medium"
-                  >
-                    Apply Filters
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Escrows Modal */}
-        {showEscrowsModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-lg w-full">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Your Escrow Accounts</h3>
-                <button onClick={() => setShowEscrowsModal(false)} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              <div className="space-y-4">
-                {userEscrows.map((escrow, index) => {
-                  const statusConfig = getStatusConfig(escrow.status);
-                  return (
-                    <div key={index} className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <h4 className="font-bold text-slate-900 dark:text-white">{escrow.title}</h4>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">{escrow.id}</p>
-                        </div>
-                        <span className={`inline-flex items-center gap-1 px-3 py-1 text-sm font-bold rounded-full border ${statusConfig.color}`}>
-                          {statusConfig.icon}
-                          {statusConfig.label}
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">Amount</p>
-                          <p className="text-sm font-semibold text-slate-900 dark:text-white">${escrow.amount.toLocaleString()}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">Progress</p>
-                          <p className="text-sm font-semibold text-slate-900 dark:text-white">{escrow.progress}%</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-slate-500 dark:text-slate-400">
-                          Created: {new Date(escrow.createdDate).toLocaleDateString()}
-                        </span>
-                        <button 
-                          onClick={() => {
-                            setShowEscrowsModal(false);
-                            setShowDetailsModal(escrow);
-                          }}
-                          className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
-                        >
-                          View Details
-                        </button>
-                      </div>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Create Escrow Modal */}
-        {showCreateModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-md w-full">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Create Custom Escrow</h3>
-                <button onClick={() => setShowCreateModal(false)} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Escrow Title</label>
-                  <input 
-                    type="text" 
-                    placeholder="e.g., Custom Project Agreement"
-                    className="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estimated Amount</label>
-                  <input 
-                    type="number" 
-                    placeholder="0.00"
-                    className="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Category</label>
-                  <select className="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-600">
-                    <option>Services</option>
-                    <option>Goods</option>
-                    <option>Digital Assets</option>
-                    <option>Property</option>
-                    <option>Custom</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Description</label>
-                  <textarea 
-                    rows={3}
-                    placeholder="Brief description of the transaction..."
-                    className="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-600"
-                  />
-                </div>
-                
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-slate-600 dark:text-slate-400">Your Tier</span>
-                    <span className={`font-bold ${TIERS[currentTier].color}`}>{currentTier}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500 dark:text-slate-400">Max Single Escrow</span>
-                    <span className="text-emerald-600 dark:text-emerald-400">${TIERS[currentTier].limits.singleEscrow.toLocaleString()}</span>
-                  </div>
-                </div>
-                
-                <div className="flex gap-3 pt-4">
-                  <button 
-                    onClick={() => setShowCreateModal(false)}
-                    className="flex-1 py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={handleCreateEscrow}
-                    disabled={loading === "create"}
-                    className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    {loading === "create" ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      'Submit Request'
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Chat Support Modal */}
-        {showChatSupportModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-md w-full">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Escrow Support</h3>
-                <button onClick={() => setShowChatSupportModal(false)} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <AlertCircle className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-                </div>
-                <h4 className="text-lg font-medium text-slate-900 dark:text-white mb-2">Need Help?</h4>
-                <p className="text-slate-600 dark:text-slate-400">How can we assist you today?</p>
-              </div>
-              
-              <div className="space-y-3">
-                <button 
-                  onClick={() => alert('Connecting to live chat...')}
-                  className="w-full py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-xl font-medium border border-blue-200 dark:border-blue-800"
-                >
-                  💬 Live Chat Support
-                </button>
-                <button 
-                  onClick={() => alert('Calling support: 1-800-ESCROW')}
-                  className="w-full py-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-xl font-medium border border-green-200 dark:border-green-800"
-                >
-                  📞 Call Support
-                </button>
-                <button 
-                  onClick={() => alert('Email support: escrow@claverica.com')}
-                  className="w-full py-3 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-xl font-medium border border-purple-200 dark:border-purple-800"
-                >
-                  📧 Email Support
-                </button>
-              </div>
-              
-              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
-                <p className="text-sm text-slate-600 dark:text-slate-400 text-center">
-                  Available 24/7 • Average response time: 5 minutes
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Details Modal */}
-        {showDetailsModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-lg w-full">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                  {typeof showDetailsModal === 'string' ? 'Template Details' : 'Escrow Details'}
-                </h3>
-                <button onClick={() => setShowDetailsModal(null)} className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              
-              {'title' in showDetailsModal ? (
-                // Escrow Details
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-bold text-slate-900 dark:text-white text-lg">{showDetailsModal.title}</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">{showDetailsModal.id}</p>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">Amount</p>
-                      <p className="text-lg font-bold text-slate-900 dark:text-white">${showDetailsModal.amount.toLocaleString()}</p>
+                    <div className={styles.referenceId}>
+                      {showSuccessModal.referenceId}
                     </div>
-                    <div>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">Status</p>
-                      <div className="flex items-center gap-2">
-                        {getStatusConfig(showDetailsModal.status).icon}
-                        <span className="font-medium text-slate-900 dark:text-white">{showDetailsModal.status}</span>
-                      </div>
+                    <div className={styles.referencePlan}>
+                      {showSuccessModal.planName}
                     </div>
                   </div>
                   
-                  <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Parties</p>
-                    <div className="flex items-center gap-4 mt-2">
+                  <div className={styles.nextStepsCard}>
+                    <div className={styles.nextStepsContent}>
+                      <Clock className={styles.nextStepsIcon} />
                       <div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Buyer</p>
-                        <p className="text-sm font-medium text-slate-900 dark:text-white">{showDetailsModal.buyer}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Seller</p>
-                        <p className="text-sm font-medium text-slate-900 dark:text-white">{showDetailsModal.seller}</p>
+                        <h4 className={styles.nextStepsTitle}>Next Steps</h4>
+                        <ul className={styles.nextStepsList}>
+                          <li>• Our team will contact you within {showSuccessModal.contactTimeline}</li>
+                          <li>• Have your transaction details ready</li>
+                          <li>• Check your email for confirmation</li>
+                          <li>• Prepare any required documents</li>
+                        </ul>
                       </div>
                     </div>
                   </div>
                   
-                  <div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Progress</p>
-                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full mt-2 overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-blue-500 to-cyan-500"
-                        style={{ width: `${showDetailsModal.progress}%` }}
-                      />
-                    </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
-                      {showDetailsModal.completedMilestones} of {showDetailsModal.milestones} milestones completed
-                    </p>
-                  </div>
-                  
-                  <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <div className={styles.modalActions}>
+                    <button
+                      onClick={() => setShowSuccessModal({ visible: false, referenceId: '', planName: '', message: '', contactTimeline: '' })}
+                      className={styles.modalPrimaryButton}
+                    >
+                      Continue Browsing
+                    </button>
                     <button
                       onClick={() => {
-                        setShowDetailsModal(null);
-                        alert('Downloading details...');
+                        setShowSuccessModal({ visible: false, referenceId: '', planName: '', message: '', contactTimeline: '' });
+                        setShowEscrowsModal(true);
                       }}
-                      className="w-full py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-medium flex items-center justify-center gap-2"
+                      className={styles.modalSecondaryButton}
                     >
-                      <Download className="w-4 h-4" />
-                      Export Details
+                      View Your Escrows
                     </button>
                   </div>
                 </div>
-              ) : (
-                // Template Details (Locked)
-                <div className="text-center py-8">
-                  <div className="w-20 h-20 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Lock className="w-10 h-10 text-amber-500" />
-                  </div>
-                  <h4 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Template Locked</h4>
-                  <p className="text-slate-600 dark:text-slate-400 mb-6">
-                    This template requires <span className="font-bold text-amber-600 dark:text-amber-400">{showDetailsModal.tierRequired} Tier</span>
-                  </p>
-                  <button
-                    onClick={() => {
-                      setShowDetailsModal(null);
-                      // Trigger KYC for upgrade
-                      alert('Redirecting to tier upgrade...');
-                    }}
-                    className="px-6 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-xl font-bold transition-all flex items-center gap-3 mx-auto"
-                  >
-                    <Rocket className="w-5 h-5" />
-                    Upgrade to {showDetailsModal.tierRequired}
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Filter Modal */}
+        <AnimatePresence>
+          {showFilterModal && (
+            <div className={styles.modalOverlay} onClick={() => setShowFilterModal(false)}>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className={styles.modalContent}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles.modalHeader}>
+                  <h3 className={styles.modalTitle}>Filter Options</h3>
+                  <button onClick={() => setShowFilterModal(false)} className={styles.closeButton}>
+                    <X className={styles.closeIcon} />
                   </button>
                 </div>
-              )}
+                
+                <div className={styles.filterContent}>
+                  <div className={styles.filterGroup}>
+                    <label className={styles.filterLabel}>Amount Range</label>
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="50000" 
+                      defaultValue="25000"
+                      className={styles.filterRange}
+                    />
+                    <div className={styles.rangeLabels}>
+                      <span>$0</span>
+                      <span>$25K</span>
+                      <span>$50K</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.filterGroup}>
+                    <label className={styles.filterLabel}>Category</label>
+                    <div className={styles.checkboxGroup}>
+                      {['Services', 'Goods', 'Property', 'Tech', 'Media', 'Business'].map(type => (
+                        <label key={type} className={styles.checkboxLabel}>
+                          <input type="checkbox" className={styles.checkbox} />
+                          <span>{type}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className={styles.filterGroup}>
+                    <label className={styles.filterLabel}>Tier Access</label>
+                    <div className={styles.tierButtons}>
+                      {['Basic', 'Verified', 'Pro'].map(tier => (
+                        <button key={tier} className={styles.tierButton}>
+                          {tier}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className={styles.modalFooter}>
+                    <button 
+                      onClick={() => setShowFilterModal(false)}
+                      className={styles.cancelButton}
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setShowFilterModal(false);
+                        alert('Filters applied!');
+                      }}
+                      className={styles.applyButton}
+                    >
+                      Apply Filters
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
             </div>
-          </div>
-        )}
+          )}
+        </AnimatePresence>
+
+        {/* Escrows Modal */}
+        <AnimatePresence>
+          {showEscrowsModal && (
+            <div className={styles.modalOverlay} onClick={() => setShowEscrowsModal(false)}>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className={styles.modalContent}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles.modalHeader}>
+                  <h3 className={styles.modalTitle}>Your Escrow Accounts</h3>
+                  <button onClick={() => setShowEscrowsModal(false)} className={styles.closeButton}>
+                    <X className={styles.closeIcon} />
+                  </button>
+                </div>
+                
+                <div className={styles.escrowsList}>
+                  {userEscrows.map((escrow, index) => {
+                    const statusConfig = getStatusConfig(escrow.status);
+                    return (
+                      <div key={index} className={styles.modalEscrowItem}>
+                        <div className={styles.modalEscrowHeader}>
+                          <div>
+                            <h4 className={styles.modalEscrowTitle}>{escrow.title}</h4>
+                            <p className={styles.modalEscrowId}>{escrow.id}</p>
+                          </div>
+                          <span className={`${styles.modalStatusBadge} ${statusConfig.className}`}>
+                            {statusConfig.icon}
+                            {statusConfig.label}
+                          </span>
+                        </div>
+                        <div className={styles.modalEscrowDetails}>
+                          <div>
+                            <p className={styles.modalDetailLabel}>Amount</p>
+                            <p className={styles.modalDetailValue}>${escrow.amount.toLocaleString()}</p>
+                          </div>
+                          <div>
+                            <p className={styles.modalDetailLabel}>Progress</p>
+                            <p className={styles.modalDetailValue}>{escrow.progress}%</p>
+                          </div>
+                        </div>
+                        <div className={styles.modalEscrowFooter}>
+                          <span className={styles.modalEscrowDate}>
+                            Created: {new Date(escrow.createdDate).toLocaleDateString()}
+                          </span>
+                          <button 
+                            onClick={() => {
+                              setShowEscrowsModal(false);
+                              setShowDetailsModal(escrow);
+                            }}
+                            className={styles.modalViewButton}
+                          >
+                            View Details
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Create Escrow Modal */}
+        <AnimatePresence>
+          {showCreateModal && (
+            <div className={styles.modalOverlay} onClick={() => setShowCreateModal(false)}>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className={styles.modalContent}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles.modalHeader}>
+                  <h3 className={styles.modalTitle}>Create Custom Escrow</h3>
+                  <button onClick={() => setShowCreateModal(false)} className={styles.closeButton}>
+                    <X className={styles.closeIcon} />
+                  </button>
+                </div>
+                
+                <div className={styles.createForm}>
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Escrow Title</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g., Custom Project Agreement"
+                      className={styles.formInput}
+                    />
+                  </div>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Estimated Amount</label>
+                    <input 
+                      type="number" 
+                      placeholder="0.00"
+                      className={styles.formInput}
+                    />
+                  </div>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Category</label>
+                    <select className={styles.formSelect}>
+                      <option>Services</option>
+                      <option>Goods</option>
+                      <option>Digital Assets</option>
+                      <option>Property</option>
+                      <option>Custom</option>
+                    </select>
+                  </div>
+                  
+                  <div className={styles.formGroup}>
+                    <label className={styles.formLabel}>Description</label>
+                    <textarea 
+                      rows={3}
+                      placeholder="Brief description of the transaction..."
+                      className={styles.formTextarea}
+                    />
+                  </div>
+                  
+                  <div className={styles.tierInfo}>
+                    <div className={styles.tierInfoRow}>
+                      <span className={styles.tierInfoLabel}>Your Tier</span>
+                      <span className={`${styles.tierInfoValue} ${TIERS[currentTier].color}`}>{currentTier}</span>
+                    </div>
+                    <div className={styles.tierInfoRow}>
+                      <span className={styles.tierInfoLabel}>Max Single Escrow</span>
+                      <span className={styles.tierInfoLimit}>${TIERS[currentTier].limits.singleEscrow.toLocaleString()}</span>
+                    </div>
+                  </div>
+                  
+                  <div className={styles.modalFooter}>
+                    <button 
+                      onClick={() => setShowCreateModal(false)}
+                      className={styles.cancelButton}
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      onClick={handleCreateEscrow}
+                      disabled={loading === "create"}
+                      className={styles.submitButton}
+                    >
+                      {loading === "create" ? (
+                        <Loader2 className={styles.spinnerIcon} />
+                      ) : (
+                        'Submit Request'
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Chat Support Modal */}
+        <AnimatePresence>
+          {showChatSupportModal && (
+            <div className={styles.modalOverlay} onClick={() => setShowChatSupportModal(false)}>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className={styles.modalContent}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles.modalHeader}>
+                  <h3 className={styles.modalTitle}>Escrow Support</h3>
+                  <button onClick={() => setShowChatSupportModal(false)} className={styles.closeButton}>
+                    <X className={styles.closeIcon} />
+                  </button>
+                </div>
+                
+                <div className={styles.chatContent}>
+                  <div className={styles.chatIconContainer}>
+                    <AlertCircle className={styles.chatIcon} />
+                  </div>
+                  <h4 className={styles.chatTitle}>Need Help?</h4>
+                  <p className={styles.chatMessage}>How can we assist you today?</p>
+                </div>
+                
+                <div className={styles.chatOptions}>
+                  <button 
+                    onClick={() => alert('Connecting to live chat...')}
+                    className={styles.chatOptionButton}
+                  >
+                    💬 Live Chat Support
+                  </button>
+                  <button 
+                    onClick={() => alert('Calling support: 1-800-ESCROW')}
+                    className={styles.chatOptionButton}
+                  >
+                    📞 Call Support
+                  </button>
+                  <button 
+                    onClick={() => alert('Email support: escrow@claverica.com')}
+                    className={styles.chatOptionButton}
+                  >
+                    📧 Email Support
+                  </button>
+                </div>
+                
+                <div className={styles.chatFooter}>
+                  <p className={styles.chatFooterText}>
+                    Available 24/7 • Average response time: 5 minutes
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Details Modal */}
+        <AnimatePresence>
+          {showDetailsModal && (
+            <div className={styles.modalOverlay} onClick={() => setShowDetailsModal(null)}>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className={styles.modalContent}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles.modalHeader}>
+                  <h3 className={styles.modalTitle}>
+                    {typeof showDetailsModal === 'string' ? 'Template Details' : 'Escrow Details'}
+                  </h3>
+                  <button onClick={() => setShowDetailsModal(null)} className={styles.closeButton}>
+                    <X className={styles.closeIcon} />
+                  </button>
+                </div>
+                
+                {'title' in showDetailsModal ? (
+                  // Escrow Details
+                  <div className={styles.detailsContent}>
+                    <div>
+                      <h4 className={styles.detailsTitle}>{showDetailsModal.title}</h4>
+                      <p className={styles.detailsId}>{showDetailsModal.id}</p>
+                    </div>
+                    
+                    <div className={styles.detailsGrid}>
+                      <div>
+                        <p className={styles.detailsLabel}>Amount</p>
+                        <p className={styles.detailsValue}>${showDetailsModal.amount.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className={styles.detailsLabel}>Status</p>
+                        <div className={styles.detailsStatus}>
+                          {getStatusConfig(showDetailsModal.status).icon}
+                          <span>{showDetailsModal.status}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p className={styles.detailsLabel}>Parties</p>
+                      <div className={styles.detailsParties}>
+                        <div>
+                          <p className={styles.detailsPartyLabel}>Buyer</p>
+                          <p className={styles.detailsPartyName}>{showDetailsModal.buyer}</p>
+                        </div>
+                        <div>
+                          <p className={styles.detailsPartyLabel}>Seller</p>
+                          <p className={styles.detailsPartyName}>{showDetailsModal.seller}</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <p className={styles.detailsLabel}>Progress</p>
+                      <div className={styles.detailsProgress}>
+                        <div className={styles.progressBar}>
+                          <div 
+                            className={styles.progressFill}
+                            style={{ width: `${showDetailsModal.progress}%` }}
+                          />
+                        </div>
+                        <p className={styles.progressText}>
+                          {showDetailsModal.completedMilestones} of {showDetailsModal.milestones} milestones completed
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className={styles.detailsFooter}>
+                      <button
+                        onClick={() => {
+                          setShowDetailsModal(null);
+                          alert('Downloading details...');
+                        }}
+                        className={styles.exportButton}
+                      >
+                        <Download className={styles.buttonIcon} />
+                        Export Details
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  // Template Details (Locked)
+                  <div className={styles.lockedTemplate}>
+                    <div className={styles.lockedIconContainer}>
+                      <Lock className={styles.lockedIconLarge} />
+                    </div>
+                    <h4 className={styles.lockedTitle}>Template Locked</h4>
+                    <p className={styles.lockedMessage}>
+                      This template requires <span className={styles.lockedHighlight}>{showDetailsModal.tierRequired} Tier</span>
+                    </p>
+                    <button
+                      onClick={() => {
+                        setShowDetailsModal(null);
+                        alert('Redirecting to tier upgrade...');
+                      }}
+                      className={styles.upgradeButton}
+                    >
+                      <Rocket className={styles.buttonIcon} />
+                      Upgrade to {showDetailsModal.tierRequired}
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

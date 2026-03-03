@@ -10,13 +10,14 @@ import {
   Shield,
   ArrowRight,
 } from "lucide-react";
+import styles from "./LoanComparison.module.css";
 
 interface LoanComparisonProps {
   loans: any[];
   onClose: () => void;
 }
 
-// ─── SVG score ring (reused from EligibilityBadge style) ────
+// ─── SVG score ring ─────────────────────────────────────
 const MiniScoreRing = ({
   score,
 }: {
@@ -25,12 +26,12 @@ const MiniScoreRing = ({
   const R = 22;
   const circ = 2 * Math.PI * R;
   const progress = (score / 100) * circ;
-  const color = score >= 85 ? "#10b981" : score >= 75 ? "#06b6d4" : "#f59e0b";
+  const color = score >= 85 ? "#1E6F6F" : score >= 75 ? "#8626E9" : "#C5A028";
 
   return (
-    <div className="relative flex items-center justify-center">
-      <svg width="56" height="56" viewBox="0 0 56 56" className="-rotate-90">
-        <circle cx="28" cy="28" r={R} fill="none" stroke="#1e293b" strokeWidth="4" />
+    <div className={styles.ringWrapper}>
+      <svg width="56" height="56" viewBox="0 0 56 56" className={styles.ringSvg}>
+        <circle cx="28" cy="28" r={R} fill="none" stroke="#E5E7EB" strokeWidth="4" />
         <circle
           cx="28"
           cy="28"
@@ -42,7 +43,7 @@ const MiniScoreRing = ({
           strokeDasharray={`${progress} ${circ - progress}`}
         />
       </svg>
-      <span className="absolute text-sm font-bold text-white tabular-nums">{score}</span>
+      <span className={styles.ringScore}>{score}</span>
     </div>
   );
 };
@@ -67,20 +68,20 @@ const LoanComparison = ({ loans, onClose }: LoanComparisonProps) => {
 
   const scoreBadge = (score: number) =>
     score >= 85
-      ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+      ? styles.scoreExcellent
       : score >= 75
-      ? "bg-cyan-500/10 border-cyan-500/30 text-cyan-400"
-      : "bg-amber-500/10 border-amber-500/30 text-amber-400";
+      ? styles.scoreGood
+      : styles.scoreFair;
 
   // ── feature icon helper ───────────────────────────────────
   const featureIcon = (feature: string) => {
     if (feature.includes("No") || feature.includes("Free"))
-      return <Check className="w-3 h-3 text-emerald-400" />;
+      return <Check className={styles.featureIconTeal} />;
     if (feature.includes("Instant") || feature.includes("Same-day"))
-      return <Zap className="w-3 h-3 text-amber-400" />;
+      return <Zap className={styles.featureIconGold} />;
     if (feature.includes("Secure") || feature.includes("Protected"))
-      return <Shield className="w-3 h-3 text-cyan-400" />;
-    return <Check className="w-3 h-3 text-slate-500" />;
+      return <Shield className={styles.featureIconPurple} />;
+    return <Check className={styles.featureIconDefault} />;
   };
 
   // ── row definition ────────────────────────────────────────
@@ -97,13 +98,11 @@ const LoanComparison = ({ loans, onClose }: LoanComparisonProps) => {
       key: "interest",
       label: "Interest Rate",
       sub: "Annual Percentage Rate",
-      icon: <TrendingUp className="w-4 h-4 text-emerald-400" />,
+      icon: <TrendingUp className={styles.rowIconTeal} />,
       render: (loan) => (
-        <div className="flex flex-col items-center">
-          <span className="text-2xl font-bold text-white tabular-nums">
-            {loan.interest}
-          </span>
-          <span className="text-xs text-slate-500 mt-0.5">APR</span>
+        <div className={styles.rowValueContainer}>
+          <span className={styles.rowValueLarge}>{loan.interest}</span>
+          <span className={styles.rowValueSmall}>APR</span>
         </div>
       ),
     },
@@ -111,53 +110,49 @@ const LoanComparison = ({ loans, onClose }: LoanComparisonProps) => {
       key: "amount",
       label: "Maximum Amount",
       sub: "Total loan available",
-      icon: <span className="text-base">💰</span>,
+      icon: <span className={styles.rowIconText}>💰</span>,
       render: (loan) => (
-        <span className="text-xl font-bold text-white">{loan.amount}</span>
+        <span className={styles.rowValueMedium}>{loan.amount}</span>
       ),
     },
     {
       key: "term",
       label: "Loan Term",
       sub: "Repayment period",
-      icon: <span className="text-base">📅</span>,
+      icon: <span className={styles.rowIconText}>📅</span>,
       render: (loan) => (
-        <span className="text-lg font-bold text-white">{loan.term}</span>
+        <span className={styles.rowValueMedium}>{loan.term}</span>
       ),
     },
     {
       key: "funding",
       label: "Funding Time",
       sub: "Time to receive funds",
-      icon: <Zap className="w-4 h-4 text-amber-400" />,
+      icon: <Zap className={styles.rowIconGold} />,
       render: (loan) => (
-        <span className="text-base font-semibold text-white">
-          {loan.fundingTime}
-        </span>
+        <span className={styles.rowValueBase}>{loan.fundingTime}</span>
       ),
     },
     {
       key: "eligibility",
       label: "Eligibility",
       sub: "Minimum requirements",
-      icon: <AlertCircle className="w-4 h-4 text-rose-400" />,
+      icon: <AlertCircle className={styles.rowIconRose} />,
       render: (loan) => (
-        <span className="text-xs text-slate-300 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 inline-block">
-          {loan.eligibility}
-        </span>
+        <span className={styles.eligibilityPill}>{loan.eligibility}</span>
       ),
     },
     {
       key: "features",
       label: "Key Features",
       sub: "Included benefits",
-      icon: <Check className="w-4 h-4 text-emerald-400" />,
+      icon: <Check className={styles.rowIconTeal} />,
       render: (loan) => (
-        <ul className="flex flex-col gap-2 text-left">
+        <ul className={styles.featuresList}>
           {loan.features.map((f: string, i: number) => (
-            <li key={i} className="flex items-start gap-2">
+            <li key={i} className={styles.featureListItem}>
               {featureIcon(f)}
-              <span className="text-xs text-slate-400">{f}</span>
+              <span className={styles.featureText}>{f}</span>
             </li>
           ))}
         </ul>
@@ -171,57 +166,44 @@ const LoanComparison = ({ loans, onClose }: LoanComparisonProps) => {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 16 }}
-        className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl shadow-black/40"
+        className={styles.container}
       >
-        {/* ── header ──────────────────────────────────────── */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-slate-800 border border-cyan-500/30 flex items-center justify-center">
-              <TrendingUp className="w-4.5 h-4.5 text-cyan-400" />
+        {/* header */}
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <TrendingUp className={styles.headerIconSvg} />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">
-                Loan Comparison
-              </h2>
-              <p className="text-xs text-slate-500">
-                {loans.length} loans selected
-              </p>
+              <h2 className={styles.headerTitle}>Loan Comparison</h2>
+              <p className={styles.headerSubtitle}>{loans.length} loans selected</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 hover:border-slate-500 flex items-center justify-center transition-all"
-          >
-            <X className="w-4 h-4 text-slate-400" />
+          <button onClick={onClose} className={styles.closeButton}>
+            <X className={styles.closeIcon} />
           </button>
         </div>
 
-        {/* ── scrollable table ────────────────────────────── */}
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[720px]">
+        {/* scrollable table */}
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
             <thead>
-              <tr className="border-b border-slate-800">
+              <tr className={styles.tableHeader}>
                 {/* empty corner */}
-                <th className="w-48 p-4" />
+                <th className={styles.tableCorner} />
                 {loans.map((loan) => {
                   const Icon = loan.icon;
                   return (
-                    <th key={loan.id} className="p-4 text-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <div
-                          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${loan.color} flex items-center justify-center`}
-                        >
-                          <Icon className="w-6 h-6 text-white" />
+                    <th key={loan.id} className={styles.tableHeaderCell}>
+                      <div className={styles.loanHeader}>
+                        <div className={`${styles.loanHeaderIcon} ${loan.color}`}>
+                          <Icon className={styles.loanHeaderIconSvg} />
                         </div>
-                        <p className="text-sm font-bold text-white">
-                          {loan.name}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          {loan.provider}
-                        </p>
+                        <p className={styles.loanHeaderName}>{loan.name}</p>
+                        <p className={styles.loanHeaderProvider}>{loan.provider}</p>
                         {loan.popular && (
-                          <div className="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold px-2 py-0.5 rounded-md">
-                            <Star className="w-2.5 h-2.5" />
+                          <div className={styles.popularBadge}>
+                            <Star className={styles.popularIcon} />
                             Popular
                           </div>
                         )}
@@ -236,55 +218,43 @@ const LoanComparison = ({ loans, onClose }: LoanComparisonProps) => {
               {rows.map((row, idx) => (
                 <tr
                   key={row.key}
-                  className={`border-b border-slate-800/60 ${
-                    idx % 2 === 0 ? "bg-slate-900" : "bg-slate-800/20"
-                  }`}
+                  className={`${styles.tableRow} ${idx % 2 === 0 ? styles.rowEven : styles.rowOdd}`}
                 >
                   {/* row label */}
-                  <td className="p-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center">
+                  <td className={styles.rowLabel}>
+                    <div className={styles.rowLabelContent}>
+                      <div className={styles.rowIconContainer}>
                         {row.icon}
                       </div>
                       <div>
-                        <p className="text-xs font-semibold text-slate-300">
-                          {row.label}
-                        </p>
-                        <p className="text-xs text-slate-600">{row.sub}</p>
+                        <p className={styles.rowLabelText}>{row.label}</p>
+                        <p className={styles.rowSubText}>{row.sub}</p>
                       </div>
                     </div>
                   </td>
 
                   {/* loan values */}
                   {loans.map((loan) => (
-                    <td key={loan.id} className="p-4 text-center">
+                    <td key={loan.id} className={styles.rowValue}>
                       {row.render(loan)}
                     </td>
                   ))}
                 </tr>
               ))}
 
-              {/* ── score row ──────────────────────────────── */}
-              <tr className="bg-slate-800/40">
-                <td className="p-4">
-                  <p className="text-xs font-semibold text-slate-300">
-                    Overall Score
-                  </p>
-                  <p className="text-xs text-slate-600">
-                    Based on features & value
-                  </p>
+              {/* score row */}
+              <tr className={styles.scoreRow}>
+                <td className={styles.scoreLabel}>
+                  <p className={styles.scoreLabelText}>Overall Score</p>
+                  <p className={styles.scoreSubText}>Based on features & value</p>
                 </td>
                 {loans.map((loan) => {
                   const score = getLoanScore(loan);
                   return (
-                    <td key={loan.id} className="p-4 text-center">
-                      <div className="flex flex-col items-center gap-2">
+                    <td key={loan.id} className={styles.scoreCell}>
+                      <div className={styles.scoreContent}>
                         <MiniScoreRing score={score} />
-                        <span
-                          className={`text-xs font-bold border px-2 py-0.5 rounded-md ${scoreBadge(
-                            score
-                          )}`}
-                        >
+                        <span className={`${styles.scoreBadge} ${scoreBadge(score)}`}>
                           {scoreLabel(score)}
                         </span>
                       </div>
@@ -296,16 +266,13 @@ const LoanComparison = ({ loans, onClose }: LoanComparisonProps) => {
           </table>
         </div>
 
-        {/* ── footer ──────────────────────────────────────── */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-800">
-          <span className="text-xs text-slate-500">
+        {/* footer */}
+        <div className={styles.footer}>
+          <span className={styles.footerNote}>
             Comparing {loans.length} of 3 loans max
           </span>
-          <div className="flex gap-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-semibold text-slate-400 border border-slate-700 hover:border-slate-500 rounded-lg transition-all"
-            >
+          <div className={styles.footerActions}>
+            <button onClick={onClose} className={styles.cancelButton}>
               Cancel
             </button>
             <button
@@ -315,10 +282,10 @@ const LoanComparison = ({ loans, onClose }: LoanComparisonProps) => {
                 );
                 console.log("Apply for:", best.id);
               }}
-              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold bg-gradient-to-r from-cyan-500 to-violet-500 text-white rounded-lg shadow-md shadow-cyan-500/20 hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
+              className={styles.applyButton}
             >
               Apply for Best Match
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className={styles.applyIcon} />
             </button>
           </div>
         </div>

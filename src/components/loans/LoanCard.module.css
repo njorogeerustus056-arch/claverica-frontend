@@ -1,0 +1,361 @@
+/* src/components/loans/LoanCard.module.css */
+
+:root {
+  --navy: #0A2540;
+  --purple: #8626E9;
+  --gold: #C5A028;
+  --teal: #1E6F6F;
+  --cream: #F5F0E6;
+  --white: #FFFFFF;
+  
+  --purple-10: rgba(134, 38, 233, 0.1);
+  --purple-20: rgba(134, 38, 233, 0.2);
+  --teal-10: rgba(30, 111, 111, 0.1);
+  --teal-20: rgba(30, 111, 111, 0.2);
+  --gold-10: rgba(197, 160, 40, 0.1);
+  --gold-20: rgba(197, 160, 40, 0.2);
+  --gold-30: rgba(197, 160, 40, 0.3);
+  
+  --text-primary: #0A2540;
+  --text-secondary: #1E6F6F;
+  --text-muted: #64748B;
+}
+
+.cardContainer {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid var(--gold-20);
+  background: var(--white);
+  box-shadow: 0 4px 12px rgba(10, 37, 64, 0.05);
+}
+
+.cardContainer:hover {
+  border-color: var(--gold);
+  box-shadow: 0 8px 20px rgba(197, 160, 40, 0.15);
+}
+
+.selectedCard {
+  border-color: var(--purple);
+  box-shadow: 0 8px 20px rgba(134, 38, 233, 0.15);
+}
+
+.compareCard {
+  border-color: var(--teal);
+}
+
+.cardAccent {
+  height: 2px;
+  transition: all 0.5s ease;
+  background: var(--gold-20);
+}
+
+.selectedAccent {
+  background: linear-gradient(90deg, var(--purple), var(--gold));
+}
+
+.cardContent {
+  padding: 1.25rem;
+}
+
+/* Header */
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.providerSection {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.providerLogo {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  background: var(--cream);
+  border: 1px solid var(--gold-20);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.providerName {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.fundingTime {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.125rem;
+}
+
+.fundingIcon {
+  width: 0.625rem;
+  height: 0.625rem;
+  color: var(--text-muted);
+}
+
+.fundingText {
+  font-size: 0.625rem;
+  color: var(--text-muted);
+}
+
+.badgeColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.375rem;
+}
+
+.popularBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--gold-10);
+  border: 1px solid var(--gold-20);
+  color: var(--gold);
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.popularIcon {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+.compareToggle {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 1px solid var(--gold-20);
+  background: var(--white);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.compareToggle:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.compareActive {
+  background: var(--purple-10);
+  border-color: var(--purple-20);
+  color: var(--purple);
+}
+
+.compareIcon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Loan name row */
+.loanNameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.loanIcon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(135deg, var(--purple), var(--navy));
+}
+
+.loanIconSvg {
+  width: 1.375rem;
+  height: 1.375rem;
+  color: var(--white);
+}
+
+.emergencyIcon {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--gold);
+}
+
+.loanNameContainer {
+  flex: 1;
+}
+
+.loanName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.securityBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.securityIcon {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--teal);
+}
+
+.securityText {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Stats grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.statItem {
+  text-align: center;
+  background: var(--cream);
+  border: 1px solid var(--gold-20);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.25rem;
+}
+
+.statValue {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-feature-settings: "tnum";
+}
+
+.statLabel {
+  font-size: 0.625rem;
+  color: var(--text-secondary);
+  margin-top: 0.125rem;
+}
+
+/* Eligibility chip */
+.eligibilityChip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--cream);
+  border: 1px solid var(--gold-20);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.eligibilityDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+}
+
+.dotTeal { background: var(--teal); }
+.dotPurple { background: var(--purple); }
+.dotGold { background: var(--gold); }
+
+.eligibilityLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.eligibilityValue {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Features list */
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-bottom: 1.25rem;
+}
+
+.featureItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.featureIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--teal);
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.featureText {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* CTA button */
+.ctaButton {
+  width: 100%;
+  padding: 0.625rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  border: 1px solid var(--gold-20);
+  background: var(--white);
+  color: var(--text-primary);
+}
+
+.ctaButton:hover {
+  border-color: var(--gold);
+  background: var(--cream);
+}
+
+.ctaSelected {
+  background: linear-gradient(135deg, var(--purple), var(--navy));
+  color: var(--white);
+  border: none;
+}
+
+.ctaSelected:hover {
+  background: linear-gradient(135deg, var(--gold), var(--purple));
+}
+
+.ctaIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  transition: transform 0.3s ease;
+}
+
+.ctaButton:hover .ctaIcon {
+  transform: translateX(4px);
+}

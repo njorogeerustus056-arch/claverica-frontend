@@ -17,6 +17,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
+import styles from "./RepaymentSchedule.module.css";
 
 interface RepaymentScheduleProps {
   amount: number;
@@ -37,21 +38,19 @@ const SummaryTile = ({
   icon: React.ComponentType<{ className?: string }>;
 }) => {
   const accentMap: Record<string, string> = {
-    emerald: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
-    cyan: "text-cyan-400 border-cyan-500/20 bg-cyan-500/5",
-    violet: "text-violet-400 border-violet-500/20 bg-violet-500/5",
+    teal: styles.tileTeal,
+    purple: styles.tilePurple,
+    gold: styles.tileGold,
   };
-  const cls = accentMap[accent] || accentMap.cyan;
+  const tileClass = accentMap[accent] || styles.tileTeal;
 
   return (
-    <div className={`rounded-xl border ${cls} p-4`}>
-      <div className="flex items-center gap-2 mb-2">
-        <Icon className={`w-3.5 h-3.5 ${cls.split(" ")[0]}`} />
-        <span className="text-xs text-slate-500 uppercase tracking-widest font-semibold">
-          {label}
-        </span>
+    <div className={`${styles.summaryTile} ${tileClass}`}>
+      <div className={styles.tileHeader}>
+        <Icon className={styles.tileIcon} />
+        <span className={styles.tileLabel}>{label}</span>
       </div>
-      <p className="text-xl font-bold text-white tabular-nums">{value}</p>
+      <p className={styles.tileValue}>{value}</p>
     </div>
   );
 };
@@ -110,8 +109,8 @@ const RepaymentSchedule = ({
 
   // ── pie data ────────────────────────────────────────────
   const pieData = [
-    { name: "Principal", value: Math.round(totalPrincipal), color: "#10b981" },
-    { name: "Interest", value: Math.round(totalInterest), color: "#a78bfa" },
+    { name: "Principal", value: Math.round(totalPrincipal), color: "#1E6F6F" },
+    { name: "Interest", value: Math.round(totalInterest), color: "#8626E9" },
   ];
 
   // ── early repayment estimates ───────────────────────────
@@ -139,182 +138,158 @@ const RepaymentSchedule = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+    <div className={styles.container}>
       {/* top stripe */}
-      <div className="h-0.5 bg-gradient-to-r from-emerald-500 via-cyan-500 to-violet-500" />
+      <div className={styles.topAccent} />
 
-      <div className="p-6">
+      <div className={styles.content}>
         {/* header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-slate-800 border border-violet-500/30 flex items-center justify-center">
-              <Calendar className="w-4.5 h-4.5 text-violet-400" />
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <Calendar className={styles.headerIconSvg} />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">
-                Repayment Schedule
-              </h2>
-              <p className="text-xs text-slate-500">
+              <h2 className={styles.headerTitle}>Repayment Schedule</h2>
+              <p className={styles.headerSubtitle}>
                 Full amortisation breakdown
               </p>
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={handleExport}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-400 border border-slate-700 hover:border-slate-500 rounded-lg transition-all"
-            >
-              <Download className="w-3 h-3" />
+          <div className={styles.headerActions}>
+            <button onClick={handleExport} className={styles.exportButton}>
+              <Download className={styles.buttonIcon} />
               Export
             </button>
-            <button
-              onClick={() => window.print()}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 rounded-lg transition-all"
-            >
-              <Printer className="w-3 h-3 text-cyan-400" />
+            <button onClick={() => window.print()} className={styles.printButton}>
+              <Printer className={styles.buttonIcon} />
               Print
             </button>
           </div>
         </div>
 
-        {/* ── top row: 3 summary tiles ─────────────────── */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        {/* top row: 3 summary tiles */}
+        <div className={styles.tilesGrid}>
           <SummaryTile
             label="Monthly"
             value={`$${monthlyPayment.toLocaleString()}`}
-            accent="emerald"
+            accent="teal"
             icon={DollarSign}
           />
           <SummaryTile
             label="Total Interest"
             value={`$${Math.round(totalInterest).toLocaleString()}`}
-            accent="violet"
+            accent="purple"
             icon={TrendingDown}
           />
           <SummaryTile
             label="Total Repayment"
             value={`$${totalRepayment.toLocaleString()}`}
-            accent="cyan"
+            accent="gold"
             icon={DollarSign}
           />
         </div>
 
-        {/* ── middle row: donut + early repayment ─────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+        {/* middle row: donut + early repayment */}
+        <div className={styles.middleGrid}>
           {/* donut chart card */}
-          <div className="bg-slate-800/30 border border-slate-700/40 rounded-xl p-5">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4">
-              Payment Breakdown
-            </p>
-            <div className="flex items-center justify-center">
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RePieChart>
-                    <Pie
-                      data={pieData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={48}
-                      outerRadius={72}
-                      strokeWidth={0}
-                      dataKey="value"
-                      label={({ name, percent }) =>
-                        `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
-                      }
-                      labelLine={{ stroke: "#475569", strokeWidth: 1 }}
-                    >
-                      {pieData.map((entry, i) => (
-                        <Cell key={i} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "#1e293b",
-                        border: "1px solid #334155",
-                        borderRadius: "8px",
-                        color: "#f1f5f9",
-                        fontSize: 12,
-                      }}
-                      formatter={(value: number) => [
-                        `$${value.toLocaleString()}`,
-                      ]}
-                    />
-                  </RePieChart>
-                </ResponsiveContainer>
-              </div>
+          <div className={styles.donutCard}>
+            <p className={styles.donutTitle}>Payment Breakdown</p>
+            <div className={styles.donutContainer}>
+              <ResponsiveContainer width="100%" height={200}>
+                <RePieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={48}
+                    outerRadius={72}
+                    strokeWidth={0}
+                    dataKey="value"
+                    label={({ name, percent }) =>
+                      `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
+                    }
+                    labelLine={{ stroke: "#C5A028", strokeWidth: 1 }}
+                  >
+                    {pieData.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#FFFFFF",
+                      border: "1px solid rgba(197, 160, 40, 0.2)",
+                      borderRadius: "8px",
+                      color: "#0A2540",
+                      fontSize: 12,
+                    }}
+                    formatter={(value: number) => [
+                      `$${value.toLocaleString()}`,
+                    ]}
+                  />
+                </RePieChart>
+              </ResponsiveContainer>
             </div>
             {/* legend */}
-            <div className="flex justify-center gap-5 mt-2">
+            <div className={styles.donutLegend}>
               {pieData.map((d) => (
-                <div key={d.name} className="flex items-center gap-1.5">
+                <div key={d.name} className={styles.legendItem}>
                   <div
-                    className="w-2.5 h-2.5 rounded-full"
+                    className={styles.legendDot}
                     style={{ backgroundColor: d.color }}
                   />
-                  <span className="text-xs text-slate-500">{d.name}</span>
+                  <span className={styles.legendText}>{d.name}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* early repayment card */}
-          <div className="bg-slate-800/30 border border-slate-700/40 rounded-xl p-5 flex flex-col gap-3">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
-              Early Repayment Savings
-            </p>
+          <div className={styles.earlyCard}>
+            <p className={styles.earlyTitle}>Early Repayment Savings</p>
 
             {earlyScenarios.map((s) => (
-              <div
-                key={s.label}
-                className="bg-slate-800/50 border border-slate-700/30 rounded-lg p-3"
-              >
-                <p className="text-xs text-slate-500 mb-1">{s.label}</p>
-                <p className="text-lg font-bold text-emerald-400 tabular-nums">
+              <div key={s.label} className={styles.earlyScenario}>
+                <p className={styles.scenarioLabel}>{s.label}</p>
+                <p className={styles.scenarioValue}>
                   Save ${s.saving.toLocaleString()}
                 </p>
               </div>
             ))}
 
-            <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-lg p-3 mt-auto">
-              <p className="text-xs text-emerald-400 font-semibold">
-                ✓ No prepayment penalties
-              </p>
-              <p className="text-xs text-slate-500 mt-0.5">
+            <div className={styles.earlyNote}>
+              <p className={styles.noteTitle}>✓ No prepayment penalties</p>
+              <p className={styles.noteText}>
                 Flexible early repayment available
               </p>
             </div>
           </div>
         </div>
 
-        {/* ── schedule table ──────────────────────────── */}
-        <div className="bg-slate-800/20 border border-slate-700/30 rounded-xl overflow-hidden">
+        {/* schedule table */}
+        <div className={styles.tableContainer}>
           {/* table header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/40">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
-              Monthly Breakdown
-            </p>
+          <div className={styles.tableHeader}>
+            <p className={styles.tableTitle}>Monthly Breakdown</p>
             <button
               onClick={() => setShowFull(!showFull)}
-              className="flex items-center gap-1 text-xs font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+              className={styles.tableToggle}
             >
               {showFull ? "Show Less" : "Show All"}
               {showFull ? (
-                <ChevronUp className="w-3 h-3" />
+                <ChevronUp className={styles.toggleIcon} />
               ) : (
-                <ChevronDown className="w-3 h-3" />
+                <ChevronDown className={styles.toggleIcon} />
               )}
             </button>
           </div>
 
           {/* column headers */}
-          <div className="grid grid-cols-5 gap-0 px-4 py-2 border-b border-slate-700/30">
+          <div className={styles.columnHeaders}>
             {["Month", "Payment", "Principal", "Interest", "Balance"].map(
               (h) => (
-                <p
-                  key={h}
-                  className="text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                >
+                <p key={h} className={styles.columnHeader}>
                   {h}
                 </p>
               )
@@ -327,30 +302,28 @@ const RepaymentSchedule = ({
               key={row.month}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="grid grid-cols-5 gap-0 px-4 py-2.5 border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors"
+              className={styles.tableRow}
             >
               {/* month */}
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-md bg-slate-800 flex items-center justify-center">
-                  <span className="text-xs font-semibold text-slate-300 tabular-nums">
-                    {row.month}
-                  </span>
+              <div className={styles.monthCell}>
+                <div className={styles.monthBadge}>
+                  <span className={styles.monthNumber}>{row.month}</span>
                 </div>
               </div>
               {/* payment */}
-              <p className="text-xs font-semibold text-white tabular-nums">
+              <p className={styles.paymentCell}>
                 ${row.payment.toLocaleString()}
               </p>
               {/* principal */}
-              <p className="text-xs font-semibold text-emerald-400 tabular-nums">
+              <p className={styles.principalCell}>
                 ${row.principal.toLocaleString()}
               </p>
               {/* interest */}
-              <p className="text-xs font-semibold text-violet-400 tabular-nums">
+              <p className={styles.interestCell}>
                 ${row.interest.toLocaleString()}
               </p>
               {/* balance */}
-              <p className="text-xs font-semibold text-slate-400 tabular-nums">
+              <p className={styles.balanceCell}>
                 ${row.balance.toLocaleString()}
               </p>
             </motion.div>
@@ -358,8 +331,8 @@ const RepaymentSchedule = ({
 
           {/* "more" indicator when collapsed */}
           {!showFull && schedule.length > 6 && (
-            <div className="px-4 py-2 text-center">
-              <p className="text-xs text-slate-600">
+            <div className={styles.moreIndicator}>
+              <p className={styles.moreText}>
                 +{schedule.length - 6} more months
               </p>
             </div>

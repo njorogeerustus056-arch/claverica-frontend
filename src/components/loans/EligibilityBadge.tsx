@@ -1,6 +1,7 @@
 // src/components/loans/EligibilityBadge.tsx
 import { motion } from "framer-motion";
 import { Award, TrendingUp, Shield, Zap } from "lucide-react";
+import styles from "./EligibilityBadge.module.css";
 
 interface EligibilityBadgeProps {
   score: number;         // 0-100
@@ -14,22 +15,22 @@ const STATUS_TOKENS: Record<
   { ring: string; glow: string; badge: string; text: string }
 > = {
   excellent: {
-    ring: "#10b981",           // emerald-500
-    glow: "rgba(16,185,129,0.25)",
-    badge: "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
-    text: "text-emerald-400",
+    ring: "#1E6F6F",           // teal
+    glow: "rgba(30,111,111,0.15)",
+    badge: "bg-teal-10 border-teal-20 text-teal",
+    text: "text-teal",
   },
   good: {
-    ring: "#06b6d4",           // cyan-500
-    glow: "rgba(6,182,212,0.25)",
-    badge: "bg-cyan-500/10 border-cyan-500/30 text-cyan-400",
-    text: "text-cyan-400",
+    ring: "#8626E9",           // purple
+    glow: "rgba(134,38,233,0.15)",
+    badge: "bg-purple-10 border-purple-20 text-purple",
+    text: "text-purple",
   },
   fair: {
-    ring: "#f59e0b",           // amber-500
-    glow: "rgba(245,158,11,0.25)",
-    badge: "bg-amber-500/10 border-amber-500/30 text-amber-400",
-    text: "text-amber-400",
+    ring: "#C5A028",           // gold
+    glow: "rgba(197,160,40,0.15)",
+    badge: "bg-gold-10 border-gold-20 text-gold",
+    text: "text-gold",
   },
 };
 
@@ -66,7 +67,7 @@ const ScoreRing = ({
         cy="36"
         r={R}
         fill="none"
-        stroke="#1e293b"
+        stroke="#E5E7EB"
         strokeWidth="5"
       />
       {/* progress arc */}
@@ -99,93 +100,80 @@ const EligibilityBadge = ({ score, status, amount }: EligibilityBadgeProps) => {
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.03 }}
       transition={{ duration: 0.25 }}
-      className="group relative cursor-pointer"
+      className={styles.eligibilityCard}
     >
       {/* card shell */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 transition-all duration-300 group-hover:border-slate-600">
-        {/* ── top accent stripe ─────────────────────── */}
-        <div className="h-0.5 -mx-5 -mt-5 mb-5 bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+      <div className={styles.cardContainer}>
+        {/* top accent stripe */}
+        <div className={styles.cardAccent} />
 
-        {/* ── score row ─────────────────────────────── */}
-        <div className="flex items-center gap-4">
+        {/* score row */}
+        <div className={styles.scoreRow}>
           {/* SVG ring */}
-          <div
-            className="relative flex items-center justify-center"
-            style={{
-              filter: `drop-shadow(0 0 6px ${tokens.glow})`,
-            }}
-          >
+          <div className={styles.ringContainer}>
             <ScoreRing score={score} color={tokens.ring} />
-            <span className="absolute text-lg font-bold text-white tabular-nums">
-              {score}
-            </span>
+            <span className={styles.ringScore}>{score}</span>
           </div>
 
           {/* info */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 mb-0.5">
-              <StatusIcon className={`w-3.5 h-3.5 ${tokens.text}`} />
-              <span className="text-xs text-slate-500 uppercase tracking-widest font-semibold">
-                Eligibility
-              </span>
+          <div className={styles.scoreInfo}>
+            <div className={styles.scoreHeader}>
+              <StatusIcon className={`${styles.statusIcon} ${tokens.text}`} />
+              <span className={styles.eligibilityLabel}>Eligibility</span>
             </div>
-            <p className={`text-base font-bold ${tokens.text}`}>{status}</p>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className={`${styles.statusText} ${tokens.text}`}>{status}</p>
+            <p className={styles.preapprovedText}>
               Pre-approved for{" "}
-              <span className="text-slate-300 font-semibold">
+              <span className={styles.preapprovedAmount}>
                 ${amount.toLocaleString()}
               </span>
             </p>
           </div>
 
           {/* status badge */}
-          <span
-            className={`text-xs font-bold border px-2 py-0.5 rounded-md ${tokens.badge}`}
-          >
+          <span className={`${styles.statusBadge} ${tokens.badge}`}>
             {status}
           </span>
         </div>
 
-        {/* ── sub-metrics ─────────────────────────── */}
-        <div className="mt-5 flex flex-col gap-3">
+        {/* sub-metrics */}
+        <div className={styles.metricsContainer}>
           {/* Credit Score bar */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs text-slate-500">Credit Score</span>
-              <span className="text-xs font-semibold text-slate-300">750+</span>
+          <div className={styles.metricItem}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricLabel}>Credit Score</span>
+              <span className={styles.metricValue}>750+</span>
             </div>
-            <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div className={styles.progressBar}>
               <div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-500"
+                className={styles.progressFill}
                 style={{ width: `${creditScore}%` }}
               />
             </div>
           </div>
 
           {/* Approval Chance bar */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs text-slate-500">Approval Chance</span>
-              <span className="text-xs font-semibold text-slate-300">
-                {approvalChance}%
-              </span>
+          <div className={styles.metricItem}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricLabel}>Approval Chance</span>
+              <span className={styles.metricValue}>{approvalChance}%</span>
             </div>
-            <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div className={styles.progressBar}>
               <div
-                className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 transition-all duration-500"
+                className={styles.progressFillPurple}
                 style={{ width: `${approvalChance}%` }}
               />
             </div>
           </div>
         </div>
 
-        {/* ── footer action ─────────────────────────── */}
-        <div className="mt-5 pt-4 border-t border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-slate-500">Ready to apply</span>
+        {/* footer action */}
+        <div className={styles.cardFooter}>
+          <div className={styles.footerLeft}>
+            <div className={styles.pulseDot} />
+            <span className={styles.footerText}>Ready to apply</span>
           </div>
-          <button className="text-xs font-semibold text-cyan-400 border border-cyan-500/30 bg-cyan-500/8 hover:bg-cyan-500/15 px-3 py-1 rounded-md transition-all">
+          <button className={styles.viewRatesButton}>
             View Rates →
           </button>
         </div>
@@ -193,7 +181,7 @@ const EligibilityBadge = ({ score, status, amount }: EligibilityBadgeProps) => {
 
       {/* subtle glow on hover */}
       <div
-        className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        className={styles.cardGlow}
         style={{
           boxShadow: `0 0 24px ${tokens.glow}`,
         }}

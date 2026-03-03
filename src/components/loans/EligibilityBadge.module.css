@@ -1,0 +1,252 @@
+/* src/components/loans/EligibilityBadge.module.css */
+
+/* ===== COLOR VARIABLES ===== */
+:root {
+  --navy: #0A2540;
+  --purple: #8626E9;
+  --gold: #C5A028;
+  --teal: #1E6F6F;
+  --cream: #F5F0E6;
+  --white: #FFFFFF;
+  
+  --purple-10: rgba(134, 38, 233, 0.1);
+  --purple-20: rgba(134, 38, 233, 0.2);
+  --teal-10: rgba(30, 111, 111, 0.1);
+  --teal-20: rgba(30, 111, 111, 0.2);
+  --gold-10: rgba(197, 160, 40, 0.1);
+  --gold-20: rgba(197, 160, 40, 0.2);
+  
+  --text-primary: #0A2540;
+  --text-secondary: #1E6F6F;
+}
+
+/* ===== MAIN CARD ===== */
+.eligibilityCard {
+  position: relative;
+  cursor: pointer;
+}
+
+.cardContainer {
+  background: var(--white);
+  border: 1px solid var(--gold-20);
+  border-radius: 16px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(10, 37, 64, 0.05);
+}
+
+.cardContainer:hover {
+  border-color: var(--gold);
+  box-shadow: 0 8px 20px rgba(197, 160, 40, 0.15);
+}
+
+.cardAccent {
+  height: 2px;
+  margin: -1.25rem -1.25rem 1.25rem -1.25rem;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ===== SCORE ROW ===== */
+.scoreRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.ringContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 6px var(--gold-20));
+}
+
+.ringScore {
+  position: absolute;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-feature-settings: "tnum";
+}
+
+.scoreInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.scoreHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.125rem;
+}
+
+.statusIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.eligibilityLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.statusText {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.125rem;
+}
+
+.preapprovedText {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.preapprovedAmount {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.statusBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+}
+
+/* Status badge colors */
+.bg-teal-10 { background: var(--teal-10); }
+.border-teal-20 { border-color: var(--teal-20); }
+.text-teal { color: var(--teal); }
+
+.bg-purple-10 { background: var(--purple-10); }
+.border-purple-20 { border-color: var(--purple-20); }
+.text-purple { color: var(--purple); }
+
+.bg-gold-10 { background: var(--gold-10); }
+.border-gold-20 { border-color: var(--gold-20); }
+.text-gold { color: var(--gold); }
+
+/* ===== METRICS ===== */
+.metricsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.metricItem {
+  width: 100%;
+}
+
+.metricHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.375rem;
+}
+
+.metricLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.metricValue {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.progressBar {
+  width: 100%;
+  height: 0.375rem;
+  background: var(--gold-10);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--teal), var(--teal));
+  transition: width 0.5s ease;
+}
+
+.progressFillPurple {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--purple), var(--purple));
+  transition: width 0.5s ease;
+}
+
+/* ===== FOOTER ===== */
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gold-20);
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.pulseDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.footerText {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.viewRatesButton {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--purple);
+  background: var(--purple-10);
+  border: 1px solid var(--purple-20);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.viewRatesButton:hover {
+  background: var(--purple);
+  color: var(--white);
+  border-color: var(--purple);
+}
+
+/* ===== GLOW EFFECT ===== */
+.cardGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.eligibilityCard:hover .cardGlow {
+  opacity: 1;
+}
