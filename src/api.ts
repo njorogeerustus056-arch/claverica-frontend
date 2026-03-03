@@ -167,20 +167,25 @@ export async function apiFetch<T = any>(
   }
 }
 
-// FormData upload utility for file uploads
+// ✅ FIXED: FormData upload utility for file uploads - Prevents double /api/
 export async function uploadFormData<T = any>(
   endpoint: string,
   formData: FormData
 ): Promise<T> {
-  const cleanEndpoint = endpoint.startsWith('/api/') ? endpoint : `/api${endpoint.startsWith('/') ? endpoint : '/' + endpoint}`;
-  const url = `${API_URL}${cleanEndpoint}`;
+  // Remove any leading /api/ from the endpoint first, then add exactly one
+  const cleanEndpoint = endpoint.replace(/^\/api\//, '');
+  const finalEndpoint = `/api/${cleanEndpoint}`;
+  const url = `${API_URL}${finalEndpoint}`;
   const token = getToken();
+
+  console.log(`📤 Upload Request: ${url}`); // Add logging to debug
 
   const headers: HeadersInit = {};
   
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
+  // Don't set Content-Type - browser will set it with boundary for FormData
 
   const response = await fetch(url, {
     method: "POST",
@@ -242,10 +247,10 @@ export const authAPI = {
     return apiFetch("/users/me/");
   },
 
-  // ✅ ADDED: Update profile method
+  // ✅ FIXED: Using existing settings/update endpoint that accepts PUT/PATCH
   updateProfile: async (data: any) => {
-    return apiFetch("/users/profile/", {
-      method: "PATCH",
+    return apiFetch("/users/settings/update/", {  // Changed from /users/profile/
+      method: "PUT",  // Using PUT as the backend accepts PUT/PATCH
       body: JSON.stringify(data),
     });
   },
@@ -521,7 +526,7 @@ export const api = {
   wallet: walletAPI,
   transfers: transferAPI,
   kyc: kycAPI,
-  cards: cardsAPI,  // ✅ Added cards API
+  cards: cardsAPI,
   fetch: apiFetch,
   get: <T = any>(endpoint: string, options?: RequestInit) => 
     apiFetch<T>(endpoint, { ...options, method: 'GET' }),
