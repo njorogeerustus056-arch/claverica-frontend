@@ -1,4 +1,4 @@
-// src/pages/Dashboard/AccountSettings.tsx - UPDATED WITH ONLY EXISTING APIS
+// src/pages/Dashboard/AccountSettings.tsx - FIXED VERSION USING API UTILITY
 import { useState, useEffect } from "react"; 
 import { 
   User, Mail, Phone, Lock, Shield, Bell, Eye, EyeOff, 
@@ -18,10 +18,9 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "../../lib/store/auth";
+import api from "../../api"; // ✅ Import api utility
 import toast, { Toaster } from 'react-hot-toast';
 import styles from './AccountSettings.module.css';
-
-const API_URL = import.meta.env.VITE_API_URL || "https://claverica-backend-production.up.railway.app";
 
 // Match your Django Account model exactly
 interface Account {
@@ -153,7 +152,7 @@ export default function AccountSettings() {
     security_score: 0
   });
 
-  // Fetch account data from REAL APIs only
+  // Fetch account data using api utility
   useEffect(() => {
     fetchAccountData();
   }, []);
@@ -169,26 +168,10 @@ export default function AccountSettings() {
     }
 
     try {
-      // Using /api/ prefix - CORRECT
-      const userRes = await fetch(`${API_URL}/api/users/profile/`, {
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-        },
-      });
-
-      if (!userRes.ok) {
-        throw new Error(`Failed to load user: ${userRes.statusText}`);
-      }
-
-      const userData = await userRes.json();
+      // ✅ Using api.get() instead of raw fetch
+      const userData = await api.get("/users/profile/");
       
-      // Using /api/ prefix - CORRECT
-      const settingsRes = await fetch(`${API_URL}/api/users/settings/`, {
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-        },
-      });
-
+      // ✅ Fetch settings (optional - might not exist)
       let settingsData: UserSettings = {
         profile_visibility: 'public',
         email_notifications: true,
@@ -196,8 +179,10 @@ export default function AccountSettings() {
         email_frequency: 'realtime'
       };
       
-      if (settingsRes.ok) {
-        settingsData = await settingsRes.json();
+      try {
+        settingsData = await api.get("/users/settings/");
+      } catch (settingsErr) {
+        console.log('Settings endpoint not available yet, using defaults');
       }
 
       setAccount({
@@ -298,22 +283,8 @@ export default function AccountSettings() {
     }
 
     try {
-      // Using /api/ prefix - CORRECT
-      const response = await fetch(`${API_URL}/api/users/settings/update/`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updates),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Failed to update settings: ${response.statusText}`);
-      }
-
-      const updatedSettings = await response.json();
+      // ✅ Using api.patch()
+      const updatedSettings = await api.patch("/users/settings/update/", updates);
       
       setUserSettings(prev => ({ ...prev, ...updates }));
       setSettingsForm(prev => ({ ...prev, ...updates }));
@@ -345,20 +316,8 @@ export default function AccountSettings() {
         ])
       );
 
-      // Using /api/ prefix - CORRECT
-      const response = await fetch(`${API_URL}/api/users/profile/update/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(cleanedData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Failed to update profile: ${response.statusText}`);
-      }
+      // ✅ Using api.post()
+      await api.post("/users/profile/update/", cleanedData);
 
       toast.success("Profile updated successfully");
       setShowProfileModal(false);
@@ -389,20 +348,8 @@ export default function AccountSettings() {
 
     setSaving(true);
     try {
-      // Using /api/ prefix - CORRECT
-      const response = await fetch(`${API_URL}/api/users/password/change/`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${tokens.access}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(passwordForm),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to change password");
-      }
+      // ✅ Using api.post()
+      await api.post("/users/password/change/", passwordForm);
 
       toast.success("Password changed successfully");
       setShowPasswordModal(false);
@@ -683,7 +630,7 @@ export default function AccountSettings() {
             { 
               label: "Security Score", 
               value: `${securityStatus.security_score}/100`, 
-              icon: ShieldCheck, 
+              icon: Shield, 
               colorStart: "#3B82F6",
               colorEnd: "#2563EB",
               trend: null
@@ -892,7 +839,7 @@ export default function AccountSettings() {
                         <p className={styles.settingDesc}>Extra security layer</p>
                       </div>
                     </div>
-                    <span className={`${styles.settingBadge} ${securityStatus.two_factor_enabled ? styles.badgeSuccess : styles.badgeDisabled}`}>
+                    <span className={`${styles.settingBadge} ${securityStatus.two_factor_enabled ? 'badgeSuccess' : 'badgeDisabled'}`}>
                       {securityStatus.two_factor_enabled ? 'Enabled' : 'Coming Soon'}
                     </span>
                   </div>

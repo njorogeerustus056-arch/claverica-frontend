@@ -1,4 +1,4 @@
-// src/pages/Settings.tsx - UPDATED WITH HOMEPAGE COLOR SYSTEM
+// src/pages/Settings.tsx - FIXED VERSION (removed preferences tab)
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth";
@@ -10,12 +10,10 @@ import {
   User,
   Lock,
   Bell,
-  Globe,
   Shield,
   Download,
   Trash2,
   CheckCircle2,
-  Smartphone,
   Mail,
   Key,
   Eye,
@@ -28,7 +26,6 @@ import {
   BarChart3,
   Award,
   Clock,
-  Phone,
   Mail as MailIcon,
   FileText,
   MapPin,
@@ -54,11 +51,8 @@ export default function Settings() {
     confirm_password: "",
   });
 
-  // Settings state
+  // Settings state - removed theme, language, timezone
   const [settings, setSettings] = useState({
-    theme: "light",
-    language: "en",
-    timezone: "Africa/Nairobi",
     email_notifications: true,
     two_factor_auth: false,
     marketing_emails: false,
@@ -69,7 +63,7 @@ export default function Settings() {
   useEffect(() => {
     const fetchKYCStatus = async () => {
       try {
-        const data = await api.fetch("/api/kyc/simple-status/");
+        const data = await api.fetch("/kyc/simple-status/");
         setKycStatus(data);
       } catch (error) {
         console.error("Failed to fetch KYC status:", error);
@@ -90,7 +84,7 @@ export default function Settings() {
 
   const handleSaveSettings = async () => {
     try {
-      await api.post("/api/users/settings/update/", settings);
+      await api.post("/users/settings/update/", settings);
       toast.success("Settings updated successfully!");
     } catch (error) {
       toast.error("Failed to update settings");
@@ -104,7 +98,7 @@ export default function Settings() {
       return;
     }
     try {
-      await api.post("/api/users/password/change/", passwordData);
+      await api.post("/users/password/change/", passwordData);
       toast.success("Password changed successfully!");
       setPasswordData({
         current_password: "",
@@ -145,7 +139,6 @@ export default function Settings() {
     { id: "profile", label: "Profile", icon: User },
     { id: "security", label: "Security", icon: Lock },
     { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "preferences", label: "Preferences", icon: Globe },
     { id: "account", label: "Account", icon: SettingsIcon },
   ];
 
@@ -165,7 +158,7 @@ export default function Settings() {
         <div>
           <h1 className={styles.title}>Account Settings</h1>
           <p className={styles.subtitle}>
-            Manage your preferences, security, and privacy settings
+            Manage your security and privacy settings
           </p>
         </div>
         <button onClick={handleLogout} className={styles.logoutBtn}>
@@ -601,57 +594,6 @@ export default function Settings() {
                     />
                     <span className={styles.toggleSlider}></span>
                   </label>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "preferences" && (
-            <div className={styles.contentCard}>
-              <h2 className={styles.contentTitle}>
-                <Globe className={styles.contentIcon} />
-                App Preferences
-              </h2>
-
-              <div className={styles.preferencesGrid}>
-                <div className={styles.preferenceItem}>
-                  <label>Theme</label>
-                  <select
-                    value={settings.theme}
-                    onChange={(e) => setSettings({...settings, theme: e.target.value})}
-                    className={styles.select}
-                  >
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                    <option value="auto">Auto (Follow System)</option>
-                  </select>
-                </div>
-
-                <div className={styles.preferenceItem}>
-                  <label>Language</label>
-                  <select
-                    value={settings.language}
-                    onChange={(e) => setSettings({...settings, language: e.target.value})}
-                    className={styles.select}
-                  >
-                    <option value="en">English</option>
-                    <option value="sw">Swahili</option>
-                    <option value="fr">French</option>
-                  </select>
-                </div>
-
-                <div className={styles.preferenceItem}>
-                  <label>Timezone</label>
-                  <select
-                    value={settings.timezone}
-                    onChange={(e) => setSettings({...settings, timezone: e.target.value})}
-                    className={styles.select}
-                  >
-                    <option value="Africa/Nairobi">Africa/Nairobi (EAT)</option>
-                    <option value="UTC">UTC</option>
-                    <option value="America/New_York">America/New York (EST)</option>
-                    <option value="Europe/London">Europe/London (GMT)</option>
-                  </select>
                 </div>
               </div>
             </div>
