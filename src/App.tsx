@@ -1,4 +1,4 @@
-// src/App.tsx - FIXED with Brand Colors
+// src/App.tsx - ADD EDIT PROFILE ROUTE
 import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
@@ -52,6 +52,7 @@ const ContactSupport = lazy(() => import("./pages/Dashboard/Contact"));
 const Cards = lazy(() => import("./pages/Dashboard/Cards"));
 const CardTransactions = lazy(() => import("./pages/Dashboard/CardTransactions"));
 const Profile = lazy(() => import("./pages/Dashboard/Profile"));
+const EditProfile = lazy(() => import("./pages/Dashboard/EditProfile")); // ✅ ADD THIS LINE
 const Settings = lazy(() => import("./pages/Dashboard/Settings"));
 
 // Loading component with brand colors
@@ -195,6 +196,7 @@ export default function App() {
               <Route path="cards" element={<Cards />} />
               <Route path="cards/transactions" element={<CardTransactions />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="profile/edit" element={<EditProfile />} /> {/* ✅ ADD THIS ROUTE */}
               <Route path="settings" element={<Settings />} />
             </Route>
 

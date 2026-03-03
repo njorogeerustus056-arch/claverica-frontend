@@ -698,17 +698,6 @@ export default function Profile() {
                   </div>
                   <ChevronRight className={styles.actionArrow} />
                 </button>
-
-                <button
-                  onClick={() => navigate('/dashboard/referrals')}
-                  className={styles.actionButton}
-                >
-                  <div className={styles.actionLeft}>
-                    <User className={styles.actionIcon} />
-                    <span>Refer Friends</span>
-                  </div>
-                  <ChevronRight className={styles.actionArrow} />
-                </button>
               </div>
             </div>
 

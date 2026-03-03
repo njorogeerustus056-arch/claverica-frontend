@@ -1,4 +1,4 @@
-// src/api.ts - COMPLETELY FIXED VERSION WITH CARDS API
+// src/api.ts - COMPLETELY FIXED VERSION WITH CARDS API AND UPDATEPROFILE
 import { useAuthStore } from './lib/store/auth';
 
 // ✅ CRITICAL FIX: Remove any trailing /api from the URL
@@ -240,6 +240,14 @@ export const authAPI = {
 
   getProfile: async () => {
     return apiFetch("/users/me/");
+  },
+
+  // ✅ ADDED: Update profile method
+  updateProfile: async (data: any) => {
+    return apiFetch("/users/profile/", {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
   },
 
   refresh: async (refreshToken: string) => {
