@@ -1,4 +1,4 @@
-// src/pages/Dashboard/Profile.tsx - UPDATED WITH HOMEPAGE COLOR SYSTEM
+// src/pages/Dashboard/Profile.tsx - COMPLETE WITH HOMEPAGE COLOR SYSTEM
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../lib/store/auth";
@@ -8,7 +8,7 @@ import {
   Calendar, MapPin, Building, Edit, Download,
   Share2, Award, Clock, TrendingUp, CreditCard,
   ChevronRight, Briefcase, Home, Globe, FileText,
-  Map, AlertCircle, Loader2
+  Map, AlertCircle, Loader2, Zap
 } from "lucide-react";
 import styles from './Profile.module.css';
 
@@ -267,7 +267,7 @@ export default function Profile() {
   };
 
   const downloadStatement = () => {
-    toast.info("Statement download coming soon!");
+    alert("Statement download coming soon!");
   };
 
   const completeKyc = () => {
