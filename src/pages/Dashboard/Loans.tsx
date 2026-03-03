@@ -1,4 +1,4 @@
-// src/pages/Dashboard/Loans.tsx - UPDATED WITH HOMEPAGE COLOR SYSTEM
+// src/pages/Dashboard/Loans.tsx - UPDATED WITH HOMEPAGE COLOR SYSTEM (CSS MODULES)
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -48,7 +48,7 @@ import EligibilityBadge from "../../components/loans/EligibilityBadge";
 import RepaymentSchedule from "../../components/loans/RepaymentSchedule";
 import LoanRecommendation from "../../components/loans/LoanRecommendation";
 import api from '../../api';
-import "./Loans.module.css";
+import styles from "./Loans.module.css";
 
 // ─────────────────────────────────────────────────────────────
 // LOAN PRODUCT DATA (Homepage Color System)
@@ -264,7 +264,7 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-navy/70 backdrop-blur-md"
+            className={styles.modalBackdrop}
             aria-hidden="true"
           />
           
@@ -272,84 +272,84 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-50 mx-auto max-w-md"
+            className={styles.modalContainer}
             role="dialog"
             aria-modal="true"
             aria-labelledby="success-modal-title"
           >
-            <div className="bg-cream border border-gold/20 rounded-2xl p-6 shadow-2xl shadow-navy/10">
+            <div className={styles.successModal}>
               {/* Top accent - gold to purple gradient */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-purple rounded-t-2xl" />
+              <div className={styles.modalAccent} />
               
               {/* Header with celebration */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="relative">
-                  <div className="w-12 h-12 rounded-xl bg-teal/20 flex items-center justify-center" aria-hidden="true">
-                    <CheckCircle className="w-6 h-6 text-teal" />
+              <div className={styles.modalHeader}>
+                <div className={styles.modalIconWrapper}>
+                  <div className={styles.modalIcon}>
+                    <CheckCircle className={styles.modalIconSvg} />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gold rounded-full animate-pulse" aria-hidden="true" />
+                  <div className={styles.modalPulseDot} />
                 </div>
                 <div>
-                  <h3 id="success-modal-title" className="text-lg font-bold text-navy">You're on the list! 🎉</h3>
-                  <p className="text-sm text-navy/60">Early Access Program</p>
+                  <h3 id="success-modal-title" className={styles.modalTitle}>You're on the list! 🎉</h3>
+                  <p className={styles.modalSubtitle}>Early Access Program</p>
                 </div>
               </div>
               
               {/* Message */}
-              <div className="mb-6">
-                <p className="text-navy/80 mb-3">
-                  ✨ <span className="font-semibold text-purple">{loanName}</span> interest submitted successfully!
+              <div className={styles.modalMessage}>
+                <p className={styles.modalMessageText}>
+                  ✨ <span className={styles.modalMessageHighlight}>{loanName}</span> interest submitted successfully!
                 </p>
-                <p className="text-sm text-navy/60">
+                <p className={styles.modalMessageNote}>
                   You're now in our priority queue. We'll contact you with exclusive rates when loans launch.
                 </p>
               </div>
               
               {/* Reference Card */}
-              <div className="bg-cream border border-gold/20 rounded-xl p-4 mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-purple/20 border border-purple/30 flex items-center justify-center" aria-hidden="true">
-                      <BadgeCheck className="w-4 h-4 text-purple" />
+              <div className={styles.referenceCard}>
+                <div className={styles.referenceHeader}>
+                  <div className={styles.referenceTitleWrapper}>
+                    <div className={styles.referenceIcon}>
+                      <BadgeCheck className={styles.referenceIconSvg} />
                     </div>
-                    <span className="text-sm font-medium text-navy/70">Reference ID</span>
+                    <span className={styles.referenceLabel}>Reference ID</span>
                   </div>
                   <button 
                     onClick={handleCopyReferenceId}
-                    className="text-xs font-medium text-purple hover:text-gold bg-purple/10 hover:bg-gold/10 px-2 py-1 rounded-lg transition-colors"
+                    className={styles.copyButton}
                     aria-label={`Copy reference ID: ${referenceId}`}
                   >
                     Copy
                   </button>
                 </div>
-                <div className="font-mono text-sm text-navy bg-navy/5 rounded-lg p-3 border border-gold/20">
+                <div className={styles.referenceValue}>
                   {referenceId}
                 </div>
               </div>
               
               {/* What's Next */}
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-3 bg-gold/10 border border-gold/20 rounded-xl p-3">
-                  <Rocket className="w-4 h-4 text-gold" />
+              <div className={styles.whatsNextGrid}>
+                <div className={styles.whatsNextItem}>
+                  <Rocket className={styles.whatsNextIcon} />
                   <div>
-                    <p className="text-xs font-semibold text-gold">Priority Position</p>
-                    <p className="text-xs text-navy/60">You'll be first to access when we launch</p>
+                    <p className={styles.whatsNextTitle}>Priority Position</p>
+                    <p className={styles.whatsNextText}>You'll be first to access when we launch</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3 bg-purple/10 border border-purple/20 rounded-xl p-3">
-                  <Bell className="w-4 h-4 text-purple" />
+                <div className={styles.whatsNextItem}>
+                  <Bell className={styles.whatsNextIcon} />
                   <div>
-                    <p className="text-xs font-semibold text-purple">Exclusive Updates</p>
-                    <p className="text-xs text-navy/60">Get early notifications & special offers</p>
+                    <p className={styles.whatsNextTitle}>Exclusive Updates</p>
+                    <p className={styles.whatsNextText}>Get early notifications & special offers</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3 bg-teal/10 border border-teal/20 rounded-xl p-3">
-                  <Gift className="w-4 h-4 text-teal" />
+                <div className={styles.whatsNextItem}>
+                  <Gift className={styles.whatsNextIcon} />
                   <div>
-                    <p className="text-xs font-semibold text-teal">Launch Bonus</p>
-                    <p className="text-xs text-navy/60">Eligible for early adopter rewards</p>
+                    <p className={styles.whatsNextTitle}>Launch Bonus</p>
+                    <p className={styles.whatsNextText}>Eligible for early adopter rewards</p>
                   </div>
                 </div>
               </div>
@@ -357,15 +357,15 @@ const SuccessModal = ({ isOpen, onClose, referenceId, loanName, amount, term }: 
               {/* Action Button */}
               <button
                 onClick={onClose}
-                className="w-full py-3 text-sm font-semibold text-cream bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 hover:shadow-xl hover:shadow-gold/40 transition-all duration-300 flex items-center justify-center gap-2"
+                className={styles.modalContinueButton}
                 aria-label="Continue exploring loan options"
               >
                 Continue Exploring
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className={styles.modalContinueIcon} />
               </button>
               
               {/* Small print */}
-              <p className="text-xs text-navy/50 text-center mt-4">
+              <p className={styles.modalFootnote}>
                 Our team will contact you within 24-48 hours. No commitment required.
               </p>
             </div>
@@ -407,7 +407,7 @@ const EarlyAccessModal = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-navy/70 backdrop-blur-md"
+            className={styles.earlyAccessBackdrop}
             aria-hidden="true"
           />
           
@@ -416,38 +416,38 @@ const EarlyAccessModal = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
             transition={{ type: "spring", damping: 25 }}
-            className="fixed inset-x-4 bottom-0 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md z-50"
+            className={styles.earlyAccessContainer}
             role="dialog"
             aria-modal="true"
             aria-labelledby="early-access-title"
           >
-            <div className="bg-cream border border-gold/20 rounded-2xl overflow-hidden shadow-2xl shadow-navy/20">
+            <div className={styles.earlyAccessModal}>
               {/* Animated gradient header */}
-              <div className="h-2 bg-gradient-to-r from-gold to-purple animate-pulse" aria-hidden="true" />
+              <div className={styles.earlyAccessAccent} />
               
-              <div className="p-6">
+              <div className={styles.earlyAccessContent}>
                 {/* Header */}
-                <div className="flex items-start justify-between mb-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple/20 flex items-center justify-center" aria-hidden="true">
-                      <Rocket className="w-5 h-5 text-purple" />
+                <div className={styles.earlyAccessHeader}>
+                  <div className={styles.earlyAccessHeaderLeft}>
+                    <div className={styles.earlyAccessIcon}>
+                      <Rocket className={styles.earlyAccessIconSvg} />
                     </div>
                     <div>
-                      <h3 id="early-access-title" className="text-base font-bold text-navy">Join Early Access</h3>
-                      <p className="text-xs text-navy/60">Get priority when {loanName} launches</p>
+                      <h3 id="early-access-title" className={styles.earlyAccessTitle}>Join Early Access</h3>
+                      <p className={styles.earlyAccessSubtitle}>Get priority when {loanName} launches</p>
                     </div>
                   </div>
                   <button
                     onClick={onClose}
-                    className="w-7 h-7 rounded-lg bg-cream border border-gold/20 hover:border-gold flex items-center justify-center transition-colors"
+                    className={styles.earlyAccessCloseButton}
                     aria-label="Close early access modal"
                   >
-                    <X className="w-3.5 h-3.5 text-navy/60" />
+                    <X className={styles.earlyAccessCloseIcon} />
                   </button>
                 </div>
 
                 {/* Benefits */}
-                <div className="space-y-3 mb-6">
+                <div className={styles.earlyAccessBenefits}>
                   {[
                     { icon: Target, text: "Priority position in waitlist", color: "purple" },
                     { icon: Gift, text: "Exclusive launch offers", color: "teal" },
@@ -455,63 +455,65 @@ const EarlyAccessModal = ({
                     { icon: Users, text: "Dedicated support", color: "navy" },
                   ].map((benefit, idx) => {
                     const Icon = benefit.icon;
-                    const colorClass = benefit.color === 'purple' ? 'border-purple/20 bg-purple/10 text-purple' :
-                                      benefit.color === 'teal' ? 'border-teal/20 bg-teal/10 text-teal' :
-                                      benefit.color === 'gold' ? 'border-gold/20 bg-gold/10 text-gold' :
-                                      'border-navy/20 bg-navy/10 text-navy';
+                    const colorClass = 
+                      benefit.color === 'purple' ? styles.benefitPurple :
+                      benefit.color === 'teal' ? styles.benefitTeal :
+                      benefit.color === 'gold' ? styles.benefitGold :
+                      styles.benefitNavy;
+                    
                     return (
-                      <div key={idx} className={`flex items-center gap-3 rounded-lg border p-3 ${colorClass}`}>
-                        <Icon className="w-4 h-4" />
-                        <span className="text-xs text-navy/80">{benefit.text}</span>
+                      <div key={idx} className={`${styles.benefitItem} ${colorClass}`}>
+                        <Icon className={styles.benefitIcon} />
+                        <span className={styles.benefitText}>{benefit.text}</span>
                       </div>
                     );
                   })}
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center justify-around bg-navy/5 rounded-xl p-3 mb-6">
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <Users className="w-3 h-3 text-purple" />
-                      <p className="text-lg font-bold text-navy">150+</p>
+                <div className={styles.earlyAccessStats}>
+                  <div className={styles.statItem}>
+                    <div className={styles.statIconWrapper}>
+                      <Users className={styles.statIcon} />
+                      <p className={styles.statNumber}>150+</p>
                     </div>
-                    <p className="text-xs text-navy/60">Already waiting</p>
+                    <p className={styles.statLabel}>Already waiting</p>
                   </div>
-                  <div className="h-8 w-px bg-gold/20" />
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <Calendar className="w-3 h-3 text-teal" />
-                      <p className="text-lg font-bold text-navy">Q2 2024</p>
+                  <div className={styles.statDivider} />
+                  <div className={styles.statItem}>
+                    <div className={styles.statIconWrapper}>
+                      <Calendar className={styles.statIcon} />
+                      <p className={styles.statNumber}>Q2 2024</p>
                     </div>
-                    <p className="text-xs text-navy/60">Expected launch</p>
+                    <p className={styles.statLabel}>Expected launch</p>
                   </div>
                 </div>
 
                 {/* CTA */}
-                <div className="space-y-2">
+                <div className={styles.earlyAccessCta}>
                   <button
                     onClick={onSubmit}
                     onKeyDown={handleKeyDown}
                     disabled={isSubmitting}
-                    className="w-full py-3 text-sm font-semibold text-cream bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className={styles.joinButton}
                     aria-label={`Join waitlist for ${loanName}`}
                     aria-busy={isSubmitting}
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                        <Loader2 className={styles.spinnerIcon} aria-hidden="true" />
                         <span>Submitting...</span>
                       </>
                     ) : (
                       <>
                         Join Waitlist for {loanName}
-                        <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                        <ArrowRight className={styles.arrowIcon} aria-hidden="true" />
                       </>
                     )}
                   </button>
                   <button
                     onClick={onClose}
-                    className="w-full py-2.5 text-sm font-semibold text-navy/60 hover:text-gold transition-colors"
+                    className={styles.notNowButton}
                     aria-label="Skip early access for now"
                   >
                     Not now
@@ -705,85 +707,83 @@ function LoansContent() {
   };
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className={styles.container}>
       {/* Animated background grid */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
-                        from-purple/5 via-transparent to-transparent" />
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238626E9' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
+      <div className={styles.backgroundGrid}>
+        <div className={styles.backgroundGradient} />
+        <div className={styles.backgroundPattern} />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className={styles.content}>
         {/* HEADER */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="mb-8"
+          className={styles.headerSection}
         >
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="w-14 h-14 rounded-2xl bg-purple/20 flex items-center justify-center" aria-hidden="true">
-                  <DollarSign className="w-7 h-7 text-purple" />
+          <div className={styles.headerTop}>
+            <div className={styles.headerLeft}>
+              <div className={styles.headerIconWrapper}>
+                <div className={styles.headerIcon}>
+                  <DollarSign className={styles.headerIconSvg} />
                 </div>
-                <div className="absolute -top-2 -right-2 bg-gold text-navy text-xs font-bold px-2 py-1 rounded-lg">
+                <div className={styles.earlyAccessBadge}>
                   EARLY ACCESS
                 </div>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-navy tracking-tight">Smart Loans</h1>
-                <p className="text-sm text-navy/60 mt-1">
+                <h1 className={styles.headerTitle}>Smart Loans</h1>
+                <p className={styles.headerSubtitle}>
                   Join {stats.by_product.loan}+ others on the waitlist
                 </p>
               </div>
             </div>
 
             {/* User Stats */}
-            <div className="flex items-center gap-4">
-              <div className="hidden sm:flex items-center gap-4">
-                <div className="text-right">
-                  <p className="text-xs text-navy/60">Pre-approved for</p>
-                  <p className="text-lg font-bold text-navy">$50,000</p>
-                </div>
-                <div className="h-8 w-px bg-gold/20" />
-                <div className="text-right">
-                  <p className="text-xs text-navy/60">Best Rate</p>
-                  <p className="text-lg font-bold text-teal">3.2%</p>
-                </div>
+            <div className={styles.userStats}>
+              <div className={styles.userStatItem}>
+                <p className={styles.userStatLabel}>Pre-approved for</p>
+                <p className={styles.userStatValue}>$50,000</p>
+              </div>
+              <div className={styles.statDivider} />
+              <div className={styles.userStatItem}>
+                <p className={styles.userStatLabel}>Best Rate</p>
+                <p className={`${styles.userStatValue} ${styles.rateValue}`}>3.2%</p>
               </div>
             </div>
           </div>
 
           {/* Welcome Banner */}
-          <div className="bg-cream border border-gold/20 rounded-2xl overflow-hidden">
-            <div className="h-1 bg-gradient-to-r from-gold to-purple" aria-hidden="true" />
-            <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className={styles.welcomeBanner}>
+            <div className={styles.welcomeAccent} />
+            <div className={styles.welcomeContent}>
               <div>
-                <h2 className="text-lg font-bold text-navy">
-                  Welcome back, <span className="text-purple">{user?.first_name || "valued customer"}</span>
+                <h2 className={styles.welcomeTitle}>
+                  Welcome back, <span className={styles.welcomeName}>{user?.first_name || "valued customer"}</span>
                 </h2>
-                <p className="text-sm text-navy/60 mt-1">
+                <p className={styles.welcomeText}>
                   Submit interest for exclusive early access rates
                 </p>
               </div>
-              <div className="flex items-center gap-6">
+              <div className={styles.welcomeStats}>
                 {[
                   { icon: Zap, value: "Instant", label: "Waitlist", color: "gold" },
                   { icon: Lock, value: "Secure", label: "Submission", color: "teal" },
                   { icon: Gift, value: "Bonus", label: "On Launch", color: "purple" },
                 ].map((stat) => {
                   const Icon = stat.icon;
-                  const colorClass = stat.color === 'gold' ? 'text-gold' : stat.color === 'teal' ? 'text-teal' : 'text-purple';
+                  const colorClass = 
+                    stat.color === 'gold' ? styles.statGold :
+                    stat.color === 'teal' ? styles.statTeal :
+                    styles.statPurple;
                   return (
-                    <div key={stat.label} className="text-center">
-                      <div className="flex items-center justify-center gap-1">
-                        <Icon className={`w-4 h-4 ${colorClass}`} />
-                        <p className={`text-lg font-bold ${colorClass}`}>{stat.value}</p>
+                    <div key={stat.label} className={styles.welcomeStat}>
+                      <div className={styles.welcomeStatIconWrapper}>
+                        <Icon className={`${styles.welcomeStatIcon} ${colorClass}`} />
+                        <p className={`${styles.welcomeStatValue} ${colorClass}`}>{stat.value}</p>
                       </div>
-                      <p className="text-xs text-navy/60">{stat.label}</p>
+                      <p className={styles.welcomeStatLabel}>{stat.label}</p>
                     </div>
                   );
                 })}
@@ -797,14 +797,14 @@ function LoansContent() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-8"
+          className={styles.eligibilitySection}
         >
           <div 
             onClick={handleViewRates}
             onKeyDown={handleEligibilityKeyDown}
             role="button"
             tabIndex={0}
-            className="cursor-pointer transform hover:scale-[1.02] transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2 rounded-xl"
+            className={styles.eligibilityButton}
             aria-label="View exclusive loan rates based on your eligibility score"
           >
             <EligibilityBadge
@@ -820,7 +820,7 @@ function LoansContent() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="mb-8"
+          className={styles.recommendationSection}
         >
           <LoanRecommendation
             userProfile={user}
@@ -834,7 +834,7 @@ function LoansContent() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mb-8"
+          className={styles.calculatorSection}
         >
           <LoanCalculator
             loanAmount={loanAmount}
@@ -851,34 +851,34 @@ function LoansContent() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="mb-8"
+          className={styles.productsSection}
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+          <div className={styles.productsHeader}>
             <div>
-              <h2 className="text-xl font-bold text-navy">Available Loan Products</h2>
-              <p className="text-sm text-navy/60 mt-0.5">Submit interest for early access</p>
+              <h2 className={styles.productsTitle}>Available Loan Products</h2>
+              <p className={styles.productsSubtitle}>Submit interest for early access</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className={styles.productsActions}>
               {compareLoans.length > 0 && (
                 <button
                   onClick={() => setIsComparing(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-cream bg-gradient-to-r from-purple to-gold rounded-xl shadow-lg shadow-purple/25 hover:shadow-xl hover:shadow-gold/40 transition-all focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2"
+                  className={styles.compareButton}
                   aria-label={`Compare ${compareLoans.length} selected loans`}
                 >
                   Compare ({compareLoans.length})
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className={styles.compareButtonIcon} />
                 </button>
               )}
-              <div className="flex items-center gap-2 bg-navy/5 border border-gold/20 rounded-lg px-3 py-1.5">
-                <Shield className="w-3.5 h-3.5 text-teal" />
-                <span className="text-xs text-navy/70">
-                  <span className="text-teal font-semibold">Secure</span> & encrypted
+              <div className={styles.securityBadge}>
+                <Shield className={styles.securityIcon} />
+                <span className={styles.securityText}>
+                  <span className={styles.securityHighlight}>Secure</span> & encrypted
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className={styles.loanGrid}>
             {loanProducts.map((loan) => (
               <LoanCard
                 key={loan.id}
@@ -898,7 +898,7 @@ function LoansContent() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mb-8"
+            className={styles.comparisonSection}
           >
             <div onClick={(e) => {
               const target = e.target as HTMLElement;
@@ -920,7 +920,7 @@ function LoansContent() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mb-8"
+          className={styles.repaymentSection}
         >
           <RepaymentSchedule amount={loanAmount} term={selectedTerm} interestRate={4.9} />
         </motion.div>
@@ -930,21 +930,22 @@ function LoansContent() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
+          className={styles.ctaSection}
         >
-          <div className="bg-cream border border-gold/20 rounded-2xl overflow-hidden">
-            <div className="h-1 bg-gradient-to-r from-gold via-purple to-teal animate-pulse" aria-hidden="true" />
-            <div className="p-6">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-purple/20 flex items-center justify-center" aria-hidden="true">
-                  <Rocket className="w-6 h-6 text-purple" />
+          <div className={styles.ctaBanner}>
+            <div className={styles.ctaAccent} />
+            <div className={styles.ctaContent}>
+              <div className={styles.ctaHeader}>
+                <div className={styles.ctaIcon}>
+                  <Rocket className={styles.ctaIconSvg} />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-navy">Ready for Early Access?</h3>
-                  <p className="text-sm text-navy/60">Join {stats.by_product.loan}+ others on the waitlist</p>
+                  <h3 className={styles.ctaTitle}>Ready for Early Access?</h3>
+                  <p className={styles.ctaSubtitle}>Join {stats.by_product.loan}+ others on the waitlist</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              <div className={styles.featureGrid}>
                 {[
                   { icon: Zap, label: "Priority Access", sub: "Be first in line", color: "purple" },
                   { icon: Gift, label: "Launch Bonus", sub: "Exclusive offers", color: "teal" },
@@ -952,17 +953,18 @@ function LoansContent() {
                   { icon: Lock, label: "No Commitment", sub: "Free to submit", color: "navy" },
                 ].map((feature) => {
                   const Icon = feature.icon;
-                  const colorClass = feature.color === 'purple' ? 'border-purple/20 bg-purple/5 text-purple' :
-                                    feature.color === 'teal' ? 'border-teal/20 bg-teal/5 text-teal' :
-                                    feature.color === 'gold' ? 'border-gold/20 bg-gold/5 text-gold' :
-                                    'border-navy/20 bg-navy/5 text-navy';
+                  const colorClass = 
+                    feature.color === 'purple' ? styles.featurePurple :
+                    feature.color === 'teal' ? styles.featureTeal :
+                    feature.color === 'gold' ? styles.featureGold :
+                    styles.featureNavy;
                   return (
-                    <div key={feature.label} className={`rounded-xl border ${colorClass} p-4`}>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Icon className="w-4 h-4" />
-                        <span className="text-xs font-semibold text-navy">{feature.label}</span>
+                    <div key={feature.label} className={`${styles.featureItem} ${colorClass}`}>
+                      <div className={styles.featureHeader}>
+                        <Icon className={styles.featureIcon} />
+                        <span className={styles.featureLabel}>{feature.label}</span>
                       </div>
-                      <p className="text-xs text-navy/60">{feature.sub}</p>
+                      <p className={styles.featureSubtext}>{feature.sub}</p>
                     </div>
                   );
                 })}
@@ -971,24 +973,24 @@ function LoansContent() {
               <button
                 onClick={handleStartVerification}
                 disabled={isSubmitting}
-                className="w-full py-3 text-sm font-semibold text-cream bg-gradient-to-r from-purple to-gold hover:from-gold hover:to-purple rounded-xl shadow-lg shadow-purple/25 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-purple focus:ring-offset-2"
+                className={styles.ctaButton}
                 aria-label="Join early access waitlist for loans"
                 aria-busy={isSubmitting}
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                    <Loader2 className={styles.spinnerIcon} aria-hidden="true" />
                     <span>Submitting...</span>
                   </>
                 ) : (
                   <>
                     Join Early Access Waitlist
-                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                    <ArrowRight className={styles.ctaButtonIcon} aria-hidden="true" />
                   </>
                 )}
               </button>
 
-              <p className="text-xs text-navy/60 text-center mt-4">
+              <p className={styles.ctaFootnote}>
                 No commitment required. We'll contact you when loans launch.
               </p>
             </div>

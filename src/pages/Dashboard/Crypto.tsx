@@ -15,7 +15,7 @@ import {
   Bitcoin, Ethereum, DollarSign, Euro, PoundSterling, Banknote
 } from "lucide-react";
 
-// Import components - FIXED: Changed from @/ to relative paths
+// Import components
 import { PriceTicker } from "../../components/crypto/PriceTicker";
 import { TransactionHistory } from "../../components/crypto/TransactionHistory";
 import { QuickActions } from "../../components/crypto/QuickActions";
@@ -26,6 +26,9 @@ import { FiatAccountCard } from "../../components/crypto/FiatAccountCard";
 // Import data
 import { cryptoCoins } from "../../data/cryptoCoins";
 import { fiatPlatforms } from "../../data/fiatPlatforms";
+
+// Import CSS Module
+import styles from './Crypto.module.css';
 
 interface CryptoCoin {
   symbol: string;
@@ -201,7 +204,7 @@ export default function Crypto() {
         setShowKYCModal(true);
         return false;
       } else {
-        // ✅ FIXED: Redirect to KYC page with correct path
+        // Redirect to KYC page with correct path
         navigate('/dashboard/kyc/submit', {
           state: {
             amount,
@@ -221,7 +224,7 @@ export default function Crypto() {
     return true;
   }, [isAuthenticated, isVerified, checkRequirement, navigate, kycThreshold]);
 
-  // ========== ACTION HANDLERS - FIXED WITH TRY/CATCH AND NULL CHECKS ==========
+  // ========== ACTION HANDLERS ==========
   const handleCreateWallet = async () => {
     try {
       const amount = 0;
@@ -276,10 +279,7 @@ export default function Crypto() {
 
   const handleBuyCrypto = async (coin: CryptoCoin, amount: number) => {
     try {
-      if (!coin || !amount) {
-        console.error('Missing coin or amount for buy action');
-        return;
-      }
+      if (!coin || !amount) return;
       const action = 'buy';
       const allowed = await handleKYCRequiredAction(action, amount, coin.symbol, `Buy ${coin.symbol} instantly`);
       if (allowed) {
@@ -292,10 +292,7 @@ export default function Crypto() {
 
   const handleSendCrypto = async (coin: CryptoCoin, amount: number) => {
     try {
-      if (!coin || !amount) {
-        console.error('Missing coin or amount for send action');
-        return;
-      }
+      if (!coin || !amount) return;
       const action = 'send';
       const allowed = await handleKYCRequiredAction(action, amount, coin.symbol, `Send ${coin.symbol} worldwide`);
       if (allowed) {
@@ -308,10 +305,7 @@ export default function Crypto() {
 
   const handleViewWallet = async (coin: CryptoCoin) => {
     try {
-      if (!coin) {
-        console.error('Missing coin for view wallet action');
-        return;
-      }
+      if (!coin) return;
       const action = 'view_wallet';
       const allowed = await handleKYCRequiredAction(action, coin.valueUSD, coin.symbol, `View ${coin.symbol} wallet details`);
       if (allowed) {
@@ -340,7 +334,6 @@ export default function Crypto() {
     setTimeout(() => setCopiedAddress(null), 2000);
   };
 
-  // ✅ FIXED: handleVerifyNow with correct path
   const handleVerifyNow = () => {
     navigate('/dashboard/kyc/submit', {
       state: {
@@ -376,107 +369,99 @@ export default function Crypto() {
   const losers = coins.filter(c => c.change24h < 0).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-900 dark:via-blue-900/10 dark:to-purple-900/10">
-      {/* Remove header as requested */}
-      
-      <div className="max-w-[1800px] mx-auto px-4 md:px-6 lg:px-8 py-6 space-y-6">
-        {/* Portfolio Header - Revolut style */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl blur-xl opacity-40"></div>
-                <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-2xl">
-                  <Wallet className="w-7 h-7 text-white" />
-                </div>
+    <div className={styles.cryptoContainer}>
+      <div className={styles.contentWrapper}>
+        {/* Portfolio Header */}
+        <div className={styles.portfolioHeader}>
+          <div className={styles.portfolioHeaderLeft}>
+            <div className={styles.portfolioIconWrapper}>
+              <div className={styles.portfolioIconGlow}></div>
+              <div className={styles.portfolioIcon}>
+                <Wallet className={styles.portfolioIconSvg} />
               </div>
-              <div>
-                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Total Portfolio Value</p>
-                <div className="flex items-baseline gap-3">
-                  <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white">
-                    {showBalances 
-                      ? `$${totalPortfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                      : '••••••'
-                    }
-                  </h2>
-                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold ${portfolioChange >= 0 
-                    ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400' 
-                    : 'bg-red-500/15 text-red-700 dark:text-red-400'
-                  }`}>
-                    {portfolioChange >= 0 ? (
-                      <TrendingUp className="w-4 h-4" />
-                    ) : (
-                      <TrendingDown className="w-4 h-4" />
-                    )}
-                    {portfolioChange >= 0 ? '+' : ''}{portfolioChange.toFixed(2)}%
-                  </div>
+            </div>
+            <div>
+              <p className={styles.portfolioLabel}>Total Portfolio Value</p>
+              <div className={styles.portfolioValueWrapper}>
+                <h2 className={styles.portfolioValue}>
+                  {showBalances 
+                    ? `$${totalPortfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                    : '••••••'
+                  }
+                </h2>
+                <div className={`${styles.portfolioChange} ${portfolioChange >= 0 ? styles.changePositive : styles.changeNegative}`}>
+                  {portfolioChange >= 0 ? (
+                    <TrendingUp className={styles.changeIcon} />
+                  ) : (
+                    <TrendingDown className={styles.changeIcon} />
+                  )}
+                  {portfolioChange >= 0 ? '+' : ''}{portfolioChange.toFixed(2)}%
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Quick Actions - Wise style */}
-          <div className="flex flex-wrap gap-2">
+          {/* Quick Actions */}
+          <div className={styles.quickActionsWrapper}>
             <button 
               onClick={handleDeposit}
-              className="px-5 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transition-all flex items-center gap-2 group"
+              className={`${styles.actionButton} ${styles.actionButtonPrimary}`}
             >
-              <Download className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
+              <Download className={styles.actionIcon} />
               Add Money
             </button>
             <button 
               onClick={handleWithdraw}
-              className="px-5 py-3 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl font-semibold text-sm shadow-md hover:shadow-lg border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-2 group"
+              className={`${styles.actionButton} ${styles.actionButtonSecondary}`}
             >
-              <Upload className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
+              <Upload className={styles.actionIcon} />
               Withdraw
             </button>
             <button 
               onClick={handleCreateWallet}
-              className="px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transition-all flex items-center gap-2 group"
+              className={`${styles.actionButton} ${styles.actionButtonGradient}`}
             >
-              <Key className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+              <Key className={styles.actionIcon} />
               New Wallet
             </button>
           </div>
         </div>
 
-        {/* Quick Stats Bar (Moved from header) */}
-        <div className="flex items-center gap-6 p-4 bg-white/50 dark:bg-slate-800/30 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-x-auto scrollbar-hide">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+        {/* Quick Stats Bar */}
+        <div className={styles.statsBar}>
+          <div className={styles.statsBarItem}>
+            <div className={`${styles.statusDot} ${styles.statusDotSuccess}`}></div>
+            <span className={styles.statsBarText}>
               {gainers} gaining
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+          <div className={styles.statsBarItem}>
+            <div className={`${styles.statusDot} ${styles.statusDotError}`}></div>
+            <span className={styles.statsBarText}>
               {losers} losing
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-slate-400" />
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+          <div className={styles.statsBarItem}>
+            <Globe className={styles.statsBarIcon} />
+            <span className={styles.statsBarText}>
               24h volume: ${(cryptoValue * 0.15).toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-slate-400" />
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+          <div className={styles.statsBarItem}>
+            <Users className={styles.statsBarIcon} />
+            <span className={styles.statsBarText}>
               1.2M active traders
             </span>
           </div>
-          {/* KYC Status */}
-          <div className="flex items-center gap-2 ml-auto">
-            <div className={`w-2 h-2 rounded-full ${isVerified ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`}></div>
-            <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+          <div className={`${styles.statsBarItem} ${styles.statsBarKyc}`}>
+            <div className={`${styles.statusDot} ${isVerified ? styles.statusDotSuccess : styles.statusDotWarning}`}></div>
+            <span className={styles.statsBarText}>
               {isVerified ? 'Verified' : 'Unverified'}
             </span>
           </div>
         </div>
 
-        {/* Live Price Ticker */}
+        {/* Price Ticker */}
         <PriceTicker coins={coins} />
 
         {/* KYC Progress Bar */}
@@ -488,40 +473,38 @@ export default function Crypto() {
           />
         )}
 
-        {/* Smart KYC Banner - Only show when needed */}
+        {/* Smart KYC Banner */}
         {isAuthenticated && !isVerified && totalPortfolioValue > kycThreshold * 0.7 && (
-          <div className="relative overflow-hidden rounded-2xl border border-purple-200 dark:border-purple-500/30 bg-gradient-to-r from-purple-50/50 to-pink-50/50 dark:from-purple-900/20 dark:to-pink-900/20 backdrop-blur-sm">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-pink-500/5"></div>
-            <div className="relative p-5 flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              <div className="flex-shrink-0">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-lg">
-                  <Shield className="w-6 h-6 text-white" />
+          <div className={styles.kycBanner}>
+            <div className={styles.kycBannerGlow}></div>
+            <div className={styles.kycBannerContent}>
+              <div className={styles.kycBannerIconWrapper}>
+                <div className={styles.kycBannerIcon}>
+                  <Shield className={styles.kycBannerIconSvg} />
                 </div>
               </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-lg font-bold text-purple-900 dark:text-purple-300">Unlock Full Potential</h3>
-                  <span className="px-2.5 py-1 bg-purple-200 dark:bg-purple-800 text-purple-900 dark:text-purple-300 text-xs font-bold rounded-full">
-                    Recommended
-                  </span>
+              <div className={styles.kycBannerText}>
+                <div className={styles.kycBannerHeader}>
+                  <h3 className={styles.kycBannerTitle}>Unlock Full Potential</h3>
+                  <span className={styles.kycBannerBadge}>Recommended</span>
                 </div>
-                <p className="text-sm text-purple-800/80 dark:text-purple-400/80 mb-3 max-w-2xl">
+                <p className={styles.kycBannerDescription}>
                   You're ${Math.max(0, kycThreshold - totalPortfolioValue).toLocaleString()} away from KYC requirements. 
                   Verify now to access unlimited trading, higher withdrawal limits, and advanced security features.
                 </p>
-                <div className="flex flex-wrap gap-3">
+                <div className={styles.kycBannerActions}>
                   <button 
                     onClick={handleVerifyNow}
-                    className="px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-semibold text-sm transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
+                    className={`${styles.kycBannerButton} ${styles.kycBannerButtonPrimary}`}
                   >
-                    <Lock className="w-4 h-4" />
+                    <Lock className={styles.kycBannerButtonIcon} />
                     Complete KYC
                   </button>
                   <button 
                     onClick={() => setShowKYCModal(true)}
-                    className="px-4 py-2.5 bg-white/50 dark:bg-slate-800/50 hover:bg-white/70 dark:hover:bg-slate-800/70 text-purple-700 dark:text-purple-400 rounded-xl font-semibold text-sm transition-all border border-purple-200 dark:border-purple-700/50 flex items-center gap-2"
+                    className={`${styles.kycBannerButton} ${styles.kycBannerButtonSecondary}`}
                   >
-                    <HelpCircle className="w-4 h-4" />
+                    <HelpCircle className={styles.kycBannerButtonIcon} />
                     Learn More
                   </button>
                 </div>
@@ -530,23 +513,19 @@ export default function Crypto() {
           </div>
         )}
 
-        {/* Navigation Tabs - Modern banking style */}
-        <div className="sticky top-20 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-1 border border-slate-200/50 dark:border-slate-800/50">
-          <div className="flex overflow-x-auto scrollbar-hide">
+        {/* Navigation Tabs */}
+        <div className={styles.tabContainer}>
+          <div className={styles.tabWrapper}>
             {[
-              { id: "overview", label: "Overview", icon: <BarChart3 className="w-4 h-4" /> },
-              { id: "crypto", label: "Cryptocurrency", icon: <Bitcoin className="w-4 h-4" /> },
-              { id: "fiat", label: "Fiat & Banks", icon: <Banknote className="w-4 h-4" /> },
-              { id: "cards", label: "Cards", icon: <CreditCard className="w-4 h-4" /> },
+              { id: "overview", label: "Overview", icon: <BarChart3 className={styles.tabIcon} /> },
+              { id: "crypto", label: "Cryptocurrency", icon: <Bitcoin className={styles.tabIcon} /> },
+              { id: "fiat", label: "Fiat & Banks", icon: <Banknote className={styles.tabIcon} /> },
+              { id: "cards", label: "Cards", icon: <CreditCard className={styles.tabIcon} /> },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setSelectedTab(tab.id as any)}
-                className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium text-sm transition-all whitespace-nowrap ${
-                  selectedTab === tab.id
-                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
-                }`}
+                className={`${styles.tabButton} ${selectedTab === tab.id ? styles.tabButtonActive : ''}`}
               >
                 {tab.icon}
                 {tab.label}
@@ -556,45 +535,41 @@ export default function Crypto() {
         </div>
 
         {/* Main Content Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Overview */}
-          <div className="lg:col-span-2 space-y-6">
+        <div className={styles.mainGrid}>
+          {/* Left Column */}
+          <div className={styles.leftColumn}>
             {/* Asset Allocation Chart */}
             {selectedTab === "overview" && (
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl p-6">
+              <div className={styles.chartCard}>
                 <AssetAllocationChart coins={coins} />
               </div>
             )}
 
             {/* Crypto Section */}
             {(selectedTab === "overview" || selectedTab === "crypto") && (
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
-                <div className="p-6 border-b border-slate-200 dark:border-slate-800">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-yellow-500 flex items-center justify-center">
-                        <Bitcoin className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Cryptocurrency Wallets</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{coins.length} assets</p>
-                      </div>
+              <div className={styles.sectionCard}>
+                <div className={styles.sectionHeader}>
+                  <div className={styles.sectionHeaderLeft}>
+                    <div className={`${styles.sectionIcon} ${styles.sectionIconCrypto}`}>
+                      <Bitcoin className={styles.sectionIconSvg} />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={handleCreateWallet}
-                        className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold text-sm transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Add Wallet
-                      </button>
+                    <div>
+                      <h3 className={styles.sectionTitle}>Cryptocurrency Wallets</h3>
+                      <p className={styles.sectionSubtitle}>{coins.length} assets</p>
                     </div>
                   </div>
+                  <button 
+                    onClick={handleCreateWallet}
+                    className={`${styles.sectionButton} ${styles.sectionButtonPrimary}`}
+                  >
+                    <Plus className={styles.sectionButtonIcon} />
+                    Add Wallet
+                  </button>
                 </div>
                 
-                <div className="p-6">
+                <div className={styles.sectionContent}>
                   {filteredCoins.length > 0 ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className={styles.cryptoGrid}>
                       {filteredCoins.slice(0, 4).map((coin) => (
                         <CryptoWalletCard
                           key={coin.symbol}
@@ -613,17 +588,17 @@ export default function Crypto() {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <div className="w-20 h-20 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
-                        <Bitcoin className="w-10 h-10 text-slate-400" />
+                    <div className={styles.emptyState}>
+                      <div className={styles.emptyStateIcon}>
+                        <Bitcoin className={styles.emptyStateIconSvg} />
                       </div>
-                      <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-2">No Crypto Assets</h4>
-                      <p className="text-slate-500 dark:text-slate-400 mb-4">Start your crypto journey by adding your first wallet</p>
+                      <h4 className={styles.emptyStateTitle}>No Crypto Assets</h4>
+                      <p className={styles.emptyStateText}>Start your crypto journey by adding your first wallet</p>
                       <button 
                         onClick={handleCreateWallet}
-                        className="px-5 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold text-sm transition-all shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto"
+                        className={styles.emptyStateButton}
                       >
-                        <Key className="w-4 h-4" />
+                        <Key className={styles.emptyStateButtonIcon} />
                         Create First Wallet
                       </button>
                     </div>
@@ -634,30 +609,28 @@ export default function Crypto() {
 
             {/* Fiat Section */}
             {(selectedTab === "overview" || selectedTab === "fiat") && (
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl">
-                <div className="p-6 border-b border-slate-200 dark:border-slate-800">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center">
-                        <Banknote className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Fiat Accounts</h3>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{fiatPlatforms.length} accounts</p>
-                      </div>
+              <div className={styles.sectionCard}>
+                <div className={styles.sectionHeader}>
+                  <div className={styles.sectionHeaderLeft}>
+                    <div className={`${styles.sectionIcon} ${styles.sectionIconFiat}`}>
+                      <Banknote className={styles.sectionIconSvg} />
                     </div>
-                    <button 
-                      onClick={handleDeposit}
-                      className="px-4 py-2.5 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl font-semibold text-sm transition-all border border-slate-200 dark:border-slate-700 flex items-center gap-2"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Link Account
-                    </button>
+                    <div>
+                      <h3 className={styles.sectionTitle}>Fiat Accounts</h3>
+                      <p className={styles.sectionSubtitle}>{fiatPlatforms.length} accounts</p>
+                    </div>
                   </div>
+                  <button 
+                    onClick={handleDeposit}
+                    className={`${styles.sectionButton} ${styles.sectionButtonOutline}`}
+                  >
+                    <Plus className={styles.sectionButtonIcon} />
+                    Link Account
+                  </button>
                 </div>
                 
-                <div className="p-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className={styles.sectionContent}>
+                  <div className={styles.fiatGrid}>
                     {fiatPlatforms.map((platform) => (
                       <FiatAccountCard
                         key={platform.id}
@@ -677,80 +650,80 @@ export default function Crypto() {
             )}
           </div>
 
-          {/* Right Column - Stats & Quick Actions */}
-          <div className="space-y-6">
+          {/* Right Column */}
+          <div className={styles.rightColumn}>
             {/* Portfolio Stats */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl p-6">
-              <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Portfolio Breakdown</h4>
+            <div className={styles.statsCard}>
+              <h4 className={styles.statsCardTitle}>Portfolio Breakdown</h4>
               
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-yellow-500 flex items-center justify-center">
-                      <Bitcoin className="w-5 h-5 text-white" />
+              <div className={styles.breakdownList}>
+                <div className={styles.breakdownItem}>
+                  <div className={styles.breakdownItemLeft}>
+                    <div className={`${styles.breakdownIcon} ${styles.breakdownIconCrypto}`}>
+                      <Bitcoin className={styles.breakdownIconSvg} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">Cryptocurrency</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{coins.filter(c => c.valueUSD > 0).length} assets</p>
+                      <p className={styles.breakdownName}>Cryptocurrency</p>
+                      <p className={styles.breakdownCount}>{coins.filter(c => c.valueUSD > 0).length} assets</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-slate-900 dark:text-white">
+                  <div className={styles.breakdownRight}>
+                    <p className={styles.breakdownValue}>
                       {showBalances ? `$${cryptoValue.toLocaleString()}` : '••••••'}
                     </p>
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400">+2.3%</p>
+                    <p className={styles.breakdownChange}>+2.3%</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center">
-                      <DollarSign className="w-5 h-5 text-white" />
+                <div className={styles.breakdownItem}>
+                  <div className={styles.breakdownItemLeft}>
+                    <div className={`${styles.breakdownIcon} ${styles.breakdownIconFiat}`}>
+                      <DollarSign className={styles.breakdownIconSvg} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">Fiat Currency</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{fiatPlatforms.length} accounts</p>
+                      <p className={styles.breakdownName}>Fiat Currency</p>
+                      <p className={styles.breakdownCount}>{fiatPlatforms.length} accounts</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-bold text-slate-900 dark:text-white">
+                  <div className={styles.breakdownRight}>
+                    <p className={styles.breakdownValue}>
                       {showBalances ? `$${fiatValue.toLocaleString()}` : '••••••'}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Stable</p>
+                    <p className={styles.breakdownStable}>Stable</p>
                   </div>
                 </div>
               </div>
 
               {/* Quick Stats */}
-              <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-                <h5 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3">Quick Stats</h5>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Daily Limit</p>
-                    <p className="text-sm font-bold text-slate-900 dark:text-white">
+              <div className={styles.quickStats}>
+                <h5 className={styles.quickStatsTitle}>Quick Stats</h5>
+                <div className={styles.quickStatsGrid}>
+                  <div className={styles.quickStatItem}>
+                    <p className={styles.quickStatLabel}>Daily Limit</p>
+                    <p className={styles.quickStatValue}>
                       {isVerified ? '$10,000' : `$${kycThreshold.toLocaleString()}`}
                     </p>
                   </div>
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">24h Volume</p>
-                    <p className="text-sm font-bold text-slate-900 dark:text-white">
+                  <div className={styles.quickStatItem}>
+                    <p className={styles.quickStatLabel}>24h Volume</p>
+                    <p className={styles.quickStatValue}>
                       ${(cryptoValue * 0.15).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </p>
                   </div>
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Best Performer</p>
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm font-bold text-slate-900 dark:text-white">BTC</span>
-                      <span className="text-xs text-emerald-600 dark:text-emerald-400">+4.2%</span>
+                  <div className={styles.quickStatItem}>
+                    <p className={styles.quickStatLabel}>Best Performer</p>
+                    <div className={styles.quickStatFlex}>
+                      <span className={styles.quickStatAsset}>BTC</span>
+                      <span className={styles.quickStatPositive}>+4.2%</span>
                     </div>
                   </div>
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Portfolio Risk</p>
-                    <div className="flex items-center gap-1">
-                      <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                        <div className="w-1/3 h-full bg-emerald-500 rounded-full"></div>
+                  <div className={styles.quickStatItem}>
+                    <p className={styles.quickStatLabel}>Portfolio Risk</p>
+                    <div className={styles.quickStatFlex}>
+                      <div className={styles.riskBar}>
+                        <div className={styles.riskBarFill} style={{ width: '33%' }}></div>
                       </div>
-                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Low</span>
+                      <span className={styles.quickStatLow}>Low</span>
                     </div>
                   </div>
                 </div>
@@ -758,20 +731,20 @@ export default function Crypto() {
 
               {/* KYC Quick Status */}
               {!isVerified && (
-                <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-                  <div className="flex items-center justify-between mb-3">
-                    <h5 className="text-sm font-semibold text-slate-500 dark:text-slate-400">Verification</h5>
-                    <span className="text-xs font-bold text-amber-600 dark:text-amber-400">Required</span>
+                <div className={styles.kycQuickStatus}>
+                  <div className={styles.kycQuickHeader}>
+                    <h5 className={styles.kycQuickTitle}>Verification</h5>
+                    <span className={styles.kycQuickRequired}>Required</span>
                   </div>
-                  <div className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl border border-amber-200 dark:border-amber-700/30">
-                    <p className="text-xs text-amber-800 dark:text-amber-400 mb-2">
+                  <div className={styles.kycQuickContent}>
+                    <p className={styles.kycQuickText}>
                       Verify to unlock higher limits and premium features
                     </p>
                     <button 
                       onClick={handleVerifyNow}
-                      className="w-full px-3 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white rounded-lg font-bold text-xs transition-all flex items-center justify-center gap-2"
+                      className={styles.kycQuickButton}
                     >
-                      <Shield className="w-3.5 h-3.5" />
+                      <Shield className={styles.kycQuickButtonIcon} />
                       <span>Complete Verification</span>
                     </button>
                   </div>
@@ -780,7 +753,7 @@ export default function Crypto() {
             </div>
 
             {/* Transaction History */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+            <div className={styles.transactionCard}>
               <TransactionHistory 
                 coins={coins}
                 fiatPlatforms={fiatPlatforms}
@@ -820,103 +793,102 @@ export default function Crypto() {
       {showKYCModal && pendingAction && pendingAction.creativeContext && (
         <>
           <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 animate-in fade-in"
+            className={styles.modalBackdrop}
             onClick={() => setShowKYCModal(false)}
           />
           
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl animate-in slide-in-from-bottom-8 max-h-[90vh] overflow-y-auto">
+          <div className={styles.modalContainer}>
+            <div className={styles.modalContent}>
               {/* Header */}
-              <div className="sticky top-0 bg-white dark:bg-slate-900 p-6 border-b border-slate-200 dark:border-slate-800 rounded-t-3xl z-10">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${pendingAction.creativeContext.tier.color} flex items-center justify-center shadow-lg`}>
-                    <span className="text-2xl">{pendingAction.creativeContext.icon}</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">{pendingAction.creativeContext.unlockableFeature}</h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Requires verification</p>
+              <div className={styles.modalHeader}>
+                <div className={styles.modalIconWrapper}>
+                  <div className={`${styles.modalIcon} ${pendingAction.creativeContext.tier.color}`}>
+                    <span className={styles.modalIconText}>{pendingAction.creativeContext.icon}</span>
                   </div>
                 </div>
-                
-                <div className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-purple-900 dark:text-purple-300">Action:</span>
-                    <span className="text-sm font-bold text-slate-900 dark:text-white capitalize">
-                      {pendingAction.action.replace('_', ' ')}
+                <div>
+                  <h3 className={styles.modalTitle}>{pendingAction.creativeContext.unlockableFeature}</h3>
+                  <p className={styles.modalSubtitle}>Requires verification</p>
+                </div>
+              </div>
+              
+              <div className={styles.modalActionDetails}>
+                <div className={styles.modalActionRow}>
+                  <span className={styles.modalActionLabel}>Action:</span>
+                  <span className={styles.modalActionValue}>
+                    {pendingAction.action.replace('_', ' ')}
+                  </span>
+                </div>
+                {pendingAction.asset && (
+                  <div className={styles.modalActionRow}>
+                    <span className={styles.modalActionLabel}>Asset:</span>
+                    <span className={styles.modalActionValue}>
+                      {pendingAction.asset}
                     </span>
                   </div>
-                  {pendingAction.asset && (
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-semibold text-purple-900 dark:text-purple-300">Asset:</span>
-                      <span className="text-sm font-bold text-slate-900 dark:text-white">
-                        {pendingAction.asset}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-purple-900 dark:text-purple-300">Amount:</span>
-                    <span className="text-sm font-bold text-slate-900 dark:text-white">
-                      ${pendingAction.amount.toLocaleString()}
-                    </span>
-                  </div>
+                )}
+                <div className={styles.modalActionRow}>
+                  <span className={styles.modalActionLabel}>Amount:</span>
+                  <span className={styles.modalActionValue}>
+                    ${pendingAction.amount.toLocaleString()}
+                  </span>
                 </div>
               </div>
               
               {/* Benefits */}
-              <div className="p-6">
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-3">What You'll Unlock:</h4>
-                <div className="space-y-3 mb-6">
+              <div className={styles.modalBenefits}>
+                <h4 className={styles.modalBenefitsTitle}>What You'll Unlock:</h4>
+                <div className={styles.modalBenefitsList}>
                   {pendingAction.creativeContext.benefits.map((benefit: string, index: number) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <div key={index} className={styles.modalBenefitItem}>
+                      <div className={styles.modalBenefitIcon}>
+                        <Check className={styles.modalBenefitIconSvg} />
                       </div>
-                      <span className="text-sm text-slate-700 dark:text-slate-300">{benefit}</span>
+                      <span className={styles.modalBenefitText}>{benefit}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Estimated Reward */}
                 {pendingAction.creativeContext.estimatedReward > 0 && (
-                  <div className="mb-6 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-200 dark:border-blue-700/30">
-                    <div className="flex items-center gap-2 mb-2">
-                      <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                      <span className="text-sm font-bold text-blue-700 dark:text-blue-400">Potential Reward</span>
+                  <div className={styles.modalReward}>
+                    <div className={styles.modalRewardHeader}>
+                      <TrendingUp className={styles.modalRewardIcon} />
+                      <span className={styles.modalRewardTitle}>Potential Reward</span>
                     </div>
-                    <p className="text-lg font-bold text-slate-900 dark:text-white">
+                    <p className={styles.modalRewardAmount}>
                       +${pendingAction.creativeContext.estimatedReward.toFixed(2)}
                     </p>
-                    <p className="text-xs text-blue-600/80 dark:text-blue-400/80 mt-1">
+                    <p className={styles.modalRewardNote}>
                       Estimated savings/earnings from verification
                     </p>
                   </div>
                 )}
 
                 {/* Verification Info */}
-                <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Clock className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                    <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Verification Time</span>
+                <div className={styles.modalVerificationInfo}>
+                  <div className={styles.modalVerificationHeader}>
+                    <Clock className={styles.modalVerificationIcon} />
+                    <span className={styles.modalVerificationTitle}>Verification Time</span>
                   </div>
-                  <p className="text-sm text-slate-900 dark:text-white font-semibold">
+                  <p className={styles.modalVerificationTime}>
                     {pendingAction.creativeContext.timeToVerify}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  <p className={styles.modalVerificationNote}>
                     Usually completed within this timeframe
                   </p>
                 </div>
                 
                 {/* Action Buttons */}
-                <div className="flex gap-3">
+                <div className={styles.modalActions}>
                   <button
                     onClick={() => setShowKYCModal(false)}
-                    className="flex-1 px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl font-semibold transition-all"
+                    className={styles.modalCancelButton}
                   >
                     Later
                   </button>
                   <button
                     onClick={() => {
-                      // ✅ FIXED: Modal redirect with correct path
                       navigate('/dashboard/kyc/submit', {
                         state: {
                           amount: pendingAction.amount,
@@ -929,14 +901,14 @@ export default function Crypto() {
                       });
                       setShowKYCModal(false);
                     }}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-semibold transition-all shadow-lg flex items-center justify-center gap-2"
+                    className={styles.modalConfirmButton}
                   >
-                    <Lock className="w-4 h-4" />
+                    <Lock className={styles.modalConfirmIcon} />
                     Verify Now
                   </button>
                 </div>
                 
-                <p className="text-xs text-slate-500 dark:text-slate-400 text-center mt-4">
+                <p className={styles.modalSecurityNote}>
                   Secure & encrypted document processing
                 </p>
               </div>
