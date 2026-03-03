@@ -197,8 +197,8 @@ const KYCSubmit = () => {
         return;
       }
 
-      // ✅ FIXED: Correct URL with /api/ prefix
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/kyc/documents/`, {
+      // ✅ FIXED: Correct URL - removed extra /api prefix
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/kyc/documents/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authToken}`
