@@ -1,5 +1,7 @@
+/* src/components/crypto/TransactionHistory.module.css - With Dark Mode Support */
 @import url("../../styles/variables.css");
 
+/* Container */
 .container {
   background: var(--white);
   border-radius: 1.5rem;
@@ -8,10 +10,22 @@
   overflow: hidden;
 }
 
+:global(.dark) .container {
+  background: var(--dark-card);
+  border-color: var(--dark-border);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.3);
+}
+
+/* Header */
 .header {
   padding: 1.5rem;
   border-bottom: 1px solid rgba(197, 160, 40, 0.2);
   background: linear-gradient(135deg, var(--cream), var(--white));
+}
+
+:global(.dark) .header {
+  background: linear-gradient(135deg, var(--dark-card), var(--dark-bg));
+  border-bottom-color: var(--dark-border);
 }
 
 .headerTop {
@@ -40,6 +54,10 @@
   opacity: 0.5;
 }
 
+:global(.dark) .iconGlow {
+  opacity: 0.3;
+}
+
 .iconContainer {
   position: relative;
   width: 3rem;
@@ -66,12 +84,21 @@
   letter-spacing: -0.02em;
 }
 
+:global(.dark) .headerTitle h3 {
+  color: var(--dark-text);
+}
+
 .headerTitle p {
   font-size: 0.875rem;
   color: var(--teal);
   font-weight: 500;
 }
 
+:global(.dark) .headerTitle p {
+  color: var(--gold);
+}
+
+/* Export Button */
 .exportButton {
   display: flex;
   align-items: center;
@@ -87,10 +114,21 @@
   transition: all 0.3s;
 }
 
+:global(.dark) .exportButton {
+  background: var(--dark-card);
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
 .exportButton:hover {
   background: #E8E0D0;
   border-color: var(--gold);
   transform: scale(1.05);
+}
+
+:global(.dark) .exportButton:hover {
+  background: var(--dark-bg);
+  border-color: var(--gold);
 }
 
 .exportButton:active {
@@ -102,12 +140,20 @@
   height: 1rem;
 }
 
+/* Filters */
 .filters {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
+@media (max-width: 640px) {
+  .filters {
+    flex-direction: column;
+  }
+}
+
+/* Search */
 .searchWrapper {
   flex: 1;
   position: relative;
@@ -123,6 +169,10 @@
   color: var(--teal);
 }
 
+:global(.dark) .searchIcon {
+  color: var(--gold);
+}
+
 .searchInput {
   width: 100%;
   padding: 0.625rem 1rem 0.625rem 2.5rem;
@@ -135,8 +185,18 @@
   transition: border-color 0.2s;
 }
 
+:global(.dark) .searchInput {
+  background: var(--dark-card);
+  border-color: var(--dark-border);
+  color: var(--dark-text);
+}
+
 .searchInput:focus {
   border-color: var(--purple);
+}
+
+:global(.dark) .searchInput:focus {
+  border-color: var(--gold);
 }
 
 .searchInput::placeholder {
@@ -144,6 +204,12 @@
   opacity: 0.5;
 }
 
+:global(.dark) .searchInput::placeholder {
+  color: var(--gold);
+  opacity: 0.5;
+}
+
+/* Filter Tabs */
 .filterTabs {
   display: flex;
   gap: 0.25rem;
@@ -151,6 +217,17 @@
   border-radius: 0.75rem;
   padding: 0.25rem;
   border: 1px solid rgba(197, 160, 40, 0.2);
+}
+
+:global(.dark) .filterTabs {
+  background: var(--dark-card);
+  border-color: var(--dark-border);
+}
+
+@media (max-width: 640px) {
+  .filterTabs {
+    width: 100%;
+  }
 }
 
 .filterTab {
@@ -165,8 +242,16 @@
   transition: all 0.2s;
 }
 
+:global(.dark) .filterTab {
+  color: var(--gold);
+}
+
 .filterTab:hover {
   color: var(--navy);
+}
+
+:global(.dark) .filterTab:hover {
+  color: var(--dark-text);
 }
 
 .filterTabActive {
@@ -175,11 +260,17 @@
   box-shadow: 0 4px 6px -1px rgba(134, 38, 233, 0.3);
 }
 
+:global(.dark) .filterTabActive {
+  background: linear-gradient(135deg, var(--gold), var(--purple));
+}
+
+/* Transaction List */
 .transactionList {
   max-height: 600px;
   overflow-y: auto;
 }
 
+/* Transaction Item */
 .transactionItem {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid rgba(197, 160, 40, 0.2);
@@ -187,13 +278,26 @@
   transition: all 0.2s;
 }
 
+:global(.dark) .transactionItem {
+  border-bottom-color: var(--dark-border);
+}
+
 .transactionItem:hover {
   background: var(--cream);
+}
+
+:global(.dark) .transactionItem:hover {
+  background: var(--dark-card);
 }
 
 .transactionItemSelected {
   background: rgba(30, 111, 111, 0.05);
   border-left: 4px solid var(--purple);
+}
+
+:global(.dark) .transactionItemSelected {
+  background: rgba(197, 160, 40, 0.1);
+  border-left-color: var(--gold);
 }
 
 .transactionContent {
@@ -202,6 +306,13 @@
   gap: 1rem;
 }
 
+@media (max-width: 640px) {
+  .transactionContent {
+    flex-wrap: wrap;
+  }
+}
+
+/* Icon Section */
 .iconSection {
   position: relative;
   flex-shrink: 0;
@@ -235,6 +346,11 @@
   transition: transform 0.3s;
 }
 
+:global(.dark) .transactionIcon {
+  background: linear-gradient(135deg, var(--dark-card), var(--dark-bg));
+  border-color: var(--dark-border);
+}
+
 .transactionItem:hover .transactionIcon {
   transform: scale(1.1);
 }
@@ -252,12 +368,38 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
+:global(.dark) .typeBadge {
+  border-color: var(--dark-card);
+}
+
 .typeBadge svg {
   width: 100%;
   height: 100%;
   color: var(--white);
 }
 
+/* Type Colors */
+.typeBuy {
+  background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.typeSell {
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+}
+
+.typeDeposit {
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+}
+
+.typeWithdrawal {
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+
+.typeTransfer {
+  background: linear-gradient(135deg, var(--purple), #6D28D9);
+}
+
+/* Details */
 .details {
   flex: 1;
   min-width: 0;
@@ -268,6 +410,7 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.375rem;
+  flex-wrap: wrap;
 }
 
 .detailsTitle {
@@ -276,6 +419,11 @@
   color: var(--navy);
 }
 
+:global(.dark) .detailsTitle {
+  color: var(--dark-text);
+}
+
+/* Status Badge */
 .statusBadge {
   display: flex;
   align-items: center;
@@ -293,16 +441,31 @@
   border-color: rgba(30, 111, 111, 0.3);
 }
 
+:global(.dark) .statusBadgeCompleted {
+  background: rgba(30, 111, 111, 0.2);
+  color: #34D399;
+}
+
 .statusBadgePending {
   background: rgba(245, 158, 11, 0.1);
-  color: var(--warning);
+  color: #F59E0B;
   border-color: rgba(245, 158, 11, 0.3);
+}
+
+:global(.dark) .statusBadgePending {
+  background: rgba(245, 158, 11, 0.2);
+  color: #FBBF24;
 }
 
 .statusBadgeFailed {
   background: rgba(211, 47, 47, 0.1);
-  color: var(--error);
+  color: #DC2626;
   border-color: rgba(211, 47, 47, 0.3);
+}
+
+:global(.dark) .statusBadgeFailed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #F87171;
 }
 
 .statusIcon {
@@ -310,6 +473,7 @@
   height: 0.75rem;
 }
 
+/* KYC Badge */
 .kycBadge {
   display: flex;
   align-items: center;
@@ -323,11 +487,18 @@
   border: 1px solid rgba(134, 38, 233, 0.3);
 }
 
+:global(.dark) .kycBadge {
+  background: rgba(197, 160, 40, 0.2);
+  color: var(--gold);
+  border-color: rgba(197, 160, 40, 0.3);
+}
+
 .kycIcon {
   width: 0.75rem;
   height: 0.75rem;
 }
 
+/* Meta Info */
 .metaInfo {
   display: flex;
   align-items: center;
@@ -335,6 +506,11 @@
   font-size: 0.875rem;
   color: var(--teal);
   margin-bottom: 0.25rem;
+  flex-wrap: wrap;
+}
+
+:global(.dark) .metaInfo {
+  color: var(--gold);
 }
 
 .metaIcon {
@@ -347,6 +523,10 @@
   opacity: 0.3;
 }
 
+:global(.dark) .metaSeparator {
+  color: var(--purple);
+}
+
 .recipientInfo {
   font-size: 0.75rem;
   color: var(--navy);
@@ -354,9 +534,22 @@
   margin-top: 0.125rem;
 }
 
+:global(.dark) .recipientInfo {
+  color: var(--dark-text);
+}
+
+/* Amount Section */
 .amountSection {
   text-align: right;
   flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .amountSection {
+    width: 100%;
+    text-align: left;
+    margin-left: 4.5rem;
+  }
 }
 
 .amount {
@@ -370,8 +563,16 @@
   color: var(--teal);
 }
 
+:global(.dark) .amountPositive {
+  color: #34D399;
+}
+
 .amountNegative {
   color: var(--error);
+}
+
+:global(.dark) .amountNegative {
+  color: #F87171;
 }
 
 .assetAmount {
@@ -381,6 +582,11 @@
   font-family: monospace;
 }
 
+:global(.dark) .assetAmount {
+  color: var(--gold);
+}
+
+/* View Details */
 .viewDetails {
   margin-top: 0.5rem;
   display: flex;
@@ -392,17 +598,40 @@
   opacity: 0;
   transition: opacity 0.2s;
   justify-content: flex-end;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+:global(.dark) .viewDetails {
+  color: var(--gold);
 }
 
 .transactionItem:hover .viewDetails {
   opacity: 1;
 }
 
+.viewAllIcon {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.2s;
+}
+
+.viewDetails:hover .viewAllIcon,
+.viewAllButton:hover .viewAllIcon {
+  transform: translate(0.125rem, -0.125rem);
+}
+
+/* Expanded Details */
 .expandedDetails {
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(197, 160, 40, 0.2);
   animation: slideDown 0.3s ease-out;
+}
+
+:global(.dark) .expandedDetails {
+  border-top-color: var(--dark-border);
 }
 
 .detailsGrid {
@@ -411,10 +640,20 @@
   gap: 0.75rem;
 }
 
+@media (max-width: 640px) {
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .detailBox {
   padding: 0.75rem;
   background: var(--cream);
   border-radius: 0.75rem;
+}
+
+:global(.dark) .detailBox {
+  background: var(--dark-card);
 }
 
 .detailLabel {
@@ -424,6 +663,10 @@
   margin-bottom: 0.25rem;
 }
 
+:global(.dark) .detailLabel {
+  color: var(--gold);
+}
+
 .detailValue {
   font-size: 0.75rem;
   font-weight: 700;
@@ -431,6 +674,11 @@
   font-family: monospace;
 }
 
+:global(.dark) .detailValue {
+  color: var(--dark-text);
+}
+
+/* Footer */
 .footer {
   padding: 1rem 1.5rem;
   border-top: 1px solid rgba(197, 160, 40, 0.2);
@@ -440,10 +688,19 @@
   justify-content: space-between;
 }
 
+:global(.dark) .footer {
+  background: var(--dark-card);
+  border-top-color: var(--dark-border);
+}
+
 .footerText {
   font-size: 0.875rem;
   color: var(--teal);
   font-weight: 500;
+}
+
+:global(.dark) .footerText {
+  color: var(--gold);
 }
 
 .viewAllButton {
@@ -461,20 +718,19 @@
   border-radius: 0.5rem;
 }
 
+:global(.dark) .viewAllButton {
+  color: var(--gold);
+}
+
 .viewAllButton:hover {
   background: rgba(134, 38, 233, 0.1);
 }
 
-.viewAllIcon {
-  width: 1rem;
-  height: 1rem;
-  transition: transform 0.2s;
+:global(.dark) .viewAllButton:hover {
+  background: rgba(197, 160, 40, 0.1);
 }
 
-.viewAllButton:hover .viewAllIcon {
-  transform: translate(0.125rem, -0.125rem);
-}
-
+/* Animations */
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -483,38 +739,5 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@media (max-width: 640px) {
-  .header {
-    padding: 1rem;
-  }
-  
-  .filters {
-    flex-direction: column;
-  }
-  
-  .filterTabs {
-    width: 100%;
-  }
-  
-  .filterTab {
-    flex: 1;
-    text-align: center;
-  }
-  
-  .transactionContent {
-    flex-wrap: wrap;
-  }
-  
-  .amountSection {
-    width: 100%;
-    text-align: left;
-    margin-left: 4.5rem;
-  }
-  
-  .detailsGrid {
-    grid-template-columns: 1fr;
   }
 }

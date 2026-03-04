@@ -1,5 +1,7 @@
+// src/components/crypto/KYCProgressBar.tsx
 import { TrendingUp, Zap, Target, Award } from 'lucide-react';
 import { KYC_CREATIVES } from '../../lib/utils/kycCreatives';
+import styles from './KYCProgressBar.module.css';
 
 interface KYCProgressBarProps {
   portfolioValue: number;
@@ -16,79 +18,85 @@ export const KYCProgressBar = ({
   const difference = kycThreshold - portfolioValue;
   const tier = KYC_CREATIVES.getVerificationTier(portfolioValue);
   
-  const getProgressColor = () => {
-    if (progress >= 100) return 'from-emerald-500 to-green-500';
-    if (progress >= 70) return 'from-blue-500 to-cyan-500';
-    if (progress >= 40) return 'from-purple-500 to-pink-500';
-    return 'from-orange-500 to-red-500';
+  const getIconWrapperClass = () => {
+    if (progress >= 100) return styles.iconWrapperComplete;
+    if (progress >= 70) return styles.iconWrapperNear;
+    if (progress >= 40) return styles.iconWrapperProgress;
+    return styles.iconWrapperWarning;
+  };
+
+  const getProgressBarClass = () => {
+    if (progress >= 100) return styles.progressBarComplete;
+    if (progress >= 70) return styles.progressBarNear;
+    if (progress >= 40) return styles.progressBarProgress;
+    return styles.progressBarWarning;
+  };
+
+  const getTierBadgeClass = () => {
+    switch(tier.name) {
+      case 'Basic': return styles.tierBadgeBasic;
+      case 'Silver': return styles.tierBadgeSilver;
+      case 'Gold': return styles.tierBadgeGold;
+      case 'Platinum': return styles.tierBadgePlatinum;
+      default: return styles.tierBadgeBasic;
+    }
   };
   
   return (
-    <div className="bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 shadow-lg">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getProgressColor()} flex items-center justify-center shadow-lg`}>
-            <Target className="w-6 h-6 text-white" strokeWidth={2.5} />
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <div className={`${styles.iconWrapper} ${getIconWrapperClass()}`}>
+            <Target className={styles.icon} />
           </div>
-          <div>
-            <h4 className="text-lg font-bold text-slate-900 dark:text-white">Verification Progress</h4>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+          <div className={styles.title}>
+            <h4>Verification Progress</h4>
+            <p className={styles.subtitle}>
               Unlock higher limits & premium features
             </p>
           </div>
         </div>
         
-        <div className="text-right">
-          <div className={`px-3 py-1.5 rounded-full text-sm font-bold bg-gradient-to-br ${tier.color} text-white shadow-md`}>
-            {tier.name} Tier
-          </div>
+        <div className={`${styles.tierBadge} ${getTierBadgeClass()}`}>
+          {tier.name} Tier
         </div>
       </div>
       
       {/* Progress bar */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Current: ${portfolioValue.toLocaleString()}
-          </span>
-          <span className="text-sm font-bold text-slate-900 dark:text-white">
-            {Math.round(progress)}%
-          </span>
-          <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Goal: ${kycThreshold.toLocaleString()}
-          </span>
+      <div className={styles.progressSection}>
+        <div className={styles.statsRow}>
+          <span className={styles.statLabel}>Current: ${portfolioValue.toLocaleString()}</span>
+          <span className={styles.statValue}>{Math.round(progress)}%</span>
+          <span className={styles.statLabel}>Goal: ${kycThreshold.toLocaleString()}</span>
         </div>
         
-        <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+        <div className={styles.progressBarContainer}>
           <div 
-            className={`h-full bg-gradient-to-r ${getProgressColor()} rounded-full transition-all duration-1000 ease-out`}
+            className={`${styles.progressBar} ${getProgressBarClass()}`}
             style={{ width: `${progress}%` }}
           />
         </div>
         
         {progress < 100 && (
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 text-center">
+          <p className={styles.message}>
             {KYC_CREATIVES.getProgressMessage(portfolioValue, kycThreshold)}
           </p>
         )}
       </div>
       
       {/* Tier benefits */}
-      <div className="grid grid-cols-3 gap-3 mb-4">
+      <div className={styles.benefitsGrid}>
         {tier.benefits.map((benefit, index) => (
-          <div 
-            key={index} 
-            className="p-3 bg-slate-100 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <div className={`w-6 h-6 rounded-full bg-gradient-to-br ${tier.color} flex items-center justify-center`}>
+          <div key={index} className={styles.benefitItem}>
+            <div className={styles.benefitHeader}>
+              <div className={`${styles.benefitIcon} ${getIconWrapperClass()}`}>
                 <CheckIcon />
               </div>
-              <span className="text-xs font-bold text-slate-900 dark:text-white">
+              <span className={styles.benefitName}>
                 {benefit.split(':')[0]}
               </span>
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
+            <p className={styles.benefitDesc}>
               {benefit.split(':')[1] || benefit}
             </p>
           </div>
@@ -96,27 +104,27 @@ export const KYCProgressBar = ({
       </div>
       
       {/* Action buttons */}
-      <div className="flex gap-3">
+      <div className={styles.actions}>
         {progress >= 100 ? (
           <button
             onClick={onVerifyClick}
-            className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-xl font-bold text-sm transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
+            className={`${styles.primaryButton} ${styles.primaryButtonComplete}`}
           >
-            <Award className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            <Award className={styles.primaryButtonIcon} />
             <span>Complete Verification</span>
-            <Zap className="w-4 h-4" />
+            <Zap className={styles.primaryButtonIcon} />
           </button>
         ) : (
           <>
             <button
               onClick={onVerifyClick}
-              className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold text-sm transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group"
+              className={styles.primaryButton}
             >
-              <TrendingUp className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <TrendingUp className={styles.primaryButtonIcon} />
               <span>Verify Early</span>
             </button>
-            <button className="px-4 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl font-bold text-sm transition-all border border-slate-200 dark:border-slate-700 flex items-center gap-2">
-              <span>Need ${difference}</span>
+            <button className={styles.secondaryButton}>
+              Need ${Math.ceil(difference)}
             </button>
           </>
         )}
@@ -124,27 +132,25 @@ export const KYCProgressBar = ({
       
       {/* Quick stats */}
       {progress < 100 && (
-        <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-          <div className="flex items-center justify-center gap-6">
-            <div className="text-center">
-              <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-1">
-                <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400">Verify in</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">
-                {KYC_CREATIVES.getTimeToVerify()}
-              </p>
+        <div className={styles.quickStats}>
+          <div className={styles.quickStat}>
+            <div className={styles.quickStatIcon}>
+              <Zap />
             </div>
-            
-            <div className="text-center">
-              <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto mb-1">
-                <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <p className="text-xs text-slate-600 dark:text-slate-400">Next Tier</p>
-              <p className="text-sm font-bold text-slate-900 dark:text-white">
-                ${kycThreshold.toLocaleString()}
-              </p>
+            <p className={styles.quickStatLabel}>Verify in</p>
+            <p className={styles.quickStatValue}>
+              {KYC_CREATIVES.getTimeToVerify()}
+            </p>
+          </div>
+          
+          <div className={styles.quickStat}>
+            <div className={styles.quickStatIcon}>
+              <TrendingUp />
             </div>
+            <p className={styles.quickStatLabel}>Next Tier</p>
+            <p className={styles.quickStatValue}>
+              ${kycThreshold.toLocaleString()}
+            </p>
           </div>
         </div>
       )}
@@ -153,7 +159,7 @@ export const KYCProgressBar = ({
 };
 
 const CheckIcon = () => (
-  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <svg className={styles.checkIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
   </svg>
 );

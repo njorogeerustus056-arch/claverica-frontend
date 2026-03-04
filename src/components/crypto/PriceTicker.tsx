@@ -1,6 +1,7 @@
 // src/components/crypto/PriceTicker.tsx
 import { useEffect, useState } from 'react';
 import { TrendingUp, TrendingDown, RefreshCw, Zap, Activity, PauseCircle, PlayCircle, Star } from 'lucide-react';
+import styles from './PriceTicker.module.css';
 
 interface PriceTickerProps {
   coins: Array<{
@@ -49,45 +50,35 @@ export const PriceTicker = ({ coins }: PriceTickerProps) => {
   const isPositiveMarket = marketSentiment >= 0;
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl border border-slate-700/50 shadow-2xl">
+    <div className={styles.priceTicker}>
       {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 animate-gradient-shift" />
+      <div className={styles.animatedBg} />
       
       {/* Glow effect */}
-      <div className={`absolute inset-0 opacity-30 transition-opacity duration-1000 ${
-        isPositiveMarket 
-          ? 'bg-gradient-to-r from-emerald-500/10 via-transparent to-emerald-500/10' 
-          : 'bg-gradient-to-r from-red-500/10 via-transparent to-red-500/10'
-      }`} />
+      <div className={`${styles.glowEffect} ${isPositiveMarket ? styles.glowPositive : styles.glowNegative}`} />
 
       {/* Header */}
-      <div className="relative flex items-center justify-between px-6 py-4 border-b border-slate-700/50 backdrop-blur-sm">
-        <div className="flex items-center gap-4">
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
           {/* Icon with pulse effect */}
-          <div className="relative">
-            <div className={`absolute inset-0 rounded-xl blur-xl opacity-60 ${
-              isPositiveMarket ? 'bg-emerald-500' : 'bg-red-500'
-            } animate-pulse`} />
-            <div className={`relative w-10 h-10 rounded-xl flex items-center justify-center shadow-lg bg-gradient-to-br ${
-              isPositiveMarket 
-                ? 'from-emerald-500 to-green-600' 
-                : 'from-red-500 to-rose-600'
-            }`}>
-              <Activity className="w-5 h-5 text-white" strokeWidth={2.5} />
+          <div className={styles.iconWrapper}>
+            <div className={`${styles.iconPulse} ${isPositiveMarket ? styles.iconPulsePositive : styles.iconPulseNegative}`} />
+            <div className={`${styles.iconContainer} ${isPositiveMarket ? styles.iconContainerPositive : styles.iconContainerNegative}`}>
+              <Activity className={styles.icon} />
             </div>
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <h3 className={styles.headerTitle}>
               Live Market Prices
-              <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-white/10 text-white">
-                <Zap className="w-3 h-3" />
+              <span className={styles.liveBadge}>
+                <Zap className={styles.icon} />
                 Real-time
               </span>
             </h3>
-            <p className="text-xs text-slate-400 font-medium">
+            <p className={styles.marketStatus}>
               Market {isPositiveMarket ? '🟢' : '🔴'} 
-              <span className={`ml-1 font-bold ${isPositiveMarket ? 'text-emerald-400' : 'text-red-400'}`}>
+              <span className={`${styles.marketStatusPositive} ${isPositiveMarket ? styles.marketStatusPositive : styles.marketStatusNegative}`}>
                 {isPositiveMarket ? '+' : ''}{marketSentiment.toFixed(2)}%
               </span>
             </p>
@@ -95,26 +86,24 @@ export const PriceTicker = ({ coins }: PriceTickerProps) => {
         </div>
 
         {/* Controls */}
-        <div className="flex items-center gap-3">
+        <div className={styles.controls}>
           <button
             onClick={handleRefresh}
-            className={`p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20 transition-all hover:scale-105 active:scale-95 ${
-              isRefreshing ? 'animate-spin' : ''
-            }`}
+            className={`${styles.controlButton} ${isRefreshing ? styles.refreshSpinning : ''}`}
           >
-            <RefreshCw className="w-4 h-4 text-white" strokeWidth={2.5} />
+            <RefreshCw className={styles.controlIcon} />
           </button>
           
           <button
             onClick={() => setIsPaused(!isPaused)}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 hover:border-white/20 transition-all hover:scale-105 active:scale-95"
+            className={styles.controlButton}
           >
             {isPaused ? (
-              <PlayCircle className="w-4 h-4 text-white" strokeWidth={2.5} />
+              <PlayCircle className={styles.controlIcon} />
             ) : (
-              <PauseCircle className="w-4 h-4 text-white" strokeWidth={2.5} />
+              <PauseCircle className={styles.controlIcon} />
             )}
-            <span className="text-xs font-bold text-white">
+            <span className={styles.controlText}>
               {isPaused ? 'Paused' : 'Live'}
             </span>
           </button>
@@ -122,39 +111,28 @@ export const PriceTicker = ({ coins }: PriceTickerProps) => {
       </div>
 
       {/* Ticker Items */}
-      <div className="relative px-4 py-4 overflow-hidden">
-        <div className="flex gap-4 overflow-x-auto scrollbar-hide">
+      <div className={styles.tickerContainer}>
+        <div className={styles.tickerTrack}>
           {visibleCoins.map((coin, index) => {
             const isPositive = coin.change24h >= 0;
             
             return (
-              <div
-                key={`${coin.symbol}-${index}`}
-                className="flex-shrink-0 group relative"
-              >
+              <div key={`${coin.symbol}-${index}`} className={styles.tickerItem}>
                 {/* Card */}
-                <div className={`relative px-5 py-3.5 rounded-2xl transition-all duration-300 hover:scale-105 cursor-pointer border ${
-                  isPositive 
-                    ? 'bg-gradient-to-br from-emerald-500/10 to-green-500/5 border-emerald-500/30 hover:border-emerald-500/50 hover:bg-emerald-500/20' 
-                    : 'bg-gradient-to-br from-red-500/10 to-rose-500/5 border-red-500/30 hover:border-red-500/50 hover:bg-red-500/20'
-                }`}>
+                <div className={`${styles.coinCard} ${isPositive ? styles.coinCardPositive : styles.coinCardNegative}`}>
                   {/* Glow effect on hover */}
-                  <div className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity blur-xl ${
-                    isPositive ? 'bg-emerald-500/20' : 'bg-red-500/20'
-                  }`} />
+                  <div className={`${styles.cardGlow} ${isPositive ? styles.cardGlowPositive : styles.cardGlowNegative}`} />
                   
-                  <div className="relative flex items-center gap-4">
-                    {/* Coin Symbol */}
-                    <div className="flex flex-col items-start gap-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base font-bold text-white tracking-tight">{coin.symbol}</span>
-                        {index < 3 && (
-                          <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                        )}
+                  <div className={styles.cardContent}>
+                    {/* Coin Info */}
+                    <div className={styles.coinInfo}>
+                      <div className={styles.coinHeader}>
+                        <span className={styles.coinSymbol}>{coin.symbol}</span>
+                        {index < 3 && <Star className={styles.starIcon} />}
                       </div>
                       
                       {/* Price */}
-                      <span className="text-sm font-mono font-bold text-white tabular-nums">
+                      <span className={styles.coinPrice}>
                         ${coin.price.toLocaleString(undefined, {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: coin.price < 1 ? 6 : 2
@@ -163,24 +141,20 @@ export const PriceTicker = ({ coins }: PriceTickerProps) => {
                     </div>
 
                     {/* Separator */}
-                    <div className="w-px h-10 bg-white/10" />
+                    <div className={styles.separator} />
 
                     {/* Change Badge */}
-                    <div className={`flex flex-col items-end gap-1.5 min-w-[80px]`}>
-                      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs shadow-lg ${
-                        isPositive
-                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                          : 'bg-red-500/20 text-red-300 border border-red-500/40'
-                      }`}>
+                    <div className={styles.changeBadge}>
+                      <div className={`${styles.changeValue} ${isPositive ? styles.changeValuePositive : styles.changeValueNegative}`}>
                         {isPositive ? (
-                          <TrendingUp className="w-3.5 h-3.5" strokeWidth={2.5} />
+                          <TrendingUp className={styles.changeIcon} />
                         ) : (
-                          <TrendingDown className="w-3.5 h-3.5" strokeWidth={2.5} />
+                          <TrendingDown className={styles.changeIcon} />
                         )}
-                        <span className="tabular-nums">{isPositive ? '+' : ''}{coin.change24h.toFixed(2)}%</span>
+                        <span>{isPositive ? '+' : ''}{coin.change24h.toFixed(2)}%</span>
                       </div>
                       
-                      <span className="text-xs text-slate-400 font-medium">24h</span>
+                      <span className={styles.changeText}>24h</span>
                     </div>
                   </div>
                 </div>
@@ -190,32 +164,32 @@ export const PriceTicker = ({ coins }: PriceTickerProps) => {
         </div>
 
         {/* Gradient Overlays */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-slate-900 via-slate-900/80 to-transparent pointer-events-none" />
+        <div className={styles.overlayLeft} />
+        <div className={styles.overlayRight} />
       </div>
 
       {/* Footer Stats */}
-      <div className="relative px-6 py-3 border-t border-slate-700/50 bg-slate-900/50 backdrop-blur-sm">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-xs font-medium text-slate-400">
+      <div className={styles.footer}>
+        <div className={styles.footerContent}>
+          <div className={styles.statsGroup}>
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.statDotGaining}`} />
+              <span className={styles.statText}>
                 {coins.filter(c => c.change24h >= 0).length} gaining
               </span>
             </div>
             
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-              <span className="text-xs font-medium text-slate-400">
+            <div className={styles.statItem}>
+              <div className={`${styles.statDot} ${styles.statDotLosing}`} />
+              <span className={styles.statText}>
                 {coins.filter(c => c.change24h < 0).length} losing
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Activity className="w-3.5 h-3.5 text-slate-500" />
-            <span className="text-xs text-slate-400 font-medium">
+          <div className={styles.trackingInfo}>
+            <Activity className={styles.trackingIcon} />
+            <span className={styles.trackingText}>
               Tracking {coins.length} cryptocurrencies
             </span>
           </div>
@@ -224,16 +198,3 @@ export const PriceTicker = ({ coins }: PriceTickerProps) => {
     </div>
   );
 };
-
-// Add to your global CSS for gradient animation
-const gradientAnimation = `
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-.animate-gradient-shift {
-  background-size: 200% 200%;
-  animation: gradient-shift 8s ease infinite;
-}
-`;
