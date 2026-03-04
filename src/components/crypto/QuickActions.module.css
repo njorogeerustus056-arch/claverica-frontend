@@ -1,0 +1,606 @@
+@import url("../../styles/variables.css");
+
+.floatingButton {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 50;
+}
+
+.button {
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--purple), var(--teal));
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.3);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.buttonOpen {
+  transform: scale(0.95) rotate(45deg);
+}
+
+.buttonClosed {
+  transform: scale(1);
+}
+
+.buttonClosed:hover {
+  transform: scale(1.1);
+}
+
+.pulseRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  background: var(--purple);
+  opacity: 0.3;
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--purple), var(--teal));
+  filter: blur(12px);
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.button:hover .glow {
+  opacity: 0.7;
+}
+
+.icon {
+  position: relative;
+  z-index: 10;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--white);
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--navy);
+  color: var(--white);
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  white-space: nowrap;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.button:hover .tooltip {
+  opacity: 1;
+}
+
+.tooltipArrow {
+  position: absolute;
+  top: 100%;
+  right: 1rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--navy);
+  transform: rotate(45deg);
+  margin-top: -0.25rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 37, 64, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 40;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.panel {
+  position: fixed;
+  bottom: 6rem;
+  right: 1.5rem;
+  z-index: 50;
+  width: 24rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--white);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(197, 160, 40, 0.2);
+  animation: slideUp 0.5s ease-out;
+}
+
+.panelHeader {
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(197, 160, 40, 0.2);
+  border-radius: 1.5rem 1.5rem 0 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.headerIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, var(--purple), var(--teal));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 20px -5px rgba(134, 38, 233, 0.3);
+}
+
+.headerIcon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--white);
+}
+
+.headerText h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.headerText p {
+  font-size: 0.75rem;
+  color: var(--teal);
+  font-weight: 500;
+}
+
+.closeButton {
+  padding: 0.5rem;
+  background: var(--cream);
+  border: 1px solid rgba(197, 160, 40, 0.2);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.closeButton:hover {
+  background: #E8E0D0;
+  border-color: var(--gold);
+}
+
+.closeIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--navy);
+}
+
+.panelContent {
+  padding: 1.5rem;
+}
+
+.kycWarning {
+  position: relative;
+  overflow: hidden;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(134, 38, 233, 0.1), rgba(197, 160, 40, 0.1));
+  border-radius: 1rem;
+  border: 2px solid rgba(134, 38, 233, 0.3);
+  margin-bottom: 1.5rem;
+}
+
+.decorative {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8rem;
+  height: 8rem;
+  background: linear-gradient(135deg, rgba(134, 38, 233, 0.2), transparent);
+  border-radius: 50%;
+  filter: blur(2rem);
+}
+
+.warningContent {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.warningIcon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--purple), #EC4899);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 10px 20px -5px rgba(134, 38, 233, 0.3);
+}
+
+.warningIcon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--white);
+}
+
+.warningText {
+  flex: 1;
+}
+
+.warningHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.warningHeader h4 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--purple);
+}
+
+.warningBadge {
+  padding: 0.125rem 0.5rem;
+  background: rgba(134, 38, 233, 0.2);
+  color: var(--purple);
+  font-size: 0.625rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: 1px solid rgba(134, 38, 233, 0.3);
+}
+
+.warningDescription {
+  font-size: 0.875rem;
+  color: var(--navy);
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.verifyButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, var(--purple), #EC4899);
+  color: var(--white);
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 10px 20px -5px rgba(134, 38, 233, 0.3);
+}
+
+.verifyButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(134, 38, 233, 0.4);
+}
+
+.amountSection {
+  margin-bottom: 1.5rem;
+}
+
+.amountHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.amountLabel {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.currencyTag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--navy);
+  background: var(--cream);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.amountGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.amountButton {
+  position: relative;
+  padding: 0.875rem 0.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: var(--cream);
+  color: var(--navy);
+}
+
+.amountButton:hover {
+  background: #E8E0D0;
+  transform: scale(1.05);
+}
+
+.amountButtonSelected {
+  background: linear-gradient(135deg, var(--purple), var(--teal));
+  color: var(--white);
+  box-shadow: 0 10px 20px -5px rgba(134, 38, 233, 0.3);
+}
+
+.kycLock {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--gold);
+}
+
+.customInput {
+  position: relative;
+}
+
+.customInputPrefix {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.customInputField {
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 2rem;
+  background: var(--cream);
+  border: 2px solid rgba(197, 160, 40, 0.2);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--navy);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.customInputField:focus {
+  border-color: var(--purple);
+}
+
+.actionsTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.75rem;
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.actionCard {
+  position: relative;
+  padding: 1.25rem 0.5rem;
+  border-radius: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  overflow: hidden;
+}
+
+.actionCard:hover {
+  transform: scale(1.05);
+}
+
+.actionCardSelected {
+  transform: scale(0.95);
+}
+
+.actionBackground {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+}
+
+.actionShine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    transparent 100%
+  );
+  transform: translateX(-200%);
+  transition: transform 0.7s;
+}
+
+.actionCard:hover .actionShine {
+  transform: translateX(200%);
+}
+
+.kycBadge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.kycBadge svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--navy);
+}
+
+.actionContent {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.actionIconWrapper {
+  width: 3rem;
+  height: 3rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.actionIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--white);
+}
+
+.actionName {
+  font-weight: 700;
+  color: var(--white);
+  font-size: 1rem;
+  margin-bottom: 0.125rem;
+}
+
+.actionDesc {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.statsCard {
+  padding: 1.25rem;
+  background: linear-gradient(135deg, var(--cream), rgba(245, 240, 230, 0.5));
+  border-radius: 1rem;
+  border: 1px solid rgba(197, 160, 40, 0.2);
+}
+
+.statsTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--teal);
+  margin-bottom: 1rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statItemIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+
+.statItemIcon svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--teal);
+}
+
+.statItemLabel {
+  font-size: 0.75rem;
+  color: var(--teal);
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.statItemValue {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .panel {
+    width: calc(100% - 2rem);
+    right: 1rem;
+    bottom: 5rem;
+  }
+  
+  .amountGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}

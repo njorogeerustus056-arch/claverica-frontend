@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../lib/store/auth';
+import { useAuthStore } from '../../lib/store/auth';  // ✅ FIXED: Changed from useAuth to useAuthStore
 import ProtectedRoute from '../../components/ProtectedRoute';
 import { motion } from 'framer-motion';
 import { Shield, Lock, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
@@ -11,7 +11,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://claverica-backend-produ
 function ComplianceContent() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { tokens } = useAuthStore();
+  const { tokens } = useAuthStore();  // ✅ Now works with correct import
   const [tacCode, setTacCode] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

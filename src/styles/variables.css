@@ -1,0 +1,21 @@
+/* Claverica Brand Variables */
+:root {
+  --navy: #0A2540;
+  --purple: #8626E9;
+  --gold: #C5A028;
+  --teal: #1E6F6F;
+  --cream: #F5F0E6;
+  --white: #FFFFFF;
+  --error: #D32F2F;
+  --success: #10B981;
+  --warning: #F59E0B;
+  
+  /* Font Family */
+  --font-outfit: 'Outfit', sans-serif;
+  
+  /* Dark Mode Variables */
+  --dark-bg: #0A2540;
+  --dark-card: #1E2A3A;
+  --dark-border: #2A3A4A;
+  --dark-text: #F5F0E6;
+}

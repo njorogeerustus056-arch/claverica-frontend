@@ -1,4 +1,4 @@
-// src/api.ts - COMPLETELY FIXED VERSION WITH CARDS API AND UPDATEPROFILE
+// src/api.ts - COMPLETELY FIXED VERSION WITH PATCH METHOD ADDED
 import { useAuthStore } from './lib/store/auth';
 
 // ✅ CRITICAL FIX: Remove any trailing /api from the URL
@@ -519,7 +519,7 @@ export const cardsAPI = {
   }
 };
 
-// ✅ Export all APIs as a single object
+// ✅ Export all APIs as a single object - WITH PATCH METHOD ADDED
 export const api = {
   auth: authAPI,
   notifications: notificationAPI,
@@ -534,6 +534,9 @@ export const api = {
     apiFetch<T>(endpoint, { ...options, method: 'POST', body: data ? JSON.stringify(data) : undefined }),
   put: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
     apiFetch<T>(endpoint, { ...options, method: 'PUT', body: data ? JSON.stringify(data) : undefined }),
+  // ✅ ADDED: PATCH method
+  patch: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
+    apiFetch<T>(endpoint, { ...options, method: 'PATCH', body: data ? JSON.stringify(data) : undefined }),
   delete: <T = any>(endpoint: string, options?: RequestInit) =>
     apiFetch<T>(endpoint, { ...options, method: 'DELETE' }),
 };

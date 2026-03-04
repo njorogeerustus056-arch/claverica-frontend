@@ -1,0 +1,463 @@
+@import url("../../styles/variables.css");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+
+.priceTicker {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--navy), #1E2A3A);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(197, 160, 40, 0.2);
+  box-shadow: 0 20px 30px -10px rgba(10, 37, 64, 0.3);
+  font-family: var(--font-outfit);
+}
+
+.animatedBg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, 
+    rgba(134, 38, 233, 0.05) 0%, 
+    rgba(197, 160, 40, 0.05) 50%, 
+    rgba(134, 38, 233, 0.05) 100%
+  );
+  animation: gradientShift 8s ease infinite;
+}
+
+.glowEffect {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  transition: opacity 1s;
+}
+
+.glowPositive {
+  background: linear-gradient(90deg, 
+    rgba(30, 111, 111, 0.1) 0%, 
+    transparent 50%, 
+    rgba(30, 111, 111, 0.1) 100%
+  );
+}
+
+.glowNegative {
+  background: linear-gradient(90deg, 
+    rgba(211, 47, 47, 0.1) 0%, 
+    transparent 50%, 
+    rgba(211, 47, 47, 0.1) 100%
+  );
+}
+
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(197, 160, 40, 0.1);
+  background: rgba(10, 37, 64, 0.5);
+  backdrop-filter: blur(8px);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.iconWrapper {
+  position: relative;
+}
+
+.iconPulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  filter: blur(12px);
+  opacity: 0.6;
+  animation: pulse 2s infinite;
+}
+
+.iconPulsePositive {
+  background: var(--teal);
+}
+
+.iconPulseNegative {
+  background: var(--error);
+}
+
+.iconContainer {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+}
+
+.iconContainerPositive {
+  background: linear-gradient(135deg, var(--teal), #059669);
+}
+
+.iconContainerNegative {
+  background: linear-gradient(135deg, var(--error), #B91C1C);
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--white);
+}
+
+.headerTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.liveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.marketStatus {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.marketStatusPositive {
+  color: var(--teal);
+}
+
+.marketStatusNegative {
+  color: var(--error);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.controlButton {
+  padding: 0.625rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(197, 160, 40, 0.2);
+  border-radius: 0.75rem;
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.controlButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.controlButton:active {
+  transform: scale(0.95);
+}
+
+.controlIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.controlText {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.refreshSpinning {
+  animation: spin 1s linear infinite;
+}
+
+.tickerContainer {
+  position: relative;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.tickerTrack {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tickerTrack::-webkit-scrollbar {
+  display: none;
+}
+
+.tickerItem {
+  flex-shrink: 0;
+  position: relative;
+}
+
+.coinCard {
+  position: relative;
+  padding: 0.875rem 1.25rem;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.coinCard:hover {
+  transform: scale(1.05);
+}
+
+.coinCardPositive {
+  background: linear-gradient(135deg, rgba(30, 111, 111, 0.1), rgba(30, 111, 111, 0.05));
+  border-color: rgba(30, 111, 111, 0.3);
+}
+
+.coinCardPositive:hover {
+  background: linear-gradient(135deg, rgba(30, 111, 111, 0.2), rgba(30, 111, 111, 0.1));
+  border-color: rgba(30, 111, 111, 0.5);
+}
+
+.coinCardNegative {
+  background: linear-gradient(135deg, rgba(211, 47, 47, 0.1), rgba(211, 47, 47, 0.05));
+  border-color: rgba(211, 47, 47, 0.3);
+}
+
+.coinCardNegative:hover {
+  background: linear-gradient(135deg, rgba(211, 47, 47, 0.2), rgba(211, 47, 47, 0.1));
+  border-color: rgba(211, 47, 47, 0.5);
+}
+
+.cardGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.coinCard:hover .cardGlow {
+  opacity: 0.2;
+}
+
+.cardGlowPositive {
+  background: var(--teal);
+}
+
+.cardGlowNegative {
+  background: var(--error);
+}
+
+.cardContent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.coinInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.coinHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.coinSymbol {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.02em;
+}
+
+.starIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--gold);
+  fill: var(--gold);
+}
+
+.coinPrice {
+  font-size: 0.875rem;
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.separator {
+  width: 1px;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.changeBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.375rem;
+  min-width: 5rem;
+}
+
+.changeValue {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid;
+}
+
+.changeValuePositive {
+  background: rgba(30, 111, 111, 0.2);
+  color: #6EE7B7;
+  border-color: rgba(30, 111, 111, 0.4);
+}
+
+.changeValueNegative {
+  background: rgba(211, 47, 47, 0.2);
+  color: #FCA5A5;
+  border-color: rgba(211, 47, 47, 0.4);
+}
+
+.changeIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.changeText {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
+.overlayLeft,
+.overlayRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5rem;
+  pointer-events: none;
+}
+
+.overlayLeft {
+  left: 0;
+  background: linear-gradient(90deg, var(--navy), transparent);
+}
+
+.overlayRight {
+  right: 0;
+  background: linear-gradient(270deg, var(--navy), transparent);
+}
+
+.footer {
+  position: relative;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid rgba(197, 160, 40, 0.1);
+  background: rgba(10, 37, 64, 0.5);
+  backdrop-filter: blur(8px);
+}
+
+.footerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.statsGroup {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.statDotGaining {
+  background: var(--teal);
+}
+
+.statDotLosing {
+  background: var(--error);
+}
+
+.statText {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.trackingInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trackingIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.trackingText {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

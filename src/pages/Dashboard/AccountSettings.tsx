@@ -1,4 +1,4 @@
-// src/pages/Dashboard/AccountSettings.tsx - FIXED VERSION USING API UTILITY
+// src/pages/Dashboard/AccountSettings.tsx - FIXED VERSION WITH TOAST.INFO FIX
 import { useState, useEffect } from "react"; 
 import { 
   User, Mail, Phone, Lock, Shield, Bell, Eye, EyeOff, 
@@ -283,8 +283,8 @@ export default function AccountSettings() {
     }
 
     try {
-      // ✅ Using api.patch()
-      const updatedSettings = await api.patch("/users/settings/update/", updates);
+      // ✅ FIXED: Using api.put() instead of api.patch() - PUT is defined in api.ts
+      const updatedSettings = await api.put("/users/settings/update/", updates);
       
       setUserSettings(prev => ({ ...prev, ...updates }));
       setSettingsForm(prev => ({ ...prev, ...updates }));
@@ -316,8 +316,8 @@ export default function AccountSettings() {
         ])
       );
 
-      // ✅ Using api.post()
-      await api.post("/users/profile/update/", cleanedData);
+      // ✅ FIXED: Using auth.updateProfile which points to /users/settings/update/
+      await api.auth.updateProfile(cleanedData);
 
       toast.success("Profile updated successfully");
       setShowProfileModal(false);
@@ -348,8 +348,8 @@ export default function AccountSettings() {
 
     setSaving(true);
     try {
-      // ✅ Using api.post()
-      await api.post("/users/password/change/", passwordForm);
+      // ✅ Using api.post() for password change
+      await api.post("/accounts/password/change/", passwordForm);
 
       toast.success("Password changed successfully");
       setShowPasswordModal(false);
@@ -902,7 +902,8 @@ export default function AccountSettings() {
                     { icon: Lock, label: "Change Password", colorStart: "#3B82F6", colorEnd: "#2563EB", action: () => setShowPasswordModal(true) },
                     { icon: FileText, label: "Complete KYC", colorStart: "#8B5CF6", colorEnd: "#7C3AED", action: () => submitKYC() },
                     { icon: LogOut, label: "Logout", colorStart: "#EF4444", colorEnd: "#DC2626", action: () => logout() },
-                    { icon: HelpCircle, label: "Support", colorStart: "#F59E0B", colorEnd: "#D97706", action: () => toast.info("Support center coming soon") }
+                    // ✅ FIXED: Changed toast.info to toast.success (toast.info doesn't exist)
+                    { icon: HelpCircle, label: "Support", colorStart: "#F59E0B", colorEnd: "#D97706", action: () => toast.success("Support center coming soon") }
                   ].map((action, idx) => (
                     <button
                       key={idx}

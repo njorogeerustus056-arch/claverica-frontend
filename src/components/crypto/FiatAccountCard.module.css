@@ -1,0 +1,646 @@
+@import url("../../styles/variables.css");
+
+.card {
+  position: relative;
+  background: var(--white);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: all 0.5s ease;
+  border: 1px solid rgba(197, 160, 40, 0.2);
+  box-shadow: 0 10px 25px -5px rgba(10, 37, 64, 0.1);
+}
+
+.card:hover {
+  box-shadow: 0 25px 50px -12px rgba(10, 37, 64, 0.25);
+}
+
+.cardKyc {
+  box-shadow: 0 0 0 2px rgba(30, 111, 111, 0.2);
+}
+
+.cardKyc:hover {
+  box-shadow: 0 0 0 2px rgba(30, 111, 111, 0.4), 0 25px 50px -12px rgba(10, 37, 64, 0.25);
+}
+
+.backgroundGradient {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.7s;
+  pointer-events: none;
+}
+
+.card:hover .backgroundGradient {
+  opacity: 1;
+}
+
+.backgroundGradientKyc {
+  background: linear-gradient(135deg, rgba(30, 111, 111, 0.05), transparent, rgba(16, 185, 129, 0.05));
+}
+
+.backgroundGradientDefault {
+  background: linear-gradient(135deg, rgba(30, 111, 111, 0.05), transparent, rgba(134, 38, 233, 0.05));
+}
+
+.kycBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+}
+
+.badgeContainer {
+  position: relative;
+  cursor: pointer;
+}
+
+.badgePulse {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--teal), var(--success));
+  border-radius: 9999px;
+  filter: blur(12px);
+  opacity: 0.4;
+  animation: pulse 2s infinite;
+}
+
+.badgeContent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  background: linear-gradient(135deg, var(--teal), var(--success));
+  color: var(--white);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.badgeIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.badgeTooltip {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 14rem;
+  padding: 0.75rem;
+  background: var(--navy);
+  color: var(--white);
+  font-size: 0.75rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  border: 1px solid rgba(30, 111, 111, 0.3);
+  z-index: 30;
+}
+
+.badgeContainer:hover .badgeTooltip {
+  opacity: 1;
+}
+
+.tooltipTitle {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.tooltipText {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.content {
+  position: relative;
+  padding: 1.5rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.iconWrapper {
+  position: relative;
+}
+
+.iconGlow {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  filter: blur(12px);
+  opacity: 0.6;
+  transition: all 0.5s;
+  background: linear-gradient(135deg, var(--teal), var(--purple));
+}
+
+.card:hover .iconGlow {
+  transform: scale(1.1);
+}
+
+.iconContainer {
+  position: relative;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+  transition: all 0.5s;
+  background: linear-gradient(135deg, var(--teal), var(--purple));
+}
+
+.card:hover .iconContainer {
+  transform: scale(1.1) rotate(3deg);
+}
+
+.iconText {
+  position: relative;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.statusIndicator {
+  position: absolute;
+  bottom: -0.25rem;
+  right: -0.25rem;
+  width: 1rem;
+  height: 1rem;
+  background: var(--teal);
+  border-radius: 50%;
+  border: 3px solid var(--white);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.statusPulse {
+  position: absolute;
+  inset: 0;
+  background: var(--teal);
+  border-radius: 50%;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  opacity: 0.75;
+}
+
+.info h4 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.metaInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.typeBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  background: rgba(30, 111, 111, 0.1);
+  color: var(--teal);
+}
+
+.typeBadgeBank {
+  background: rgba(30, 111, 111, 0.1);
+  color: var(--teal);
+}
+
+.typeBadgePayment {
+  background: rgba(134, 38, 233, 0.1);
+  color: var(--purple);
+}
+
+.currencyInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.currency {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.separator {
+  color: var(--gold);
+  opacity: 0.3;
+}
+
+.accountNumber {
+  font-family: monospace;
+  color: var(--teal);
+  font-size: 0.75rem;
+}
+
+.balanceSection {
+  margin-bottom: 1.5rem;
+}
+
+.balanceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.balanceLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--teal);
+}
+
+.currencyBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--navy);
+  background: var(--cream);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.balanceDisplay {
+  position: relative;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--cream), rgba(245, 240, 230, 0.5));
+  border-radius: 1rem;
+  border: 1px solid rgba(197, 160, 40, 0.2);
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+}
+
+.decorativeBg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8rem;
+  height: 8rem;
+  background: linear-gradient(135deg, rgba(197, 160, 40, 0.1), transparent);
+  border-radius: 50%;
+  filter: blur(2rem);
+}
+
+.balanceMain {
+  position: relative;
+}
+
+.amount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-outfit);
+}
+
+.activeStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--teal);
+}
+
+.activeText {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--teal);
+}
+
+.kycNotice {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(197, 160, 40, 0.2);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.noticeIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: rgba(30, 111, 111, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.noticeIcon svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--teal);
+}
+
+.noticeContent h6 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 0.125rem;
+}
+
+.noticeContent p {
+  font-size: 0.75rem;
+  color: var(--teal);
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.statItem {
+  padding: 1rem;
+  background: var(--cream);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(197, 160, 40, 0.2);
+}
+
+.statHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.statIcon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--teal);
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--navy);
+  opacity: 0.7;
+}
+
+.statValue {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.actionButton {
+  position: relative;
+  padding: 1rem 0.5rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.actionButton:hover {
+  transform: scale(1.02);
+}
+
+.actionButton:active {
+  transform: scale(0.98);
+}
+
+.actionButtonKyc {
+  background: linear-gradient(135deg, var(--teal), var(--success));
+  color: var(--white);
+  box-shadow: 0 10px 20px -5px rgba(30, 111, 111, 0.3);
+}
+
+.actionButtonKyc:hover {
+  background: linear-gradient(135deg, #155E5E, #059669);
+}
+
+.actionButtonDefault {
+  background: linear-gradient(135deg, var(--purple), var(--teal));
+  color: var(--white);
+  box-shadow: 0 10px 20px -5px rgba(134, 38, 233, 0.3);
+}
+
+.actionButtonDefault:hover {
+  background: linear-gradient(135deg, #6B21A8, #155E5E);
+}
+
+.actionSecondary {
+  background: var(--cream);
+  border: 2px solid rgba(197, 160, 40, 0.2);
+  color: var(--navy);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.actionSecondary:hover {
+  background: #E8E0D0;
+  border-color: var(--gold);
+}
+
+.shineEffect {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    transparent 100%
+  );
+  transform: translateX(-200%);
+  transition: transform 0.7s;
+}
+
+.actionButton:hover .shineEffect {
+  transform: translateX(200%);
+}
+
+.actionIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  position: relative;
+  z-index: 10;
+  transition: transform 0.3s;
+}
+
+.actionButton:hover .actionIcon {
+  transform: translate(-0.125rem, -0.125rem);
+}
+
+.footer {
+  border-top: 1px solid rgba(197, 160, 40, 0.2);
+  padding-top: 1rem;
+}
+
+.expandButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--teal);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.expandButton:hover {
+  color: var(--navy);
+}
+
+.expandIcon {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.3s;
+}
+
+.expandIconRotated {
+  transform: rotate(90deg);
+}
+
+.detailsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  animation: slideIn 0.3s ease-out;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: var(--cream);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(197, 160, 40, 0.2);
+}
+
+.detailLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--teal);
+}
+
+.detailValue {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--navy);
+  text-transform: capitalize;
+}
+
+.statusActive {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(30, 111, 111, 0.1);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(30, 111, 111, 0.3);
+}
+
+.statusDot {
+  position: relative;
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--teal);
+  border-radius: 50%;
+}
+
+.dotPulse {
+  position: absolute;
+  inset: 0;
+  background: var(--teal);
+  border-radius: 50%;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  opacity: 0.75;
+}
+
+.statusText {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .content {
+    padding: 1rem;
+  }
+  
+  .iconContainer {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.25rem;
+  }
+  
+  .amount {
+    font-size: 1.5rem;
+  }
+  
+  .actionButton {
+    padding: 0.75rem 0.25rem;
+    font-size: 0.75rem;
+  }
+}

@@ -1,21 +1,28 @@
-/* Using your exact color palette */
+/* LiveTicker.module.css - Using your exact color palette */
 :root {
   --teal: #1E6F6F;
   --gold: #C5A028;
+  --navy: #0A2540;
   --white: #FFFFFF;
+  --navy-rgb: 10, 37, 64;
 }
 
 .ticker {
   background: var(--teal);
   color: var(--white);
-  padding: 0.625rem 0;  /* 10px = 2.5 (same as py-2.5) */
+  padding: 0.625rem 0;  /* 10px = py-2.5 */
   overflow: hidden;
   position: relative;
   border-bottom: 1px solid rgba(197, 160, 40, 0.3); /* Gold accent */
   box-shadow: 0 2px 10px rgba(10, 37, 64, 0.1);
 }
 
-/* Gradient edges for smooth fade (same size) */
+/* Pause on hover for better UX */
+.ticker:hover .tickerTrack {
+  animation-play-state: paused;
+}
+
+/* Gradient edges for smooth fade */
 .ticker::before,
 .ticker::after {
   content: '';
@@ -39,7 +46,7 @@
 
 .tickerTrack {
   display: inline-flex;
-  animation: marquee 28s linear infinite;
+  animation: marquee linear infinite;
   white-space: nowrap;
   font-size: 0.875rem;  /* text-sm */
   font-weight: 500;      /* font-medium */
@@ -79,6 +86,10 @@
     animation: none;
     padding-left: 0;
   }
+  
+  .ticker:hover .tickerTrack {
+    animation-play-state: running;
+  }
 }
 
 /* Mobile adjustment */
@@ -89,5 +100,10 @@
   
   .tickerItem::after {
     right: -1rem;
+  }
+  
+  .ticker::before,
+  .ticker::after {
+    width: 30px;  /* Smaller fade on mobile */
   }
 }
