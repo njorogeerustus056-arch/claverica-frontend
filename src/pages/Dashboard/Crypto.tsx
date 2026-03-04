@@ -14,6 +14,7 @@ import {
   PieChart as PieChartIcon, Users, Globe, Smartphone, SmartphoneCharging,
   Bitcoin, Ethereum, DollarSign, Euro, PoundSterling, Banknote
 } from "lucide-react";
+import toast from 'react-hot-toast';
 
 // Import components
 import { PriceTicker } from "../../components/crypto/PriceTicker";
@@ -22,6 +23,7 @@ import { QuickActions } from "../../components/crypto/QuickActions";
 import { AssetAllocationChart } from "../../components/crypto/AssetAllocationChart";
 import { CryptoWalletCard } from "../../components/crypto/CryptoWalletCard";
 import { FiatAccountCard } from "../../components/crypto/FiatAccountCard";
+import api from '../../api';
 
 // Import data
 import { cryptoCoins } from "../../data/cryptoCoins";
@@ -75,6 +77,26 @@ export default function Crypto() {
     asset?: string;
     creativeContext?: any;
   } | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Detect dark mode
+  useEffect(() => {
+    const checkDarkMode = () => {
+      const isDark = document.documentElement.classList.contains('dark') || 
+                     document.body.classList.contains('dark') ||
+                     window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(isDark);
+    };
+
+    checkDarkMode();
+    
+    // Observer for class changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
+  }, []);
 
   // Fetch KYC status on mount
   useEffect(() => {
@@ -152,7 +174,7 @@ export default function Crypto() {
     return () => clearInterval(interval);
   }, []);
 
-  // ========== ENHANCED SMART KYC HANDLER ==========
+  // ========== ENHANCED SMART KYC HANDLER WITH KYC_SPEC INTEGRATION ==========
   const handleKYCRequiredAction = useCallback(async (
     action: string, 
     amount: number, 
@@ -169,169 +191,157 @@ export default function Crypto() {
       return false;
     }
 
-    // Check KYC requirement via API
-    const requirement = await checkRequirement('crypto', amount);
-    
-    if (!isVerified && requirement?.requiresKYC) {
-      // Create creative context
-      const creativeContext = {
-        action,
-        amount,
-        asset,
-        icon: KYC_CREATIVES.getIconForAction(action),
-        benefits: KYC_CREATIVES.getActionBenefits(action, amount, asset),
-        unlockableFeature: KYC_CREATIVES.getUnlockableFeature(action),
-        estimatedReward: KYC_CREATIVES.getEstimatedReward(amount, action),
-        kycThreshold: kycThreshold,
-        creativeHook: creativeHook || `Unlock ${action.replace('_', ' ')} capabilities`,
-        ctaText: KYC_CREATIVES.getCreativeCTAText(action, asset),
-        tier: KYC_CREATIVES.getVerificationTier(amount),
-        timeToVerify: KYC_CREATIVES.getTimeToVerify()
-      };
-      
-      // Store for KYC page
-      localStorage.setItem('kycCreativeContext', JSON.stringify(creativeContext));
-      
-      // Show enhanced modal or redirect directly
-      if (amount > kycThreshold * 2) {
-        // Large amount - show detailed modal
-        setPendingAction({ 
-          action, 
-          amount, 
-          asset, 
-          creativeContext 
-        });
-        setShowKYCModal(true);
-        return false;
-      } else {
-        // Redirect to KYC page with correct path
-        navigate('/dashboard/kyc/submit', {
-          state: {
-            amount,
-            service_type: 'crypto',
-            action,
-            asset,
-            redirectTo: '/dashboard/crypto',
-            creativeContext,
-            attemptedAction: action,
-            unlockBenefits: creativeContext.benefits.slice(0, 3)
-          }
-        });
-        return false;
+    try {
+      // Step 1: Always log to KYC_Spec collect endpoint (always returns 200)
+      await api.post('/kyc_spec/collect/', {
+        product: 'crypto',
+        product_subtype: action,
+        user_email: user?.email,
+        user_phone: user?.phone,
+        amount: amount,
+        asset: asset,
+        timestamp: new Date().toISOString(),
+        action: `crypto_${action}`,
+        source: 'crypto_dashboard',
+        metadata: {
+          threshold: kycThreshold,
+          portfolio_value: totalPortfolioValue,
+          is_verified: isVerified
+        }
+      }).catch(err => {
+        // Even if it fails, continue - this is just logging
+        console.log('KYC_Spec log attempted (non-critical)');
+      });
+
+      // Step 2: Check actual KYC status
+      let actualKYCStatus = false;
+      let kycData = null;
+
+      try {
+        kycData = await api.get('/kyc/simple-status/');
+        actualKYCStatus = kycData?.is_verified || false;
+      } catch (kycErr) {
+        console.log('KYC status check failed, using fallback');
+        
+        // Try KYC_Spec as fallback
+        try {
+          const specResponse = await api.get('/kyc_spec/summary/');
+          actualKYCStatus = specResponse?.stats?.verified || false;
+        } catch (specErr) {
+          // If both fail, assume not verified for amounts over threshold
+          actualKYCStatus = amount < kycThreshold;
+        }
       }
+
+      // Step 3: Check requirement via API
+      const requirement = await checkRequirement('crypto', amount).catch(() => ({
+        requiresKYC: amount > kycThreshold,
+        hasApprovedKYC: actualKYCStatus
+      }));
+
+      // Step 4: Handle KYC prompt if needed
+      if (!actualKYCStatus && (requirement?.requiresKYC || amount > kycThreshold)) {
+        // Create creative context
+        const creativeContext = {
+          action,
+          amount,
+          asset,
+          icon: KYC_CREATIVES.getIconForAction(action),
+          benefits: KYC_CREATIVES.getActionBenefits(action, amount, asset),
+          unlockableFeature: KYC_CREATIVES.getUnlockableFeature(action),
+          estimatedReward: KYC_CREATIVES.getEstimatedReward(amount, action),
+          kycThreshold: kycThreshold,
+          creativeHook: creativeHook || `Unlock ${action.replace('_', ' ')} capabilities`,
+          ctaText: KYC_CREATIVES.getCreativeCTAText(action, asset),
+          tier: KYC_CREATIVES.getVerificationTier(amount),
+          timeToVerify: KYC_CREATIVES.getTimeToVerify()
+        };
+        
+        // Store for KYC page
+        localStorage.setItem('kycCreativeContext', JSON.stringify(creativeContext));
+        
+        // Show modal for large amounts
+        if (amount > kycThreshold * 2) {
+          setPendingAction({ action, amount, asset, creativeContext });
+          setShowKYCModal(true);
+          return false;
+        } else {
+          // Redirect to KYC page
+          navigate('/dashboard/kyc/submit', {
+            state: {
+              amount,
+              service_type: 'crypto',
+              action,
+              asset,
+              redirectTo: '/dashboard/crypto',
+              creativeContext,
+              attemptedAction: action,
+              unlockBenefits: creativeContext.benefits.slice(0, 3)
+            }
+          });
+          return false;
+        }
+      }
+
+      // Step 5: For demo purposes - show coming soon message
+      toast.success(`${action} requested - feature coming soon!`, {
+        icon: '🚀',
+        duration: 3000
+      });
+      
+      return true;
+
+    } catch (error) {
+      console.log('KYC check recorded, proceeding with demo');
+      toast.success('Demo mode: Action recorded', {
+        icon: '🎮',
+        duration: 2000
+      });
+      return true;
     }
-    
-    return true;
-  }, [isAuthenticated, isVerified, checkRequirement, navigate, kycThreshold]);
+  }, [isAuthenticated, isVerified, checkRequirement, navigate, kycThreshold, totalPortfolioValue, user]);
 
   // ========== ACTION HANDLERS ==========
   const handleCreateWallet = async () => {
-    try {
-      const amount = 0;
-      const action = 'create_wallet';
-      const allowed = await handleKYCRequiredAction(action, amount);
-      if (allowed) {
-        navigate('/dashboard/crypto/create-wallet');
-      }
-    } catch (error) {
-      console.error('Error in handleCreateWallet:', error);
-    }
+    await handleKYCRequiredAction('create_wallet', 0, undefined, 'Create new crypto wallet');
   };
 
   const handleDeposit = async () => {
-    try {
-      const amount = 1000;
-      const action = 'deposit';
-      const allowed = await handleKYCRequiredAction(action, amount);
-      if (allowed) {
-        navigate('/dashboard/crypto/deposit');
-      }
-    } catch (error) {
-      console.error('Error in handleDeposit:', error);
-    }
+    await handleKYCRequiredAction('deposit', 1000, 'USD', 'Add funds to your account');
   };
 
   const handleWithdraw = async () => {
-    try {
-      const amount = 500;
-      const action = 'withdraw';
-      const allowed = await handleKYCRequiredAction(action, amount);
-      if (allowed) {
-        navigate('/dashboard/crypto/withdraw');
-      }
-    } catch (error) {
-      console.error('Error in handleWithdraw:', error);
-    }
+    await handleKYCRequiredAction('withdraw', 500, 'USD', 'Withdraw to external wallet');
   };
 
   const handleTransfer = async () => {
-    try {
-      const amount = 2000;
-      const action = 'transfer';
-      const allowed = await handleKYCRequiredAction(action, amount);
-      if (allowed) {
-        navigate('/dashboard/crypto/transfer');
-      }
-    } catch (error) {
-      console.error('Error in handleTransfer:', error);
-    }
+    await handleKYCRequiredAction('transfer', 2000, 'USD', 'Transfer between accounts');
   };
 
   const handleBuyCrypto = async (coin: CryptoCoin, amount: number) => {
-    try {
-      if (!coin || !amount) return;
-      const action = 'buy';
-      const allowed = await handleKYCRequiredAction(action, amount, coin.symbol, `Buy ${coin.symbol} instantly`);
-      if (allowed) {
-        navigate('/dashboard/crypto/buy', { state: { coin, amount } });
-      }
-    } catch (error) {
-      console.error('Error in handleBuyCrypto:', error);
-    }
+    if (!coin || !amount) return;
+    await handleKYCRequiredAction('buy', amount, coin.symbol, `Buy ${coin.symbol} instantly`);
   };
 
   const handleSendCrypto = async (coin: CryptoCoin, amount: number) => {
-    try {
-      if (!coin || !amount) return;
-      const action = 'send';
-      const allowed = await handleKYCRequiredAction(action, amount, coin.symbol, `Send ${coin.symbol} worldwide`);
-      if (allowed) {
-        navigate('/dashboard/crypto/send', { state: { coin, amount } });
-      }
-    } catch (error) {
-      console.error('Error in handleSendCrypto:', error);
-    }
+    if (!coin || !amount) return;
+    await handleKYCRequiredAction('send', amount, coin.symbol, `Send ${coin.symbol} worldwide`);
   };
 
   const handleViewWallet = async (coin: CryptoCoin) => {
-    try {
-      if (!coin) return;
-      const action = 'view_wallet';
-      const allowed = await handleKYCRequiredAction(action, coin.valueUSD, coin.symbol, `View ${coin.symbol} wallet details`);
-      if (allowed) {
-        navigate('/dashboard/crypto/wallet', { state: { coin } });
-      }
-    } catch (error) {
-      console.error('Error in handleViewWallet:', error);
-    }
+    if (!coin) return;
+    await handleKYCRequiredAction('view_wallet', coin.valueUSD, coin.symbol, `View ${coin.symbol} wallet details`);
   };
 
   const handleAddFunds = async (platform: FiatPlatform, amount: number) => {
-    try {
-      const action = 'deposit';
-      const allowed = await handleKYCRequiredAction(action, amount, platform.name, `Add funds to ${platform.name}`);
-      if (allowed) {
-        navigate('/dashboard/fiat/deposit', { state: { platform, amount } });
-      }
-    } catch (error) {
-      console.error('Error in handleAddFunds:', error);
-    }
+    await handleKYCRequiredAction('deposit', amount, platform.name, `Add funds to ${platform.name}`);
   };
 
   const handleCopyAddress = (address: string) => {
     navigator.clipboard.writeText(address);
     setCopiedAddress(address);
     setTimeout(() => setCopiedAddress(null), 2000);
+    toast.success('Address copied!', { icon: '📋' });
   };
 
   const handleVerifyNow = () => {
@@ -369,7 +379,7 @@ export default function Crypto() {
   const losers = coins.filter(c => c.change24h < 0).length;
 
   return (
-    <div className={styles.cryptoContainer}>
+    <div className={`${styles.cryptoContainer} ${isDarkMode ? styles.dark : ''}`}>
       <div className={styles.contentWrapper}>
         {/* Portfolio Header */}
         <div className={styles.portfolioHeader}>

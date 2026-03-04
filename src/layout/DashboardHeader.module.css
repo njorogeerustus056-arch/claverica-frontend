@@ -20,7 +20,7 @@
   --primary: var(--gold);
   --primary-light: rgba(var(--gold-rgb), 0.8);
   --primary-dark: #8B6B1C;
-  --primary-gradient: linear-gradient(135deg, var(--gold) 0%, var(--aubergine) 100%);
+  --primary-gradient: linear-gradient(135deg, var(--gold) 0%, var(--aubergine) 70%, var(--slate) 100%);
   
   --success: var(--slate);
   --success-light: rgba(var(--slate-rgb), 0.1);
@@ -471,7 +471,10 @@
   width: 2rem;
   height: 2rem;
   border-radius: 0.75rem;
-  background: var(--primary-gradient);
+  /* UPDATED: Enhanced gradient with gold shimmer animation */
+  background: linear-gradient(135deg, var(--gold) 0%, var(--aubergine) 70%, var(--slate) 100%);
+  background-size: 200% 200%;
+  animation: shimmer 3s ease infinite;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -479,6 +482,12 @@
   font-size: 0.75rem;
   font-weight: 600;
   flex-shrink: 0;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
 }
 
 .avatarText {
@@ -850,7 +859,9 @@
   height: 3rem;
   border-radius: 1rem;
   font-size: 1rem;
-  background: var(--primary-gradient);
+  background: linear-gradient(135deg, var(--gold) 0%, var(--aubergine) 70%, var(--slate) 100%);
+  background-size: 200% 200%;
+  animation: shimmer 3s ease infinite;
 }
 
 .userDetails {
@@ -1225,6 +1236,14 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  
+  .avatar {
+    animation: none !important;
+  }
+  
+  .largeAvatar {
+    animation: none !important;
   }
 }
 
