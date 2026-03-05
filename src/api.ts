@@ -1,4 +1,4 @@
-// src/api.ts - COMPLETELY FIXED VERSION WITH PATCH METHOD ADDED
+// src/api.ts - COMPLETELY FIXED VERSION WITH CORRECT NOTIFICATION MARK AS READ URL
 import { useAuthStore } from './lib/store/auth';
 
 // ✅ CRITICAL FIX: Remove any trailing /api from the URL
@@ -284,7 +284,7 @@ export const authAPI = {
   }
 };
 
-// ✅ FIXED: Notification API functions
+// ✅ FIXED: Notification API functions - WITH CORRECT MARK AS READ URL
 export const notificationAPI = {
   getAll: async () => {
     try {
@@ -381,9 +381,10 @@ export const notificationAPI = {
     }
   },
 
+  // ✅ FIXED: Changed URL format to match backend (mark-read/{id}/)
   markAsRead: async (notificationId: number) => {
     try {
-      return await apiFetch(`/notifications/${notificationId}/mark-read/`, {
+      return await apiFetch(`/notifications/mark-read/${notificationId}/`, {
         method: "POST",
       });
     } catch (error: any) {
