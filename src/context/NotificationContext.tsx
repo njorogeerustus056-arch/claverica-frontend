@@ -1,8 +1,22 @@
-// src/context/NotificationContext.tsx - FIXED VERSION WITH useSafePusher
+// src/context/NotificationContext.tsx - UPDATED TO MATCH BACKEND
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '../lib/store/auth';
-import { useSafePusher } from '../hooks/useSafePusher';  // ✅ IMPORT useSafePusher
-import api, { Notification } from '../api';
+import { useSafePusher } from '../hooks/useSafePusher';
+import api, { Notification as ApiNotification } from '../api';
+
+// Frontend notification interface
+interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  type: "success" | "warning" | "error" | "info";
+  created_at: string;
+  is_read: boolean;
+  metadata?: any;
+  priority?: string;
+  action_url?: string | null;
+  requires_action?: boolean;
+}
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -40,49 +54,32 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   const [initialFetchDone, setInitialFetchDone] = useState<boolean>(false);
   
   const { isAuthenticated, tokens, syncFromLocalStorage } = useAuthStore();
-  
-  // ✅ FIXED: Use SafePusher instead of directly calling usePusher
   const { pusherConnected } = useSafePusher();
 
   useEffect(() => {
     syncFromLocalStorage();
   }, [syncFromLocalStorage]);
 
-  // Map notification types to UI types
-  const mapNotificationType = (type: string): "success" | "warning" | "error" | "info" => {
-    if (type.includes('SUCCESS') || type.includes('COMPLETED') || type.includes('APPROVED') || 
-        type.includes('CREATED') || type.includes('ACTIVATED') || type.includes('RECEIVED')) {
-      return 'success';
-    }
-    if (type.includes('FAILED') || type.includes('REJECTED') || type.includes('ERROR') || type.includes('CANCELLED')) {
-      return 'error';
-    }
-    if (type.includes('WARNING') || type.includes('EXPIRING') || type.includes('PENDING') || 
-        type.includes('LOW') || type.includes('REQUIRED')) {
-      return 'warning';
-    }
-    return 'info';
-  };
-
-  // Format notification messages properly based on type
-  const formatNotification = (notification: any): Notification => {
-    const type = notification.notification_type || '';
-    const metadata = notification.metadata || {};
+  // Map backend notification to frontend format
+  const mapBackendNotification = (backendNotif: any): Notification => {
+    const type = backendNotif.notification_type || '';
+    const status = backendNotif.status || 'UNREAD';
+    const metadata = backendNotif.metadata || {};
     
-    let title = notification.title || 'Notification';
-    let message = notification.message || '';
-    let actionUrl = notification.action_url || null;
-    let priority = notification.priority || 'NORMAL';
+    let title = backendNotif.title || 'Notification';
+    let message = backendNotif.message || '';
+    let actionUrl = backendNotif.action_url || metadata.action_url || null;
+    let priority = backendNotif.priority || 'NORMAL';
     
     // ===== ACCOUNT NOTIFICATIONS =====
     if (type === 'ACCOUNT_CREATED' || type.includes('ACCOUNT_CREATED')) {
-      const accountNumber = metadata.account_number || notification.account_number || 'N/A';
+      const accountNumber = metadata.account_number || 'N/A';
       title = '🎉 Welcome to Claverica!';
       message = `Your account ${accountNumber} has been successfully created and is ready to use.`;
       actionUrl = '/dashboard';
     }
     else if (type === 'ACCOUNT_ACTIVATED' || type.includes('ACTIVATED')) {
-      const accountNumber = metadata.account_number || notification.account_number || 'N/A';
+      const accountNumber = metadata.account_number || 'N/A';
       title = '✅ Account Activated!';
       message = `Your account ${accountNumber} has been activated. You can now send and receive money.`;
       actionUrl = '/dashboard';
@@ -118,34 +115,32 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       message = `$${metadata.amount || ''} has been sent from your wallet. New balance: $${metadata.new_balance || ''}`;
     }
     
-    // ===== TRANSFER NOTIFICATIONS (Initiated) =====
+    // ===== TRANSFER NOTIFICATIONS =====
     else if (type === 'TRANSFER_INITIATED' || type.includes('INITIATED')) {
       title = '🔄 Transfer Initiated';
       message = `Your transfer of $${metadata.amount || ''} to ${metadata.recipient || metadata.recipient_name || 'recipient'} has been started. Please contact live agent for TAC code.`;
-      actionUrl = `/dashboard/transfer/status/${notification.related_object_id || ''}`;
+      actionUrl = `/dashboard/transfer/status/${backendNotif.related_object_id || ''}`;
     }
     else if (type === 'TAC_SENT' || type.includes('TAC_SENT')) {
       title = '🔐 TAC Code Required';
       message = `A TAC code has been sent for your transfer of $${metadata.amount || ''}. Enter the code to complete your transfer.`;
-      actionUrl = `/dashboard/transfer/verify-tac/${notification.related_object_id || ''}`;
+      actionUrl = `/dashboard/transfer/verify-tac/${backendNotif.related_object_id || ''}`;
       priority = 'HIGH';
     }
     else if (type === 'TAC_VERIFIED' || type.includes('TAC_VERIFIED')) {
       title = '✅ TAC Verified';
       message = `TAC verified successfully. Your transfer is now being processed.`;
-      actionUrl = `/dashboard/transfer/status/${notification.related_object_id || ''}`;
+      actionUrl = `/dashboard/transfer/status/${backendNotif.related_object_id || ''}`;
     }
-    
-    // ===== TRANSFER NOTIFICATIONS (Completed/Failed) =====
     else if (type === 'TRANSFER_COMPLETED' || type.includes('COMPLETED')) {
       title = '💸 Transfer Completed';
       message = `Your transfer of $${metadata.amount || ''} to ${metadata.recipient || metadata.recipient_name || 'recipient'} has been completed successfully.`;
-      actionUrl = `/dashboard/transfer/status/${notification.related_object_id || ''}`;
+      actionUrl = `/dashboard/transfer/status/${backendNotif.related_object_id || ''}`;
     }
     else if (type === 'TRANSFER_FAILED' || type.includes('FAILED')) {
       title = '❌ Transfer Failed';
       message = metadata.reason || metadata.message || 'Your transfer could not be completed. Please try again or contact support.';
-      actionUrl = `/dashboard/transfer/status/${notification.related_object_id || ''}`;
+      actionUrl = `/dashboard/transfer/status/${backendNotif.related_object_id || ''}`;
       priority = 'HIGH';
     }
     else if (type === 'TRANSFER_CANCELLED' || type.includes('CANCELLED')) {
@@ -154,7 +149,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       actionUrl = `/dashboard/transfer/history`;
     }
     
-    // ===== MONEY RECEIVED NOTIFICATIONS (Incoming) =====
+    // ===== MONEY RECEIVED NOTIFICATIONS =====
     else if (type === 'MONEY_RECEIVED' || type === 'DEPOSIT_RECEIVED' || type.includes('RECEIVED')) {
       title = '📥 Money Received!';
       message = `You received $${metadata.amount || ''} from ${metadata.sender || metadata.recipient_name || metadata.from || 'a sender'}.`;
@@ -195,7 +190,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       actionUrl = '/dashboard/kyc/status';
     }
     
-    // ===== ADMIN/COMPLIANCE NOTIFICATIONS =====
+    // ===== ADMIN NOTIFICATIONS =====
     else if (type === 'ADMIN_TAC_REQUIRED' || type.includes('TAC_REQUIRED')) {
       title = '🔐 TAC Required for Transfer';
       message = `Transfer #${metadata.transfer_id || ''} requires TAC verification. Please provide TAC code to proceed.`;
@@ -237,13 +232,28 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       actionUrl = '/whats-new';
     }
     
+    // Map backend status to frontend is_read
+    const isRead = status === 'READ' || backendNotif.is_read === true;
+    
+    // Map notification type to UI type
+    let uiType: "success" | "warning" | "error" | "info" = "info";
+    if (type.includes('SUCCESS') || type.includes('COMPLETED') || type.includes('APPROVED') || 
+        type.includes('CREATED') || type.includes('ACTIVATED') || type.includes('RECEIVED')) {
+      uiType = 'success';
+    } else if (type.includes('FAILED') || type.includes('REJECTED') || type.includes('ERROR') || type.includes('CANCELLED')) {
+      uiType = 'error';
+    } else if (type.includes('WARNING') || type.includes('EXPIRING') || type.includes('PENDING') || 
+               type.includes('LOW') || type.includes('REQUIRED')) {
+      uiType = 'warning';
+    }
+    
     return {
-      id: notification.id,
+      id: backendNotif.id,
       title,
       message,
-      type: mapNotificationType(type),
-      created_at: notification.created_at || new Date().toISOString(),
-      is_read: notification.status === 'READ' || notification.is_read === true,
+      type: uiType,
+      created_at: backendNotif.created_at || new Date().toISOString(),
+      is_read: isRead,
       metadata: metadata,
       priority: priority,
       action_url: actionUrl,
@@ -252,9 +262,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   };
 
   const fetchNotifications = useCallback(async () => {
-    const { tokens: currentTokens } = useAuthStore.getState();
-    
-    if (!isAuthenticated || !currentTokens?.access) {
+    if (!isAuthenticated || !tokens?.access) {
       return;
     }
 
@@ -263,11 +271,14 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     
     try {
       const data = await api.notifications.getAll();
-      const formattedNotifications = data.map(formatNotification);
+      const formattedNotifications = Array.isArray(data) 
+        ? data.map(mapBackendNotification)
+        : [];
+      
       setNotifications(formattedNotifications);
       
       const countData = await api.notifications.getUnreadCount();
-      setUnreadCount(countData.unread_count);
+      setUnreadCount(countData.unread_count || 0);
       setInitialFetchDone(true);
     } catch (err: any) {
       if (err.status !== 401) {
@@ -277,8 +288,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, tokens?.access]);
 
+  // Initial fetch
   useEffect(() => {
     if (isAuthenticated && tokens?.access && !initialFetchDone) {
       const timer = setTimeout(() => {
@@ -289,7 +301,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     }
   }, [isAuthenticated, tokens?.access, fetchNotifications, initialFetchDone]);
 
-  // ✅ FIXED: Polling with Pusher awareness
+  // Polling with Pusher awareness
   useEffect(() => {
     if (!isAuthenticated || !tokens?.access) return;
     
@@ -308,13 +320,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     };
   }, [isAuthenticated, tokens?.access, pollInterval, fetchNotifications, pusherConnected]);
 
-  // ✅ FIXED: markAsRead function - correctly calls api.notifications.markAsRead(id)
+  // Mark as read
   const markAsRead = async (id: number) => {
     try {
       await api.notifications.markAsRead(id);
       setNotifications(prev =>
         prev.map(n =>
-          n.id === id ? { ...n, status: 'READ', is_read: true } : n
+          n.id === id ? { ...n, is_read: true } : n
         )
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
@@ -327,7 +339,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     try {
       await api.notifications.markAllAsRead();
       setNotifications(prev =>
-        prev.map(n => ({ ...n, status: 'READ', is_read: true }))
+        prev.map(n => ({ ...n, is_read: true }))
       );
       setUnreadCount(0);
     } catch (err) {

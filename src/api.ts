@@ -1,4 +1,4 @@
-// src/api.ts - COMPLETELY FIXED VERSION WITH CORRECT NOTIFICATION MARK AS READ URL
+// src/api.ts - COMPLETELY FIXED VERSION WITH CORRECT NOTIFICATION ENDPOINTS
 import { useAuthStore } from './lib/store/auth';
 
 // ✅ CRITICAL FIX: Remove any trailing /api from the URL
@@ -284,17 +284,17 @@ export const authAPI = {
   }
 };
 
-// ✅ FIXED: Notification API functions - WITH CORRECT MARK AS READ URL
+// ✅ FIXED: Notification API functions - WITH CORRECT ENDPOINTS MATCHING BACKEND
 export const notificationAPI = {
   getAll: async () => {
     try {
       const data = await apiFetch("/notifications/");
       if (Array.isArray(data)) {
         return data;
-      } else if (data && Array.isArray(data.notifications)) {
-        return data.notifications;
       } else if (data && Array.isArray(data.results)) {
         return data.results;
+      } else if (data && Array.isArray(data.notifications)) {
+        return data.notifications;
       } else {
         console.warn('Unexpected notifications response format:', data);
         return [];
@@ -310,11 +310,9 @@ export const notificationAPI = {
 
   getUnread: async () => {
     try {
-      const data = await apiFetch("/notifications/unread/");
+      const data = await apiFetch("/notifications/?status=UNREAD");
       if (Array.isArray(data)) {
         return data;
-      } else if (data && Array.isArray(data.notifications)) {
-        return data.notifications;
       } else if (data && Array.isArray(data.results)) {
         return data.results;
       } else {
@@ -333,45 +331,21 @@ export const notificationAPI = {
     
     try {
       const data = await apiFetch("/notifications/unread-count/");
-      
       console.log('✅ [API DEBUG] Raw unread count response:', data);
       
+      // Handle different response formats
       if (typeof data === 'object' && data !== null) {
         if ('unread_count' in data) {
-          const count = Number(data.unread_count) || 0;
-          return { unread_count: count };
+          return { unread_count: Number(data.unread_count) || 0 };
         }
         if ('count' in data) {
-          const count = Number(data.count) || 0;
-          return { unread_count: count };
-        }
-        const values = Object.values(data);
-        if (values.length === 1 && typeof values[0] === 'number') {
-          const count = values[0] as number;
-          return { unread_count: count };
-        }
-        if (data.data && typeof data.data === 'object') {
-          if ('unread_count' in data.data) {
-            const count = Number(data.data.unread_count) || 0;
-            return { unread_count: count };
-          }
-          if ('count' in data.data) {
-            const count = Number(data.data.count) || 0;
-            return { unread_count: count };
-          }
+          return { unread_count: Number(data.count) || 0 };
         }
       } else if (typeof data === 'number') {
         return { unread_count: data };
-      } else if (typeof data === 'string') {
-        const parsed = parseInt(data, 10);
-        if (!isNaN(parsed)) {
-          return { unread_count: parsed };
-        }
       }
       
-      console.warn('⚠️ Unexpected unread count format:', data);
       return { unread_count: 0 };
-      
     } catch (error: any) {
       console.error('❌ Error fetching unread count:', error);
       if (error.status === 401) {
@@ -381,7 +355,7 @@ export const notificationAPI = {
     }
   },
 
-  // ✅ FIXED: Changed URL format to match backend (mark-read/{id}/)
+  // ✅ FIXED: Match backend URL pattern (mark-read/{id}/)
   markAsRead: async (notificationId: number) => {
     try {
       return await apiFetch(`/notifications/mark-read/${notificationId}/`, {
@@ -396,6 +370,7 @@ export const notificationAPI = {
     }
   },
 
+  // ✅ FIXED: Match backend URL pattern (mark-all-read/)
   markAllAsRead: async () => {
     try {
       return await apiFetch("/notifications/mark-all-read/", {
@@ -411,22 +386,39 @@ export const notificationAPI = {
   },
 
   getPreferences: async () => {
-    return apiFetch("/notifications/preferences/");
+    try {
+      return await apiFetch("/notifications/preferences/");
+    } catch (error: any) {
+      if (error.status === 404) {
+        // Return default preferences if not found
+        return {
+          email_enabled: true,
+          email_high_priority: true,
+          email_medium_priority: true,
+          email_low_priority: false,
+          push_enabled: true,
+          push_high_priority: true,
+          push_medium_priority: true,
+          push_low_priority: false,
+        };
+      }
+      throw error;
+    }
   },
 
   updatePreferences: async (data: any) => {
-    return apiFetch("/notifications/preferences/", {
+    return await apiFetch("/notifications/preferences/", {
       method: "PUT",
       body: JSON.stringify(data),
     });
   },
 
   getAdminAlerts: async () => {
-    return apiFetch("/notifications/admin/alerts/");
+    return await apiFetch("/notifications/admin/alerts/");
   },
 
   getAdminActionRequired: async () => {
-    return apiFetch<{ action_required_count: number }>("/notifications/admin/action-required/");
+    return await apiFetch("/notifications/admin/action-required/");
   }
 };
 
