@@ -1,3 +1,4 @@
+// src/pages/Dashboard/Transfer.tsx - WITH MOBILE MONEY SUPPORT
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -60,7 +61,7 @@ const numberFixStyle = `
 interface TransferFormData {
   amount: string;
   recipient_name: string;
-  destination_type: 'bank' | 'mobile_wallet' | 'crypto';
+  destination_type: 'bank' | 'mobile_wallet' | 'crypto' | 'mobile_money'; // 👈 Added mobile_money
   destination_details: {
     bank_name?: string;
     account_number?: string;
@@ -70,6 +71,9 @@ interface TransferFormData {
     mobile_number?: string;
     crypto_address?: string;
     crypto_type?: string;
+    // 👇 Add mobile money fields
+    mobile_money_provider?: string;
+    mobile_money_number?: string;
   };
   narration: string;
 }
@@ -349,6 +353,8 @@ const Transfer = () => {
       account_number: '',
       account_type: '',
       branch: '',
+      mobile_money_provider: '', // 👈 Added
+      mobile_money_number: '', // 👈 Added
     },
     narration: '',
   });
@@ -463,7 +469,8 @@ const Transfer = () => {
     }
   };
 
-  const handleDestinationTypeChange = (type: 'bank' | 'mobile_wallet' | 'crypto') => {
+  // 👇 Updated to include mobile_money
+  const handleDestinationTypeChange = (type: 'bank' | 'mobile_wallet' | 'crypto' | 'mobile_money') => {
     setFormData(prev => ({
       ...prev,
       destination_type: type,
@@ -476,6 +483,8 @@ const Transfer = () => {
         mobile_number: '',
         crypto_address: '',
         crypto_type: '',
+        mobile_money_provider: '', // 👈 Added
+        mobile_money_number: '', // 👈 Added
       },
     }));
   };
@@ -515,6 +524,13 @@ const Transfer = () => {
         if (!formData.destination_details.mobile_provider?.trim() || 
             !formData.destination_details.mobile_number?.trim()) {
           setError('Please fill in all mobile wallet details');
+          return false;
+        }
+        break;
+      case 'mobile_money': // 👈 Added validation for mobile money
+        if (!formData.destination_details.mobile_money_provider?.trim() || 
+            !formData.destination_details.mobile_money_number?.trim()) {
+          setError('Please fill in all mobile money details');
           return false;
         }
         break;
@@ -590,6 +606,8 @@ const Transfer = () => {
             account_number: '',
             account_type: '',
             branch: '',
+            mobile_money_provider: '',
+            mobile_money_number: '',
           },
           narration: '',
         });
@@ -616,6 +634,7 @@ const Transfer = () => {
     });
   };
 
+  // 👇 Updated to include mobile_money in renderDestinationFields
   const renderDestinationFields = () => {
     switch (formData.destination_type) {
       case 'bank':
@@ -772,6 +791,45 @@ const Transfer = () => {
           </>
         );
 
+      // 👇 NEW: Mobile Money section
+      case 'mobile_money':
+        return (
+          <>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                select
+                fullWidth
+                label="Mobile Money Provider"
+                name="destination_details.mobile_money_provider"
+                value={formData.destination_details.mobile_money_provider || ''}
+                onChange={handleChange}
+                required
+                className={styles.inputField}
+              >
+                <MenuItem value="M-Pesa Kenya">M-Pesa Kenya</MenuItem>
+                <MenuItem value="M-Pesa Tanzania">M-Pesa Tanzania</MenuItem>
+                <MenuItem value="M-Pesa Uganda">M-Pesa Uganda</MenuItem>
+                <MenuItem value="Airtel Money">Airtel Money</MenuItem>
+                <MenuItem value="Tigo Pesa">Tigo Pesa</MenuItem>
+                <MenuItem value="MTN MoMo">MTN MoMo</MenuItem>
+              </TextField>
+            </Grid>
+            
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField
+                fullWidth
+                label="Mobile Money Number"
+                name="destination_details.mobile_money_number"
+                value={formData.destination_details.mobile_money_number || ''}
+                onChange={handleChange}
+                required
+                placeholder="e.g., 0712345678"
+                className={styles.inputField}
+              />
+            </Grid>
+          </>
+        );
+
       case 'crypto':
         return (
           <>
@@ -868,7 +926,7 @@ const Transfer = () => {
           Send Money
         </Typography>
         <Typography color="textSecondary" sx={{ fontSize: '1rem' }}>
-          Transfer funds to bank accounts, mobile wallets, or cryptocurrency addresses
+          Transfer funds to bank accounts, mobile wallets, mobile money, or cryptocurrency addresses
         </Typography>
       </Box>
 
@@ -1051,7 +1109,7 @@ const Transfer = () => {
                       />
                     </Grid>
 
-                    {/* Destination Type */}
+                    {/* Destination Type - Updated with Mobile Money button */}
                     <Grid size={{ xs: 12 }}>
                       <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#0A2540' }}>
                         Destination Type
@@ -1068,6 +1126,12 @@ const Transfer = () => {
                           onClick={() => handleDestinationTypeChange('mobile_wallet')}
                         >
                           Mobile Wallet
+                        </Button>
+                        <Button
+                          className={`${styles.destTypeButton} ${formData.destination_type === 'mobile_money' ? styles.active : ''}`}
+                          onClick={() => handleDestinationTypeChange('mobile_money')}
+                        >
+                          Mobile Money
                         </Button>
                         <Button
                           className={`${styles.destTypeButton} ${formData.destination_type === 'crypto' ? styles.active : ''}`}

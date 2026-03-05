@@ -1,11 +1,11 @@
-// src/services/transfer-api.ts - COMPLETE FIXED VERSION
+// src/services/transfer-api.ts - COMPLETE FIXED VERSION WITH MOBILE MONEY
 import { apiFetch } from '../api';  // Import from main api.ts
 import { useAuthStore } from '../lib/store/auth';
 
 export interface TransferRequest {
   amount: number;
   recipient_name: string;
-  destination_type: 'bank' | 'mobile_wallet' | 'crypto';
+  destination_type: 'bank' | 'mobile_wallet' | 'crypto' | 'mobile_money'; // 👈 Added mobile_money
   destination_details: {
     bank_name?: string;
     account_number?: string;
@@ -14,6 +14,9 @@ export interface TransferRequest {
     mobile_number?: string;
     crypto_address?: string;
     crypto_type?: string;
+    // 👇 Add mobile money fields
+    mobile_money_provider?: string;
+    mobile_money_number?: string;
   };
   narration?: string;
 }
@@ -113,7 +116,7 @@ export interface KYCStatus {
 }
 
 export const transferAPI = {
-  // ✅ FIXED: Create transfer - ADDED /api prefix
+  // ✅ FIXED: Create transfer - ADDED /api prefix and mobile_money support
   createTransfer: async (data: TransferRequest): Promise<{success: boolean; transfer_id: number; reference: string; message: string}> => {
     try {
       const { user } = useAuthStore.getState();
@@ -149,6 +152,12 @@ export const transferAPI = {
         cleanedData.destination_details = {
           crypto_type: cleanedData.destination_details.crypto_type || '',
           crypto_address: cleanedData.destination_details.crypto_address || ''
+        };
+        
+      } else if (cleanedData.destination_type === 'mobile_money') { // 👈 New mobile_money case
+        cleanedData.destination_details = {
+          mobile_money_provider: cleanedData.destination_details.mobile_money_provider || '',
+          mobile_money_number: cleanedData.destination_details.mobile_money_number || ''
         };
       }
       

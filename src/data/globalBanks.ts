@@ -8,7 +8,7 @@ export interface BankRecipient {
   countryCode: string;
   region: string;
   logo: string; // Emoji for now, can be replaced with actual logos
-  type: 'bank' | 'fintech' | 'crypto';
+  type: 'bank' | 'fintech' | 'crypto' | 'mobile_money';
   swiftCode?: string;
   popular?: boolean; // For featured banks
   supports: {
@@ -174,7 +174,7 @@ export const globalBanks: BankRecipient[] = [
   },
 
   // ============================================
-  // AFRICA - KENYA (Updated: Removed M-Pesa, Added Co-op)
+  // AFRICA - KENYA
   // ============================================
   
   {
@@ -387,6 +387,47 @@ export const globalBanks: BankRecipient[] = [
   },
 
   // ============================================
+  // AFRICA - MOBILE MONEY (NEW SECTION)
+  // ============================================
+
+  {
+    id: 'ke-mpesa',
+    name: 'M-Pesa',
+    shortName: 'M-Pesa',
+    country: 'Kenya',
+    countryCode: 'KE',
+    region: 'Africa',
+    logo: '📱',
+    type: 'mobile_money',
+    popular: true,
+    supports: { swift: false, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'tz-mpesa',
+    name: 'M-Pesa Tanzania',
+    shortName: 'M-Pesa TZ',
+    country: 'Tanzania',
+    countryCode: 'TZ',
+    region: 'Africa',
+    logo: '📱',
+    type: 'mobile_money',
+    popular: true,
+    supports: { swift: false, sepa: false, local: true, instant: true }
+  },
+  {
+    id: 'ug-mpesa',
+    name: 'M-Pesa Uganda',
+    shortName: 'M-Pesa UG',
+    country: 'Uganda',
+    countryCode: 'UG',
+    region: 'Africa',
+    logo: '📱',
+    type: 'mobile_money',
+    popular: true,
+    supports: { swift: false, sepa: false, local: true, instant: true }
+  },
+
+  // ============================================
   // EUROPE - UNITED KINGDOM
   // ============================================
 
@@ -486,6 +527,30 @@ export const globalBanks: BankRecipient[] = [
     countryCode: 'GB',
     region: 'Europe',
     logo: '💳',
+    type: 'fintech',
+    popular: true,
+    supports: { swift: true, sepa: true, local: true, instant: true }
+  },
+  {
+    id: 'gb-wise',
+    name: 'Wise (formerly TransferWise)',
+    shortName: 'Wise',
+    country: 'United Kingdom',
+    countryCode: 'GB',
+    region: 'Europe',
+    logo: '🌍',
+    type: 'fintech',
+    popular: true,
+    supports: { swift: true, sepa: true, local: true, instant: true }
+  },
+  {
+    id: 'gb-skrill',
+    name: 'Skrill (Moneybookers)',
+    shortName: 'Skrill',
+    country: 'United Kingdom',
+    countryCode: 'GB',
+    region: 'Europe',
+    logo: '💸',
     type: 'fintech',
     popular: true,
     supports: { swift: true, sepa: true, local: true, instant: true }
