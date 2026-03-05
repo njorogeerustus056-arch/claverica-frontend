@@ -214,6 +214,7 @@ export class NotificationService {
         return false;
       }
       
+      // ✅ This calls api.notifications.markAsRead which uses the URL from api.ts
       await api.notifications.markAsRead(notificationId);
       return true;
     } catch (error: any) {
