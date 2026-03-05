@@ -345,39 +345,6 @@
   border: 1px solid rgba(30, 111, 111, 0.3);
 }
 
-/* Social Links */
-.socialLinks {
-  display: flex;
-  gap: var(--space-xs);
-  flex-wrap: wrap;
-}
-
-.socialLink {
-  width: 2.25rem;
-  height: 2.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
-  border-radius: 0.625rem;
-  transition: all 0.2s ease;
-}
-
-.socialLink:hover {
-  background: var(--gold);
-  color: var(--white);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(197, 160, 40, 0.3);
-}
-
-.socialIcon {
-  width: 1.125rem;
-  height: 1.125rem;
-}
-
 /* Link Columns - Compact */
 .linkColumn {
   text-align: left;
@@ -533,7 +500,6 @@
 /* Focus States for Accessibility */
 .footerLink:focus-visible,
 .legalLink:focus-visible,
-.socialLink:focus-visible,
 .subscribeButton:focus-visible,
 .newsletterInput:focus-visible {
   outline: 2px solid var(--gold);
@@ -557,10 +523,6 @@
   }
   
   .trustBadges {
-    justify-content: center;
-  }
-  
-  .socialLinks {
     justify-content: center;
   }
   
@@ -602,7 +564,6 @@
   }
   
   .newsletterSection,
-  .socialLinks,
   .subscribeButton,
   .trademarkInfo,
   .headquarters,

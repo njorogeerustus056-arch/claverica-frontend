@@ -308,6 +308,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     };
   }, [isAuthenticated, tokens?.access, pollInterval, fetchNotifications, pusherConnected]);
 
+  // ✅ FIXED: markAsRead function - correctly calls api.notifications.markAsRead(id)
   const markAsRead = async (id: number) => {
     try {
       await api.notifications.markAsRead(id);
