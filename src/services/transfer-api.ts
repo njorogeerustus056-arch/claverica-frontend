@@ -143,9 +143,10 @@ export const transferAPI = {
         };
         
       } else if (cleanedData.destination_type === 'mobile_wallet') {
+        // ✅ FIXED: Changed field names to match backend expectations
         cleanedData.destination_details = {
-          mobile_provider: cleanedData.destination_details.mobile_provider || '',
-          mobile_number: cleanedData.destination_details.mobile_number || ''
+          provider: cleanedData.destination_details.mobile_provider || '',  // 👈 Changed from 'mobile_provider' to 'provider'
+          phone_number: cleanedData.destination_details.mobile_number || ''  // 👈 Changed from 'mobile_number' to 'phone_number'
         };
         
       } else if (cleanedData.destination_type === 'crypto') {
