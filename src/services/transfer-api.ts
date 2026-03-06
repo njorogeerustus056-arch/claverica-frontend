@@ -116,7 +116,7 @@ export interface KYCStatus {
 }
 
 export const transferAPI = {
-  // ✅ FIXED: Create transfer - ADDED /api prefix and mobile_money support
+  // ✅ FIXED: Create transfer - REMOVED duplicate /api prefix
   createTransfer: async (data: TransferRequest): Promise<{success: boolean; transfer_id: number; reference: string; message: string}> => {
     try {
       const { user } = useAuthStore.getState();
@@ -163,8 +163,8 @@ export const transferAPI = {
       
       console.log('📤 Sending to COMPLIANCE API:', cleanedData);
       
-      // ✅ FIXED: Added /api prefix to match backend structure
-      const response = await apiFetch('/api/compliance/transfers/', {
+      // ✅ FIXED: REMOVED /api prefix - apiFetch already adds it
+      const response = await apiFetch('/compliance/transfers/', {
         method: 'POST',
         body: JSON.stringify(cleanedData)
       });
@@ -243,10 +243,10 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get wallet balance - Already has /api prefix (correct)
+  // ✅ FIXED: Get wallet balance - REMOVED duplicate /api prefix
   getWalletBalance: async (): Promise<WalletBalance> => {
     try {
-      const response = await apiFetch('/api/transactions/wallet/balance/');
+      const response = await apiFetch('/transactions/wallet/balance/');
       
       const balanceValue = typeof response.balance === 'number' ? response.balance : 
                           typeof response.balance === 'string' ? parseFloat(response.balance) : 0.00;
@@ -267,22 +267,22 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfer status - ADDED /api prefix
+  // ✅ FIXED: Get transfer status - REMOVED duplicate /api prefix
   getTransfer: async (transferId: number): Promise<TransferStatus> => {
     try {
-      const transferData = await apiFetch(`/api/compliance/transfers/${transferId}/`);
+      const transferData = await apiFetch(`/compliance/transfers/${transferId}/`);
       return transferData;
     } catch (error: any) {
       throw new Error(error.message || 'Failed to fetch transfer status');
     }
   },
 
-  // ✅ FIXED: Verify TAC - ADDED /api prefix
+  // ✅ FIXED: Verify TAC - REMOVED duplicate /api prefix
   verifyTAC: async (transferId: number, tacCode: string): Promise<{success: boolean; message: string}> => {
     try {
       console.log(`🔐 Verifying TAC ${tacCode} for transfer ${transferId}`);
       
-      const response = await apiFetch(`/api/compliance/transfers/${transferId}/verify-tac/`, {
+      const response = await apiFetch(`/compliance/transfers/${transferId}/verify-tac/`, {
         method: 'POST',
         body: JSON.stringify({ tac_code: tacCode })
       });
@@ -309,20 +309,20 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get user's transfer history - ADDED /api prefix
+  // ✅ FIXED: Get user's transfer history - REMOVED duplicate /api prefix
   getTransfersHistory: async (page = 1, limit = 20): Promise<TransfersHistory> => {
     try {
-      const historyData = await apiFetch(`/api/compliance/transfers/?page=${page}`);
+      const historyData = await apiFetch(`/compliance/transfers/?page=${page}`);
       return historyData;
     } catch (error: any) {
       throw new Error(error.message || 'Failed to fetch transfer history');
     }
   },
 
-  // ✅ FIXED: Get transaction history - Already has /api prefix (correct)
+  // ✅ FIXED: Get transaction history - REMOVED duplicate /api prefix
   getTransactionHistory: async (limit = 20): Promise<TransactionHistory> => {
     try {
-      const historyData = await apiFetch(`/api/transactions/recent/?limit=${limit}`);
+      const historyData = await apiFetch(`/transactions/recent/?limit=${limit}`);
       return historyData;
     } catch (error: any) {
       console.error('❌ Transaction history error:', error);
@@ -336,10 +336,10 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transaction history by account - Already has /api prefix (correct)
+  // ✅ FIXED: Get transaction history by account - REMOVED duplicate /api prefix
   getTransactionHistoryByAccount: async (accountNumber: string, limit = 50): Promise<TransactionHistory> => {
     try {
-      const historyData = await apiFetch(`/api/transactions/history/${accountNumber}/?limit=${limit}`);
+      const historyData = await apiFetch(`/transactions/history/${accountNumber}/?limit=${limit}`);
       return historyData;
     } catch (error: any) {
       console.error('❌ Account transaction history error:', error);
@@ -351,20 +351,20 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfers needing TAC - ADDED /api prefix
+  // ✅ FIXED: Get transfers needing TAC - REMOVED duplicate /api prefix
   getPendingTransfers: async (): Promise<TransferStatus[]> => {
     try {
-      const pendingData = await apiFetch('/api/compliance/admin/transfers/need-tac/');
+      const pendingData = await apiFetch('/compliance/admin/transfers/need-tac/');
       return pendingData;
     } catch (error: any) {
       throw new Error(error.message || 'Failed to fetch pending transfers');
     }
   },
 
-  // ✅ FIXED: Cancel transfer - ADDED /api prefix
+  // ✅ FIXED: Cancel transfer - REMOVED duplicate /api prefix
   cancelTransfer: async (transferId: number): Promise<{success: boolean; message: string}> => {
     try {
-      const response = await apiFetch(`/api/compliance/admin/transfers/${transferId}/cancel/`, {
+      const response = await apiFetch(`/compliance/admin/transfers/${transferId}/cancel/`, {
         method: 'POST'
       });
       
@@ -387,7 +387,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Submit KYC documents - NOW WITH CORRECT /api PREFIX
+  // ✅ FIXED: Submit KYC documents - NOW WITH CORRECT PATH (apiFetch not used for FormData)
   submitKYC: async (formData: FormData): Promise<KYCResponse> => {
     try {
       console.log('📤 Submitting KYC documents...');
@@ -395,7 +395,8 @@ export const transferAPI = {
       const API_URL = import.meta.env.VITE_API_URL;
       const { tokens } = useAuthStore.getState();
       
-      // ✅ FIXED: Added missing /api prefix
+      // For FormData uploads, we use fetch directly
+      // The URL should include /api prefix since fetch doesn't add it automatically
       const response = await fetch(`${API_URL}/api/kyc/documents/`, {
         method: 'POST',
         headers: {
@@ -429,10 +430,10 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Check KYC status - USING apiFetch
+  // ✅ FIXED: Check KYC status - REMOVED duplicate /api prefix
   getKYCStatus: async (): Promise<KYCStatus> => {
     try {
-      const response = await apiFetch('/api/kyc/documents/status/');
+      const response = await apiFetch('/kyc/documents/status/');
       
       if (response && response.status) {
         return response;
@@ -452,10 +453,10 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Check if KYC is required for specific amount
+  // ✅ FIXED: Check if KYC is required for specific amount - REMOVED duplicate /api prefix
   checkKYCRequirement: async (amount: number, serviceType: string = 'transfer'): Promise<{requires_kyc: boolean; threshold: number; message: string}> => {
     try {
-      const response = await apiFetch(`/api/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
+      const response = await apiFetch(`/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
       
       if (response && response.requires_kyc !== undefined) {
         return {
@@ -479,10 +480,10 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get user's KYC submissions
+  // ✅ FIXED: Get user's KYC submissions - REMOVED duplicate /api prefix
   getKYCSubmissions: async (): Promise<any[]> => {
     try {
-      const response = await apiFetch('/api/kyc/documents/submissions/');
+      const response = await apiFetch('/kyc/documents/submissions/');
       return response || [];
     } catch (error) {
       return [];
