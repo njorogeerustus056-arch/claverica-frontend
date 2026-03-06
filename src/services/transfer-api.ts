@@ -1,11 +1,11 @@
-// src/services/transfer-api.ts - COMPLETE FIXED VERSION WITH MOBILE MONEY AND DEBUG LINE
+// src/services/transfer-api.ts - COMPLETE FIXED VERSION (MOBILE MONEY REMOVED)
 import { apiFetch } from '../api';  // Import from main api.ts
 import { useAuthStore } from '../lib/store/auth';
 
 export interface TransferRequest {
   amount: number;
   recipient_name: string;
-  destination_type: 'bank' | 'mobile_wallet' | 'crypto' | 'mobile_money'; // 👈 Added mobile_money
+  destination_type: 'bank' | 'mobile_wallet' | 'crypto'; // 👈 REMOVED mobile_money
   destination_details: {
     bank_name?: string;
     account_number?: string;
@@ -14,9 +14,7 @@ export interface TransferRequest {
     mobile_number?: string;
     crypto_address?: string;
     crypto_type?: string;
-    // 👇 Add mobile money fields
-    mobile_money_provider?: string;
-    mobile_money_number?: string;
+    // 👇 REMOVED mobile money fields
   };
   narration?: string;
 }
@@ -116,7 +114,7 @@ export interface KYCStatus {
 }
 
 export const transferAPI = {
-  // ✅ FIXED: Create transfer - REMOVED duplicate /api prefix
+  // ✅ FIXED: Create transfer - REMOVED mobile money
   createTransfer: async (data: TransferRequest): Promise<{success: boolean; transfer_id: number; reference: string; message: string}> => {
     try {
       const { user } = useAuthStore.getState();
@@ -155,12 +153,7 @@ export const transferAPI = {
           crypto_address: cleanedData.destination_details.crypto_address || ''
         };
         
-      } else if (cleanedData.destination_type === 'mobile_money') { // 👈 New mobile_money case
-        cleanedData.destination_details = {
-          mobile_money_provider: cleanedData.destination_details.mobile_money_provider || '',
-          mobile_money_number: cleanedData.destination_details.mobile_money_number || ''
-        };
-      }
+      } // 👈 REMOVED mobile_money case
       
       console.log('📤 Sending to COMPLIANCE API:', cleanedData);
       
@@ -247,7 +240,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get wallet balance - REMOVED duplicate /api prefix
+  // ✅ FIXED: Get wallet balance
   getWalletBalance: async (): Promise<WalletBalance> => {
     try {
       const response = await apiFetch('/transactions/wallet/balance/');
@@ -271,7 +264,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfer status - REMOVED duplicate /api prefix
+  // ✅ FIXED: Get transfer status
   getTransfer: async (transferId: number): Promise<TransferStatus> => {
     try {
       const transferData = await apiFetch(`/compliance/transfers/${transferId}/`);
@@ -281,7 +274,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Verify TAC - REMOVED duplicate /api prefix
+  // ✅ FIXED: Verify TAC
   verifyTAC: async (transferId: number, tacCode: string): Promise<{success: boolean; message: string}> => {
     try {
       console.log(`🔐 Verifying TAC ${tacCode} for transfer ${transferId}`);
@@ -313,7 +306,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get user's transfer history - REMOVED duplicate /api prefix
+  // ✅ FIXED: Get user's transfer history
   getTransfersHistory: async (page = 1, limit = 20): Promise<TransfersHistory> => {
     try {
       const historyData = await apiFetch(`/compliance/transfers/?page=${page}`);
@@ -323,7 +316,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transaction history - REMOVED duplicate /api prefix
+  // ✅ FIXED: Get transaction history
   getTransactionHistory: async (limit = 20): Promise<TransactionHistory> => {
     try {
       const historyData = await apiFetch(`/transactions/recent/?limit=${limit}`);
@@ -340,7 +333,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transaction history by account - REMOVED duplicate /api prefix
+  // ✅ FIXED: Get transaction history by account
   getTransactionHistoryByAccount: async (accountNumber: string, limit = 50): Promise<TransactionHistory> => {
     try {
       const historyData = await apiFetch(`/transactions/history/${accountNumber}/?limit=${limit}`);
@@ -355,7 +348,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfers needing TAC - REMOVED duplicate /api prefix
+  // ✅ FIXED: Get transfers needing TAC
   getPendingTransfers: async (): Promise<TransferStatus[]> => {
     try {
       const pendingData = await apiFetch('/compliance/admin/transfers/need-tac/');
@@ -365,7 +358,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Cancel transfer - REMOVED duplicate /api prefix
+  // ✅ FIXED: Cancel transfer
   cancelTransfer: async (transferId: number): Promise<{success: boolean; message: string}> => {
     try {
       const response = await apiFetch(`/compliance/admin/transfers/${transferId}/cancel/`, {
@@ -391,7 +384,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Submit KYC documents - NOW WITH CORRECT PATH (apiFetch not used for FormData)
+  // ✅ FIXED: Submit KYC documents
   submitKYC: async (formData: FormData): Promise<KYCResponse> => {
     try {
       console.log('📤 Submitting KYC documents...');
@@ -434,7 +427,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Check KYC status - REMOVED duplicate /api prefix
+  // ✅ FIXED: Check KYC status
   getKYCStatus: async (): Promise<KYCStatus> => {
     try {
       const response = await apiFetch('/kyc/documents/status/');
@@ -457,7 +450,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Check if KYC is required for specific amount - REMOVED duplicate /api prefix
+  // ✅ FIXED: Check if KYC is required for specific amount
   checkKYCRequirement: async (amount: number, serviceType: string = 'transfer'): Promise<{requires_kyc: boolean; threshold: number; message: string}> => {
     try {
       const response = await apiFetch(`/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
@@ -484,7 +477,7 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get user's KYC submissions - REMOVED duplicate /api prefix
+  // ✅ FIXED: Get user's KYC submissions
   getKYCSubmissions: async (): Promise<any[]> => {
     try {
       const response = await apiFetch('/kyc/documents/submissions/');
