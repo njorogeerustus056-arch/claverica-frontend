@@ -1,4 +1,4 @@
-// src/services/transfer-api.ts - COMPLETE FIXED VERSION WITH MOBILE MONEY
+// src/services/transfer-api.ts - COMPLETE FIXED VERSION WITH MOBILE MONEY AND DEBUG LINE
 import { apiFetch } from '../api';  // Import from main api.ts
 import { useAuthStore } from '../lib/store/auth';
 
@@ -162,6 +162,9 @@ export const transferAPI = {
       }
       
       console.log('📤 Sending to COMPLIANCE API:', cleanedData);
+      
+      // ✅ ADD DEBUG LINE HERE - SHOW THE EXACT PAYLOAD BEING SENT
+      console.log('📤 FINAL PAYLOAD STRINGIFIED:', JSON.stringify(cleanedData, null, 2));
       
       // ✅ FIXED: REMOVED /api prefix - apiFetch already adds it
       const response = await apiFetch('/compliance/transfers/', {

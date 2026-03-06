@@ -1,4 +1,4 @@
-// src/api.ts - COMPLETELY FIXED VERSION WITH CORRECT NOTIFICATION ENDPOINTS
+// src/api.ts - COMPLETELY FIXED VERSION WITH DETAILED ERROR LOGGING
 import { useAuthStore } from './lib/store/auth';
 
 // ✅ CRITICAL FIX: Remove any trailing /api from the URL
@@ -151,7 +151,26 @@ export async function apiFetch<T = any>(
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      const errorMessage = data.message || data.error || data.detail || `API request failed (${response.status})`;
+      console.error('❌ API Error Response DETAILS:', {
+        status: response.status,
+        statusText: response.statusText,
+        url: url,
+        data: data,
+        dataKeys: Object.keys(data || {})
+      });
+      
+      // Log nested errors if they exist
+      if (data.destination_details) {
+        console.error('❌ Destination details errors:', data.destination_details);
+      }
+      if (data.errors) {
+        console.error('❌ Validation errors:', data.errors);
+      }
+      if (data.non_field_errors) {
+        console.error('❌ Non-field errors:', data.non_field_errors);
+      }
+      
+      const errorMessage = data.message || data.error || data.detail || JSON.stringify(data) || `API request failed (${response.status})`;
       throw new ApiError(errorMessage, response.status, data);
     }
 
@@ -178,7 +197,7 @@ export async function uploadFormData<T = any>(
   const url = `${API_URL}${finalEndpoint}`;
   const token = getToken();
 
-  console.log(`📤 Upload Request: ${url}`); // Add logging to debug
+  console.log(`📤 Upload Request: ${url}`);
 
   const headers: HeadersInit = {};
   
@@ -195,6 +214,7 @@ export async function uploadFormData<T = any>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
+    console.error('❌ Upload Error Response:', error);
     throw new ApiError(
       error.message || error.detail || `Upload failed (${response.status})`,
       response.status,
@@ -247,10 +267,9 @@ export const authAPI = {
     return apiFetch("/users/me/");
   },
 
-  // ✅ FIXED: Using existing settings/update endpoint that accepts PUT/PATCH
   updateProfile: async (data: any) => {
-    return apiFetch("/users/settings/update/", {  // Changed from /users/profile/
-      method: "PUT",  // Using PUT as the backend accepts PUT/PATCH
+    return apiFetch("/users/settings/update/", {
+      method: "PUT",
       body: JSON.stringify(data),
     });
   },
@@ -355,7 +374,6 @@ export const notificationAPI = {
     }
   },
 
-  // ✅ FIXED: Match backend URL pattern (mark-read/{id}/)
   markAsRead: async (notificationId: number) => {
     try {
       return await apiFetch(`/notifications/mark-read/${notificationId}/`, {
@@ -370,7 +388,6 @@ export const notificationAPI = {
     }
   },
 
-  // ✅ FIXED: Match backend URL pattern (mark-all-read/)
   markAllAsRead: async () => {
     try {
       return await apiFetch("/notifications/mark-all-read/", {
@@ -390,7 +407,6 @@ export const notificationAPI = {
       return await apiFetch("/notifications/preferences/");
     } catch (error: any) {
       if (error.status === 404) {
-        // Return default preferences if not found
         return {
           email_enabled: true,
           email_high_priority: true,
@@ -527,7 +543,6 @@ export const api = {
     apiFetch<T>(endpoint, { ...options, method: 'POST', body: data ? JSON.stringify(data) : undefined }),
   put: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
     apiFetch<T>(endpoint, { ...options, method: 'PUT', body: data ? JSON.stringify(data) : undefined }),
-  // ✅ ADDED: PATCH method
   patch: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
     apiFetch<T>(endpoint, { ...options, method: 'PATCH', body: data ? JSON.stringify(data) : undefined }),
   delete: <T = any>(endpoint: string, options?: RequestInit) =>
