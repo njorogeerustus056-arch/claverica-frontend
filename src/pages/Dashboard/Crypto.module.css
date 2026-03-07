@@ -27,6 +27,8 @@
 
 /* ===== CONTAINER ===== */
 .cryptoContainer {
+  border-radius: 20px; 
+
   min-height: 100vh;
   background: linear-gradient(135deg, var(--cream) 0%, #f5f3ff 100%);
   width: 100%;

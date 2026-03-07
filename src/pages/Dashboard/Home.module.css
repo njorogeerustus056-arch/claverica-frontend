@@ -53,6 +53,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, var(--cream) 0%, #FAF7F2 100%);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  border-radius: 20px; 
 }
 
 /* ===== HERO SECTION - NAVY TO PURPLE GRADIENT ===== */
@@ -62,6 +63,8 @@
   padding: 1rem 1.5rem 1.5rem;
   position: relative;
   overflow: hidden;
+  border-radius: 20px; 
+
 }
 
 .hero::before {
@@ -658,11 +661,23 @@
   color: var(--white);
   font-size: 1.25rem;
   flex-shrink: 0;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
+  transition: filter 0.35s ease, transform 0.25s ease;
+
+}
+
+
+.icon {
+  filter: grayscale(100%);
+  transition: filter 0.35s ease;
 }
 
 .actionCard:hover .actionIcon {
   transform: scale(1.1);
+}
+
+.actionCard:hover .icon {
+  filter: grayscale(0%);
 }
 
 .actionInfo {

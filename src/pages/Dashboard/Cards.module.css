@@ -17,6 +17,8 @@
   padding-bottom: 2rem;
   min-height: 100vh;
   background: var(--cream);
+  border-radius: 20px; 
+
 }
 
 /* ===== HEADER SECTION ===== */

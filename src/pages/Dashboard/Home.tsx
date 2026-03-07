@@ -161,15 +161,15 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
         </div>
 
         <div className={styles.modalActions}>
-          <button 
-            onClick={() => { onClose(); navigate("/dashboard/transfer"); }} 
+          <button
+            onClick={() => { onClose(); navigate("/dashboard/transfer"); }}
             className={styles.modalActionBtn}
           >
             <Send className={styles.modalActionIcon} />
             <span>Send</span>
           </button>
-          <button 
-            onClick={() => { onClose(); navigate("/dashboard/transfer"); }} 
+          <button
+            onClick={() => { onClose(); navigate("/dashboard/transfer"); }}
             className={styles.modalActionBtn}
           >
             <Download className={styles.modalActionIcon} />
@@ -206,8 +206,8 @@ function MiniWalletModal({ user, wallet, transactions, onClose, navigate }: Mini
               <p>No transactions yet</p>
             </div>
           )}
-          <button 
-            onClick={() => { onClose(); navigate("/dashboard/transfer/history"); }} 
+          <button
+            onClick={() => { onClose(); navigate("/dashboard/transfer/history"); }}
             className={styles.modalViewAll}
           >
             View All Transactions
@@ -236,6 +236,9 @@ export default function Home() {
 
   const { wallet, transactions, user, loading, error, refetch } = useDashboardData();
   const { pusherConnected } = useSafePusher();
+  const [hovered, setHovered] = useState(null);
+  const [scanIndex, setScanIndex] = useState(-1);
+
 
   // Add WebSocket listeners for real-time updates
   useEffect(() => {
@@ -254,14 +257,14 @@ export default function Home() {
       try {
         // ✅ FIXED: Use the dedicated cards API method
         const response = await api.cards.getUserCards();
-        
+
         let cardsArray = [];
         if (response && Array.isArray(response.cards)) {
           cardsArray = response.cards;
         } else if (Array.isArray(response)) {
           cardsArray = response;
         }
-        
+
         setCardsCount(cardsArray.length);
       } catch (err: any) {
         console.error('Failed to fetch cards:', err);
@@ -271,7 +274,7 @@ export default function Home() {
         setCardsLoading(false);
       }
     };
-    
+
     if (user) {
       fetchCardsCount();
     }
@@ -310,18 +313,18 @@ export default function Home() {
 
   const formatDate = () => {
     const now = new Date();
-    return now.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
+    return now.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
     });
   };
 
   const formatTime = () => {
     const now = new Date();
-    return now.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return now.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -331,11 +334,11 @@ export default function Home() {
     { icon: Download, label: "Withdraw", color: "#8626E9", action: () => navigate("/dashboard/transfer"), desc: "To bank account" },
     { icon: Bitcoin, label: "Crypto", color: "#C5A028", action: () => navigate("/dashboard/crypto"), desc: "Buy/Sell crypto", badge: "New" },
     { icon: WalletIcon, label: "Wallet", color: "#1E6F6F", action: () => setShowWalletModal(true), desc: "Quick overview" },
-    { 
-      icon: CreditCard, 
-      label: "Cards", 
-      color: "#8626E9", 
-      action: () => navigate("/dashboard/cards"), 
+    {
+      icon: CreditCard,
+      label: "Cards",
+      color: "#8626E9",
+      action: () => navigate("/dashboard/cards"),
       desc: cardsLoading ? "Loading..." : cardsError ? "Error" : `${cardsCount} active`,
       count: cardsCount,
       loading: cardsLoading,
@@ -344,7 +347,20 @@ export default function Home() {
     { icon: History, label: "History", color: "#0A2540", action: () => navigate("/dashboard/transfer/history"), desc: "Transactions", badge: transactions.length > 0 ? transactions.length.toString() : null },
     { icon: Headphones, label: "Support", color: "#C5A028", action: () => navigate("/dashboard/support"), desc: "24/7 help" },
     { icon: BarChart3, label: "Savings", color: "#1E6F6F", action: () => navigate("/dashboard/savings"), desc: "Grow money" },
-  ];
+  ]; 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setScanIndex((prev) => {
+        if (prev === -2) return -1; 
+        if (prev >= quickActions.length - 1) return -2; 
+        return prev + 1;
+      });
+    }, 700);
+
+    return () => clearInterval(interval);
+  }, [quickActions.length]);
+
 
   const formatTransactionDate = (dateString: string) => {
     try {
@@ -352,7 +368,7 @@ export default function Home() {
       const now = new Date();
       const diffMs = now.getTime() - date.getTime();
       const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-      
+
       if (diffHours < 24) {
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       } else if (diffHours < 48) {
@@ -413,7 +429,7 @@ export default function Home() {
       <div className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.open : ''}`}>
         <div className={styles.mobileMenuHeader}>
           <span className={styles.mobileMenuTitle}>Menu</span>
-          <button 
+          <button
             className={styles.mobileMenuClose}
             onClick={() => setMobileMenuOpen(false)}
           >
@@ -486,7 +502,7 @@ export default function Home() {
                   )}
                 </div>
               </div>
-              
+
               <div className={styles.dateTimeCompact}>
                 <div className={styles.date}>{formatDate()}</div>
                 <div className={styles.time}>{formatTime()}</div>
@@ -501,22 +517,22 @@ export default function Home() {
                   {showBalance ? <EyeOff /> : <Eye />}
                 </button>
               </div>
-              
+
               <div className={styles.balanceAmount}>
                 <span className={styles.currency}>{wallet?.currency || "USD"}</span>
                 <span className={styles.amount}>
-                  {showBalance 
+                  {showBalance
                     ? wallet?.balance?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"
                     : "••••••"}
                 </span>
               </div>
-              
+
               <div className={styles.balanceDetails}>
                 <div className={styles.balanceDetail}>
                   <div className={`${styles.detailDot} ${styles.available}`}></div>
                   <span>Available</span>
                   <span className={styles.detailAmount}>
-                    {showBalance 
+                    {showBalance
                       ? `${wallet?.currency || "USD"} ${wallet?.available?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00"}`
                       : "••••••"}
                   </span>
@@ -526,7 +542,7 @@ export default function Home() {
                     <div className={`${styles.detailDot} ${styles.pending}`}></div>
                     <span>Pending</span>
                     <span className={styles.detailAmount}>
-                      {showBalance 
+                      {showBalance
                         ? `${wallet?.currency || "USD"} ${wallet?.pending?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                         : "••••••"}
                     </span>
@@ -571,15 +587,33 @@ export default function Home() {
                 <Zap className={styles.sectionIcon} />
                 Quick Actions
               </h2>
-            </div>
-            
+            </div> 
+
             <div className={styles.actionGrid}>
-              {quickActions.map((action, idx) => (
-                <button key={idx} onClick={action.action} className={styles.actionCard}>
-                  <div className={styles.actionIcon} style={{ background: action.color }}>
-                    <action.icon />
-                  </div>
-                  <div className={styles.actionInfo}>
+              {quickActions.map((action, idx) => {
+                const active = hovered === idx || scanIndex === idx;
+
+                return (
+                  <button key={idx} onClick={action.action} className={styles.actionCard}
+                    onMouseEnter={() => setHovered(idx)}
+                    onMouseLeave={() => setHovered(null)}
+                  >
+                    <div
+                      className={styles.actionIcon}
+                      style={{
+                        background: active ? action.color : "#999",
+                        transition: "all 0.35s ease", transform: active ? "scale(1.08)" : "scale(1)"
+                      }}
+                    >
+                      <action.icon
+                        style={{
+                          filter: active ? "grayscale(0%)" : "grayscale(100%)",
+                          transition: "filter 0.35s ease"
+                        }}
+                      />
+                    </div>
+
+                    <div className={styles.actionInfo}>
                     <span className={styles.actionLabel}>{action.label}</span>
                     <span className={styles.actionDesc}>{action.desc}</span>
                   </div>
@@ -587,9 +621,9 @@ export default function Home() {
                   {action.badge && !action.loading && <span className={styles.actionBadge}>{action.badge}</span>}
                   {action.loading && <CardSkeleton />}
                 </button>
-              ))}
+                );
+              })}
             </div>
-            
             {/* Show card error if any */}
             {cardsError && (
               <div className={styles.cardError}>
@@ -617,11 +651,11 @@ export default function Home() {
                     <span>+42% YoY</span>
                   </div>
                 </div>
-                
+
                 <div className={styles.mapContainer}>
                   <CountryMap mapColor="#F5F0E6" />
                 </div>
-                
+
                 <div className={styles.statsGrid}>
                   <div className={styles.statItem}>
                     <div className={styles.statValue}>25+</div>
@@ -704,7 +738,7 @@ export default function Home() {
                   <Globe className={styles.sectionIcon} />
                   Currency Converter
                 </h2>
-                <CurrencyConverter 
+                <CurrencyConverter
                   baseAmount={wallet?.balance || 0}
                   baseCurrency={wallet?.currency || "USD"}
                 />
@@ -716,7 +750,7 @@ export default function Home() {
                   <PieChart className={styles.sectionIcon} />
                   Financial Snapshot
                 </h2>
-                
+
                 <div className={styles.snapshotGrid}>
                   <div className={styles.snapshotCard}>
                     <div className={styles.snapshotIcon} style={{ background: 'rgba(30, 111, 111, 0.1)' }}>
@@ -729,7 +763,7 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className={styles.snapshotCard}>
                     <div className={styles.snapshotIcon} style={{ background: 'rgba(239, 68, 68, 0.1)' }}>
                       <ArrowDownRight style={{ color: '#EF4444' }} />
@@ -761,7 +795,7 @@ export default function Home() {
                   <Shield className={styles.sectionIcon} />
                   Account Status
                 </h2>
-                
+
                 <div className={styles.statusList}>
                   <div className={styles.statusItem}>
                     <span className={styles.statusLabel}>Account</span>
@@ -797,14 +831,14 @@ export default function Home() {
               Financial Insights
             </h2>
             <div className={styles.insightsGrid}>
-              <FintechMetrics 
+              <FintechMetrics
                 totalIncome={totalIncome}
                 totalExpenses={totalExpenses}
                 walletBalance={wallet?.balance || 0}
                 transactions={transactions}
                 walletCurrency={wallet?.currency || "USD"}
               />
-              <RecentOrders 
+              <RecentOrders
                 transactions={transactions.slice(0, 5)}
                 walletCurrency={wallet?.currency || "USD"}
               />

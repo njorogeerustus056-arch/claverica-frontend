@@ -306,7 +306,7 @@ const TransfersHistory = () => {
 
       {/* Filters Section */}
       <Paper className={styles.paper} sx={{ mb: 3 }}>
-        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2} marginBlockStart={2} mr={2} ml={2}>
           <Typography variant="h6" sx={{ color: '#0A2540', fontWeight: 600 }}>
             Filters
           </Typography>
@@ -335,7 +335,7 @@ const TransfersHistory = () => {
 
         <Grid container spacing={2}>
           {/* Search */}
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3} ml={2}>
             <TextField
               fullWidth
               placeholder="Search transfers..."
@@ -433,7 +433,7 @@ const TransfersHistory = () => {
           </Grid>
 
           {/* Clear Filters */}
-          <Grid item xs={12} md={1}>
+          <Grid item xs={12} md={1} ml={2} mb={2}>
             <Button
               fullWidth
               variant="outlined"

@@ -20,6 +20,8 @@
 .container {
   width: 100%;
   min-height: 100vh;
+  border-radius: 20px; 
+
   background: linear-gradient(135deg, var(--cream) 0%, #FAF7F2 100%);
 }
 
