@@ -42,6 +42,8 @@
   min-height: 100vh;
   background: var(--cream);
   font-family: var(--font-sans);
+  border-radius: 20px; 
+
 }
 
 .content {

@@ -78,7 +78,7 @@ export const QuickActions = ({ onDeposit, onTransfer, onBuy, user, kycThreshold 
 
           {/* Tooltip on hover */}
           <div className={styles.tooltip}>
-            Quick Actions
+            Quick Actionsz
             <div className={styles.tooltipArrow} />
           </div>
         </button>
