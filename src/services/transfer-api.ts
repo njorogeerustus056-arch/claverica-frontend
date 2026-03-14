@@ -1,11 +1,11 @@
-// src/services/transfer-api.ts - COMPLETE FIXED VERSION (MOBILE MONEY REMOVED)
+// src/services/transfer-api.ts - COMPLETE FIXED VERSION (WITH E-WALLET ADDED)
 import { apiFetch } from '../api';  // Import from main api.ts
 import { useAuthStore } from '../lib/store/auth';
 
 export interface TransferRequest {
   amount: number;
   recipient_name: string;
-  destination_type: 'bank' | 'mobile_wallet' | 'crypto'; // 👈 REMOVED mobile_money
+  destination_type: 'bank' | 'mobile_wallet' | 'crypto' | 'e_wallet'; // 👈 ADDED e_wallet
   destination_details: {
     bank_name?: string;
     account_number?: string;
@@ -14,7 +14,10 @@ export interface TransferRequest {
     mobile_number?: string;
     crypto_address?: string;
     crypto_type?: string;
-    // 👇 REMOVED mobile money fields
+    // 👇 ADDED e-wallet fields
+    e_wallet_provider?: string;
+    e_wallet_email?: string;
+    e_wallet_account_id?: string;
   };
   narration?: string;
 }
@@ -114,7 +117,7 @@ export interface KYCStatus {
 }
 
 export const transferAPI = {
-  // ✅ FIXED: Create transfer - REMOVED mobile money
+  // ✅ FIXED: Create transfer - ADDED e_wallet
   createTransfer: async (data: TransferRequest): Promise<{success: boolean; transfer_id: number; reference: string; message: string}> => {
     try {
       const { user } = useAuthStore.getState();
@@ -141,10 +144,17 @@ export const transferAPI = {
         };
         
       } else if (cleanedData.destination_type === 'mobile_wallet') {
-        // ✅ FIXED: Changed field names to match backend expectations
         cleanedData.destination_details = {
-          provider: cleanedData.destination_details.mobile_provider || '',  // 👈 Changed from 'mobile_provider' to 'provider'
-          phone_number: cleanedData.destination_details.mobile_number || ''  // 👈 Changed from 'mobile_number' to 'phone_number'
+          provider: cleanedData.destination_details.mobile_provider || '',
+          phone_number: cleanedData.destination_details.mobile_number || ''
+        };
+        
+      // 👇 ADDED e_wallet case
+      } else if (cleanedData.destination_type === 'e_wallet') {
+        cleanedData.destination_details = {
+          provider: cleanedData.destination_details.e_wallet_provider || '',
+          email: cleanedData.destination_details.e_wallet_email || '',
+          account_id: cleanedData.destination_details.e_wallet_account_id || ''
         };
         
       } else if (cleanedData.destination_type === 'crypto') {
@@ -152,8 +162,7 @@ export const transferAPI = {
           crypto_type: cleanedData.destination_details.crypto_type || '',
           crypto_address: cleanedData.destination_details.crypto_address || ''
         };
-        
-      } // 👈 REMOVED mobile_money case
+      }
       
       console.log('📤 Sending to COMPLIANCE API:', cleanedData);
       

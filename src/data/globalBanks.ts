@@ -1204,6 +1204,19 @@ export const globalBanks: BankRecipient[] = [
     popular: true,
     supports: { swift: false, sepa: false, local: true, instant: true }
   },
+  // 👇 ADDED NETELLER
+  {
+    id: 'global-neteller',
+    name: 'Neteller',
+    shortName: 'Neteller',
+    country: 'Global',
+    countryCode: 'GL',
+    region: 'Global',
+    logo: '💳',
+    type: 'fintech',
+    popular: true,
+    supports: { swift: false, sepa: false, local: true, instant: true }
+  },
   {
     id: 'global-binance',
     name: 'Binance',
