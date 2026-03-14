@@ -1,4 +1,4 @@
-// src/pages/Dashboard/Transfer.tsx - WITH E-WALLET ADDED + BINANCE PAY IN CRYPTO
+// src/pages/Dashboard/Transfer.tsx - WITH CORRECTED FIELD NAMES
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -62,7 +62,7 @@ const numberFixStyle = `
 interface TransferFormData {
   amount: string;
   recipient_name: string;
-  destination_type: 'bank' | 'mobile_wallet' | 'crypto' | 'e_wallet'; // 👈 ADDED e_wallet
+  destination_type: 'bank' | 'mobile_wallet' | 'crypto' | 'e_wallet';
   destination_details: {
     bank_name?: string;
     account_number?: string;
@@ -70,12 +70,13 @@ interface TransferFormData {
     branch?: string;
     mobile_provider?: string;
     mobile_number?: string;
-    crypto_address?: string;
+    // Crypto fields - match backend exactly
     crypto_type?: string;
-    // 👇 ADDED e-wallet fields
-    e_wallet_provider?: string;
-    e_wallet_email?: string;
-    e_wallet_account_id?: string;
+    crypto_address?: string;
+    // E-wallet fields - match backend exactly (no e_wallet_ prefix)
+    provider?: string;
+    email?: string;
+    account_id?: string;
   };
   narration: string;
 }
@@ -357,12 +358,12 @@ const Transfer = () => {
       branch: '',
       mobile_provider: '',
       mobile_number: '',
-      crypto_address: '',
       crypto_type: '',
-      // 👇 ADDED e-wallet fields
-      e_wallet_provider: '',
-      e_wallet_email: '',
-      e_wallet_account_id: '',
+      crypto_address: '',
+      // E-wallet fields - no prefix, match backend exactly
+      provider: '',
+      email: '',
+      account_id: '',
     },
     narration: '',
   });
@@ -477,7 +478,6 @@ const Transfer = () => {
     }
   };
 
-  // 👇 UPDATED: Added e_wallet
   const handleDestinationTypeChange = (type: 'bank' | 'mobile_wallet' | 'crypto' | 'e_wallet') => {
     setFormData(prev => ({
       ...prev,
@@ -489,12 +489,12 @@ const Transfer = () => {
         branch: '',
         mobile_provider: '',
         mobile_number: '',
-        crypto_address: '',
         crypto_type: '',
-        // 👇 ADDED e-wallet fields
-        e_wallet_provider: '',
-        e_wallet_email: '',
-        e_wallet_account_id: '',
+        crypto_address: '',
+        // E-wallet fields - no prefix, match backend exactly
+        provider: '',
+        email: '',
+        account_id: '',
       },
     }));
   };
@@ -547,19 +547,18 @@ const Transfer = () => {
           return false;
         }
         break;
-      // 👇 ADDED e_wallet validation
       case 'e_wallet':
-        if (!formData.destination_details.e_wallet_provider?.trim()) {
+        if (!formData.destination_details.provider?.trim()) {
           setError('Please select e-wallet provider');
           return false;
         }
-        if (!formData.destination_details.e_wallet_email?.trim()) {
+        if (!formData.destination_details.email?.trim()) {
           setError('Please enter email address');
           return false;
         }
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.destination_details.e_wallet_email)) {
+        if (!emailRegex.test(formData.destination_details.email)) {
           setError('Please enter a valid email address');
           return false;
         }
@@ -632,11 +631,11 @@ const Transfer = () => {
             branch: '',
             mobile_provider: '',
             mobile_number: '',
-            crypto_address: '',
             crypto_type: '',
-            e_wallet_provider: '',
-            e_wallet_email: '',
-            e_wallet_account_id: '',
+            crypto_address: '',
+            provider: '',
+            email: '',
+            account_id: '',
           },
           narration: '',
         });
@@ -663,7 +662,6 @@ const Transfer = () => {
     });
   };
 
-  // 👇 UPDATED: Added e_wallet case
   const renderDestinationFields = () => {
     switch (formData.destination_type) {
       case 'bank':
@@ -820,7 +818,6 @@ const Transfer = () => {
           </>
         );
 
-      // 👇 ADDED e_wallet case
       case 'e_wallet':
         return (
           <>
@@ -829,8 +826,8 @@ const Transfer = () => {
                 select
                 fullWidth
                 label="E-Wallet Provider"
-                name="destination_details.e_wallet_provider"
-                value={formData.destination_details.e_wallet_provider || ''}
+                name="destination_details.provider"
+                value={formData.destination_details.provider || ''}
                 onChange={handleChange}
                 required
                 className={styles.inputField}
@@ -847,8 +844,8 @@ const Transfer = () => {
               <TextField
                 fullWidth
                 label="Email Address"
-                name="destination_details.e_wallet_email"
-                value={formData.destination_details.e_wallet_email || ''}
+                name="destination_details.email"
+                value={formData.destination_details.email || ''}
                 onChange={handleChange}
                 required
                 placeholder="email@example.com"
@@ -860,8 +857,8 @@ const Transfer = () => {
               <TextField
                 fullWidth
                 label="Account ID (Optional)"
-                name="destination_details.e_wallet_account_id"
-                value={formData.destination_details.e_wallet_account_id || ''}
+                name="destination_details.account_id"
+                value={formData.destination_details.account_id || ''}
                 onChange={handleChange}
                 placeholder="Account ID if different from email"
                 className={styles.inputField}
@@ -890,7 +887,6 @@ const Transfer = () => {
                 <MenuItem value="USDC">USDC</MenuItem>
                 <MenuItem value="BNB">BNB</MenuItem>
                 <MenuItem value="Solana">Solana (SOL)</MenuItem>
-                {/* 👇 ADDED Binance Pay */}
                 <MenuItem value="Binance Pay">Binance Pay (BEP2/BEP20)</MenuItem>
               </TextField>
             </Grid>
@@ -1151,7 +1147,7 @@ const Transfer = () => {
                       />
                     </Grid>
 
-                    {/* Destination Type - ADDED E-WALLET BUTTON */}
+                    {/* Destination Type */}
                     <Grid size={{ xs: 12 }}>
                       <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#0A2540' }}>
                         Destination Type
@@ -1169,7 +1165,6 @@ const Transfer = () => {
                         >
                           Mobile Wallet
                         </Button>
-                        {/* 👇 ADDED E-WALLET BUTTON */}
                         <Button
                           className={`${styles.destTypeButton} ${formData.destination_type === 'e_wallet' ? styles.active : ''}`}
                           onClick={() => handleDestinationTypeChange('e_wallet')}

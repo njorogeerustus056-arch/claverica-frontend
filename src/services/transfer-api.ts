@@ -1,23 +1,24 @@
-// src/services/transfer-api.ts - COMPLETE FIXED VERSION (WITH E-WALLET ADDED)
-import { apiFetch } from '../api';  // Import from main api.ts
+// src/services/transfer-api.ts - COMPLETE FIXED VERSION (WITH CORRECT FIELD NAMES)
+import { apiFetch } from '../api';
 import { useAuthStore } from '../lib/store/auth';
 
 export interface TransferRequest {
   amount: number;
   recipient_name: string;
-  destination_type: 'bank' | 'mobile_wallet' | 'crypto' | 'e_wallet'; // 👈 ADDED e_wallet
+  destination_type: 'bank' | 'mobile_wallet' | 'crypto' | 'e_wallet';
   destination_details: {
     bank_name?: string;
     account_number?: string;
     account_type?: string;
     mobile_provider?: string;
     mobile_number?: string;
-    crypto_address?: string;
+    // Crypto fields - match backend exactly
     crypto_type?: string;
-    // 👇 ADDED e-wallet fields
-    e_wallet_provider?: string;
-    e_wallet_email?: string;
-    e_wallet_account_id?: string;
+    crypto_address?: string;
+    // E-wallet fields - match backend exactly (no e_wallet_ prefix)
+    provider?: string;
+    email?: string;
+    account_id?: string;
   };
   narration?: string;
 }
@@ -117,7 +118,6 @@ export interface KYCStatus {
 }
 
 export const transferAPI = {
-  // ✅ FIXED: Create transfer - ADDED e_wallet
   createTransfer: async (data: TransferRequest): Promise<{success: boolean; transfer_id: number; reference: string; message: string}> => {
     try {
       const { user } = useAuthStore.getState();
@@ -149,12 +149,11 @@ export const transferAPI = {
           phone_number: cleanedData.destination_details.mobile_number || ''
         };
         
-      // 👇 ADDED e_wallet case
       } else if (cleanedData.destination_type === 'e_wallet') {
         cleanedData.destination_details = {
-          provider: cleanedData.destination_details.e_wallet_provider || '',
-          email: cleanedData.destination_details.e_wallet_email || '',
-          account_id: cleanedData.destination_details.e_wallet_account_id || ''
+          provider: cleanedData.destination_details.provider || '',
+          email: cleanedData.destination_details.email || '',
+          account_id: cleanedData.destination_details.account_id || ''
         };
         
       } else if (cleanedData.destination_type === 'crypto') {
@@ -165,11 +164,8 @@ export const transferAPI = {
       }
       
       console.log('📤 Sending to COMPLIANCE API:', cleanedData);
-      
-      // ✅ ADD DEBUG LINE HERE - SHOW THE EXACT PAYLOAD BEING SENT
       console.log('📤 FINAL PAYLOAD STRINGIFIED:', JSON.stringify(cleanedData, null, 2));
       
-      // ✅ FIXED: REMOVED /api prefix - apiFetch already adds it
       const response = await apiFetch('/compliance/transfers/', {
         method: 'POST',
         body: JSON.stringify(cleanedData)
@@ -186,7 +182,6 @@ export const transferAPI = {
       
       // Check multiple possible response formats
       if (response && response.id) {
-        // Format 1: Direct TransferSerializer response
         console.log('✅ Format 1: Direct TransferSerializer response');
         return {
           success: true,
@@ -195,7 +190,6 @@ export const transferAPI = {
           message: 'Transfer submitted successfully! Contact live agent for TAC code.'
         };
       } else if (response && response.data && response.data.id) {
-        // Format 2: Nested response with data object
         console.log('✅ Format 2: Nested response with data object');
         return {
           success: true,
@@ -204,7 +198,6 @@ export const transferAPI = {
           message: 'Transfer submitted successfully! Contact live agent for TAC code.'
         };
       } else if (response && response.transfer_id) {
-        // Format 3: Alternative field name
         console.log('✅ Format 3: Alternative field name (transfer_id)');
         return {
           success: true,
@@ -213,9 +206,7 @@ export const transferAPI = {
           message: 'Transfer submitted successfully! Contact live agent for TAC code.'
         };
       } else if (response && response.status === 201) {
-        // Format 4: HTTP status in response
         console.log('✅ Format 4: HTTP status in response');
-        // Try to extract from response data
         const transferData = response.data || response;
         return {
           success: true,
@@ -249,7 +240,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get wallet balance
   getWalletBalance: async (): Promise<WalletBalance> => {
     try {
       const response = await apiFetch('/transactions/wallet/balance/');
@@ -273,7 +263,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfer status
   getTransfer: async (transferId: number): Promise<TransferStatus> => {
     try {
       const transferData = await apiFetch(`/compliance/transfers/${transferId}/`);
@@ -283,7 +272,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Verify TAC
   verifyTAC: async (transferId: number, tacCode: string): Promise<{success: boolean; message: string}> => {
     try {
       console.log(`🔐 Verifying TAC ${tacCode} for transfer ${transferId}`);
@@ -315,7 +303,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get user's transfer history
   getTransfersHistory: async (page = 1, limit = 20): Promise<TransfersHistory> => {
     try {
       const historyData = await apiFetch(`/compliance/transfers/?page=${page}`);
@@ -325,14 +312,12 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transaction history
   getTransactionHistory: async (limit = 20): Promise<TransactionHistory> => {
     try {
       const historyData = await apiFetch(`/transactions/recent/?limit=${limit}`);
       return historyData;
     } catch (error: any) {
       console.error('❌ Transaction history error:', error);
-      // Return empty but valid structure
       const { user } = useAuthStore.getState();
       return {
         account_number: user?.account_number || 'unknown',
@@ -342,7 +327,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transaction history by account
   getTransactionHistoryByAccount: async (accountNumber: string, limit = 50): Promise<TransactionHistory> => {
     try {
       const historyData = await apiFetch(`/transactions/history/${accountNumber}/?limit=${limit}`);
@@ -357,7 +341,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get transfers needing TAC
   getPendingTransfers: async (): Promise<TransferStatus[]> => {
     try {
       const pendingData = await apiFetch('/compliance/admin/transfers/need-tac/');
@@ -367,7 +350,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Cancel transfer
   cancelTransfer: async (transferId: number): Promise<{success: boolean; message: string}> => {
     try {
       const response = await apiFetch(`/compliance/admin/transfers/${transferId}/cancel/`, {
@@ -393,7 +375,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Submit KYC documents
   submitKYC: async (formData: FormData): Promise<KYCResponse> => {
     try {
       console.log('📤 Submitting KYC documents...');
@@ -401,8 +382,6 @@ export const transferAPI = {
       const API_URL = import.meta.env.VITE_API_URL;
       const { tokens } = useAuthStore.getState();
       
-      // For FormData uploads, we use fetch directly
-      // The URL should include /api prefix since fetch doesn't add it automatically
       const response = await fetch(`${API_URL}/api/kyc/documents/`, {
         method: 'POST',
         headers: {
@@ -436,7 +415,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Check KYC status
   getKYCStatus: async (): Promise<KYCStatus> => {
     try {
       const response = await apiFetch('/kyc/documents/status/');
@@ -459,7 +437,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Check if KYC is required for specific amount
   checkKYCRequirement: async (amount: number, serviceType: string = 'transfer'): Promise<{requires_kyc: boolean; threshold: number; message: string}> => {
     try {
       const response = await apiFetch(`/kyc/check-requirement/?amount=${amount}&service_type=${serviceType}`);
@@ -486,7 +463,6 @@ export const transferAPI = {
     }
   },
 
-  // ✅ FIXED: Get user's KYC submissions
   getKYCSubmissions: async (): Promise<any[]> => {
     try {
       const response = await apiFetch('/kyc/documents/submissions/');
