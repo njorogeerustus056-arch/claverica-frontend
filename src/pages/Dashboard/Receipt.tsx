@@ -17,6 +17,7 @@ interface Receipt {
   pdf_url: string;
   uploaded_at: string;
   uploaded_by?: string;
+  user?: number;
   user_email?: string;
   user_name?: string;
 }
@@ -65,8 +66,7 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString("en-US", {
     day: "numeric",
     month: "short",
-    year:
-      date.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
+    year: date.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
   });
 }
 
@@ -247,8 +247,9 @@ const Receipts: React.FC = () => {
       setReceipts(results);
       setTotalCount(data.count);
     } catch (err: any) {
+      console.error("Fetch receipts error:", err);
       if (err.name !== "CanceledError") {
-        setError("Failed to load receipts. Please try again.");
+        setError(err.response?.data?.detail || "Failed to load receipts. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -270,7 +271,8 @@ const Receipts: React.FC = () => {
         credit_note: all.filter((r) => r.type === "credit_note").length,
       };
       setStats(s);
-    } catch {
+    } catch (err) {
+      console.error("Fetch stats error:", err);
       /* stats are non-critical */
     }
   }, []);
@@ -293,6 +295,9 @@ const Receipts: React.FC = () => {
     setDownloadingId(receipt.id);
     try {
       window.open(receipt.pdf_url, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      console.error("Download error:", err);
+      setError("Failed to download PDF. Please try again.");
     } finally {
       setTimeout(() => setDownloadingId(null), 800);
     }

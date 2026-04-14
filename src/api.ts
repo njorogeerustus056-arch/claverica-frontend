@@ -106,6 +106,7 @@ export async function apiFetch<T = any>(
       ...defaultHeaders,
       ...options.headers,
     },
+    redirect: 'follow', // ✅ FIXED: Follow redirects automatically
   };
 
   try {
@@ -210,6 +211,7 @@ export async function uploadFormData<T = any>(
     method: "POST",
     headers,
     body: formData,
+    redirect: 'follow', // ✅ FIXED: Follow redirects
   });
 
   if (!response.ok) {
