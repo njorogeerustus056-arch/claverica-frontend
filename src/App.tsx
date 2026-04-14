@@ -54,7 +54,7 @@ const CardTransactions = lazy(() => import("./pages/Dashboard/CardTransactions")
 const Profile = lazy(() => import("./pages/Dashboard/Profile"));
 const EditProfile = lazy(() => import("./pages/Dashboard/EditProfile"));
 const Settings = lazy(() => import("./pages/Dashboard/Settings"));
-const Receipts = lazy(() => import("./pages/Dashboard/Receipts")); // ✅ ADDED: Receipts page
+const Receipt = lazy(() => import("./pages/Dashboard/Receipt")); // ✅ FIXED: Removed 's' - matches filename Receipt.tsx
 
 // Loading component with brand colors
 function LoadingSpinner() {
@@ -199,7 +199,7 @@ export default function App() {
               <Route path="profile" element={<Profile />} />
               <Route path="profile/edit" element={<EditProfile />} />
               <Route path="settings" element={<Settings />} />
-              <Route path="receipts" element={<Receipts />} /> {/* ✅ ADDED: Receipts route */}
+              <Route path="receipts" element={<Receipt />} /> {/* ✅ FIXED: Uses Receipt component */}
             </Route>
 
             {/* 404 */}
