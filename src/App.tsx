@@ -52,8 +52,9 @@ const ContactSupport = lazy(() => import("./pages/Dashboard/Contact"));
 const Cards = lazy(() => import("./pages/Dashboard/Cards"));
 const CardTransactions = lazy(() => import("./pages/Dashboard/CardTransactions"));
 const Profile = lazy(() => import("./pages/Dashboard/Profile"));
-const EditProfile = lazy(() => import("./pages/Dashboard/EditProfile")); // ✅ ADD THIS LINE
+const EditProfile = lazy(() => import("./pages/Dashboard/EditProfile"));
 const Settings = lazy(() => import("./pages/Dashboard/Settings"));
+const Receipts = lazy(() => import("./pages/Dashboard/Receipts")); // ✅ ADDED: Receipts page
 
 // Loading component with brand colors
 function LoadingSpinner() {
@@ -94,7 +95,7 @@ export default function App() {
             <Route path="/" element={
               <>
                 <PublicNavbar />
-                <div style={{ paddingTop: '80px' }}> {/* Fixed padding */}
+                <div style={{ paddingTop: '80px' }}>
                   <Home />
                 </div>
                 <Footer />
@@ -196,8 +197,9 @@ export default function App() {
               <Route path="cards" element={<Cards />} />
               <Route path="cards/transactions" element={<CardTransactions />} />
               <Route path="profile" element={<Profile />} />
-              <Route path="profile/edit" element={<EditProfile />} /> {/* ✅ ADD THIS ROUTE */}
+              <Route path="profile/edit" element={<EditProfile />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="receipts" element={<Receipts />} /> {/* ✅ ADDED: Receipts route */}
             </Route>
 
             {/* 404 */}

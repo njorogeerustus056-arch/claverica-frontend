@@ -28,6 +28,7 @@ type Props = { isOpen: boolean; close: () => void };
 const menu = [
   { name: "Dashboard", path: "/dashboard", icon: HomeIcon, section: "overview" },
   { name: "Transfers", path: "/dashboard/transfer", icon: ArrowUpRight, section: "banking" },
+  { name: "Receipts", path: "/dashboard/receipts", icon: FileText, section: "banking" }, // ✅ ADDED: Receipts after Transfers
   { name: "Escrow", path: "/dashboard/escrow", icon: Shield, section: "banking" },
   { name: "Savings", path: "/dashboard/savings", icon: PiggyBank, section: "financial" },
   { name: "Loans", path: "/dashboard/loans", icon: DollarSign, section: "financial" },
@@ -125,6 +126,7 @@ export default function DashboardSidebar({ isOpen, close }: Props) {
               {items.map((item) => {
                 const active = location.pathname === item.path;
                 const isKYC = item.name === "Identity Verification";
+                const isReceipts = item.name === "Receipts"; // For optional styling
 
                 return (
                   <button
