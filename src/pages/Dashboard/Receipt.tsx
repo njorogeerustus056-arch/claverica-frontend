@@ -234,7 +234,6 @@ const Receipts: React.FC = () => {
       if (filterType !== "all") params.type = filterType;
       if (debouncedSearch.trim()) params.customer = debouncedSearch.trim();
 
-      // ✅ FIXED: The response is already the data, not wrapped in .data
       const data = await api.get<PaginatedResponse>("/receipts/", { params });
       
       console.log("📄 Receipts API response:", data);
@@ -261,7 +260,6 @@ const Receipts: React.FC = () => {
   // ── Fetch all-time stats (page 1, large page_size, no filter) ──
   const fetchStats = useCallback(async () => {
     try {
-      // ✅ FIXED: The response is already the data
       const data = await api.get<PaginatedResponse>("/receipts/", {
         params: { page: 1, page_size: 500 },
       });
@@ -276,7 +274,6 @@ const Receipts: React.FC = () => {
       setStats(s);
     } catch (err) {
       console.error("Fetch stats error:", err);
-      /* stats are non-critical */
     }
   }, []);
 
@@ -293,11 +290,55 @@ const Receipts: React.FC = () => {
     return () => abortRef.current?.abort();
   }, [fetchReceipts]);
 
-  // ── Download handler ──
+  // ── Download handler with authentication ──
   const handleDownload = async (receipt: Receipt) => {
     setDownloadingId(receipt.id);
     try {
-      window.open(receipt.pdf_url, "_blank", "noopener,noreferrer");
+      const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+      
+      if (!token) {
+        console.error("No token found");
+        setError("Please log in again to download receipts.");
+        return;
+      }
+      
+      let downloadUrl = receipt.pdf_url;
+      if (!downloadUrl.endsWith('/')) {
+        downloadUrl += '/';
+      }
+      if (downloadUrl.includes('?format=api')) {
+        downloadUrl = downloadUrl.replace('?format=api', '');
+      }
+      
+      console.log("Downloading from URL:", downloadUrl);
+      
+      const response = await fetch(downloadUrl, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Download failed: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get('Content-Type');
+      if (!contentType || !contentType.includes('application/pdf')) {
+        throw new Error('Server returned HTML instead of PDF');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `receipt_${receipt.id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      console.log("Download successful");
+      
     } catch (err) {
       console.error("Download error:", err);
       setError("Failed to download PDF. Please try again.");
@@ -316,11 +357,8 @@ const Receipts: React.FC = () => {
     { key: "credit_note", label: "Credit Notes" },
   ];
 
-  // ─────────────────────────────────────────────────────────────────────────────
-
   return (
     <div className={styles.page}>
-      {/* ── Header ── */}
       <div className={styles.pageHeader}>
         <div className={styles.pageHeaderLeft}>
           <h1 className={styles.pageTitle}>Receipts</h1>
@@ -333,7 +371,6 @@ const Receipts: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Stats ── */}
       {stats && (
         <div className={styles.statsGrid}>
           <StatCard
@@ -364,9 +401,7 @@ const Receipts: React.FC = () => {
         </div>
       )}
 
-      {/* ── Controls ── */}
       <div className={styles.controls}>
-        {/* Filter tabs */}
         <div className={styles.filterTabs}>
           {filterTabs.map((tab) => (
             <button
@@ -380,7 +415,6 @@ const Receipts: React.FC = () => {
         </div>
 
         <div className={styles.controlsRight}>
-          {/* Search */}
           <div className={styles.searchWrap}>
             <span className={styles.searchIcon}>
               <IconSearch />
@@ -403,7 +437,6 @@ const Receipts: React.FC = () => {
             )}
           </div>
 
-          {/* Sort */}
           <button
             className={styles.sortBtn}
             onClick={() =>
@@ -419,7 +452,6 @@ const Receipts: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Content ── */}
       {loading ? (
         <div className={styles.grid}>
           {Array.from({ length: 6 }).map((_, i) => (
@@ -498,7 +530,6 @@ const Receipts: React.FC = () => {
             ))}
           </div>
 
-          {/* ── Pagination ── */}
           {totalPages > 1 && (
             <div className={styles.pagination}>
               <button
