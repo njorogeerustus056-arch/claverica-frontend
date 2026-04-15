@@ -234,10 +234,12 @@ const Receipts: React.FC = () => {
       if (filterType !== "all") params.type = filterType;
       if (debouncedSearch.trim()) params.customer = debouncedSearch.trim();
 
-      const res = await api.get<PaginatedResponse>("/receipts/", { params });
-      const data = res.data;
+      // ✅ FIXED: The response is already the data, not wrapped in .data
+      const data = await api.get<PaginatedResponse>("/receipts/", { params });
+      
+      console.log("📄 Receipts API response:", data);
 
-      let results = [...data.results];
+      let results = [...(data.results || [])];
       if (sortOrder === "oldest") {
         results.sort(
           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -245,11 +247,11 @@ const Receipts: React.FC = () => {
       }
 
       setReceipts(results);
-      setTotalCount(data.count);
+      setTotalCount(data.count || 0);
     } catch (err: any) {
       console.error("Fetch receipts error:", err);
       if (err.name !== "CanceledError") {
-        setError(err.response?.data?.detail || "Failed to load receipts. Please try again.");
+        setError(err.message || "Failed to load receipts. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -259,12 +261,13 @@ const Receipts: React.FC = () => {
   // ── Fetch all-time stats (page 1, large page_size, no filter) ──
   const fetchStats = useCallback(async () => {
     try {
-      const res = await api.get<PaginatedResponse>("/receipts/", {
+      // ✅ FIXED: The response is already the data
+      const data = await api.get<PaginatedResponse>("/receipts/", {
         params: { page: 1, page_size: 500 },
       });
-      const all = res.data.results;
+      const all = data.results || [];
       const s: SummaryStats = {
-        total: res.data.count,
+        total: data.count || 0,
         totalAmount: all.reduce((sum, r) => sum + parseFloat(r.amount), 0),
         invoice: all.filter((r) => r.type === "invoice").length,
         refund: all.filter((r) => r.type === "refund").length,
