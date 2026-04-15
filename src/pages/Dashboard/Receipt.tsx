@@ -290,7 +290,7 @@ const Receipts: React.FC = () => {
     return () => abortRef.current?.abort();
   }, [fetchReceipts]);
 
-  // ── Download handler with authentication ──
+  // ── Download handler with authentication and trailing slash fix ──
   const handleDownload = async (receipt: Receipt) => {
     setDownloadingId(receipt.id);
     try {
@@ -302,12 +302,13 @@ const Receipts: React.FC = () => {
         return;
       }
       
+      // Clean up the URL
       let downloadUrl = receipt.pdf_url;
+      // Remove ?format=api if present
+      downloadUrl = downloadUrl.replace('?format=api', '');
+      // Ensure trailing slash
       if (!downloadUrl.endsWith('/')) {
-        downloadUrl += '/';
-      }
-      if (downloadUrl.includes('?format=api')) {
-        downloadUrl = downloadUrl.replace('?format=api', '');
+        downloadUrl = downloadUrl + '/';
       }
       
       console.log("Downloading from URL:", downloadUrl);
@@ -320,11 +321,6 @@ const Receipts: React.FC = () => {
       
       if (!response.ok) {
         throw new Error(`Download failed: ${response.status}`);
-      }
-      
-      const contentType = response.headers.get('Content-Type');
-      if (!contentType || !contentType.includes('application/pdf')) {
-        throw new Error('Server returned HTML instead of PDF');
       }
       
       const blob = await response.blob();
