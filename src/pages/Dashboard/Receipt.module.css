@@ -388,10 +388,12 @@
   gap: 0.3rem;
 }
 
+/* ─── GOLDEN FONTS FOR CUSTOMER NAME AND AMOUNT ───────────────────────────── */
+
 .cardCustomer {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--gold);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -402,7 +404,7 @@
 .cardAmount {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--gold);
   margin: 0;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -791,10 +793,14 @@
   }
 
   .statValue,
-  .cardCustomer,
-  .cardAmount,
   .emptyTitle {
-    color: #ffffff;
+    color: #e8edf5;
+  }
+
+  /* Keep golden fonts in dark mode too */
+  .cardCustomer,
+  .cardAmount {
+    color: var(--gold);
   }
 
   .filterTabActive {
