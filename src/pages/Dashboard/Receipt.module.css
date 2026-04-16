@@ -511,10 +511,14 @@
 .skeletonName,
 .skeletonAmount,
 .skeletonBtn {
+  /* FIX 6 (light mode): Original midpoint rgba(245,240,230,0.4) was nearly
+     identical to var(--cream) = #f5f0e6, making the shimmer wave invisible.
+     Replaced with a clearly lighter #fff midpoint so the sweep is legible
+     and users can see that content is loading. */
   background: linear-gradient(
     90deg,
     var(--cream) 0%,
-    rgba(245, 240, 230, 0.4) 50%,
+    rgba(255, 255, 255, 0.85) 50%,
     var(--cream) 100%
   );
   background-size: 200% 100%;
@@ -788,29 +792,74 @@
     --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.4);
     --navy-10: rgba(255, 255, 255, 0.06);
     --navy-20: rgba(255, 255, 255, 0.12);
+
+    /* FIX 1: Remap --navy so any element using var(--navy) for text
+       renders light instead of near-black (#0a2540) on dark card surfaces.
+       Without this, cardCustomer, cardAmount, statValue, pageTitle etc.
+       are all dark-on-dark and invisible. */
+    --navy: #c8d8f0;
+  }
+
+  /* FIX 2: Explicit colour locks for the three key text elements reported
+     as invisible. These override any cascade that might still resolve to
+     the old navy or a low-contrast value. */
+  .cardCustomer {
+    color: #e8edf5; /* customer name — bright readable white */
+  }
+
+  .cardAmount {
+    color: #ffffff; /* amount — full white for maximum contrast on dark card */
   }
 
   .statValue,
-  .cardCustomer,
-  .cardAmount,
   .emptyTitle {
     color: #e8edf5;
   }
 
-  .filterTabActive {
-    background: var(--purple);
-  }
-
+  /* FIX 3: Download button — ensure text is always visible in dark mode.
+     The base button background becomes var(--cream) = #1a2235 (very dark),
+     so we need explicit light text even before hover. */
   .downloadBtn {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: #e8edf5;
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #e8edf5; /* visible button label in dark mode */
   }
 
   .downloadBtn:hover {
     background: var(--purple);
     border-color: var(--purple);
-    color: #fff;
+    color: #ffffff;
+  }
+
+  /* FIX 4: Disabled / active download button — keep label readable */
+  .downloadBtn:disabled,
+  .downloadBtnActive {
+    background: rgba(197, 160, 40, 0.15);
+    border-color: rgba(197, 160, 40, 0.4);
+    color: #d4aa3a; /* warm gold — legible against dark background */
+  }
+
+  /* FIX 5: Skeleton shimmer — in dark mode the rgba(245,240,230,0.4)
+     midpoint stays near-light on a dark surface, making the shimmer
+     flash bright then disappear. Replace both stops with dark-surface
+     appropriate tones so the loading state is always visible. */
+  .skeletonBadge,
+  .skeletonDate,
+  .skeletonName,
+  .skeletonAmount,
+  .skeletonBtn {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.16) 50%,
+      rgba(255, 255, 255, 0.08) 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  .filterTabActive {
+    background: var(--purple);
+    color: #ffffff;
   }
 
   .card::after {
