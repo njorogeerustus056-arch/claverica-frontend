@@ -6,7 +6,7 @@
   --purple: #8626e9;
   --gold: #c5a028;
   --teal: #1e6f6f;
-  --cream: #f0e6d2;  /* CHANGED: from #f5f0e6 to Linen #f0e6d2 */
+  --cream: #f0e6d2;
   --white: #ffffff;
 
   --navy-10: rgba(10, 37, 64, 0.08);
@@ -391,7 +391,7 @@
 .cardCustomer {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--navy);
+  color: var(--text-primary);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -402,7 +402,7 @@
 .cardAmount {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--navy);
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -779,7 +779,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --white: #111827;
-    --cream: #1a2235;  /* Kept original dark mode value */
+    --cream: #1a2235;
     --border: rgba(255, 255, 255, 0.1);
     --text-primary: #e8edf5;
     --text-secondary: #a0aec0;
@@ -794,7 +794,7 @@
   .cardCustomer,
   .cardAmount,
   .emptyTitle {
-    color: #e8edf5;
+    color: #ffffff;
   }
 
   .filterTabActive {
